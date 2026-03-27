@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Feedback Loop — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+
+/* The feedback loop diagram — interactive cycle */
+.loop-diagram{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;}
+.ld-header{background:var(--purple-pale);padding:18px 22px;border-bottom:1px solid var(--purple-mid);}
+.ld-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ld-sub{font-size:14px;color:var(--gray-muted);}
+.ld-body{padding:22px;}
+.loop-nodes{display:flex;flex-direction:column;gap:0;}
+.loop-node{display:flex;gap:18px;align-items:flex-start;cursor:pointer;}
+.loop-node-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:52px;}
+.loop-num{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:20px;font-weight:900;border:2px solid var(--purple-mid);transition:all .2s;}
+.loop-node:hover .loop-num,.loop-node.open .loop-num{background:var(--purple);color:white;border-color:var(--purple);}
+.loop-num.default{background:var(--white);color:var(--purple);}
+.loop-line{width:2px;background:var(--purple-mid);flex:1;min-height:16px;margin:4px auto;}
+.loop-node:last-child .loop-line{display:none;}
+.loop-node-right{flex:1;padding:6px 0 20px;}
+.loop-node-title{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.loop-node-short{font-size:14px;color:var(--gray-muted);}
+.loop-node-detail{display:none;background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;margin-top:10px;font-size:14px;line-height:1.7;color:var(--gray-text);}
+.loop-node.open .loop-node-detail{display:block;animation:fadeIn .2s ease;}
+
+/* How your interactions feed in — by tool */
+.tool-feedback{margin:24px 0;}
+.tf-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.tf-tab{padding:9px 16px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.tf-tab.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.tf-panel{display:none;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.tf-panel.show{display:block;animation:fadeIn .2s ease;}
+.tf-panel-header{background:var(--gray-soft);padding:16px 20px;border-bottom:1px solid var(--purple-mid);}
+.tf-panel-title{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.tf-panel-sub{font-size:13px;color:var(--gray-muted);}
+.tf-panel-body{padding:18px 20px;}
+.tf-signal-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.tf-signal{display:flex;gap:12px;background:var(--gray-soft);border-radius:10px;padding:12px 14px;}
+.tf-signal-icon{font-size:18px;flex-shrink:0;}
+.tf-signal-text{font-size:14px;line-height:1.55;color:var(--gray-text);}
+.tf-signal-text strong{color:var(--purple-dark);}
+.tf-caveat{background:var(--orange-pale);border:1.5px solid #FDE68A;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.6;color:#78350F;}
+.tf-caveat-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:5px;}
+
+/* Feedback quality matters — what good vs. bad feedback looks like */
+.feedback-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.fc-col{border-radius:18px;padding:20px;}
+.fc-col.good{background:var(--green-pale);border:1.5px solid var(--green);}
+.fc-col.bad{background:var(--red-pale);border:1.5px solid var(--red);}
+.fc-title{font-size:15px;font-weight:700;margin-bottom:12px;}
+.fc-col.good .fc-title{color:var(--green);}
+.fc-col.bad .fc-title{color:var(--red);}
+.fc-items{display:flex;flex-direction:column;gap:8px;}
+.fc-item{font-size:14px;line-height:1.5;display:flex;gap:8px;}
+.fc-col.good .fc-item::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;}
+.fc-col.bad .fc-item::before{content:"✗";color:var(--red);font-weight:700;flex-shrink:0;}
+
+/* The compounding effect */
+.compound-timeline{margin:24px 0;}
+.ct-items{display:flex;flex-direction:column;gap:10px;}
+.ct-item{display:flex;gap:16px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:14px 18px;}
+.ct-time{font-family:"Fraunces",serif;font-size:20px;font-weight:900;color:var(--purple);flex-shrink:0;min-width:80px;line-height:1.2;}
+.ct-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+.ct-desc strong{color:var(--purple-dark);}
+
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.feedback-compare{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.2 · How AI Works (Conceptually)</div>
+  <h1>The Feedback Loop: How AI Models Improve Over Time — and How Your Corrections Shape That Improvement</h1>
+  <p class="hero-sub">AI is not static. The tools you use today are being shaped by how people use them — including you. Understanding the feedback loop changes how you think about corrections, overrides, and the long-term quality of AI systems in your organization.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Misconception: AI Is a Fixed Black Box</h2>
+    <p>Many people interact with AI tools as if they're interacting with a static piece of software — the same input always produces the same output, forever. This mental model is wrong in an important and practically relevant way.</p>
+    <p><mark>AI systems are designed to improve over time, and the primary mechanism for that improvement is feedback from the humans who use them.</mark> When you accept or reject a Copilot suggestion, when you mark a security alert as a false positive, when you flag an AI-generated document as inaccurate — these actions feed into systems that shape how the next version of the model behaves. Your corrections matter. Understanding how they matter changes what it means to be a professional user of AI tools.</p>
+    <p>Click through the feedback loop cycle below to understand how improvement actually works:</p>
+
+    <div class="loop-diagram fade-in">
+      <div class="ld-header">
+        <div class="ld-title">The AI Improvement Cycle</div>
+        <div class="ld-sub">Click each step to understand what happens and who owns it</div>
+      </div>
+      <div class="ld-body">
+        <div class="loop-nodes" id="loopNodes"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How Your Interactions Feed Into Model Improvement</h2>
+    <p>Different AI tools capture feedback in different ways. Explore each tool type to understand what signals your interactions generate — and what those signals are used for:</p>
+    <div class="tool-feedback fade-in">
+      <div class="tf-tabs" id="tfTabs"></div>
+      <div id="tfPanels"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Feedback Quality Matters — Your Corrections Train the Next Version</h2>
+    <p>Not all feedback is equally useful. The quality of human feedback directly determines the quality of model improvement. Here's what high-quality feedback looks like versus feedback that degrades model performance:</p>
+    <div class="feedback-compare">
+      <div class="fc-col good">
+        <div class="fc-title">✓ High-quality feedback that improves models</div>
+        <div class="fc-items">
+          <div class="fc-item">Rejecting an AI suggestion and providing the correct alternative in the same context</div>
+          <div class="fc-item">Accurately marking security alerts as true positives or confirmed false positives with consistent criteria</div>
+          <div class="fc-item">Using AI-generated code in the right contexts and rejecting it specifically when it's wrong — not randomly</div>
+          <div class="fc-item">Flagging AI hallucinations with specifics — what was wrong and what the correct information was</div>
+          <div class="fc-item">Consistent behavior — applying the same standards across similar situations</div>
+        </div>
+      </div>
+      <div class="fc-col bad">
+        <div class="fc-title">✗ Poor feedback that degrades model quality</div>
+        <div class="fc-items">
+          <div class="fc-item">Dismissing all alerts as false positives to reduce noise — without actually investigating them</div>
+          <div class="fc-item">Accepting AI outputs without review — normalizes wrong outputs as correct training signal</div>
+          <div class="fc-item">Marking alerts differently depending on time of day or workload — inconsistent labeling confuses the model</div>
+          <div class="fc-item">Rejecting AI suggestions out of habit or skepticism, not because they were wrong — trains the model away from correct outputs</div>
+          <div class="fc-item">Providing feedback on edge cases only, creating a biased training signal</div>
+        </div>
+      </div>
+    </div>
+    <p>This is why alert fatigue is not just an operational problem — it's a model quality problem. When engineers start dismissing all security alerts to manage volume, they're teaching the model that those patterns are false positives. The model's next version becomes less sensitive, missing real incidents. The fatigue compounds the problem it was trying to solve.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>Every correction you make, every override you exercise, every alert you mark as false positive — you are literally training the next version of the model. The quality of AI tools in your organization over time is partly a function of how rigorously the people using them today provide accurate feedback.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Compounding Effect — How Quality Accumulates Over Time</h2>
+    <p>Feedback loops create compounding dynamics in both directions. High-quality feedback consistently applied produces models that get more useful over time. Poor-quality feedback consistently applied produces models that drift away from what users actually need:</p>
+    <div class="compound-timeline">
+      <div class="ct-items" id="ctItems"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Feedback Loops Your Organization Controls Directly</h2>
+    <p>Beyond the feedback signals embedded in how you use AI tools, organizations can build explicit feedback loops that dramatically accelerate model improvement:</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;">
+      <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;display:flex;gap:14px;">
+        <div style="font-size:20px;flex-shrink:0;">🏷️</div>
+        <div><div style="font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;">Consistent label standards for security and IT operations</div><div style="font-size:14px;line-height:1.6;color:var(--gray-text);">Establish team-wide criteria for what constitutes a true positive vs. false positive in your environment. Document these criteria and apply them consistently. The consistency of labels, not just their accuracy, is what enables a model to learn from them.</div></div>
+      </div>
+      <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;display:flex;gap:14px;">
+        <div style="font-size:20px;flex-shrink:0;">📋</div>
+        <div><div style="font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;">Post-incident reviews that include AI accuracy assessment</div><div style="font-size:14px;line-height:1.6;color:var(--gray-text);">After a significant incident, review whether AI tools flagged it early, missed it, or generated noise that delayed response. This structured retrospective creates high-quality labeled examples for retraining and identifies systematic biases in the current model.</div></div>
+      </div>
+      <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;display:flex;gap:14px;">
+        <div style="font-size:20px;flex-shrink:0;">🔄</div>
+        <div><div style="font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;">Scheduled model performance reviews against business metrics</div><div style="font-size:14px;line-height:1.6;color:var(--gray-text);">Regularly compare model performance against what actually matters for your organization — not benchmark metrics, but operational outcomes. This creates the feedback signal for deciding when retraining is needed and what the retraining data should prioritize.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A security operations team is experiencing alert fatigue. To manage the volume, engineers have started automatically dismissing a category of network alerts they believe are mostly false positives — without individually reviewing each one. What's the most important risk of this approach?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The team is violating their security SLA by not reviewing every alert</button>
+        <button class="qopt" onclick="doQ(this,false)">The AI system will detect that alerts are being dismissed and automatically retrain to reduce the alert volume</button>
+        <button class="qopt" onclick="doQ(this,true)">By dismissing alerts as false positives without investigation, the team is feeding inaccurate feedback into the model — teaching it that these patterns don't represent real threats. The next model version will be less sensitive to these patterns, causing it to miss real threats that match them in the future. The fatigue is creating the conditions for a worse model</button>
+        <button class="qopt" onclick="doQ(this,false)">This is an acceptable operational tradeoff — alert fatigue is a known limitation of AI security tools that can't be resolved through feedback</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI models are not static. They improve over time through feedback loops — human corrections, overrides, and signal data that get incorporated into future model versions through retraining.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Your interactions with AI tools generate feedback signals whether you intend them to or not. Accepting a Copilot suggestion, marking an alert as false positive, thumbs-downing a response — these actions contribute to how future model versions behave. This is a professional responsibility, not a side effect.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Feedback quality matters. Consistent, accurate feedback improves models. Alert fatigue, indiscriminate rejection, and inconsistent labeling produce models that drift away from what users actually need. Poor feedback compounds into worse performance over time.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Organizations can build explicit feedback loops — consistent label standards, post-incident AI accuracy reviews, scheduled model performance assessments — that dramatically accelerate model improvement beyond the implicit signals from normal tool usage.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const loopNodes=[
+  {num:"1",title:"Model deployed — initial performance",short:"The model starts generating outputs based on its training",detail:"A new or updated model is deployed into production. Its initial performance reflects only what it learned from its pre-deployment training data. In most environments, the model is reasonably good at common cases and notably weaker on edge cases, domain-specific patterns, and inputs that differ from its training distribution. This is expected — and it's why feedback loops exist."},
+  {num:"2",title:"Human users interact with outputs",short:"Engineers accept, reject, flag, correct, and override",detail:"Every interaction with an AI tool generates a signal: a code suggestion accepted or rejected, a security alert marked as true or false positive, a ticket classification corrected, a monitoring alert dismissed or escalated. These interactions are the raw material for feedback loops. They are happening whether or not anyone thinks of them as 'feedback.'"},
+  {num:"3",title:"Feedback signals are collected",short:"Interaction data is logged and aggregated",detail:"AI platforms collect interaction data — what users accepted, what they rejected, what corrections they made, how long they reviewed outputs before acting. Not all platforms collect this equally. Some capture rich behavioral signals; others capture only explicit feedback (thumbs up/down). The richness of feedback collection directly determines how much the model can learn from it."},
+  {num:"4",title:"Signal analysis — what patterns emerge",short:"Data scientists review feedback for systematic patterns",detail:"Engineers and data scientists analyze the collected signals to identify systematic patterns. Where is the model reliably right? Where is it reliably wrong? Are there specific input categories where rejection rates are high? Are there alert types that consistently get dismissed as false positives? Are there domains where the model's suggestions are consistently modified before use? These patterns determine what the retraining should address."},
+  {num:"5",title:"Retraining — new data incorporated",short:"The model is updated using corrected examples",detail:"New training data — including the correction signals from user interactions — is incorporated into the next training run. This process is not instantaneous; it happens on cycles of weeks to months for most enterprise AI products. The new model will be better on the dimensions where feedback was rich and accurate. It may regress on dimensions where feedback was sparse or inconsistent."},
+  {num:"6",title:"Updated model replaces previous version",short:"The cycle begins again with a better baseline",detail:"The new model version is deployed. Its performance should be meaningfully better in the areas where high-quality feedback was provided. Users may notice improvements — or may not, because AI improvement often looks like fewer problems rather than obvious new capabilities. The cycle restarts, now with a better initial baseline."},
+];
+
+const loopEl=document.getElementById("loopNodes");
+loopNodes.forEach((n,i)=>{
+  const div=document.createElement("div");
+  div.className="loop-node";
+  div.innerHTML=`<div class="loop-node-left"><div class="loop-num default">${n.num}</div><div class="loop-line"></div></div><div class="loop-node-right"><div class="loop-node-title">${n.title}</div><div class="loop-node-short">${n.short}</div><div class="loop-node-detail">${n.detail}</div></div>`;
+  div.onclick=()=>{const was=div.classList.contains("open");document.querySelectorAll(".loop-node").forEach(ln=>ln.classList.remove("open"));if(!was)div.classList.add("open");};
+  loopEl.appendChild(div);
+});
+
+const toolFeedback=[
+  {label:"🖥️ Code Assistants",title:"GitHub Copilot, Cursor, Tabnine",sub:"How your coding interactions generate feedback signals",signals:[
+    {icon:"✅",text:"<strong>Accepting a suggestion:</strong> Signals this completion was appropriate for this context. Copilot's training improves its suggestions for similar code patterns."},
+    {icon:"❌",text:"<strong>Rejecting and typing a different completion:</strong> Signals the suggestion was wrong and what the right completion was. This is the highest-quality signal — it includes both 'what was wrong' and 'what was right.'"},
+    {icon:"✏️",text:"<strong>Accepting and then immediately editing the suggestion:</strong> Signals the suggestion was partially right but needed correction. The edit itself is the correction signal."},
+    {icon:"⏭️",text:"<strong>Tab-cycling through suggestions:</strong> Signals which alternatives were considered and which was ultimately selected, giving the model relative ranking data on alternatives."},
+  ],caveat:"Code assistants typically capture implicit behavioral signals (accept/reject/edit patterns) rather than explicit ratings. The feedback loop for code assistants is generally at the model provider level — your interactions aggregate with millions of other users to shape model updates, not your individual instance."},
+  {label:"🔒 Security SIEMs",title:"Splunk, Microsoft Sentinel, Palo Alto Cortex",sub:"How alert triage decisions shape detection model performance",signals:[
+    {icon:"🚨",text:"<strong>Escalating an alert as a true positive:</strong> Confirms this pattern represents a real threat. The strongest positive signal for the detection model."},
+    {icon:"❎",text:"<strong>Marking as false positive with a reason:</strong> Signals this pattern in this context is not a threat. The reason code (if provided) makes this a much richer signal than a simple dismissal."},
+    {icon:"🔔",text:"<strong>Adjusting alert thresholds:</strong> Signals that the model's current sensitivity is wrong for your environment and how it should be tuned."},
+    {icon:"📋",text:"<strong>Creating suppression rules for repeated false positives:</strong> Strong signal that a specific pattern is systematically wrong in your environment — one of the most actionable feedback signals."},
+  ],caveat:"Alert fatigue is the most dangerous feedback loop failure mode in security. When engineers start mass-dismissing alerts to manage volume — without actually investigating them — they're feeding a false signal: 'this pattern is not a threat.' The model learns from this and becomes less sensitive to the pattern in future versions. Real threats matching that pattern get missed."},
+  {label:"📊 Monitoring Platforms",title:"Datadog, New Relic, Dynatrace",sub:"How your incident responses train anomaly detection models",signals:[
+    {icon:"🔍",text:"<strong>Investigating an alert and confirming it as an incident:</strong> Confirms that this deviation from baseline represents a real problem. Strengthens the model's sensitivity to this pattern."},
+    {icon:"🔕",text:"<strong>Silencing an alert with a justification:</strong> Signals this deviation is expected in this context. Many platforms use silence patterns to automatically adjust detection sensitivity."},
+    {icon:"📊",text:"<strong>Adding context annotations to incidents:</strong> 'This spike was caused by the product launch' or 'this memory increase is expected after the config change' — these annotations are high-value training data for helping the model understand causal context."},
+    {icon:"⚡",text:"<strong>Response time and resolution patterns:</strong> How quickly your team responds to specific alert types signals their relative importance and urgency — data that can shape future alert prioritization."},
+  ],caveat:"Monitoring feedback loops are often more tightly scoped to your organization's data than code assistant loops. Many monitoring platforms train model components specifically on your environment's baseline — meaning your interactions have a more direct and faster impact on model behavior than they do for general-purpose AI tools."},
+  {label:"🎫 IT Service Management",title:"ServiceNow, Jira Service Management, Zendesk AI",sub:"How ticket workflows shape classification and routing models",signals:[
+    {icon:"🔄",text:"<strong>Reassigning a ticket that was mis-categorized:</strong> Directly signals that the model's classification was wrong for this ticket type and content."},
+    {icon:"✓",text:"<strong>Confirming that automatically routed tickets went to the right team:</strong> Positive signal that the routing logic is working correctly for this pattern."},
+    {icon:"📝",text:"<strong>Editing AI-generated ticket summaries or suggested responses:</strong> The diff between what the model generated and what you used is a direct correction signal."},
+    {icon:"⭐",text:"<strong>Rating AI-suggested knowledge base articles as helpful or not helpful:</strong> Tunes the recommendation model for what's actually useful for specific ticket types."},
+  ],caveat:"ITSM feedback loops are among the most actionable because the feedback is typically explicit (you changed a classification, you accepted or rejected a routing) and highly specific to your organizational patterns. Teams with consistent classification standards benefit the most — inconsistent labeling produces models that learn an inconsistent standard, which performs poorly on both counts."},
+];
+
+const tfTabsEl=document.getElementById("tfTabs"),tfPanelsEl=document.getElementById("tfPanels");
+toolFeedback.forEach((t,i)=>{
+  const btn=document.createElement("button");
+  btn.className="tf-tab"+(i===0?" active":"");
+  btn.textContent=t.label;
+  btn.onclick=()=>{document.querySelectorAll(".tf-tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tf-panel").forEach(p=>p.classList.remove("show"));btn.classList.add("active");document.getElementById("tfp"+i).classList.add("show");};
+  tfTabsEl.appendChild(btn);
+  const panel=document.createElement("div");
+  panel.className="tf-panel"+(i===0?" show":"");panel.id="tfp"+i;
+  const signalsHTML=t.signals.map(s=>`<div class="tf-signal"><div class="tf-signal-icon">${s.icon}</div><div class="tf-signal-text">${s.text}</div></div>`).join("");
+  panel.innerHTML=`<div class="tf-panel-header"><div class="tf-panel-title">${t.title}</div><div class="tf-panel-sub">${t.sub}</div></div><div class="tf-panel-body"><div class="tf-signal-list">${signalsHTML}</div><div class="tf-caveat"><div class="tf-caveat-label">⚠️ Key feedback risk in this domain</div>${t.caveat}</div></div>`;
+  tfPanelsEl.appendChild(panel);
+});
+
+const timeline=[
+  {time:"Month 1",desc:"Team deploys AI-powered security monitoring. <strong>High false positive rate</strong> — 40% of alerts require manual review to dismiss. Engineers investigate each alert carefully and mark true vs. false positives with consistent criteria."},
+  {time:"Month 3",desc:"Model retrained on first 2 months of feedback. <strong>False positive rate drops to 22%</strong>. The model learned organization-specific patterns that distinguish legitimate internal traffic from threat-matching traffic. Team continues careful triage."},
+  {time:"Month 6",desc:"Second retraining cycle complete. <strong>False positive rate now at 11%</strong>, with notably better detection of the specific threat types most common in this environment. Team morale improves as alert quality improves."},
+  {time:"Month 9",desc:"<strong>Critical difference in outcome</strong>: Team A (consistent feedback) vs. Team B (alert fatigue, mass-dismissal). Team A's model now flags real threats with 94% precision. Team B's model has learned their patterns are 'safe' — it's systematically missing the same threat category. A real incident goes undetected for 6 hours in Team B's environment."},
+];
+
+const ctEl=document.getElementById("ctItems");
+timeline.forEach(t=>{
+  const div=document.createElement("div");
+  div.className="ct-item";
+  div.innerHTML=`<div class="ct-time">${t.time}</div><div class="ct-desc">${t.desc}</div>`;
+  ctEl.appendChild(div);
+});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is the feedback loop failure mode in action. Alert fatigue causes engineers to provide systematically inaccurate feedback — dismissing alerts as false positives without investigation — which the model incorporates as training signal during the next retraining cycle. The result is a model that has literally learned 'these patterns are safe' from the organization's behavior, even though they may not be. The next version of the model will be less sensitive to these patterns, increasing the risk of missing real threats. The solution to alert fatigue is not mass-dismissal — it's better triage, threshold adjustment, and suppression rules with accurate justifications.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("feeding inaccurate feedback"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. The AI system does not detect that alerts are being dismissed and automatically retrain — retraining cycles are deliberate processes, not automatic responses to dismissal patterns. And alert fatigue is absolutely resolvable through careful feedback, threshold adjustment, and suppression rules. The most important risk is not procedural — it's that inaccurate feedback degrades the model's ability to detect real threats that match the dismissed patterns.";}
+}
+</script>
+</body>
+</html>

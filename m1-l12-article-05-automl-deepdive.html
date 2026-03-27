@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google AutoML Deep Dive — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.flow{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.flow-step{display:flex;gap:18px;position:relative;}
+.flow-step:not(:last-child)::after{content:"";position:absolute;left:27px;top:52px;width:2px;height:calc(100% - 32px);background:var(--purple-mid);}
+.flow-left{width:54px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+.flow-dot{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid;}
+.flow-dot.auto{background:var(--purple-pale);border-color:var(--purple);}
+.flow-dot.human{background:var(--orange-pale);border-color:var(--orange);}
+.flow-body{flex:1;padding:6px 0 26px;}
+.flow-tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:3px 10px;border-radius:6px;margin-bottom:7px;}
+.flow-tag.auto{background:var(--purple-pale);color:var(--purple);}
+.flow-tag.human{background:var(--orange-pale);color:var(--orange);}
+.flow-title{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.flow-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+.flow-detail{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:10px;padding:11px 14px;margin-top:8px;font-size:13px;line-height:1.6;color:var(--gray-text);}
+.ptabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 12px;}
+.ptab{padding:9px 16px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.ptab.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.ppanel{display:none;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.ppanel.show{display:block;animation:fadeIn .2s ease;}
+.pp-head{background:var(--purple-pale);padding:16px 20px;border-bottom:1px solid var(--purple-mid);}
+.pp-name{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.pp-tag{font-size:14px;color:var(--gray-muted);}
+.pp-body{padding:18px 20px;}
+.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.pp-col{background:var(--gray-soft);border-radius:12px;padding:14px;}
+.pp-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.pp-col ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.pp-col li{font-size:13px;line-height:1.5;padding-left:14px;position:relative;}
+.pp-col li::before{content:"→";position:absolute;left:0;color:var(--purple);font-size:11px;}
+.pp-honest{background:var(--orange-pale);border:1.5px solid #FDE68A;border-radius:12px;padding:12px 14px;}
+.pp-honest-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:6px;}
+.pp-honest-text{font-size:14px;line-height:1.65;}
+.hr-items{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.hr-item{display:flex;gap:14px;border:1.5px solid var(--purple-mid);border-radius:14px;padding:15px 18px;}
+.hr-icon{font-size:20px;flex-shrink:0;}
+.hr-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.hr-desc{font-size:14px;line-height:1.6;}
+.sense-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.sense-col{border-radius:18px;padding:18px;}
+.sense-col.yes{background:var(--green-pale);border:1.5px solid var(--green);}
+.sense-col.no{background:var(--red-pale);border:1.5px solid var(--red);}
+.sense-title{font-size:15px;font-weight:700;margin-bottom:10px;}
+.sense-col.yes .sense-title{color:var(--green);}
+.sense-col.no .sense-title{color:var(--red);}
+.sense-list{display:flex;flex-direction:column;gap:7px;}
+.sense-item{font-size:14px;line-height:1.5;display:flex;gap:8px;}
+.sense-col.yes .sense-item::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;}
+.sense-col.no .sense-item::before{content:"✗";color:var(--red);font-weight:700;flex-shrink:0;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.pp-grid,.sense-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.2 · How AI Works (Conceptually)</div>
+  <h1>Google AutoML Deep Dive: What Automated Machine Learning Means for IT Teams Without Data Science Backgrounds</h1>
+  <p class="hero-sub">The lesson uses Google AutoML as its real-world example. This article gives you the full picture — what AutoML actually automates, what it still requires humans to do well, and when it genuinely helps versus when it creates false confidence.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>What "Automated Machine Learning" Actually Means</h2>
+    <p>Traditionally, building a machine learning model required a data scientist who could write code, understand statistical methods, tune hyperparameters, and interpret results. This was a specialized skill most IT and operations teams didn't have internally.</p>
+    <p>AutoML platforms automate significant parts of this process. <mark>AutoML does not make ML easy. It makes the technical ML steps accessible to teams without ML expertise, while shifting the remaining hard problems to domain expertise and business judgment — which is where those problems belong.</mark></p>
+    <p>Walk through what AutoML actually automates — and what it doesn't:</p>
+    <div class="flow fade-in" id="flowSteps"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The AutoML Platforms You'll Actually Encounter</h2>
+    <p>Google AutoML is the lesson example, but several platforms compete in this space. Explore each to understand what they do and where the honest limitations are:</p>
+    <div class="ptabs" id="ptabs"></div>
+    <div id="ppanels"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What AutoML Still Requires Humans to Do Well</h2>
+    <p>The promise of AutoML can create a dangerous misconception: that you can feed data in and get a reliable model out, with no expertise required. The hardest parts remain human responsibilities:</p>
+    <div class="hr-items" id="hrItems"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>AutoML automates the algorithm search. It does not automate knowing whether you're solving the right problem, whether your data is trustworthy, or whether the model should be deployed in your specific environment.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>When AutoML Makes Sense — and When It Doesn't</h2>
+    <div class="sense-grid">
+      <div class="sense-col yes">
+        <div class="sense-title">✓ Good fit for AutoML</div>
+        <div class="sense-list">
+          <div class="sense-item">Labeled tabular data with a clear classification or regression task</div>
+          <div class="sense-item">Teams with domain expertise but not ML expertise</div>
+          <div class="sense-item">Prototyping to establish whether ML is viable before investing in custom development</div>
+          <div class="sense-item">Ticket classification, log categorization, incident priority scoring</div>
+          <div class="sense-item">When baseline performance matters more than maximum performance</div>
+        </div>
+      </div>
+      <div class="sense-col no">
+        <div class="sense-title">✗ Poor fit for AutoML</div>
+        <div class="sense-list">
+          <div class="sense-item">Small or low-quality datasets — AutoML doesn't fix bad data</div>
+          <div class="sense-item">Applications requiring model explainability for regulatory or legal reasons</div>
+          <div class="sense-item">Real-time inference at high scale with strict latency requirements</div>
+          <div class="sense-item">Problems where the failure mode of a wrong prediction is severe</div>
+          <div class="sense-item">When you need to understand why the model makes specific predictions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">An IT operations team wants to use Google AutoML to categorize support tickets by severity. They have 2 years of historical tickets, each labeled with a severity level by their team. What's the most accurate assessment?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Poor fit — AutoML requires a dedicated data science team to use effectively</button>
+        <button class="qopt" onclick="doQ(this,false)">Will produce a perfect model — AutoML optimizes the algorithm so human expertise isn't needed</button>
+        <button class="qopt" onclick="doQ(this,true)">Reasonable fit: labeled tabular data, clear classification task, domain experts who can evaluate outputs. The team still needs to assess data quality, evaluate performance on critical edge cases, and decide what to do when the model is wrong — but AutoML handles the algorithm search</button>
+        <button class="qopt" onclick="doQ(this,false)">Should build a custom model instead — AutoML-generated models are always less accurate than hand-tuned ones</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AutoML automates algorithm selection, hyperparameter tuning, and architecture search — making these steps accessible to teams with domain expertise but not ML expertise.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>What AutoML does not automate: defining the right problem, ensuring data quality, evaluating model fitness for deployment, understanding failure modes, and deciding when to trust the model's outputs in your specific environment.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AutoML is a good fit for labeled tabular classification problems where teams have domain expertise. It's a poor fit for small datasets, high-stakes explainability requirements, or problems where wrong predictions are severely consequential.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const flowData=[
+  {type:"human",icon:"🧠",title:"Problem definition — human",desc:"Before any automation begins, a human must decide what problem is worth solving with ML and what success looks like.",detail:"Bad problem definition leads to models that optimize for the wrong metric. This is where most ML projects fail — long before a single algorithm is tested."},
+  {type:"human",icon:"📊",title:"Data collection and labeling — human",desc:"You need the right data, in sufficient quantity, correctly labeled, with minimal bias. AutoML accepts data; it doesn't produce, clean, or verify it.",detail:"Garbage in, garbage out applies with full force. If your training data has labeling inconsistencies, is from an atypical period, or doesn't represent your real-world distribution — AutoML will faithfully build a model that performs well on bad data and poorly on real inputs."},
+  {type:"auto",icon:"🤖",title:"Algorithm search — automated",desc:"AutoML tests dozens or hundreds of model architectures and training configurations, measuring performance at each step.",detail:"What previously took a data scientist weeks of experimentation, AutoML handles in hours. The result is usually a model that performs well on your dataset — often better than what a non-expert would build manually."},
+  {type:"auto",icon:"⚙️",title:"Hyperparameter tuning — automated",desc:"For each algorithm candidate, AutoML tunes the configuration settings that control how the algorithm learns.",detail:"Hyperparameter tuning was historically one of the most time-consuming parts of ML development. AutoML's automation here is genuinely valuable — often finding better configurations than manual tuning because it explores the space more systematically."},
+  {type:"auto",icon:"📈",title:"Model evaluation — partially automated",desc:"AutoML provides performance metrics: accuracy, precision, recall, AUC-ROC. It can produce confusion matrices and feature importance rankings.",detail:"A model with 94% accuracy looks great in the dashboard. But if the 6% error rate is concentrated on your highest-priority tickets, the metric tells you nothing about whether the model should be deployed."},
+  {type:"human",icon:"🔍",title:"Evaluating fitness for deployment — human",desc:"Translating benchmark metrics into deployment decisions requires domain expertise. Is 94% accuracy good enough for this application?",detail:"This is where domain experts are essential. The DevOps team knows which ticket categories are most critical. That knowledge is required to evaluate whether a model's error patterns are acceptable."},
+  {type:"human",icon:"🚀",title:"Deployment, monitoring, and maintenance — human",desc:"After deployment, the model's performance needs monitoring as real-world inputs evolve.",detail:"Model drift is inevitable. Your environment changes, your data distribution changes. AutoML can help you build a new model when you decide retraining is needed — it cannot tell you when retraining is needed."},
+];
+
+const flowEl=document.getElementById("flowSteps");
+flowData.forEach(s=>{
+  const div=document.createElement("div");div.className="flow-step";
+  div.innerHTML=`<div class="flow-left"><div class="flow-dot ${s.type}">${s.icon}</div></div><div class="flow-body"><span class="flow-tag ${s.type}">${s.type==="auto"?"🤖 AutoML handles this":"👤 Human required"}</span><div class="flow-title">${s.title}</div><div class="flow-desc">${s.desc}</div><div class="flow-detail">${s.detail}</div></div>`;
+  flowEl.appendChild(div);
+});
+
+const products=[
+  {label:"Google AutoML",name:"Google AutoML (Vertex AI)",tag:"The lesson example — Google's no-code/low-code ML platform",
+   automates:["Neural architecture search across multiple model types","Hyperparameter optimization via Bayesian methods","Feature preprocessing and normalization","Cross-validation and performance evaluation","Model export to multiple deployment formats"],
+   uses:["Image classification (equipment defect identification)","Text classification (ticket categorization, document routing)","Tabular prediction (churn prediction, incident priority scoring)","Video classification for security applications"],
+   honest:"Google AutoML is genuinely impressive for its target use cases. Where teams over-rely on it: assuming the highest-performing model in the dashboard is the right model for production. The dashboard optimizes for benchmark metrics; your business context determines whether those metrics are the right ones to optimize."},
+  {label:"AWS Autopilot",name:"AWS SageMaker Autopilot",tag:"Amazon's AutoML with full transparency into the training process",
+   automates:["Algorithm selection across linear, XGBoost, and deep learning","Feature engineering recommendations","Hyperparameter optimization","Full transparency — generates the notebooks used for training","Model deployment integration with AWS infrastructure"],
+   uses:["Customer churn prediction for SaaS operations","Log anomaly classification with custom training data","Resource utilization forecasting for infrastructure planning","Support ticket priority automation"],
+   honest:"Autopilot's differentiator is transparency — it generates the actual training code notebooks, so teams can inspect and modify the process. For non-technical teams, this transparency can be overwhelming. Right audience: teams who want AutoML acceleration but may need to customize or explain the resulting models."},
+  {label:"Azure Automated ML",name:"Azure Automated ML",tag:"Microsoft's enterprise-integrated AutoML with explainability features",
+   automates:["Algorithm selection across classification, regression, time-series","Featurization — automatic handling of missing values, encoding, scaling","Ensemble methods combining multiple models","Explainability features with SHAP values","Integration with Azure ML pipelines for enterprise deployment"],
+   uses:["IT ticket classification and routing","Predictive maintenance for infrastructure","Resource demand forecasting","Security alert triage and prioritization"],
+   honest:"Azure Automated ML's strongest differentiator is its explainability features — SHAP value integration makes it more appropriate for use cases where model decisions need to be auditable. For regulated environments (financial services, healthcare-adjacent IT), this is a meaningful advantage."},
+];
+
+const tabsEl=document.getElementById("ptabs"),panelsEl=document.getElementById("ppanels");
+products.forEach((p,i)=>{
+  const btn=document.createElement("button");btn.className="ptab"+(i===0?" active":"");btn.textContent=p.label;
+  btn.onclick=()=>{document.querySelectorAll(".ptab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".ppanel").forEach(pp=>pp.classList.remove("show"));btn.classList.add("active");document.getElementById("pp"+i).classList.add("show");};
+  tabsEl.appendChild(btn);
+  const panel=document.createElement("div");panel.className="ppanel"+(i===0?" show":"");panel.id="pp"+i;
+  panel.innerHTML=`<div class="pp-head"><div class="pp-name">${p.name}</div><div class="pp-tag">${p.tag}</div></div><div class="pp-body"><div class="pp-grid"><div class="pp-col"><div class="pp-col-title">🤖 What it automates</div><ul>${p.automates.map(a=>`<li>${a}</li>`).join("")}</ul></div><div class="pp-col"><div class="pp-col-title">📋 Common IT use cases</div><ul>${p.uses.map(u=>`<li>${u}</li>`).join("")}</ul></div></div><div class="pp-honest"><div class="pp-honest-label">⚖️ Honest assessment</div><div class="pp-honest-text">${p.honest}</div></div></div>`;
+  panelsEl.appendChild(panel);
+});
+
+const humanItems=[
+  {icon:"🎯",title:"Problem definition and framing",desc:"The hardest question in ML is not 'which algorithm works best?' but 'what problem should we actually solve, and is ML the right approach?' AutoML assumes you've already answered this correctly. If you're optimizing a proxy metric instead of the real business goal, AutoML will efficiently build you the wrong model."},
+  {icon:"🗃️",title:"Data quality assessment and preparation",desc:"AutoML handles some preprocessing automatically. It cannot assess whether your data is representative of real-world inputs. If your training data only covers 6 months of seasonal patterns, if labels were applied inconsistently, or if data systematically excludes certain subgroups — AutoML optimizes on the data you give it, including all its problems."},
+  {icon:"🔎",title:"Evaluating whether benchmark performance translates to deployment",desc:"AutoML dashboards show impressive accuracy numbers measured on held-out test data. Your production environment is not the same distribution as test data — it has new patterns, unexpected inputs, and edge cases that weren't in training. The translation from 'performs well on test data' to 'performs well in production' requires domain expertise."},
+  {icon:"⚠️",title:"Understanding and accepting the failure modes",desc:"Every model fails in specific ways. AutoML shows aggregate error rates but cannot tell you which specific errors will be most costly in your environment. A model that is 95% accurate but consistently wrong about the highest-severity incidents may be worse than a 90% accurate model that distributes errors more evenly."},
+  {icon:"📡",title:"Ongoing monitoring and retraining decisions",desc:"After deployment, model performance will change as the real world changes. AutoML can help you retrain when you decide retraining is needed. It cannot monitor its own performance against your business metrics or make the judgment call about when performance degradation is serious enough to take the model offline."},
+];
+
+const hrEl=document.getElementById("hrItems");
+humanItems.forEach(h=>{
+  const div=document.createElement("div");div.className="hr-item";
+  div.innerHTML=`<div class="hr-icon">${h.icon}</div><div><div class="hr-title">${h.title}</div><div class="hr-desc">${h.desc}</div></div>`;
+  hrEl.appendChild(div);
+});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This scenario has all the ingredients for a reasonable AutoML application: labeled training data (2 years of tickets with severity labels applied by the team), a clear classification task (assign severity), and domain experts who can evaluate outputs and catch errors. The remaining human tasks are clear: assessing whether historical labels are consistent, evaluating performance on the specific ticket types most critical to get right, and deciding what the failure workflow looks like when the model is wrong.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Reasonable fit"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. AutoML doesn't require a dedicated data science team — that's exactly the gap it's designed to bridge. And AutoML-generated models frequently match or outperform hand-tuned models for standard classification tasks. But AutoML also doesn't eliminate the need for human judgment, especially around data quality and model evaluation against operational requirements.";}
+}
+</script>
+</body>
+</html>

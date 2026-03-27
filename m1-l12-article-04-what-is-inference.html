@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is AI Inference? — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.step-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.step-btn{padding:8px 16px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.step-btn.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.step-panel{display:none;}
+.step-panel.show{display:block;animation:fadeIn .2s ease;}
+.inf-box{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:24px 0;}
+.inf-box-header{background:var(--purple-pale);padding:18px 22px;border-bottom:1px solid var(--purple-mid);}
+.inf-box-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.inf-box-body{padding:20px 22px;}
+.step-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.step-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.step-desc{font-size:15px;line-height:1.7;color:var(--gray-text);margin-bottom:12px;}
+.ibox{border-radius:12px;padding:12px 16px;margin-bottom:8px;}
+.ibox.input{background:var(--gray-soft);border:1.5px solid var(--purple-mid);}
+.ibox.process{background:var(--purple-pale);border:1.5px solid var(--purple-mid);}
+.ibox.output{background:var(--green-pale);border:1.5px solid var(--green);}
+.ibox.caveat{background:var(--orange-pale);border:1.5px solid #FDE68A;}
+.ibox-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.ibox.input .ibox-label{color:var(--gray-muted);}
+.ibox.process .ibox-label{color:var(--purple);}
+.ibox.output .ibox-label{color:var(--green);}
+.ibox.caveat .ibox-label{color:var(--orange);}
+.ibox-text{font-size:14px;line-height:1.65;}
+.ibox.output .ibox-text,.ibox.input .ibox-text{font-family:"Courier New",monospace;white-space:pre-wrap;font-size:13px;}
+.conf-cases{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.cc{border:1.5px solid var(--purple-mid);border-radius:14px;overflow:hidden;cursor:pointer;}
+.cc-header{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--white);transition:background .2s;}
+.cc:hover .cc-header,.cc.open .cc-header{background:var(--purple-pale);}
+.cc-score{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:15px;font-weight:900;flex-shrink:0;border:3px solid;}
+.cc-score.hi-wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.cc-score.hi-right{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.cc-score.med{background:var(--orange-pale);border-color:var(--orange);color:var(--orange);}
+.cc-info{flex:1;}
+.cc-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.cc-sub{font-size:13px;color:var(--gray-muted);}
+.cc-body{display:none;border-top:1px solid var(--purple-mid);padding:14px 18px;font-size:14px;line-height:1.7;}
+.cc.open .cc-body{display:block;animation:fadeIn .2s ease;}
+.verdict{display:inline-block;font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;margin-top:8px;}
+.verdict.right{background:var(--green-pale);color:var(--green);}
+.verdict.wrong{background:var(--red-pale);color:var(--red);}
+.verdict.warn{background:var(--orange-pale);color:var(--orange);}
+.qcards{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.qcard{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.qcard-num{width:32px;height:32px;background:var(--purple);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:14px;font-weight:700;flex-shrink:0;}
+.qcard-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.qcard-desc{font-size:14px;line-height:1.6;}
+.pv{margin:24px 0;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:22px;}
+.pv-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.pv-sub{font-size:14px;color:var(--gray-muted);margin-bottom:16px;}
+.pv-scen{margin-bottom:16px;}
+.pv-scen-label{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.pv-row{display:flex;align-items:center;gap:10px;margin-bottom:5px;}
+.pv-label{font-size:13px;width:190px;flex-shrink:0;}
+.pv-track{flex:1;background:var(--purple-mid);border-radius:4px;height:10px;overflow:hidden;}
+.pv-fill{height:100%;border-radius:4px;}
+.pv-pct{font-size:12px;font-weight:700;color:var(--gray-muted);width:38px;text-align:right;}
+.pv-note{font-size:13px;color:var(--gray-muted);font-style:italic;margin-top:8px;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.pv-label{width:120px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.2 · How AI Works (Conceptually)</div>
+  <h1>What Is AI Inference? How a Trained Model Makes a Guess — and Why That Guess Is Never Certain</h1>
+  <p class="hero-sub">Every AI output you'll ever receive is the result of inference — a probabilistic process that produces plausible outputs, not verified facts. Understanding how inference works changes how you evaluate everything an AI tool tells you.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Inference Is Happening Every Time You Use an AI Tool</h2>
+    <p>You've submitted a prompt to GitHub Copilot. You've triggered a security alert review. You've watched a monitoring tool flag an anomaly. In every one of these moments, the AI system is performing <strong>inference</strong> — taking your input, running it through a trained model's learned parameters, and generating an output.</p>
+    <p>Inference is not retrieval. The model is not looking up your answer in a database. Inference is not calculation. The model is not executing a deterministic formula. <mark>Inference is statistical estimation: the model generates what its learned patterns suggest is most likely to be appropriate for your input.</mark> It can be right, it can be wrong, and it cannot reliably tell you which.</p>
+    <p>Step through the inference process below — using GitHub Copilot as the example:</p>
+    <div class="inf-box fade-in">
+      <div class="inf-box-header"><div class="inf-box-title">Inside Inference: Step by Step</div></div>
+      <div class="inf-box-body">
+        <div class="step-nav" id="stepNav"></div>
+        <div id="stepPanels"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Probability Scores Actually Mean</h2>
+    <p>Many AI systems surface a confidence score alongside outputs. Understanding what these numbers represent — and what they don't — is essential for using them correctly.</p>
+    <div class="pv">
+      <div class="pv-title">Reading Probability Distributions</div>
+      <div class="pv-sub">When a model generates output, it's distributing probability across possible completions. These two scenarios look the same to you — but the underlying uncertainty is very different.</div>
+      <div class="pv-scen">
+        <div class="pv-scen-label">Scenario A: Completion for a common Python pattern — high confidence</div>
+        <div class="pv-row"><div class="pv-label">return sorted(items)</div><div class="pv-track"><div class="pv-fill" style="width:78%;background:var(--green)"></div></div><div class="pv-pct">78%</div></div>
+        <div class="pv-row"><div class="pv-label">return list(sorted(items))</div><div class="pv-track"><div class="pv-fill" style="width:14%;background:var(--purple)"></div></div><div class="pv-pct">14%</div></div>
+        <div class="pv-row"><div class="pv-label">items.sort(); return items</div><div class="pv-track"><div class="pv-fill" style="width:6%;background:var(--gray-muted)"></div></div><div class="pv-pct">6%</div></div>
+        <div class="pv-row"><div class="pv-label">Other</div><div class="pv-track"><div class="pv-fill" style="width:2%;background:var(--gray-muted)"></div></div><div class="pv-pct">2%</div></div>
+        <div class="pv-note">Tight distribution — strong signal from training data. Here, high confidence usually does mean the suggestion is genuinely good.</div>
+      </div>
+      <div class="pv-scen">
+        <div class="pv-scen-label">Scenario B: Completion for a novel API in a new library — scattered distribution</div>
+        <div class="pv-row"><div class="pv-label">client.send_request(data)</div><div class="pv-track"><div class="pv-fill" style="width:32%;background:var(--orange)"></div></div><div class="pv-pct">32%</div></div>
+        <div class="pv-row"><div class="pv-label">client.post(data)</div><div class="pv-track"><div class="pv-fill" style="width:28%;background:var(--orange)"></div></div><div class="pv-pct">28%</div></div>
+        <div class="pv-row"><div class="pv-label">client.submit(payload=data)</div><div class="pv-track"><div class="pv-fill" style="width:21%;background:var(--gray-muted)"></div></div><div class="pv-pct">21%</div></div>
+        <div class="pv-row"><div class="pv-label">Other</div><div class="pv-track"><div class="pv-fill" style="width:19%;background:var(--gray-muted)"></div></div><div class="pv-pct">19%</div></div>
+        <div class="pv-note">Scattered distribution — the model is guessing by analogy from similar libraries. This is when hallucinated API calls are most likely. But you only see the top suggestion — not this warning.</div>
+      </div>
+    </div>
+    <p><strong>The critical problem: in most AI tools, you only see the top output — not the confidence distribution behind it.</strong> A confident-looking completion can come from Scenario A or Scenario B, and the interface looks identical in both cases.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>High Confidence Can Still Mean Wrong</h2>
+    <p>The most dangerous misconception about AI inference: treating high confidence scores as evidence of correctness. High confidence means the model found a strong pattern match in training data — not that the pattern applies to your specific situation. Click each case:</p>
+    <div class="conf-cases" id="confCases"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>Inference is the model's best guess given everything it learned. It is not a lookup, not a calculation, not a verification. It is a probabilistic estimate that happens to sound definitive — and that is exactly what makes it professionally dangerous to accept without review.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Five Questions to Ask Before Acting on Any AI Output</h2>
+    <div class="qcards" id="qcardsList"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A developer asks an AI coding assistant to complete a function using an API from a library released 6 months ago. The assistant provides a confident-looking completion with a specific method name and parameter structure. What's the most important thing to understand?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The output is reliable because AI coding tools are trained on library documentation</button>
+        <button class="qopt" onclick="doQ(this,true)">The model generated the most statistically likely completion based on patterns from similar libraries — but this specific library may postdate training, meaning this is analogical inference, not knowledge of this API. Verify against actual documentation before using</button>
+        <button class="qopt" onclick="doQ(this,false)">Confident-looking output from a modern AI is generally reliable for specific API details</button>
+        <button class="qopt" onclick="doQ(this,false)">The developer should ask the AI whether it was trained on this library before trusting the output</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Inference is what happens every time you use an AI tool. The model takes your input, runs it through frozen learned parameters, and generates a probabilistic estimate. It is estimation — not retrieval, not calculation.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>High confidence does not mean correct. Confidence reflects how strongly the model matched your input to training patterns — not whether those patterns apply to your specific situation.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The model cannot flag its own uncertainty. Scattered distributions (Scenario B) look identical to tight distributions (Scenario A) in the interface. The difference is invisible without checking against ground truth.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Five questions turn inference awareness into daily habits: Is this similar to training data? Is the output specific or general? What are the consequences of being wrong? Can I verify independently? Does this match what I know?</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const steps=[
+  {label:"Step 1",title:"You provide an input",desc:"You type the beginning of a function or a comment describing what you want. This is your prompt — what the model will use as context.",input:"// Parse CSV, return list of dicts with column headers as keys\ndef parse_csv(filepath: str) ->",process:null,output:null,caveat:null},
+  {label:"Step 2",title:"The input is tokenized",desc:"Your text is broken into tokens — chunks roughly corresponding to words or word fragments. The model doesn't see letters; it sees token IDs mapped to learned embeddings.",input:"Tokens: ['def', ' parse', '_csv', '(', 'filepath', ':', ' str', ')', ' ->', '...']",process:"Each token is mapped to a vector of numbers capturing its learned relationships to other tokens.",output:null,caveat:null},
+  {label:"Step 3",title:"The model runs a forward pass",desc:"Your tokenized input travels through the model's billions of parameters — learned weights that were frozen during training. Each layer transforms the representation.",input:null,process:"Billions of matrix multiplications happen in milliseconds. The model is not 'thinking' — it is running mathematical operations using learned parameters. No reasoning occurs. No database is consulted. The parameters encode everything the model 'knows.'",output:null,caveat:null},
+  {label:"Step 4",title:"Probability distribution over next tokens",desc:"The model produces a probability score for every possible next token, based on how often similar patterns led to each token in training.",input:null,process:null,output:"list        → 0.41\nList        → 0.18\ndict        → 0.14\n[           → 0.09\nOptional    → 0.07\nother...    → 0.11",caveat:"The model generates a probability for EVERY possible next token. You only see the top result. The confidence shown doesn't reveal whether the distribution is tight (strong signal) or scattered (guessing)."},
+  {label:"Step 5",title:"Token selected — process repeats",desc:"The highest-probability token is selected. Then the whole process repeats — now with your original input plus the new token. Each token is generated one at a time.",input:null,process:"This continues until the model generates a stop token or hits the length limit. The final output looks like a deliberate response. It was generated token-by-token, each step based on statistical patterns — not understanding of what you actually need.",output:"def parse_csv(filepath: str) -> list[dict]:\n    import csv\n    with open(filepath, 'r') as f:\n        reader = csv.DictReader(f)\n        return list(reader)",caveat:null},
+];
+
+const nav=document.getElementById("stepNav"),panelsEl=document.getElementById("stepPanels");
+steps.forEach((s,i)=>{
+  const btn=document.createElement("button");
+  btn.className="step-btn"+(i===0?" active":"");
+  btn.textContent=s.label;
+  btn.onclick=()=>{document.querySelectorAll(".step-btn").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".step-panel").forEach(p=>p.classList.remove("show"));btn.classList.add("active");document.getElementById("sp"+i).classList.add("show");};
+  nav.appendChild(btn);
+  const panel=document.createElement("div");
+  panel.className="step-panel"+(i===0?" show":"");panel.id="sp"+i;
+  panel.innerHTML=`<div class="step-label">${s.label} of ${steps.length}</div><div class="step-title">${s.title}</div><div class="step-desc">${s.desc}</div>${s.input?`<div class="ibox input"><div class="ibox-label">Input</div><div class="ibox-text">${s.input}</div></div>`:""}${s.process?`<div class="ibox process"><div class="ibox-label">What happens inside</div><div class="ibox-text" style="font-size:14px;font-family:'DM Sans',sans-serif">${s.process}</div></div>`:""}${s.output?`<div class="ibox output"><div class="ibox-label">Output generated</div><div class="ibox-text">${s.output}</div></div>`:""}${s.caveat?`<div class="ibox caveat"><div class="ibox-label">⚠️ Critical caveat</div><div class="ibox-text" style="font-family:'DM Sans',sans-serif;font-size:14px">${s.caveat}</div></div>`:""}`;
+  panelsEl.appendChild(panel);
+});
+
+const cases=[
+  {score:"97%",cls:"hi-wrong",title:"High confidence, completely wrong",sub:"Code assistant suggests a deprecated API — confidently",body:"The model returns a 97% confidence suggestion with a method name that looks exactly right. But the library released a breaking change 8 months ago removing this method. The model's training predates this change. High confidence reflects how well the old pattern matched training data — not whether the pattern is still valid.<br><br>The output is wrong. The confidence score gives no indication of this.",verdict:"❌ Confidently wrong — training cutoff made this a known-unknown",vcls:"wrong"},
+  {score:"91%",cls:"hi-wrong",title:"High confidence, correct pattern, wrong context",sub:"Security model flags legitimate internal traffic as malicious",body:"A network model flags traffic with 91% confidence — the pattern really does match C2 communication patterns in training data. But the IP belongs to an internal monitoring agent deployed last month. The model has no knowledge of this infrastructure change. The confidence reflects pattern match quality, not ground truth.<br><br>The traffic is completely legitimate.",verdict:"❌ Correct pattern, wrong application — lacks organizational context",vcls:"wrong"},
+  {score:"88%",cls:"hi-right",title:"High confidence, genuinely reliable",sub:"Code assistant suggests standard Python error handling",body:"The model suggests a complete try/except pattern with 88% confidence. This pattern appears in virtually every Python codebase in training data — the distribution is tight, the pattern is universal, and there's nothing context-specific that could make it wrong for this general case.<br><br>Here, 88% confidence actually does mean the output is reliable. The key: this is a general, context-independent pattern.",verdict:"✓ Reliable — general pattern with strong training signal",vcls:"right"},
+  {score:"73%",cls:"med",title:"Medium confidence, appropriate caution",sub:"Anomaly detector flags a database spike — worth investigating",body:"A monitoring tool flags a 340% increase in database queries with 73% confidence. The model has seen similar patterns that were both real incidents and expected events. The medium confidence correctly signals that human investigation is essential — not optional. This is inference working as intended.",verdict:"⟳ Medium confidence signals: human investigation required",vcls:"warn"},
+];
+
+const ccEl=document.getElementById("confCases");
+cases.forEach(c=>{
+  const div=document.createElement("div");div.className="cc";
+  div.innerHTML=`<div class="cc-header"><div class="cc-score ${c.cls}">${c.score}</div><div class="cc-info"><div class="cc-title">${c.title}</div><div class="cc-sub">${c.sub}</div></div></div><div class="cc-body">${c.body}<br><br><span class="verdict ${c.vcls}">${c.verdict}</span></div>`;
+  div.onclick=()=>{const was=div.classList.contains("open");document.querySelectorAll(".cc").forEach(e=>e.classList.remove("open"));if(!was)div.classList.add("open");};
+  ccEl.appendChild(div);
+});
+
+const qcards=[
+  {num:"1",title:"Is this input similar to what the model was trained on?",desc:"The model's confidence reflects how well your input matches training patterns. Novel inputs, new libraries, unusual architectures — these get lower-quality outputs regardless of what the confidence score says. The more your situation diverges from 'typical,' the more scrutiny the output needs."},
+  {num:"2",title:"Is the output specific or general?",desc:"General patterns (common algorithms, established idioms) are more reliably correct because they appear thousands of times in training data. Specific claims (exact parameter names, version-specific behavior) are more likely to be wrong or hallucinated. Verify specifics; trust generals more."},
+  {num:"3",title:"What are the consequences of being wrong here?",desc:"A wrong completion in a dev sandbox and a wrong completion in payment processing have completely different implications. Verification effort should be proportional to the consequence of error. High stakes outputs need thorough review regardless of confidence score."},
+  {num:"4",title:"Can I verify this independently?",desc:"For many AI outputs, independent verification is fast: check official documentation for an API call, run the code in a test environment, cross-reference a security finding against known CVEs. When verification is available, use it — especially for specific claims."},
+  {num:"5",title:"Does this match what I already know about the system?",desc:"Your organizational knowledge is context the model doesn't have. If the AI output conflicts with what you know about your specific system or environment — that's a signal to investigate, not to defer. Your knowledge is not a bias to overcome; it's what makes AI outputs meaningful for your situation."},
+];
+
+const qcEl=document.getElementById("qcardsList");
+qcards.forEach(q=>{
+  const div=document.createElement("div");div.className="qcard";
+  div.innerHTML=`<div class="qcard-num">${q.num}</div><div><div class="qcard-title">${q.title}</div><div class="qcard-desc">${q.desc}</div></div>`;
+  qcEl.appendChild(div);
+});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is analogical inference — the model draws on patterns from similar libraries to generate what is statistically most plausible. It is not drawing on actual knowledge of this specific library, which may not be in its training data at all. The output can look perfectly correct and be completely wrong. Verification against the actual documentation is the only reliable check.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("analogical inference"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Asking the AI whether it knows the library is unreliable — the model may not have accurate information about its own training data contents. And confident-looking output for specific API details is precisely where inference is most unreliable, because specifics are generated by analogy from similar patterns, not from actual knowledge.";}
+}
+</script>
+</body>
+</html>
