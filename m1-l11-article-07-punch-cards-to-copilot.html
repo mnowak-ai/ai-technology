@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Punch Cards to Copilot: A Brief History of Automation in Technology</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;
+  --white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;
+  --green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;
+  --amber:#92400E;--amber-pale:#FFF7ED;--amber-border:#FDE68A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+
+/* Interactive history timeline */
+.hist-timeline{margin:24px 0;position:relative;}
+.ht-era{margin-bottom:8px;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.ht-header{display:flex;gap:16px;align-items:center;padding:18px 22px;cursor:pointer;background:var(--white);transition:background .2s;}
+.ht-header:hover{background:var(--purple-pale);}
+.ht-era.open .ht-header{background:var(--purple-pale);}
+.ht-year{font-family:"Fraunces",serif;font-size:22px;font-weight:900;color:var(--purple);min-width:80px;line-height:1;}
+.ht-name{flex:1;}
+.ht-era-title{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.ht-tagline{font-size:13px;color:var(--gray-muted);}
+.ht-chevron{font-size:12px;color:var(--gray-muted);transition:transform .2s;}
+.ht-era.open .ht-chevron{transform:rotate(180deg);}
+.ht-body{display:none;border-top:1px solid var(--purple-mid);padding:20px 22px;background:var(--white);}
+.ht-era.open .ht-body{display:block;animation:fadeIn .25s ease;}
+.ht-body p{font-size:15px;line-height:1.7;margin-bottom:12px;}
+.ht-body p:last-child{margin-bottom:0;}
+.ht-jobs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.ht-job-col{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px;}
+.ht-job-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.ht-job-list{display:flex;flex-direction:column;gap:6px;}
+.ht-job-item{font-size:13px;line-height:1.4;color:var(--gray-text);display:flex;gap:6px;}
+.ht-job-item::before{content:"→";color:var(--purple);flex-shrink:0;font-size:12px;}
+
+/* The "what's different this time" comparison */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.cg-col{border:1.5px solid var(--purple-mid);border-radius:18px;padding:20px;}
+.cg-col.prev{background:var(--gray-soft);}
+.cg-col.now{background:var(--purple-pale);}
+.cg-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
+.cg-col.prev .cg-label{color:var(--gray-muted);}
+.cg-col.now .cg-label{color:var(--purple);}
+.cg-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.cg-points{display:flex;flex-direction:column;gap:8px;}
+.cg-point{font-size:14px;line-height:1.5;display:flex;gap:8px;}
+.cg-point::before{flex-shrink:0;}
+.cg-col.prev .cg-point::before{content:"→";color:var(--gray-muted);}
+.cg-col.now .cg-point::before{content:"→";color:var(--purple);}
+
+/* The recurring pattern */
+.pattern-cards{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.pattern-card{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:16px 18px;}
+.pattern-num{font-family:"Fraunces",serif;font-size:28px;font-weight:900;color:var(--purple);flex-shrink:0;line-height:1;width:32px;}
+.pattern-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.pattern-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.ht-jobs,.compare-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.1 · What Is AI in Tech Work?</div>
+  <h1>From Punch Cards to Copilot: A Brief History of Automation in Technology</h1>
+  <p class="hero-sub">AI is not the first technology to dramatically change what tech work involves — it's just the latest. Understanding the historical arc of automation in technology reveals both what's genuinely new about AI and what follows a pattern that's played out before.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Technology Has Always Automated Itself</h2>
+    <p>There's an irony at the center of tech history: the industry that builds automation tools has always been one of the first industries to have its own work automated. Programmers wrote compilers so they didn't have to write machine code. Operators built monitoring systems so they didn't have to watch dashboards manually. Teams built CI/CD pipelines so they didn't have to deploy manually.</p>
+    <p><mark>Every major era of computing has produced a new category of automation that changed what tech work looked like</mark> — and every transition was met with some combination of excitement about the possibilities and anxiety about the implications. AI is the latest era. It helps to understand the ones that came before.</p>
+    <p>Click through each era below to understand what changed, what was automated, and what happened to the humans doing the work:</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="hist-timeline" id="histTimeline"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Recurring Pattern</h2>
+    <p>Across every era, the same pattern repeats — the same one you'll see play out with AI. Understanding it helps you anticipate what's happening rather than react to it:</p>
+    <div class="pattern-cards">
+      <div class="pattern-card"><div class="pattern-num">1</div><div><div class="pattern-title">A new tool automates a category of work that was previously manual</div><div class="pattern-desc">Compilers automated assembly language writing. IDEs automated code navigation. CI/CD automated deployment. Each tool automated a specific, well-defined category of repetitive work.</div></div></div>
+      <div class="pattern-card"><div class="pattern-num">2</div><div><div class="pattern-title">The people doing that work worry their role will disappear</div><div class="pattern-desc">Assembly programmers worried about compilers. Sysadmins worried about automation tools. In each case, the concern was real enough to take seriously — but the outcome was more nuanced than elimination.</div></div></div>
+      <div class="pattern-card"><div class="pattern-num">3</div><div><div class="pattern-title">The role evolves — the work moves up the abstraction ladder</div><div class="pattern-desc">Assembly programmers became C programmers. Sysadmins became infrastructure engineers. Manual testers became automation engineers. The low-level, manual work gets automated; the judgment, design, and verification work remains and grows.</div></div></div>
+      <div class="pattern-card"><div class="pattern-num">4</div><div><div class="pattern-title">The field grows — more work becomes possible, so more work gets done</div><div class="pattern-desc">Compilers didn't eliminate programming jobs — they made software development accessible to far more people, which grew the field. CI/CD didn't eliminate operations teams — it made faster deployment cycles possible, which increased demand for infrastructure work.</div></div></div>
+      <div class="pattern-card"><div class="pattern-num">5</div><div><div class="pattern-title">New skills become premium; old skills become baseline or obsolete</div><div class="pattern-desc">Hand-writing machine code became a rare specialty. Shell scripting became a baseline expectation. The skill that was once scarce becomes either universal or irrelevant — and a new skill tier emerges above it.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What's Actually Different About AI This Time</h2>
+    <p>The pattern above is real — but there are features of the current AI transition that distinguish it from previous automation cycles. Understanding the differences matters as much as understanding the similarities:</p>
+    <div class="compare-grid">
+      <div class="cg-col prev">
+        <div class="cg-label">Previous automation waves</div>
+        <div class="cg-title">Automating specific, defined tasks</div>
+        <div class="cg-points">
+          <div class="cg-point">Targeted one category of work — compiling, deploying, testing</div>
+          <div class="cg-point">Required explicit programming: the automation did exactly what it was told</div>
+          <div class="cg-point">The scope of what would be automated was relatively predictable</div>
+          <div class="cg-point">Affected primarily manual, repetitive tasks with clear correct outputs</div>
+          <div class="cg-point">The tool's limitations were apparent — it did its job and nothing more</div>
+        </div>
+      </div>
+      <div class="cg-col now">
+        <div class="cg-label">AI automation</div>
+        <div class="cg-title">Automating judgment-adjacent tasks</div>
+        <div class="cg-points">
+          <div class="cg-point">Applies across many categories simultaneously: writing, coding, analysis, triage</div>
+          <div class="cg-point">Learns behavior from data — can generalize to tasks it wasn't explicitly programmed for</div>
+          <div class="cg-point">The scope continues to expand as models become more capable</div>
+          <div class="cg-point">Affects tasks that previously required cognitive work, not just mechanical work</div>
+          <div class="cg-point">The tool's limitations are less apparent — it can fail in subtle, confident-sounding ways</div>
+        </div>
+      </div>
+    </div>
+    <p>The historical pattern suggests that AI will automate a category of work and shift humans to higher-level tasks. What's genuinely new is that the category being automated — cognitive pattern recognition and text generation — is broader and harder to separate from human judgment than previous automation targets. The judgment work and the pattern-matching work were more intertwined in cognitive tasks than they were in compilation or deployment.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>Every generation of tech workers has looked at the automation of their era and wondered what would be left for humans to do. In each case, what remained was more interesting than what was automated. There's no strong reason to think this time is fundamentally different — but there's also no reason to assume the transition won't require real adaptation.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">Based on the historical pattern of automation in tech, which outcome is most consistent with how previous automation waves played out?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">AI will eliminate most software development roles within 5 years, as the tools become capable enough to replace human programmers entirely</button>
+        <button class="qopt" onclick="doQ(this,false)">AI will have minimal impact on tech roles, as previous automation waves show that tech workers always adapt without significant disruption</button>
+        <button class="qopt" onclick="doQ(this,true)">AI will automate certain categories of cognitive work, shift tech roles toward higher-level judgment and verification tasks, grow the field overall, and create new skill premiums — while the transition requires real adaptation from current practitioners</button>
+        <button class="qopt" onclick="doQ(this,false)">AI will primarily affect non-technical roles, leaving core engineering and security work largely unchanged</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Tech has always automated itself. Compilers, IDEs, testing frameworks, CI/CD, cloud infrastructure — each era produced new automation that changed what the work involved. AI is the latest iteration of a long pattern, not an unprecedented event.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The recurring pattern: automation targets a category of work → roles evolve upward → the field grows → new skills become premium. Each transition required adaptation from current practitioners but did not eliminate the field.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>What's genuinely different about AI: previous automation targeted specific, explicitly defined tasks. AI targets broad, judgment-adjacent cognitive work, can generalize across domains, and fails in subtle ways that previous automation didn't. The transition may be faster and broader than previous waves.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The skill that becomes premium in every automation wave is the skill one level of abstraction above what was automated. In the AI era, that skill is judgment about AI outputs — knowing when to trust them, when to verify them, and when to override them. That's what this certification builds.</p></div>
+    </div>
+  </div>
+
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const eras=[
+  {year:"1940s–50s",title:"Punch Cards and Machine Code",tagline:"Programming by hand — every instruction written at the hardware level",
+   body:"The earliest programmers wrote directly in machine code or assembly language: binary instructions, memory addresses, hardware registers. Programming meant understanding the exact physical architecture of the machine you were using. A single program might take days to write, punch onto cards, and debug.\n\nThis was not inefficiency — it was the frontier of what was possible. The programmers of this era were doing something that had never been done before. But the work was extremely low-level, and the gap between human intent and machine instruction was enormous.",
+   gone:["Hand-punching individual machine instructions","Manual memory address calculation","Physical card sorting and deck management"],
+   emerged:["Assembly language programmers","Computer operators","Systems analysts"]},
+  {year:"1950s–60s",title:"Compilers and High-Level Languages",tagline:"Automating translation: write in human language, let the machine handle the rest",
+   body:"Compilers were the first major automated tool that tech built for itself — software that translated human-readable code into machine instructions. FORTRAN (1957) and COBOL (1959) let programmers write code that described what they wanted to compute, not how the hardware should execute each step.\n\nThe concern at the time: would compilers eliminate the need for programmers? The actual outcome: compilers made programming accessible to far more people, which grew the field dramatically. The work moved from writing machine code to writing higher-level programs — and the demand for people who could do that work exploded.",
+   gone:["Writing raw machine code for production systems","Manual assembly language programming for most applications","Hardware-specific instruction optimization (for most work)"],
+   emerged:["High-level language programmers (COBOL, FORTRAN, later C)","Software engineers as a distinct profession","Application developers as distinct from systems programmers"]},
+  {year:"1970s–80s",title:"Operating Systems and IDEs",tagline:"Abstracting the hardware — and the editor that knows your code",
+   body:"Operating systems abstracted the hardware entirely — developers no longer needed to know the physical architecture of the machine they were running on. You wrote to the OS API; the OS handled the hardware. This was a massive productivity multiplier that enabled software to run across many machines.\n\nEarly integrated development environments (IDEs) in the 1980s started providing code navigation, syntax highlighting, and basic autocomplete. The editor began to understand something about the code it was editing — a precursor to what Copilot does today.",
+   gone:["Hardware-specific programming for most applications","Manual code navigation across files (using grep and memory)","Binary-only debugging without symbolic debuggers"],
+   emerged:["Application developers working at high abstraction levels","Systems programmers focused on OS internals (a specialization, not the default)","Software as a layered stack of abstractions rather than monolithic hardware programs"]},
+  {year:"1990s–2000s",title:"The Internet and Automated Testing",tagline:"Networks changed everything; testing frameworks changed quality",
+   body:"The internet created an enormous new surface for software to serve — and with it, new requirements for scale, reliability, and speed of iteration. Manual testing of web applications at scale was impossible; automated testing frameworks emerged as a necessity.\n\nBuild systems, version control (Git becoming dominant), and the early forms of continuous integration all emerged in this era. The pattern: as software became more complex and teams larger, tools that automated quality and deployment gates became essential.",
+   gone:["Manual regression testing as the primary quality gate","Deploying by FTP and crossing fingers","Software released on annual or multi-year cycles as the norm"],
+   emerged:["QA automation engineers","DevOps as a concept (humans who understood both development and operations)","Software release managers focused on process rather than just code"]},
+  {year:"2000s–2010s",title:"Cloud, CI/CD, and Infrastructure as Code",tagline:"Servers became software; deployments became pipelines",
+   body:"Cloud computing (AWS launching in 2006, followed by others) made infrastructure something you could provision programmatically. Servers became API calls. Configuration became code. Continuous integration and delivery pipelines automated the path from commit to production.\n\nSysadmins who had managed physical servers found their role transforming. The manual, hardware-focused work was automated; the work of designing, orchestrating, and maintaining infrastructure as code became the premium skill. Many made the transition; some didn't.",
+   gone:["Manually provisioning and racking physical servers","FTP deployments and manual release management","Separate 'ops' teams that were gatekeepers for all production changes"],
+   emerged:["Site reliability engineers (SREs)","DevOps engineers who could write infrastructure code","Cloud architects designing systems that were previously impossible to build"]},
+  {year:"2020s",title:"AI Coding Assistants and Intelligent Tools",tagline:"The editor starts predicting your intent, not just your syntax",
+   body:"GitHub Copilot launched in 2021. ChatGPT in late 2022. The AI tools that emerged weren't automating a single defined task — they were generating plausible outputs across many categories of cognitive work simultaneously: code, documentation, analysis, debugging, test generation, threat assessment.\n\nFor the first time, the automation target wasn't a mechanical or procedural task. It was the cognitive work of pattern recognition and language generation — tasks that had previously seemed uniquely human. The transition is ongoing, which is exactly why this certification exists.",
+   gone:["Writing all boilerplate from scratch (increasingly rare)","Manual log correlation for security analysis (being replaced)","Most of the first-pass documentation writing for simple functions"],
+   emerged:["Prompt engineering as a practical skill","AI output verification as a required workflow step","Roles focused on AI integration, governance, and quality assurance"]},
+];
+
+const tl=document.getElementById("histTimeline");
+eras.forEach((era,i)=>{
+  const div=document.createElement("div");
+  div.className="ht-era";
+  const bodyParas=era.body.split("\n\n").map(p=>`<p>${p}</p>`).join("");
+  div.innerHTML=`
+    <div class="ht-header" onclick="toggleEra(this.parentElement)">
+      <div class="ht-year">${era.year}</div>
+      <div class="ht-name">
+        <div class="ht-era-title">${era.title}</div>
+        <div class="ht-tagline">${era.tagline}</div>
+      </div>
+      <div class="ht-chevron">▼</div>
+    </div>
+    <div class="ht-body">
+      ${bodyParas}
+      <div class="ht-jobs">
+        <div class="ht-job-col">
+          <div class="ht-job-label">Work that declined or disappeared</div>
+          <div class="ht-job-list">${era.gone.map(g=>`<div class="ht-job-item">${g}</div>`).join("")}</div>
+        </div>
+        <div class="ht-job-col">
+          <div class="ht-job-label">Work that emerged or grew</div>
+          <div class="ht-job-list">${era.emerged.map(e=>`<div class="ht-job-item">${e}</div>`).join("")}</div>
+        </div>
+      </div>
+    </div>`;
+  // Open the last era by default
+  if(i===eras.length-1){div.classList.add("open");div.querySelector(".ht-body").style.display="block";}
+  tl.appendChild(div);
+});
+
+function toggleEra(el){
+  const isOpen=el.classList.contains("open");
+  document.querySelectorAll(".ht-era").forEach(e=>{e.classList.remove("open");e.querySelector(".ht-body").style.display="none";});
+  if(!isOpen){el.classList.add("open");el.querySelector(".ht-body").style.display="block";}
+}
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){
+    fb.className="qfb show cfb";
+    fb.textContent="✅ Correct. This answer captures all five elements of the recurring pattern: automation of a category of work, role evolution upward, field growth, new skill premiums, and required adaptation from practitioners. The key nuance is that \"real adaptation\" is part of the pattern — previous transitions weren't painless, but the field didn't disappear. Tech workers who understood the tools shaping their field and developed the new premium skills consistently navigated the transitions well.";
+  } else {
+    document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("automate certain categories"))o.classList.add("correct");});
+    fb.className="qfb show wfb";
+    fb.textContent="❌ Not quite. The historical record doesn't support either the 'total elimination' or 'minimal impact' narratives. Compilers didn't eliminate programmers — but they did change what programming involved and required adaptation from practitioners. CI/CD didn't eliminate ops teams — but it did require those teams to develop new skills or risk irrelevance. The most historically accurate prediction for AI follows the same pattern: real change, required adaptation, role evolution rather than elimination.";
+  }
+}
+</script>
+</body>
+</html>

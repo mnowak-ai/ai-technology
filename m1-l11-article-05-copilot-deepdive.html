@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Copilot Deep Dive: What AI-Assisted Coding Actually Looks Like in Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;--code-bg:#1e1e2e;--code-text:#cdd6f4;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+
+/* Code simulation */
+.code-sim{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.code-sim-header{background:var(--code-bg);padding:12px 16px;display:flex;align-items:center;gap:8px;}
+.code-dot{width:12px;height:12px;border-radius:50%;}
+.code-dot.red{background:#ff5f57;}
+.code-dot.yellow{background:#febc2e;}
+.code-dot.green{background:#28c840;}
+.code-filename{font-size:13px;color:#a6adc8;margin-left:8px;font-family:monospace;}
+.code-body{background:var(--code-bg);padding:20px;font-family:"Courier New",monospace;font-size:14px;line-height:1.7;overflow-x:auto;}
+.code-line{display:block;color:var(--code-text);}
+.code-line.comment{color:#6c7086;}
+.code-line.keyword{color:#cba6f7;}
+.code-line.suggestion{color:#a6e3a1;background:rgba(166,227,161,0.1);border-left:3px solid #a6e3a1;padding-left:8px;margin-left:-8px;}
+.code-line.func{color:#89b4fa;}
+.code-line.string{color:#a6e3a1;}
+.copilot-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(166,227,161,0.15);border:1px solid #a6e3a1;border-radius:6px;padding:3px 10px;font-size:12px;color:#a6e3a1;margin-top:10px;}
+
+/* Scenario explorer */
+.scenario-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 12px;}
+.stab{padding:9px 16px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.stab.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.scen-panel{display:none;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.scen-panel.show{display:block;animation:fadeIn .2s ease;}
+.scen-header{padding:18px 22px;background:var(--purple-pale);border-bottom:1px solid var(--purple-mid);}
+.scen-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.scen-body{padding:20px 22px;}
+.scen-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.scen-col{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px;}
+.scen-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.scen-col.good .scen-col-title{color:var(--green);}
+.scen-col.caution .scen-col-title{color:var(--orange);}
+.scen-col ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.scen-col li{font-size:13px;line-height:1.5;padding-left:14px;position:relative;}
+.scen-col li::before{position:absolute;left:0;font-size:11px;}
+.scen-col.good li::before{content:"✓";color:var(--green);}
+.scen-col.caution li::before{content:"⚠";color:var(--orange);}
+
+/* What to verify */
+.verify-list{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.verify-item{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.verify-icon{font-size:20px;flex-shrink:0;}
+.verify-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.verify-desc{font-size:14px;line-height:1.55;color:var(--gray-text);}
+
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.scen-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.1 · What Is AI in Tech Work?</div>
+  <h1>GitHub Copilot Deep Dive: What AI-Assisted Coding Actually Looks Like in Practice</h1>
+  <p class="hero-sub">GitHub Copilot is the AI tool most developers encounter first. Understanding exactly how it works, where it excels, and where it fails gives you a concrete foundation for working with AI coding tools in any environment.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What Copilot Is Actually Doing When It Suggests Code</h2>
+    <p>When you type a function signature or a comment in your editor and Copilot suggests the rest, it's not searching a database or executing logic. <mark>It's predicting what code is statistically most likely to follow what you've written</mark>, based on patterns from billions of lines of public code.</p>
+    <p>Here's what that looks like in a simplified simulation. Notice how Copilot's suggestions (in green) follow naturally from the context you provide — but the quality of the suggestion is entirely dependent on how clear and specific that context is:</p>
+    <div class="code-sim">
+      <div class="code-sim-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">utils.py</span></div>
+      <div class="code-body">
+        <span class="code-line comment"># Validate that an email address is properly formatted</span>
+        <span class="code-line comment"># Returns True if valid, False if not</span>
+        <span class="code-line"><span class="code-line keyword">def</span> <span class="code-line func">is_valid_email</span>(email: str) -> bool:</span>
+        <span class="code-line suggestion">    import re</span>
+        <span class="code-line suggestion">    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'</span>
+        <span class="code-line suggestion">    return bool(re.match(pattern, email))</span>
+        <div class="copilot-badge">✦ Copilot suggestion — Tab to accept</div>
+      </div>
+    </div>
+    <p>The suggestion looks clean and probably works for common cases. But notice what it doesn't do: it doesn't know whether your system needs to handle internationalized domain names, whether the 2+ character TLD requirement is right for your use case, or whether your existing codebase already has a validation utility you should use instead. That context is yours to provide — or verify against.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Where Copilot Excels — and Where It Doesn't</h2>
+    <p>Explore each scenario to understand when Copilot is most valuable and when it requires the most scrutiny:</p>
+    <div class="scenario-tabs" id="scenTabs"></div>
+    <div id="scenPanels"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Non-Negotiable Verification Checklist</h2>
+    <p>Every piece of Copilot-generated code that enters your codebase should pass through these checks. Not because Copilot is usually wrong — but because <mark>the cases where it's wrong are exactly the cases where the errors are hardest to catch later</mark>:</p>
+    <div class="verify-list">
+      <div class="verify-item"><div class="verify-icon">🔒</div><div><div class="verify-title">Security: Does it handle untrusted input correctly?</div><div class="verify-desc">Copilot can generate SQL queries without parameterization, string interpolation that creates injection vulnerabilities, or file paths without sanitization. Pattern-matching against common examples doesn't mean the patterns were secure examples.</div></div></div>
+      <div class="verify-item"><div class="verify-icon">🏗️</div><div><div class="verify-title">Context fit: Does it match your codebase's conventions?</div><div class="verify-desc">Copilot learned general patterns. Your codebase has specific conventions — error handling patterns, naming conventions, logging standards, dependency preferences. The suggestion may be correct in general and wrong for your specific context.</div></div></div>
+      <div class="verify-item"><div class="verify-icon">📅</div><div><div class="verify-title">Currency: Are the APIs and methods still current?</div><div class="verify-desc">Libraries deprecate methods. APIs change signatures. Copilot's training data has a cutoff, and it may confidently suggest deprecated patterns or removed APIs that worked at training time but don't work now.</div></div></div>
+      <div class="verify-item"><div class="verify-icon">🔁</div><div><div class="verify-title">Duplication: Does this already exist in your codebase?</div><div class="verify-desc">Copilot doesn't know what utilities you've already built. Accepting its suggestions can create duplicate implementations of the same logic — which diverge over time and create maintenance burden.</div></div></div>
+      <div class="verify-item"><div class="verify-icon">🧪</div><div><div class="verify-title">Edge cases: Does it handle the inputs that don't look typical?</div><div class="verify-desc">Copilot's suggestions are optimized for common cases. Empty inputs, null values, extremely large values, malformed inputs — these are exactly the cases where pattern-matching against typical examples is least reliable.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>Copilot doesn't make you a better developer. It makes a good developer faster. The judgment, the architecture understanding, the security awareness — those still come from you. Copilot just handles more of the typing.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A developer is using Copilot to write a function that processes user-submitted file uploads. Copilot suggests a clean, readable implementation. What's the most important thing to verify before accepting it?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Whether the function name follows Copilot's preferred naming conventions</button>
+        <button class="qopt" onclick="doQ(this,false)">Whether the suggestion was generated quickly enough to indicate Copilot was confident</button>
+        <button class="qopt" onclick="doQ(this,true)">Whether the implementation properly validates file types, sanitizes filenames, enforces size limits, and handles malformed inputs — because user-submitted file uploads are a classic attack vector and Copilot's "clean, readable" suggestion may have pattern-matched against examples that didn't prioritize these security controls</button>
+        <button class="qopt" onclick="doQ(this,false)">Whether the function uses the same variable naming style as the rest of the file</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Copilot predicts what code is statistically most likely to follow your context based on patterns from billions of lines of public code. It doesn't understand your codebase, your requirements, or your specific security constraints.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Copilot excels at boilerplate, common patterns, and well-documented APIs. It requires the most scrutiny for security-sensitive code, organization-specific conventions, recently updated APIs, and edge case handling.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every piece of Copilot-generated code needs verification against five checks: security handling, context fit with your codebase, currency of APIs used, duplication of existing utilities, and edge case handling. The cleaner the suggestion looks, the more important verification becomes.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+const scenarios=[
+  {label:"Boilerplate & setup",title:"🏗️ Boilerplate and Setup Code",body:"Copilot is most reliable here. Setting up a Flask route, defining a TypeScript interface, writing a pytest fixture, creating a Dockerfile — these follow patterns so common and well-established in its training data that the suggestions are usually accurate and idiomatic.",goods:["Standard library imports and configurations","Framework setup following well-established conventions","Database connection boilerplate","Common data structure implementations","Standard test scaffolding"],cautions:["Boilerplate that uses deprecated patterns from older versions of the framework","Configuration defaults that may not be appropriate for your security requirements","Framework patterns that differ between the version in training data and your current version"]},
+  {label:"Algorithm implementation",title:"⚙️ Algorithm Implementation",body:"Copilot does well with standard algorithms — sorting, searching, tree traversal, common data transformations — because these appear thousands of times in training data with well-understood implementations. Custom business logic is different.",goods:["Standard algorithms with well-known implementations (sorting, searching, graph traversal)","Common data transformation patterns","Mathematical utilities with clear specifications"],cautions:["Business logic unique to your domain — Copilot has never seen your specific requirements","Algorithms where the 'correct' implementation depends on context Copilot doesn't have","Performance-critical code where the idiomatic solution may not be the optimal one for your scale"]},
+  {label:"Security-sensitive code",title:"🔒 Security-Sensitive Code",body:"This is where Copilot requires the most scrutiny. Security vulnerabilities often come from edge cases, specific input handling requirements, and security controls that add complexity but look like they could be simplified. Copilot's training data includes both secure and insecure examples.",goods:["Prompting you to think about input validation by generating a first draft","Generating authentication scaffolding that follows common patterns","Raising your awareness of where security controls should go"],cautions:["SQL queries without parameterization — always verify","File path handling without sanitization","Input validation that misses specific attack vectors relevant to your context","Cryptographic implementations — these need expert review regardless of source","Authentication flows where subtle errors have serious consequences"]},
+  {label:"Test generation",title:"🧪 Test Generation",body:"Copilot can significantly accelerate test writing, but with a crucial caveat: it generates tests that cover the cases it predicts from your code structure, which are often the common happy-path cases. Edge cases, error conditions, and security-relevant inputs often require you to write the test cases explicitly.",goods:["Happy-path test cases for well-defined functions","Boilerplate for test setup and teardown","Test case naming and structure following established patterns","Generating test data for common inputs"],cautions:["Tests may not cover the edge cases that matter most for your specific function","Copilot-generated tests can pass while missing entire categories of failure conditions","Tests that test the implementation rather than the intended behavior — testing what the code does rather than what it should do"]},
+  {label:"Documentation",title:"📝 Documentation Generation",body:"Copilot generates documentation that describes what the code does based on its structure. This is genuinely useful for first drafts — but the documentation describes the code as written, not the intent behind it or the constraints on its use.",goods:["First-draft docstrings that describe parameters and return values","Inline comments explaining what code blocks do","README sections describing how to use a module or function"],cautions:["Documentation may accurately describe what the code does without capturing why — the reasoning, constraints, and assumptions that future maintainers need","Edge cases and error conditions that aren't obvious from the code structure may not be documented","Documentation of deprecated behavior that should be changed, not documented"]},
+];
+const tabs=document.getElementById("scenTabs"),panels=document.getElementById("scenPanels");
+scenarios.forEach((s,i)=>{
+  const btn=document.createElement("button");btn.className="stab"+(i===0?" active":"");btn.textContent=s.label;
+  btn.onclick=()=>{document.querySelectorAll(".stab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".scen-panel").forEach(p=>p.classList.remove("show"));btn.classList.add("active");document.getElementById("sp"+i).classList.add("show");};
+  tabs.appendChild(btn);
+  const panel=document.createElement("div");panel.className="scen-panel"+(i===0?" show":"");panel.id="sp"+i;
+  panel.innerHTML=`<div class="scen-header"><div class="scen-title">${s.title}</div></div><div class="scen-body"><p style="font-size:15px;line-height:1.65;margin-bottom:0">${s.body}</p><div class="scen-grid"><div class="scen-col good"><div class="scen-col-title">✓ Copilot does well here</div><ul>${s.goods.map(g=>`<li>${g}</li>`).join("")}</ul></div><div class="scen-col caution"><div class="scen-col-title">⚠ Scrutinize carefully here</div><ul>${s.cautions.map(c=>`<li>${c}</li>`).join("")}</ul></div></div></div>`;
+  panels.appendChild(panel);
+});
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. File upload handling is a classic security-sensitive context — path traversal attacks, file type spoofing, malicious file content, size-based DoS attacks, and storage exhaustion are all real risks. Copilot's suggestion may be clean and readable while missing all of these. The cleaner and more confident-looking the suggestion, the more important it is to verify security properties explicitly, because the appearance of competence is not evidence of security-correctness.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("properly validates"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Naming conventions and generation speed are not meaningful signals of correctness. For security-sensitive code processing user input, the only meaningful check is whether the implementation correctly handles the security requirements — validation, sanitization, size limits, and edge cases.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Day in Tech Before AI Gets Involved — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;
+  --white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;
+  --green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;
+  --orange:#D97706;--orange-pale:#FFFBEB;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+
+/* Role selector */
+.role-nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 16px;}
+.role-btn{padding:10px 18px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.role-btn:hover{border-color:var(--purple);color:var(--purple-dark);}
+.role-btn.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+
+/* Day timeline */
+.day-panel{display:none;}
+.day-panel.show{display:block;animation:fadeIn .25s ease;}
+.timeline{display:flex;flex-direction:column;gap:0;margin:8px 0;}
+.tl-item{display:flex;gap:20px;position:relative;}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.tl-time{font-size:12px;font-weight:700;color:var(--purple);white-space:nowrap;padding-top:14px;width:48px;text-align:center;}
+.tl-dot{width:14px;height:14px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:18px;}
+.tl-line{width:2px;background:var(--purple-mid);flex:1;min-height:12px;margin:4px 0;}
+.tl-item:last-child .tl-line{display:none;}
+.tl-right{flex:1;padding:12px 0 24px;}
+.tl-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:16px 18px;}
+.tl-task{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.tl-desc{font-size:14px;line-height:1.6;color:var(--gray-text);margin-bottom:8px;}
+.tl-friction{background:var(--orange-pale);border:1px solid #FDE68A;border-radius:8px;padding:8px 12px;font-size:13px;color:#78350F;}
+.tl-friction-label{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.tl-highlight{background:var(--purple-pale);border:1px solid var(--purple-mid);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--purple-dark);margin-top:6px;}
+.tl-highlight-label{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;color:var(--purple);}
+
+/* Time cost summary */
+.time-summary{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.ts-header{padding:16px 20px;background:var(--purple-pale);border-bottom:1px solid var(--purple-mid);}
+.ts-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.ts-rows{display:flex;flex-direction:column;}
+.ts-row{display:grid;grid-template-columns:1fr 100px 100px;gap:0;border-bottom:1px solid var(--purple-mid);}
+.ts-row:last-child{border-bottom:none;}
+.ts-row.header{background:var(--gray-soft);}
+.ts-cell{padding:12px 16px;font-size:14px;}
+.ts-row.header .ts-cell{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);}
+.ts-cell.time{font-weight:700;color:var(--purple);text-align:right;}
+.ts-cell.flag{text-align:right;font-size:13px;}
+.ts-total{background:var(--purple-pale);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;}
+.ts-total-label{font-size:14px;font-weight:700;color:var(--purple-dark);}
+.ts-total-num{font-family:"Fraunces",serif;font-size:24px;font-weight:900;color:var(--purple);}
+
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.ts-row{grid-template-columns:1fr 80px;}.ts-cell.flag{display:none;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.1 · What Is AI in Tech Work?</div>
+  <h1>A Day in Tech Before AI Gets Involved: What the Work Actually Looks Like</h1>
+  <p class="hero-sub">To understand what AI is actually changing in tech work, you need to understand what tech work looked like before AI got involved — the real steps, the time costs, and the points of friction that defined the job.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why the Before Matters</h2>
+    <p>It's easy to talk about AI in terms of what it adds. But the more useful frame is understanding what it changes — and to understand what it changes, you need a clear picture of what was there before.</p>
+    <p>Every AI tool in tech work was built to address a specific friction point in existing workflows. <mark>GitHub Copilot exists because writing boilerplate code is slow and tedious.</mark> AI-powered SIEMs exist because correlating security events across log volumes no human team can manually review was a real operational gap. Predictive monitoring tools exist because reactive incident response was costing organizations hours of downtime that pattern recognition could prevent.</p>
+    <p>Select your role below and walk through a typical pre-AI day — the actual tasks, how long they took, and where the friction lived:</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="role-nav" id="roleNav"></div>
+    <div id="dayPanels"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Patterns Across Every Role</h2>
+    <p>Looking across these pre-AI workflows, three patterns appear in every role — and they're exactly the patterns that AI tools were built to address:</p>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin:20px 0;">
+      <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px 20px;display:flex;gap:14px;">
+        <div style="font-size:22px;flex-shrink:0;">🔁</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;">High-volume pattern recognition was done manually</div>
+          <div style="font-size:14px;line-height:1.6;">Reading logs, reviewing code, searching documentation, scanning alerts — every role involved a significant portion of time spent searching for patterns in large volumes of information. This is exactly the task that scales poorly for humans and scales well for AI.</div>
+        </div>
+      </div>
+      <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px 20px;display:flex;gap:14px;">
+        <div style="font-size:22px;flex-shrink:0;">🕐</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;">Context switching was constant and expensive</div>
+          <div style="font-size:14px;line-height:1.6;">The pre-AI day involved moving between many different tools, windows, and contexts — editor to browser to documentation to Slack and back again. Each switch had a cost in lost focus and reorientation. AI tools that surface information in context (in the editor, in the alert dashboard, in the ticket) reduce this tax.</div>
+        </div>
+      </div>
+      <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px 20px;display:flex;gap:14px;">
+        <div style="font-size:22px;flex-shrink:0;">🧠</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;">The work requiring the most judgment got the least time</div>
+          <div style="font-size:14px;line-height:1.6;">In nearly every role, the tasks that most benefited from careful human judgment — architectural decisions, security analysis, incident postmortems, process design — were the tasks that got compressed when the high-volume, pattern-recognition tasks consumed the day. AI assistance that handles volume frees time for judgment.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The pre-AI day wasn't slow because the people were slow. It was slow because humans doing pattern recognition at machine scale is the wrong tool for the job. AI doesn't make people better — it removes a category of work that humans were never the right tool for.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A developer reports that since adopting GitHub Copilot, they feel like they're spending more time reviewing and correcting AI suggestions than they saved on typing. Which of the following most accurately describes what's happening?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The developer is using the tool wrong — Copilot suggestions should be accepted without review</button>
+        <button class="qopt" onclick="doQ(this,false)">Copilot is not the right tool for this developer's workflow and should be disabled</button>
+        <button class="qopt" onclick="doQ(this,true)">The developer is in the adjustment period where review habits are being calibrated — the review step is correct, but the efficiency gain comes when developers learn to quickly identify which suggestion categories need deep review vs. quick acceptance</button>
+        <button class="qopt" onclick="doQ(this,false)">AI coding tools are only beneficial for developers who write primarily boilerplate code</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Pre-AI tech work was defined by three friction points: high-volume pattern recognition done manually, constant expensive context switching, and judgment work compressed by volume work. AI tools were built specifically to address these friction points.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Understanding what the work looked like before AI is how you evaluate whether an AI tool is actually solving the right problem — and whether it's solving it at the right point in your workflow.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI doesn't change what the high-judgment work requires — architecture decisions, security analysis, incident investigation, and process design still demand exactly what they always did. It changes where your time goes, which is only valuable if you redirect that time toward the work that needs it most.</p></div>
+    </div>
+  </div>
+
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const roles=[
+  {label:"💻 Developer",title:"Software Developer — A Pre-AI Day",
+   events:[
+    {time:"9:00am",task:"Pick up a ticket: add input validation to an API endpoint",desc:"Open the ticket, read the requirements, look at the existing endpoint code. Spend time understanding the data model and current validation gaps before writing a single line.",friction:"30–45 min just to orient: reading existing code, tracing data flow, understanding which edge cases matter for this specific endpoint.",highlight:null},
+    {time:"9:45am",task:"Research the right validation approach",desc:"Search the docs for the framework's validation utilities. Find three different approaches. Read Stack Overflow to understand which is idiomatic for this version. Check if there's a company convention in the codebase.",friction:"20–40 min of documentation reading and searching — not writing code, just finding the right way to write it.",highlight:null},
+    {time:"10:30am",task:"Write the validation logic",desc:"Implement the validation. Handle the common case, then think through edge cases: empty strings, unicode, max lengths, type coercion, what happens when validation fails.",friction:"The boilerplate (imports, structure, basic pattern) is repetitive work. The edge cases are where the real thinking happens — but both take similar time.",highlight:null},
+    {time:"11:30am",task:"Write the tests",desc:"Write unit tests for the happy path. Then think through and write tests for each edge case. Look up test patterns for this framework. Realize you missed a case; go back and fix it.",friction:"Writing test boilerplate (setup, teardown, assertions) is repetitive. Thinking up the right test cases is the real work — but both consume calendar time equally.",highlight:null},
+    {time:"1:30pm",task:"Debug a failing CI build on a different ticket",desc:"A build started failing that was passing yesterday. Read the CI logs. Search for what changed. Bisect the commits. Find it was a dependency update. Fix the lockfile.",friction:"30–60 min of log reading and context switching — reactive work that replaced planned work.",highlight:null},
+    {time:"3:00pm",task:"Code review: 3 PRs from teammates",desc:"Read three pull requests. Understand each one's context. Check for bugs, style issues, security concerns. Leave comments. One PR has a subtle bug in error handling that requires a long comment to explain.",friction:"Code review is high-value work — but reading and understanding unfamiliar code takes time that scales with code volume, not reviewer expertise.",highlight:null},
+    {time:"4:30pm",task:"Update documentation for the API changes",desc:"Write the docstring for the new validation. Update the API documentation. Check that examples are still accurate. The doc format is slightly different than what you use day-to-day.",friction:"Documentation is consistently the task that gets deferred or compressed when the day runs long. It's important but not urgent, and writing it is slow.",highlight:null},
+   ],
+   costs:[{t:"Orientation & research",h:"1.5–2 hrs",f:"⚠️"},{t:"Boilerplate & test scaffolding",h:"1.5 hrs",f:"⚠️"},{t:"Reactive debugging",h:"30–60 min",f:"⚠️"},{t:"Documentation",h:"30–45 min",f:"⚠️"},{t:"Actual logic & judgment work",h:"2–3 hrs",f:"✓"}],total:"7–8 hrs"},
+
+  {label:"🔒 Security Analyst",title:"Security Analyst — A Pre-AI Day",
+   events:[
+    {time:"8:00am",task:"Morning alert triage: 200+ alerts from overnight",desc:"Open the SIEM dashboard. 200+ alerts generated overnight. Begin reading each one: source IP, destination, event type, severity. Most are low-severity noise or known false positives.",friction:"Manual alert triage at this volume takes 2–3 hours just for the first pass. High-value analysts spend most of their morning on pattern recognition a machine could do.",highlight:null},
+    {time:"10:30am",task:"Investigate a suspicious login anomaly",desc:"One alert looks genuinely suspicious: login from an unusual location at 3am. Pull the user's login history. Check other activity from that IP. Search threat intelligence feeds manually.",friction:"Correlating data across multiple systems — SIEM, AD logs, threat intel feeds, email logs — means manually querying each system and mentally combining the results.",highlight:null},
+    {time:"12:00pm",task:"False positive documentation and tuning",desc:"Three alerts were false positives from a known internal scanner. Document them. Write a suppression rule. Test the rule to make sure it doesn't suppress real alerts.",friction:"Every false positive is a recurring cost: it happens again until it's tuned out. Tuning requires understanding the rule language, testing, and documentation.",highlight:null},
+    {time:"1:30pm",task:"Threat hunting: look for indicators of compromise from a recent advisory",desc:"A threat advisory was published. Manually write queries to search logs for the specific IOCs: specific IP ranges, hash values, file paths, registry keys.",friction:"Writing hunt queries from scratch for every new advisory is slow and requires both security knowledge and query language fluency simultaneously.",highlight:null},
+    {time:"3:30pm",task:"Incident report from yesterday's confirmed alert",desc:"Write up yesterday's incident: timeline, root cause, impact assessment, remediation steps. Pull logs from multiple systems to reconstruct the exact sequence of events.",friction:"Incident reports require manually assembling a timeline from scattered log data across different systems — the most important output of the day, done at the end when focus is lowest.",highlight:null},
+   ],
+   costs:[{t:"Alert triage (first pass)",h:"2–3 hrs",f:"⚠️"},{t:"Manual correlation across systems",h:"1.5 hrs",f:"⚠️"},{t:"False positive documentation",h:"45 min",f:"⚠️"},{t:"Query writing for threat hunting",h:"1.5 hrs",f:"⚠️"},{t:"Analysis, judgment, response",h:"1–2 hrs",f:"✓"}],total:"7–9 hrs"},
+
+  {label:"⚙️ IT Ops / DevOps",title:"IT Ops / DevOps Engineer — A Pre-AI Day",
+   events:[
+    {time:"8:30am",task:"Check monitoring dashboards — 40 active alerts",desc:"Open Grafana. 40 alerts are active. Most are recurring noise: disk at 80%, memory spikes that self-resolved, connection pool warnings on a non-critical service.",friction:"Each alert requires reading, cross-referencing against known issues, and deciding whether it's new or known. Manual triage scales poorly with alert volume.",highlight:null},
+    {time:"9:30am",task:"Production incident: API latency spike",desc:"A high-severity alert: API p99 latency jumped from 120ms to 4 seconds. Begin investigating: check recent deployments, database query times, upstream service health, network metrics.",friction:"Manually correlating metrics across systems to identify root cause takes 30–60 min even for experienced engineers. Every minute is user-facing impact.",highlight:null},
+    {time:"11:00am",task:"Post-incident work: write the postmortem",desc:"Incident resolved (bad index on a database table). Write the postmortem: timeline, root cause, impact, action items. Pull exact timestamps from multiple log sources.",friction:"Reconstructing a precise timeline from distributed logs is slow. This work often gets abbreviated when the next incident starts before the postmortem is finished.",highlight:null},
+    {time:"1:00pm",task:"Capacity planning for next quarter",desc:"Review current resource utilization across services. Project growth based on business forecasts. Identify which services will need scaling. Write recommendations.",friction:"Manual analysis of utilization trends requires pulling data from monitoring, massaging it in spreadsheets, and making projections. Time-consuming and often outdated by the time it's done.",highlight:null},
+    {time:"3:00pm",task:"Deploy a configuration change to 12 services",desc:"A security patch requires a config update across 12 services. Write the Ansible playbook. Test in staging. Deploy in production. Verify each service came back healthy.",friction:"Verification after deployment requires manually checking health endpoints, logs, and metrics for each service. Automating this check is important but takes time to build.",highlight:null},
+   ],
+   costs:[{t:"Alert triage & noise filtering",h:"1.5 hrs",f:"⚠️"},{t:"Incident investigation",h:"1.5 hrs",f:"⚠️"},{t:"Postmortem & documentation",h:"1 hr",f:"⚠️"},{t:"Manual verification work",h:"1 hr",f:"⚠️"},{t:"Actual design & judgment work",h:"2 hrs",f:"✓"}],total:"7–8 hrs"},
+];
+
+const nav=document.getElementById("roleNav"),panelsEl=document.getElementById("dayPanels");
+roles.forEach((role,i)=>{
+  const btn=document.createElement("button");
+  btn.className="role-btn"+(i===0?" active":"");
+  btn.textContent=role.label;
+  btn.onclick=()=>{
+    document.querySelectorAll(".role-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".day-panel").forEach(p=>p.classList.remove("show"));
+    btn.classList.add("active");
+    document.getElementById("dp"+i).classList.add("show");
+  };
+  nav.appendChild(btn);
+
+  const panel=document.createElement("div");
+  panel.className="day-panel"+(i===0?" show":"");
+  panel.id="dp"+i;
+
+  const tlHTML=role.events.map(ev=>`
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-time">${ev.time}</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-right">
+        <div class="tl-card">
+          <div class="tl-task">${ev.task}</div>
+          <div class="tl-desc">${ev.desc}</div>
+          <div class="tl-friction"><div class="tl-friction-label">⚠️ Friction point</div>${ev.friction}</div>
+        </div>
+      </div>
+    </div>`).join("");
+
+  const costRows=role.costs.map(c=>`
+    <div class="ts-row">
+      <div class="ts-cell">${c.t}</div>
+      <div class="ts-cell time">${c.h}</div>
+      <div class="ts-cell flag">${c.f}</div>
+    </div>`).join("");
+
+  panel.innerHTML=`
+    <div style="margin-bottom:8px;">
+      <h3 style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--purple-dark);padding:16px 0 4px;">${role.title}</h3>
+    </div>
+    <div class="timeline">${tlHTML}</div>
+    <div class="time-summary">
+      <div class="ts-header"><div class="ts-title">Where the time goes</div></div>
+      <div class="ts-rows">
+        <div class="ts-row header"><div class="ts-cell">Task category</div><div class="ts-cell time">Typical time</div><div class="ts-cell flag">AI target?</div></div>
+        ${costRows}
+      </div>
+      <div class="ts-total"><div class="ts-total-label">Total day</div><div class="ts-total-num">${role.total}</div></div>
+    </div>`;
+  panelsEl.appendChild(panel);
+});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){
+    fb.className="qfb show cfb";
+    fb.textContent="✅ Correct. The adjustment period is a real and documented pattern in AI tool adoption. Developers accustomed to writing all their own code need to develop new judgment skills: which suggestion types can be accepted with a quick scan, which need line-by-line review, which should be rejected outright. This calibration takes time — but the alternative (reviewing every suggestion with equal depth) or the opposite extreme (accepting all suggestions without review) are both worse outcomes.";
+  } else {
+    document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("adjustment period"))o.classList.add("correct");});
+    fb.className="qfb show wfb";
+    fb.textContent="❌ Not quite. Skipping review is not the answer — that's Misconception 1 from the previous article (AI can verify its own correctness). And AI coding tools benefit all developers, not just those writing boilerplate. The real issue is that the developer hasn't yet calibrated which types of suggestions need deep review and which can be accepted quickly — that calibration is a learnable skill, not a reason to abandon the tool.";
+  }
+}
+</script>
+</body>
+</html>

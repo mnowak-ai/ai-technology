@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Across Tech Roles — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.role-nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 16px;}
+.role-btn{padding:10px 18px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.role-btn:hover{border-color:var(--purple);color:var(--purple-dark);}
+.role-btn.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.role-panel{display:none;border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;}
+.role-panel.show{display:block;animation:fadeIn .25s ease;}
+.role-header{background:var(--purple-pale);padding:24px 28px;border-bottom:1px solid var(--purple-mid);}
+.role-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.role-subtitle{font-size:14px;color:var(--gray-muted);}
+.role-body{padding:22px 28px;}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.role-col{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.role-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:10px;}
+.role-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.role-col li{font-size:14px;line-height:1.5;padding-left:16px;position:relative;}
+.role-col li::before{content:"→";position:absolute;left:0;color:var(--purple);font-size:12px;}
+.role-still{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.role-still-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-dark);margin-bottom:10px;}
+.role-still-list{display:flex;flex-direction:column;gap:7px;}
+.role-still-item{font-size:14px;line-height:1.5;display:flex;gap:8px;}
+.role-still-item::before{content:"✓";color:var(--purple);font-weight:700;flex-shrink:0;}
+.thread-cards{display:flex;flex-direction:column;gap:12px;margin:24px 0;}
+.thread{display:flex;gap:16px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px 20px;}
+.thread-icon{font-size:22px;flex-shrink:0;}
+.thread-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.thread-desc{font-size:14px;line-height:1.6;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.role-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.1 · What Is AI in Tech Work?</div>
+  <h1>AI Across Tech Roles: What It Actually Looks Like for a Developer vs. a Security Analyst vs. an IT Ops Engineer</h1>
+  <p class="hero-sub">AI doesn't look the same in every tech role. A security analyst's experience with AI is fundamentally different from a developer's — different tools, different risks, different judgment calls. This article makes it concrete by role.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Why "AI in Tech" Isn't One Thing</h2>
+    <p>The phrase "AI is changing tech work" is true — but it's so broad it doesn't help anyone know what to actually do differently. A software developer using GitHub Copilot is having a completely different experience than a security analyst using an AI-powered SIEM, or a DevOps engineer using predictive monitoring.</p>
+    <p><mark>The tools are different, the failure modes are different, and the judgment calls are different.</mark> What stays the same across every role is the underlying dynamic: AI handles pattern recognition at scale, and humans own interpretation, verification, and decisions with real consequences.</p>
+    <p>Select your role below to explore what AI actually looks like in that context:</p>
+  </div>
+  <div class="section fade-in">
+    <div class="role-nav" id="roleNav"></div>
+    <div id="rolePanels"></div>
+  </div>
+  <div class="section fade-in">
+    <h2>What Stays the Same Across Every Role</h2>
+    <p>Despite very different tools and use cases, five dynamics appear consistently across every tech role that works with AI:</p>
+    <div class="thread-cards">
+      <div class="thread"><div class="thread-icon">🔍</div><div><div class="thread-title">AI surfaces candidates — humans make decisions</div><div class="thread-desc">Whether it's a code suggestion, a security alert, or a deployment recommendation, AI surfaces what's most likely to be relevant. The human decides what to do about it. This division of labor is consistent across every role.</div></div></div>
+      <div class="thread"><div class="thread-icon">⚡</div><div><div class="thread-title">Volume increases, but so does the need for judgment</div><div class="thread-desc">AI allows every role to process more — more code, more alerts, more logs, more tickets — faster. But this means judgment calls happen faster too. The increased volume doesn't reduce the importance of each decision; it often increases it.</div></div></div>
+      <div class="thread"><div class="thread-icon">🧪</div><div><div class="thread-title">Verification becomes a core skill</div><div class="thread-desc">In every role, the ability to critically evaluate AI outputs — without assuming they're correct and without dismissing them reflexively — becomes more valuable than it was before AI tools existed. The question is never "did AI say it?" but "is it actually right?"</div></div></div>
+      <div class="thread"><div class="thread-icon">📉</div><div><div class="thread-title">The cost of context loss is higher</div><div class="thread-desc">AI doesn't have your organizational context — your team's conventions, your company's risk tolerance, your system's history. Workers who provide that context get dramatically better results. Workers who don't get confidently wrong outputs that match general patterns but miss specific realities.</div></div></div>
+      <div class="thread"><div class="thread-icon">🏛️</div><div><div class="thread-title">Accountability doesn't transfer to the tool</div><div class="thread-desc">In every role, the human who acted on an AI recommendation owns the outcome. A developer who shipped AI-generated code owns the bug. A security analyst who dismissed an AI alert owns the missed incident. The tool is a collaborator, not a decision-maker.</div></div></div>
+    </div>
+  </div>
+  <div class="section fade-in">
+    <div class="pull-quote"><p>AI makes you faster at the parts of your job that involve processing information. It doesn't make you better at the parts that require judgment — it just makes judgment more important, more frequent, and harder to avoid.</p></div>
+  </div>
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A security analyst's team receives 400% more alerts per day after implementing an AI-powered SIEM. The analyst says, "The AI is making my job harder, not easier." What's the most useful way to interpret this situation?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The analyst is right — if the total workload increased, the AI implementation failed</button>
+        <button class="qopt" onclick="doQ(this,true)">The AI is surfacing patterns it would have taken humans much longer to find, but the team needs triage processes that match the new volume — the tool changed the work, not eliminated it</button>
+        <button class="qopt" onclick="doQ(this,false)">The analyst should disable the AI and return to manual monitoring to manage the volume</button>
+        <button class="qopt" onclick="doQ(this,false)">The AI needs better training data before it can be useful in this environment</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI looks different in every tech role — the tools, failure modes, and judgment calls are role-specific. Understanding what AI does in your specific role is more useful than understanding AI abstractly.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Across every role: AI surfaces candidates, humans make decisions. AI increases volume, but judgment becomes more important — not less. Accountability never transfers to the tool.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The skill gap AI creates is not knowledge of AI internals — it's the ability to verify AI outputs critically, provide context that improves output quality, and maintain accountability for decisions that AI informed but didn't make.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+const roles=[
+  {emoji:"💻",label:"Software Developer",subtitle:"AI in coding, code review, documentation, and testing",
+   aiDoes:["Suggests code completions and entire functions as you type","Explains unfamiliar codebases in plain language","Flags potential bugs and security vulnerabilities during review","Generates test cases and boilerplate from function signatures","Drafts inline documentation from code context"],
+   humanOwns:["Verifying that generated code is correct for your specific context","Deciding whether AI-flagged issues are actual problems or false positives","Owning architecture decisions AI cannot make","Understanding what the code actually does before shipping it","Code review of AI-generated output before it enters production"],
+   stillOwns:["System design and architectural decisions","Understanding business logic well enough to verify AI suggestions","Debugging when AI suggestions don't work and the AI can't explain why","Security review of AI-generated code for context-specific vulnerabilities","The pull request — and all consequences of what it contains"]},
+  {emoji:"🔒",label:"Security Analyst",subtitle:"AI in threat detection, alert triage, and incident response",
+   aiDoes:["Correlates events across massive log volumes faster than any human team","Surfaces anomalies that deviate from learned baseline behavior","Classifies alerts by predicted severity and attack pattern","Suggests remediation steps based on similar past incidents","Generates threat intelligence summaries from raw data"],
+   humanOwns:["Determining whether an anomaly is a genuine threat or false positive","Deciding escalation and response for incidents with organizational context","Evaluating whether AI threat classifications match actual risk profile","Communicating findings to stakeholders in terms of business impact","Authorizing response actions that affect production systems"],
+   stillOwns:["Incident investigation that requires understanding motive, not just pattern","Threat modeling for new attack surfaces AI has no training data for","Regulatory and compliance judgment requiring interpretation","Relationships with the threat intelligence community","Deciding what risk the organization is willing to accept"]},
+  {emoji:"⚙️",label:"DevOps / IT Ops Engineer",subtitle:"AI in monitoring, deployment, incident response, and infrastructure",
+   aiDoes:["Predicts infrastructure failures before they happen using anomaly patterns","Suggests root causes during active incidents","Recommends configuration changes based on performance patterns","Automates runbook execution for known incident types","Summarizes complex log streams into actionable context"],
+   humanOwns:["Authorizing changes to production systems based on AI recommendations","Deciding when a predicted failure is high-confidence enough to act on","Evaluating whether suggested root causes are plausible given system history","Owning post-incident review and process improvement","Judgment calls where false positives or missed alerts have high consequences"],
+   stillOwns:["Novel incident types AI has no training data for — truly new failure modes","Capacity planning that accounts for business context AI doesn't have","Change management and organizational communication during incidents","Building and maintaining the observability stack that feeds AI tools","Deciding when to trust prediction and when human intuition overrides"]},
+  {emoji:"📊",label:"Data Scientist / ML Engineer",subtitle:"AI in data analysis, model building, and pipeline automation",
+   aiDoes:["Generates data exploration code and statistical summaries from natural language","Suggests feature engineering approaches based on dataset characteristics","Identifies outliers and data quality issues at scale","Drafts model evaluation frameworks and metrics","Assists with writing technical documentation and methodology sections"],
+   humanOwns:["Deciding which features are meaningful versus spurious correlations","Evaluating model outputs for bias and fairness","Determining whether model performance metrics translate to real-world value","Communicating uncertainty and limitations to stakeholders","Deployment decisions when model confidence is ambiguous"],
+   stillOwns:["Problem framing — deciding what question the model should answer","Domain expertise that makes data meaningful","Ethical review of model outputs for unintended consequences","Stakeholder management when model recommendations conflict with intuition","The hard conversations when model outputs suggest uncomfortable conclusions"]},
+  {emoji:"🖥️",label:"IT Support / Sysadmin",subtitle:"AI in ticket routing, knowledge base, and troubleshooting",
+   aiDoes:["Classifies and routes incoming tickets based on content and history","Suggests solutions based on similar past tickets","Summarizes long ticket threads for faster context transfer","Drafts knowledge base articles from resolved ticket patterns","Flags tickets that deviate from normal patterns for priority review"],
+   humanOwns:["Verifying suggested solutions are appropriate for this specific user and environment","Handling tickets that require empathy, explanation, and trust-building","Escalation decisions when AI solutions don't resolve the issue","Recognizing when a cluster of tickets indicates a broader systemic problem","Context about which users need extra patience or special handling"],
+   stillOwns:["The human conversation when a user is frustrated and needs to feel heard","Judgment about when a 'resolved' ticket is actually unresolved","Relationships with VIP users that require personal attention","Recognizing novel issues that don't match any historical pattern","Advocating for systemic fixes when AI triage masks underlying problems"]},
+];
+const nav=document.getElementById("roleNav"),panels=document.getElementById("rolePanels");
+roles.forEach((role,i)=>{
+  const btn=document.createElement("button");
+  btn.className="role-btn"+(i===0?" active":"");
+  btn.textContent=role.emoji+" "+role.label;
+  btn.onclick=()=>{document.querySelectorAll(".role-btn").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".role-panel").forEach(p=>p.classList.remove("show"));btn.classList.add("active");document.getElementById("rp"+i).classList.add("show");};
+  nav.appendChild(btn);
+  const panel=document.createElement("div");
+  panel.className="role-panel"+(i===0?" show":"");panel.id="rp"+i;
+  panel.innerHTML=`<div class="role-header"><div class="role-title">${role.emoji} ${role.label}</div><div class="role-subtitle">${role.subtitle}</div></div><div class="role-body"><div class="role-grid"><div class="role-col"><div class="role-col-title">🤖 What AI does in this role</div><ul>${role.aiDoes.map(d=>`<li>${d}</li>`).join("")}</ul></div><div class="role-col"><div class="role-col-title">🧠 What the human owns</div><ul>${role.humanOwns.map(d=>`<li>${d}</li>`).join("")}</ul></div></div><div class="role-still"><div class="role-still-title">🔐 What this role still owns entirely</div><div class="role-still-list">${role.stillOwns.map(d=>`<div class="role-still-item">${d}</div>`).join("")}</div></div></div>`;
+  panels.appendChild(panel);
+});
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. More alerts doesn't mean the AI failed — it means the AI is surfacing patterns previously invisible. The right response is building triage processes — severity thresholds, automated filtering, escalation criteria — that match the new volume. The tool changed what the work looks like, not whether the work has value.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("surfacing patterns"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Returning to manual monitoring means missing threats the AI was correctly flagging. The answer is adapting the team's triage process to the new volume, not eliminating the signal source.";}
+}
+</script>
+</body>
+</html>
