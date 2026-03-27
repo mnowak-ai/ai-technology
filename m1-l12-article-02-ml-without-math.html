@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning Without the Math — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+
+/* Supervised vs Unsupervised interactive comparison */
+.ml-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.mlc{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.mlc-header{padding:16px 20px;border-bottom:1px solid var(--purple-mid);}
+.mlc.sup .mlc-header{background:var(--purple-pale);}
+.mlc.unsup .mlc-header{background:var(--gray-soft);}
+.mlc-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.mlc-tag{font-size:12px;font-weight:600;color:var(--gray-muted);}
+.mlc-body{padding:16px 20px;}
+.mlc-body p{font-size:14px;line-height:1.65;margin-bottom:12px;}
+.mlc-examples{display:flex;flex-direction:column;gap:6px;}
+.mlc-ex{background:var(--gray-soft);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--gray-text);}
+.mlc-ex strong{color:var(--purple-dark);}
+
+/* Training vs Inference visual */
+.t-vs-i{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.tvi-header{background:var(--purple-pale);padding:16px 22px;border-bottom:1px solid var(--purple-mid);}
+.tvi-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.tvi-body{display:grid;grid-template-columns:1fr 40px 1fr;}
+.tvi-col{padding:20px;}
+.tvi-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.tvi-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.tvi-col li{font-size:14px;line-height:1.5;padding-left:14px;position:relative;}
+.tvi-col li::before{content:"→";position:absolute;left:0;color:var(--purple);font-size:12px;}
+.tvi-arrow{display:flex;align-items:center;justify-content:center;background:var(--purple-mid);font-size:20px;color:var(--purple-dark);}
+.tvi-col.inference{background:var(--gray-soft);}
+.tvi-critical{background:var(--orange-pale);border-top:1px solid var(--purple-mid);padding:14px 20px;font-size:14px;color:#78350F;line-height:1.6;}
+.tvi-critical strong{font-weight:700;}
+
+/* Model accuracy — what it actually means */
+.accuracy-sim{margin:24px 0;}
+.acc-controls{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.acc-label{font-size:14px;font-weight:600;color:var(--purple-dark);}
+.acc-slider{-webkit-appearance:none;width:220px;height:6px;border-radius:3px;background:var(--purple-mid);outline:none;}
+.acc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;}
+.acc-value{font-family:"Fraunces",serif;font-size:24px;font-weight:900;color:var(--purple);min-width:52px;}
+.acc-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;}
+.acc-card{border:1.5px solid var(--purple-mid);border-radius:14px;padding:14px;text-align:center;}
+.acc-card-num{font-family:"Fraunces",serif;font-size:28px;font-weight:900;line-height:1;}
+.acc-card-label{font-size:12px;color:var(--gray-muted);margin-top:4px;line-height:1.3;}
+.acc-insight{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:14px;padding:14px 16px;margin-top:12px;font-size:14px;line-height:1.65;color:var(--purple-dark);}
+
+/* ML vocabulary reference */
+.vocab-list{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.vocab-item{border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;display:flex;gap:16px;cursor:pointer;transition:all .2s;}
+.vocab-item:hover{border-color:var(--purple);background:var(--purple-pale);}
+.vocab-item.expanded{border-color:var(--purple);background:var(--purple-pale);}
+.vocab-term{font-size:15px;font-weight:700;color:var(--purple-dark);min-width:200px;flex-shrink:0;}
+.vocab-short{font-size:14px;color:var(--gray-muted);}
+.vocab-long{display:none;font-size:14px;line-height:1.65;color:var(--gray-text);margin-top:8px;padding-top:8px;border-top:1px solid var(--purple-mid);}
+.vocab-item.expanded .vocab-long{display:block;}
+.vocab-item.expanded .vocab-short{display:none;}
+
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.ml-compare,.tvi-body,.acc-grid{grid-template-columns:1fr;}.tvi-arrow{display:none;}.vocab-term{min-width:unset;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.2 · How AI Works (Conceptually)</div>
+  <h1>Machine Learning Without the Math: How Models Are Built, Trained, and Deployed in Tech Environments</h1>
+  <p class="hero-sub">You don't need to know the math to work effectively with AI tools. But you do need the vocabulary and the mental models — because these concepts shape every capability and limitation you'll encounter in the field.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why You Need This Vocabulary</h2>
+    <p>Machine learning vocabulary shows up in vendor documentation, incident reports, team discussions, job postings, and product meetings. When a security tool's documentation says it uses "unsupervised clustering," or a monitoring vendor describes their model as "achieving 94% accuracy on test data," you need to know what those phrases actually mean — not just to sound informed, but to make good decisions about when to trust the output.</p>
+    <p><mark>The vocabulary is not trivia. It's operational knowledge.</mark> Understanding the difference between training and inference, or why "94% accuracy" might be misleading for your use case, directly determines whether you use AI tools well or badly.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Two Fundamentally Different Ways AI Learns</h2>
+    <p>All machine learning involves learning patterns from data — but the nature of the learning differs significantly based on what kind of data is available. The most important distinction to understand:</p>
+    <div class="ml-compare">
+      <div class="mlc sup">
+        <div class="mlc-header">
+          <div class="mlc-title">Supervised Learning</div>
+          <div class="mlc-tag">Learns from labeled examples</div>
+        </div>
+        <div class="mlc-body">
+          <p>The model is trained on data where each example has a known answer (the "label"). The model learns to predict the label for new examples it hasn't seen. This requires significant labeling effort upfront — someone has to label all that training data.</p>
+          <p><strong>In practice:</strong> A spam filter trained on millions of emails labeled "spam" or "not spam." A code review tool trained on code labeled "vulnerable" or "safe." An anomaly detector trained on server logs labeled "normal" or "incident."</p>
+          <div class="mlc-examples">
+            <div class="mlc-ex"><strong>Security:</strong> Malware classifier — trained on files labeled as malware or clean</div>
+            <div class="mlc-ex"><strong>DevOps:</strong> Incident predictor — trained on metrics labeled as pre-incident or normal</div>
+            <div class="mlc-ex"><strong>Dev:</strong> Bug detector — trained on code labeled as containing bugs or not</div>
+          </div>
+        </div>
+      </div>
+      <div class="mlc unsup">
+        <div class="mlc-header">
+          <div class="mlc-title">Unsupervised Learning</div>
+          <div class="mlc-tag">Discovers structure without labels</div>
+        </div>
+        <div class="mlc-body">
+          <p>The model finds patterns and structure in data without being told what to look for. It clusters similar things together or detects things that don't fit the general pattern. No labeling required — but the model's findings require human interpretation.</p>
+          <p><strong>In practice:</strong> A ticket clustering tool that groups similar support requests without being told what the categories are. An anomaly detector that flags deviations from learned baseline behavior without needing labeled incident examples.</p>
+          <div class="mlc-examples">
+            <div class="mlc-ex"><strong>IT Support:</strong> Ticket clustering — groups similar issues without predefined categories</div>
+            <div class="mlc-ex"><strong>Security:</strong> Behavior anomaly detection — flags unusual patterns without labeled incidents</div>
+            <div class="mlc-ex"><strong>DevOps:</strong> Log clustering — groups similar log events for faster triage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>The critical difference for your work: supervised models tell you what something <em>is</em> (this is spam, this is malware, this is a bug). Unsupervised models tell you something looks <em>different</em> from the rest. Both require human interpretation, but in different ways.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Training vs. Inference — Two Completely Different Activities</h2>
+    <p>The single most important conceptual distinction in machine learning for practical use:</p>
+    <div class="t-vs-i">
+      <div class="tvi-header"><div class="tvi-title">Training vs. Inference — What's Actually Happening</div></div>
+      <div class="tvi-body">
+        <div class="tvi-col">
+          <div class="tvi-col-title">🏋️ Training (happens once)</div>
+          <ul>
+            <li>Massive amounts of labeled data are fed to the model</li>
+            <li>The model's internal parameters adjust to reduce prediction errors</li>
+            <li>This process runs for hours, days, or weeks on specialized hardware</li>
+            <li>At the end, parameters are frozen — the model "knows" what it learned</li>
+            <li>Training is expensive; inference is cheap</li>
+          </ul>
+        </div>
+        <div class="tvi-arrow">→</div>
+        <div class="tvi-col inference">
+          <div class="tvi-col-title">⚡ Inference (happens every time you use it)</div>
+          <ul>
+            <li>A new input (your prompt, your code, your log) is run through the frozen model</li>
+            <li>The model generates a prediction based on its learned parameters</li>
+            <li>This happens in milliseconds to seconds</li>
+            <li>The model does NOT update or learn from this interaction</li>
+            <li>Same input can produce slightly different outputs each time</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tvi-critical"><strong>Why this matters for you:</strong> Every time you use an AI tool — submitting a prompt, triggering a code review, watching an anomaly alert — you are using inference. The model is not learning from your interaction. It is applying what it learned during training. This means it cannot adapt to your specific environment, your team's conventions, or events that happened after training. That knowledge has to come from you.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What "Model Accuracy" Actually Means</h2>
+    <p>Vendor documentation and research papers frequently cite accuracy numbers. Understanding what those numbers actually mean — and what they don't — prevents a lot of misplaced trust. Use the interactive simulator below to understand how accuracy translates to real-world outcomes:</p>
+    <div class="accuracy-sim fade-in">
+      <div class="acc-controls">
+        <div class="acc-label">Model accuracy:</div>
+        <input type="range" class="acc-slider" id="accSlider" min="50" max="99" value="95">
+        <div class="acc-value" id="accValue">95%</div>
+        <div style="font-size:13px;color:var(--gray-muted);">Adjust to see impact on results</div>
+      </div>
+      <div class="acc-grid" id="accGrid">
+        <!-- populated by JS -->
+      </div>
+      <div class="acc-insight" id="accInsight"></div>
+    </div>
+    <p>The key insight: a model that is "95% accurate" still makes a lot of mistakes in high-volume environments. And accuracy on test data does not guarantee accuracy on your specific inputs, which may differ from what the model was tested on.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The ML Vocabulary You'll Actually Need</h2>
+    <p>These terms appear in vendor documentation, team discussions, and product evaluations. Click each to understand what it means and why it matters for your work:</p>
+    <div class="vocab-list" id="vocabList"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>You don't need to build a model to work effectively with one. You need enough vocabulary to ask the right questions: What was it trained on? How is accuracy measured? What does it get wrong? What inputs fall outside its training distribution? Those questions are available to everyone.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A vendor claims their security anomaly detection tool achieves "98% accuracy." A security engineer wants to evaluate this tool for their organization. Which question is most important to ask the vendor first?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">What programming language was used to build the model?</button>
+        <button class="qopt" onclick="doQ(this,true)">What does "accuracy" mean in this context — specifically, what dataset was it measured on, what counts as a true positive vs. false positive, and how does it perform on environments similar to ours?</button>
+        <button class="qopt" onclick="doQ(this,false)">Whether the model uses supervised or unsupervised learning</button>
+        <button class="qopt" onclick="doQ(this,false)">How many parameters the model has — larger models are always more accurate</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Supervised learning requires labeled training examples and tells you what something is. Unsupervised learning discovers patterns without labels and tells you something looks different. Both require human interpretation, in different ways.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Training happens once — the model's parameters are frozen after it. Inference happens every time you use the tool. The model does NOT learn from your interactions. Context that the model lacks has to come from you, explicitly.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>"Model accuracy" is not a simple number. It depends on what dataset accuracy was measured on, how the task was defined, whether false positives and false negatives are counted differently, and whether the test data resembles your actual environment.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The ML vocabulary — training, inference, supervised, unsupervised, false positive, false negative, overfitting, model drift — is operational knowledge. It determines whether you evaluate AI tools critically or accept vendor claims at face value.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+// Accuracy simulator
+const slider=document.getElementById("accSlider");
+const accValue=document.getElementById("accValue");
+const accGrid=document.getElementById("accGrid");
+const accInsight=document.getElementById("accInsight");
+
+function updateAccuracy(){
+  const pct=parseInt(slider.value);
+  accValue.textContent=pct+"%";
+  const daily=10000; // events per day
+  const TP=Math.round(daily*0.02*pct/100); // assume 2% actually anomalous
+  const FP=Math.round(daily*0.98*(100-pct)/100);
+  const TN=Math.round(daily*0.98*pct/100);
+  const FN=Math.round(daily*0.02*(100-pct)/100);
+  const precision=TP>0?Math.round(100*TP/(TP+FP)):0;
+  accGrid.innerHTML=`
+    <div class="acc-card" style="background:var(--green-pale);border-color:var(--green)"><div class="acc-card-num" style="color:var(--green)">${TP.toLocaleString()}</div><div class="acc-card-label">True positives<br>(real threats caught)</div></div>
+    <div class="acc-card" style="background:var(--red-pale);border-color:var(--red)"><div class="acc-card-num" style="color:var(--red)">${FP.toLocaleString()}</div><div class="acc-card-label">False positives<br>(false alarms)</div></div>
+    <div class="acc-card" style="background:var(--gray-soft)"><div class="acc-card-num" style="color:var(--gray-muted)">${TN.toLocaleString()}</div><div class="acc-card-label">True negatives<br>(correctly ignored)</div></div>
+    <div class="acc-card" style="background:var(--orange-pale);border-color:#FDE68A"><div class="acc-card-num" style="color:var(--orange)">${FN}</div><div class="acc-card-label">False negatives<br>(real threats missed)</div></div>`;
+  accInsight.innerHTML=`<strong>At ${pct}% accuracy on 10,000 daily events</strong> (assuming 2% true anomaly rate): your team would receive <strong>${FP.toLocaleString()} false alarms per day</strong> alongside ${TP} real threats — a ${precision}% precision rate. ${FP>200?`That's roughly ${Math.round(FP/8)} false alarms per working hour. <strong>This is why alert fatigue is a documented operational problem even with "high-accuracy" models.</strong>`:"This is a manageable false positive rate for a well-staffed team with good triage processes."}`;
+}
+slider.addEventListener("input",updateAccuracy);
+updateAccuracy();
+
+// Vocab
+const vocab=[
+  {term:"Training data",short:"The examples the model learned from",long:"The corpus of labeled examples used to train a model. For a spam classifier: millions of emails labeled 'spam' or 'not spam.' For a code analyzer: thousands of code snippets labeled 'vulnerable' or 'safe.' The model's capabilities and limitations are entirely determined by what was in its training data. Data that was missing, biased, or outdated produces capabilities that are missing, biased, or outdated."},
+  {term:"Hyperparameters",short:"Settings that control how the model learns",long:"Configuration choices made before training begins — like how fast the model adjusts during training, how complex the model is allowed to be, and how many times it reviews the training data. Unlike model parameters (which are learned during training), hyperparameters are set by human engineers. They significantly affect what the model ends up being good at."},
+  {term:"Overfitting",short:"When a model memorized training data instead of learning patterns",long:"A model that overfit memorized its training examples rather than learning the underlying patterns. It performs very well on training data and poorly on new inputs. In practice: a spam filter that memorized specific spam emails rather than learning what makes email spammy. It catches all old spam but misses new campaigns. Vendors should report performance on held-out test data, not training data, to demonstrate the model generalizes."},
+  {term:"Underfitting",short:"When a model is too simple to learn the real patterns",long:"A model that underfit failed to learn enough from training data — often because the model architecture was too simple or training was stopped too early. In practice: an anomaly detector that only flags the most extreme deviations and misses subtle but important patterns. Underfitting produces models that are too conservative — high false negative rate, missing real events."},
+  {term:"False positive",short:"AI flags something that isn't actually a problem",long:"The model predicted something was in a class (a threat, a bug, a spam email) when it actually wasn't. In security: an AI alerts on legitimate user behavior as a potential intrusion. In code review: an AI flags a pattern as a vulnerability when the specific context makes it safe. False positives are the primary driver of alert fatigue — when there are too many, humans stop reviewing alerts carefully."},
+  {term:"False negative",short:"AI misses something that was actually a problem",long:"The model predicted something was NOT in a class when it actually was. In security: an AI doesn't flag a real intrusion attempt. In code review: an AI misses an actual vulnerability. False negatives are the more dangerous failure mode — you don't know what you missed. Highly tuned models that minimize false positives often do so by increasing false negatives."},
+  {term:"Model drift",short:"When a model's environment changes after training",long:"After training, the world keeps changing — but the model doesn't. When the real-world distribution of inputs shifts significantly from what the model was trained on, performance degrades. In security: threat actor tactics evolve faster than training cycles. In IT ops: a monitoring model trained on old infrastructure patterns becomes less accurate as the architecture evolves. Models require periodic retraining to maintain performance."},
+  {term:"Training cutoff",short:"The date after which the model knows nothing",long:"The point at which training data collection ended. The model has no knowledge of events, patterns, vulnerabilities, library releases, or changes that happened after this date. For code completion tools: APIs released after the cutoff may be suggested incorrectly or not at all. For security tools: threat patterns discovered after the cutoff won't be recognized. Always ask vendors when a model was last retrained."},
+  {term:"Precision vs. recall",short:"Two competing measures of model quality",long:"Precision: of all the things the model flagged, what fraction were actually correct? High precision = few false positives. Recall: of all the things that should have been flagged, what fraction did the model catch? High recall = few false negatives. These trade off against each other. A security team prioritizing recall (catching everything real) will accept more false positives. A team prioritizing precision (only alert on high-confidence threats) will miss some real threats."},
+];
+
+const list=document.getElementById("vocabList");
+vocab.forEach(v=>{
+  const div=document.createElement("div");
+  div.className="vocab-item";
+  div.innerHTML=`<div class="vocab-term">${v.term}</div><div style="flex:1"><div class="vocab-short">${v.short}</div><div class="vocab-long">${v.long}</div></div>`;
+  div.onclick=()=>{const was=div.classList.contains("expanded");document.querySelectorAll(".vocab-item").forEach(i=>i.classList.remove("expanded"));if(!was)div.classList.add("expanded");};
+  list.appendChild(div);
+});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. 'Accuracy' is the most commonly misunderstood metric in AI evaluation. 98% accuracy sounds impressive — but what dataset was it measured on? What was the base rate of true anomalies in that dataset? How does the model perform specifically on network traffic patterns similar to yours? A model that is 98% accurate on a benchmark dataset with a 50% anomaly rate may perform very differently on your real-world data with a 0.1% anomaly rate.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("what does accuracy mean"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not the most critical question. Programming language doesn't affect output quality for end users. Supervised vs. unsupervised is useful context but secondary. And model size does not straightforwardly correlate with accuracy — a smaller specialized model often outperforms a larger general model on domain-specific tasks. The accuracy question — specifically, what it was measured on and how — is the highest-leverage evaluation question.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Context Is the Most Important Thing AI Doesn't Have — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+
+/* The 85C scenario — core interactive simulation */
+.scenario-builder{border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;margin:24px 0;}
+.sb-header{background:var(--purple-pale);padding:18px 22px;border-bottom:1px solid var(--purple-mid);}
+.sb-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.sb-subtitle{font-size:14px;color:var(--gray-muted);}
+.sb-body{padding:22px;}
+.sb-signal{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;margin-bottom:18px;}
+.sb-signal-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:6px;}
+.sb-signal-text{font-family:"Courier New",monospace;font-size:14px;color:var(--purple-dark);line-height:1.6;}
+.sb-question{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sb-contexts{display:flex;flex-direction:column;gap:8px;}
+.sb-ctx{border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;transition:all .2s;background:var(--white);}
+.sb-ctx:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sb-ctx.selected{border-color:var(--purple);background:var(--purple-pale);}
+.sb-ctx-label{font-size:15px;font-weight:600;color:var(--gray-text);}
+.sb-ctx-reveal{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--purple-mid);font-size:14px;line-height:1.65;color:var(--gray-text);}
+.sb-ctx.selected .sb-ctx-reveal{display:block;}
+.sb-action{display:inline-block;font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;margin-top:6px;}
+.action-urgent{background:var(--red-pale);color:var(--red);}
+.action-monitor{background:var(--orange-pale);color:var(--orange);}
+.action-ignore{background:var(--green-pale);color:var(--green);}
+
+/* The four types of context */
+.context-types{display:flex;flex-direction:column;gap:14px;margin:24px 0;}
+.ct{border:1.5px solid var(--purple-mid);border-radius:18px;overflow:hidden;}
+.ct-header{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;background:var(--white);transition:background .2s;}
+.ct-header:hover{background:var(--purple-pale);}
+.ct-icon{font-size:22px;flex-shrink:0;}
+.ct-title{font-size:16px;font-weight:700;color:var(--purple-dark);flex:1;}
+.ct-chevron{font-size:12px;color:var(--gray-muted);transition:transform .25s;}
+.ct-body{display:none;border-top:1px solid var(--purple-mid);padding:18px 20px;background:var(--purple-pale);}
+.ct-body.open{display:block;animation:fadeIn .25s ease;}
+.ct-body p{font-size:15px;line-height:1.7;margin-bottom:10px;}
+.ct-body p:last-child{margin-bottom:0;}
+.ct-examples{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.ct-ex{background:var(--white);border-radius:8px;padding:8px 12px;font-size:13px;line-height:1.55;color:var(--gray-text);}
+
+/* Why this gap is permanent */
+.permanent-gap{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:28px;margin:24px 0;}
+.pg-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.pg-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;}
+.pg-rows{display:flex;flex-direction:column;gap:10px;}
+.pg-row{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;display:flex;gap:12px;}
+.pg-row-icon{font-size:18px;flex-shrink:0;}
+.pg-row-text{font-size:14px;line-height:1.6;color:var(--gray-text);}
+.pg-row-text strong{color:var(--purple-dark);}
+
+/* How to use this — practical habits */
+.habits{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.habit{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.habit-num{width:32px;height:32px;background:var(--purple);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:15px;font-weight:700;flex-shrink:0;}
+.habit-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.habit-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.2 · How AI Works (Conceptually)</div>
+  <h1>Why Context Is the Most Important Thing AI Doesn't Have — And Why That Makes Your Job More Valuable</h1>
+  <p class="hero-sub">AI sees the signal. You know what the signal means. This distinction — between data and context — is why human judgment remains essential in every AI-assisted workflow, and why it becomes more important as AI handles more.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Same Signal, Three Different Answers</h2>
+    <p>One of the most important concepts in the lesson is the temperature example: a sensor reads 85°C. Is that a problem? The answer is: <mark>it depends entirely on context that the sensor doesn't have.</mark></p>
+    <p>This isn't a quirk of temperature sensors — it's a fundamental characteristic of every AI system. The same data signal produces the correct response only when interpreted with the right context. And context, by definition, is not in the data. It's in the environment, the history, the organization, and the people who understand all three.</p>
+    <p>Work through the scenario below — the same sensor reading, four different contexts. Click each to see how context determines the correct response:</p>
+    <div class="scenario-builder">
+      <div class="sb-header">
+        <div class="sb-title">Same Signal — Different Contexts</div>
+        <div class="sb-subtitle">A temperature sensor reads 85°C. What should happen next?</div>
+      </div>
+      <div class="sb-body">
+        <div class="sb-signal">
+          <div class="sb-signal-label">🌡️ AI Alert</div>
+          <div class="sb-signal-text">TEMPERATURE ALERT — Sensor 14<br>Current reading: 85°C<br>Threshold exceeded (normal: &lt;60°C)<br>Severity: HIGH | Confidence: 0.94</div>
+        </div>
+        <div class="sb-question">Select a context to see what the correct response actually is:</div>
+        <div class="sb-contexts" id="sbContexts"></div>
+      </div>
+    </div>
+    <p>The AI generated the same alert with the same confidence score in every scenario. The correct response ranged from immediate emergency shutdown to ignoring the reading entirely. <strong>Context made every difference — and context is something the AI doesn't have.</strong></p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Types of Context AI Consistently Lacks</h2>
+    <p>Context isn't a vague concept — it has specific categories that show up consistently in tech work. Click each to understand what kind of context it is and why AI can't have it:</p>
+    <div class="context-types" id="contextTypes"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why This Gap Is Permanent — Not a Bug to Be Fixed</h2>
+    <div class="permanent-gap">
+      <div class="pg-label">A structural reality, not a temporary limitation</div>
+      <div class="pg-title">Context is not in the data. It's in the world.</div>
+      <div class="pg-rows">
+        <div class="pg-row"><div class="pg-row-icon">📊</div><div class="pg-row-text"><strong>AI learns from historical data.</strong> But the meaning of that data is shaped by the organization, environment, and circumstances that produced it — none of which are captured in the data itself.</div></div>
+        <div class="pg-row"><div class="pg-row-icon">🔄</div><div class="pg-row-text"><strong>Organizations change continuously.</strong> New systems get added. Teams adopt new practices. Infrastructure evolves. Risk tolerances shift. A model trained on last year's data has no knowledge of this year's context.</div></div>
+        <div class="pg-row"><div class="pg-row-icon">🧠</div><div class="pg-row-text"><strong>Context requires situational awareness.</strong> Knowing that tonight's traffic spike is because of a product launch — not an attack — requires being embedded in the organization. AI is not embedded anywhere. It processes inputs in isolation.</div></div>
+        <div class="pg-row"><div class="pg-row-icon">⚡</div><div class="pg-row-text"><strong>The context gap widens over time.</strong> The longer a model runs without retraining, the more the real world diverges from what it learned. Context doesn't just matter at deployment — it becomes more important as the model ages.</div></div>
+      </div>
+    </div>
+    <p>This is why the role of the "human in the loop" is not going away as AI improves. Better AI generates more signals with higher confidence. But the meaning of those signals in your specific environment still requires someone who knows the environment.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>AI can tell you that something changed. It cannot tell you whether that change matters, why it happened, or what to do about it. Those answers live in organizational knowledge that no training dataset has ever captured.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How to Use Context Actively in AI-Assisted Work</h2>
+    <p>Understanding the context gap suggests three practical habits for working with AI tools more effectively:</p>
+    <div class="habits">
+      <div class="habit"><div class="habit-num">1</div><div><div class="habit-title">Provide context explicitly in your inputs</div><div class="habit-desc">When using a coding assistant, tell it your architecture, your conventions, your constraints. When using a monitoring tool, configure baselines that reflect your specific environment. The more organizational context you can inject into the AI's inputs, the more relevant its outputs will be.</div></div></div>
+      <div class="habit"><div class="habit-num">2</div><div><div class="habit-title">Interpret AI outputs with organizational context</div><div class="habit-desc">Before acting on an AI recommendation, ask: "Does this make sense given what I know about this specific system, at this specific time, in this specific environment?" The AI generated the output without that knowledge. You're adding it.</div></div></div>
+      <div class="habit"><div class="habit-num">3</div><div><div class="habit-title">Flag when context changes</div><div class="habit-desc">When your organization changes — new infrastructure, new practices, new risk posture — that's when AI tool performance is most likely to degrade. Proactively reconfiguring baselines, updating model inputs, and flagging unusual AI behavior is part of operating AI tools responsibly over time.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A DevOps team's AI monitoring system flags an unusually high volume of database queries as anomalous. The on-call engineer knows that the company is running a product launch event tonight with heavy user traffic. What does this scenario illustrate?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The AI tool is poorly calibrated and should be disabled during known high-traffic events</button>
+        <button class="qopt" onclick="doQ(this,false)">The alert should be escalated immediately — anomalous database query volume is always a serious incident</button>
+        <button class="qopt" onclick="doQ(this,true)">The AI correctly identified a pattern deviation from its learned baseline. The engineer's knowledge that a product launch is happening tonight is context the AI doesn't have — which is exactly what makes the human review step essential. In this case, that context changes "incident" to "expected load"</button>
+        <button class="qopt" onclick="doQ(this,false)">AI monitoring tools should automatically adjust for known events by accessing the company calendar</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The same AI signal requires different responses in different contexts. AI generates the signal with the same confidence regardless of context. The human provides the context that determines what the signal actually means.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Four types of context AI consistently lacks: organizational history, environmental specifics, temporal context (what's happening right now), and business context (what matters and why). All four require human knowledge to bridge.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The context gap is permanent, not a bug that better AI will fix. Organizational context lives in the world, not in training data. As AI generates more signals with higher confidence, the importance of human contextual judgment increases — not decreases.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Three practical habits follow: provide context explicitly in your inputs, interpret AI outputs with organizational context, and flag when your environment changes so AI tool performance can be evaluated and reconfigured accordingly.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const scenarios=[
+  {label:"🖥️ A data center server room",reveal:`This is almost certainly a hardware failure. Server hardware has specific thermal thresholds — CPUs and GPUs are designed to operate well below 85°C. At this temperature, thermal throttling has likely already begun, and hardware damage may follow. <span class="sb-action action-urgent">⚠️ Urgent: investigate immediately</span> The AI alert is correct. Shut down the affected server for investigation.`},
+  {label:"🌡️ A factory where industrial furnaces are used",reveal:`85°C is probably completely normal. Industrial manufacturing processes frequently involve high temperatures as part of normal operations. The alert threshold needs to be reconfigured for this environment. <span class="sb-action action-ignore">✓ Safe to ignore — reconfigure threshold</span> The AI is using the wrong baseline for this environment. The alert is a misconfiguration, not a real problem.`},
+  {label:"🧪 A laboratory running a scheduled heat test",reveal:`85°C is expected and intentional — someone deliberately set this test up. The alert is technically correct (threshold exceeded) but contextually wrong (the threshold is appropriate for normal operation, not a controlled test). <span class="sb-action action-monitor">⟳ Monitor but do not act</span> Check the lab schedule. If a heat test is running, this is expected. If not, investigate.`},
+  {label:"🏢 A standard office building HVAC system",reveal:`85°C in an HVAC system is a potential emergency — commercial HVAC systems are designed to operate well below this temperature. This could indicate a compressor failure, refrigerant leak, or fire risk. <span class="sb-action action-urgent">⚠️ Urgent: contact facilities immediately</span> This is outside normal operating range for office HVAC and requires immediate human assessment.`},
+];
+
+const sbCtx=document.getElementById("sbContexts");
+scenarios.forEach((s,i)=>{
+  const div=document.createElement("div");
+  div.className="sb-ctx";
+  div.innerHTML=`<div class="sb-ctx-label">${s.label}</div><div class="sb-ctx-reveal">${s.reveal}</div>`;
+  div.onclick=()=>{
+    const was=div.classList.contains("selected");
+    document.querySelectorAll(".sb-ctx").forEach(c=>c.classList.remove("selected"));
+    if(!was)div.classList.add("selected");
+  };
+  sbCtx.appendChild(div);
+});
+
+const ctTypes=[
+  {icon:"🏛️",title:"Organizational history — what has happened before",body:`AI knows general patterns. It doesn't know your organization's specific history: the incident that happened last November and why; the production change that went wrong three months ago; the vendor whose alerts turned out to be noise; the service that always spikes on the first of the month for billing reasons.\n\nThis history shapes how an alert should be interpreted and prioritized. Without it, AI can only apply general patterns — which may not match your specific environment's track record.`,examples:["A monitoring tool flags a database connection spike — but your team knows this happens every Sunday during the backup process","A security tool flags a new IP connection — but your team knows this is the range used by a new remote developer hired last week","A code reviewer flags a pattern — but your team knows this pattern is a deliberate architectural decision made two years ago for specific performance reasons"]},
+  {icon:"🌍",title:"Environmental specifics — the unique characteristics of your system",body:`AI was trained on general data. It doesn't know the specifics of your infrastructure: your non-standard architecture; the legacy system that communicates on an unusual port for historical reasons; the service that uses 300% of normal memory because it caches aggressively by design; the container that always restarts during deployment for configuration reasons.\n\nThese specifics mean that "anomaly from baseline" can be a false positive even for a correctly calibrated baseline, because your environment is not a typical environment.`,examples:["A network anomaly detector flags traffic on port 8443 — but your organization uses this port for an internal service by convention","A memory alert fires on a service — but this service is designed to pre-load a large dataset into memory on startup","An authentication tool flags a service account login at 3am — but this account runs scheduled maintenance jobs at exactly that time"]},
+  {icon:"📅",title:"Temporal context — what is happening right now",body:`AI has no knowledge of current events in your organization: the product launch happening tonight; the security audit running this week; the migration that started this morning; the marketing campaign driving 10x normal traffic. These current events completely change what an AI alert means — the same signal can be an emergency in one moment and expected in another.\n\nThis temporal context requires being connected to the organization — to the people, the calendar, the communications channels — in a way that no trained model can be.`,examples:["A traffic spike alert fires at 8pm — but your team knows a product launch email went out at 7:45pm","An anomaly detector flags unusual file access patterns — but a quarterly audit is currently running that requires reviewing those exact files","Authentication alerts fire across multiple accounts — but IT sent out a forced password reset to all users this morning"]},
+  {icon:"💼",title:"Business context — what actually matters and why",body:`AI has no concept of business impact: whether the affected service is customer-facing or internal; whether this is a VIP customer or a test account; whether the company can absorb 20 minutes of downtime or whether 20 seconds triggers an SLA breach; whether this is a busy sales quarter where reliability is paramount or a slow period where a risky update is acceptable.\n\nBusiness context determines the appropriate urgency and response to any technical event — and it's context that lives entirely in the humans who understand the business.`,examples:["Two servers are down — but only one serves external customers. The business impact is very different.","A performance degradation is 15% — acceptable if it's an internal tool, unacceptable if it affects payment processing","An alert fires on Friday afternoon — the response priority changes if this is before a major weekend sale event vs. a quiet weekend"]},
+];
+
+const ctEl=document.getElementById("contextTypes");
+ctTypes.forEach(ct=>{
+  const div=document.createElement("div");
+  div.className="ct";
+  const body=ct.body.split("\n\n").map(p=>`<p>${p}</p>`).join("");
+  const examples=ct.examples.map(e=>`<div class="ct-ex">${e}</div>`).join("");
+  div.innerHTML=`<div class="ct-header" onclick="toggleCT(this.parentElement)"><div class="ct-icon">${ct.icon}</div><div class="ct-title">${ct.title}</div><div class="ct-chevron">▼</div></div><div class="ct-body">${body}<div class="ct-examples"><strong style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple)">Examples from tech work</strong><div style="height:8px"></div>${examples}</div></div>`;
+  ctEl.appendChild(div);
+});
+
+function toggleCT(el){
+  const body=el.querySelector(".ct-body");
+  const isOpen=body.classList.contains("open");
+  document.querySelectorAll(".ct-body").forEach(b=>b.classList.remove("open"));
+  document.querySelectorAll(".ct-chevron").forEach(c=>c.style.transform="");
+  if(!isOpen){body.classList.add("open");el.querySelector(".ct-chevron").style.transform="rotate(180deg)";}
+}
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a textbook example of temporal context changing the meaning of an AI signal. The AI correctly identified a deviation from its learned baseline of database query volume. The engineer correctly identified that a product launch — which the AI has no knowledge of — explains the deviation. Without that human contextual knowledge, the correct response would have been to treat this as a potential incident. With it, the correct response is to acknowledge the alert and continue monitoring normally.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("the engineer's knowledge"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Disabling the tool removes valuable monitoring during high-risk periods — product launches are exactly when you want monitoring active. And automatic calendar integration, while technically conceivable, wouldn't solve the underlying problem: the same event can have very different implications depending on context the system can't fully capture. The human review step, combined with organizational knowledge, is what converts an alert from 'possible incident' to 'expected behavior.' That conversion requires human judgment.";}
+}
+</script>
+</body>
+</html>
