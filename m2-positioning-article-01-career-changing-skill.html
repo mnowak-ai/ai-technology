@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why AI in Tech Support Is the Most Career-Changing Skill You Can Add Right Now — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;transition:width .1s;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:30px;font-weight:700;color:var(--purple-dark);margin-bottom:18px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:21px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.cards{display:flex;flex-direction:column;gap:12px;margin:24px 0;}
+.card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.card-icon{font-size:24px;margin-bottom:6px;}
+.card-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.card-desc{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.card-note{font-size:12px;font-weight:600;color:var(--purple);background:var(--purple-pale);border-radius:6px;padding:3px 10px;display:inline-block;margin-top:8px;}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0;}
+.stat-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:22px;text-align:center;}
+.stat-number{font-family:"Fraunces",serif;font-size:40px;font-weight:900;color:var(--purple);line-height:1;}
+.stat-label{font-size:13px;line-height:1.5;color:var(--gray-text);margin-top:8px;}
+.split-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+.compare-box{border-radius:16px;padding:22px;border:1.5px solid;}
+.compare-box.before{background:#FFF8F8;border-color:#FFC5C5;}
+.compare-box.after{background:var(--green-pale);border-color:#9DE0BC;}
+.compare-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}
+.compare-label.before-label{color:var(--red);}
+.compare-label.after-label{color:var(--green);}
+.compare-role{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.compare-item{font-size:13px;line-height:1.6;color:var(--gray-text);padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.compare-item:last-child{border-bottom:none;}
+.compare-item::before{content:"→ ";color:var(--purple);font-weight:700;}
+.salary-band{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:22px;margin:24px 0;}
+.sb-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.sb-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--purple-mid);}
+.sb-row:last-child{border-bottom:none;}
+.sb-title{font-size:14px;font-weight:600;color:var(--purple-dark);width:220px;flex-shrink:0;}
+.sb-bar-wrap{flex:1;background:#E8D5FF;border-radius:100px;height:10px;overflow:hidden;}
+.sb-bar{height:100%;background:var(--purple);border-radius:100px;transition:width 1s ease;}
+.sb-val{font-size:13px;font-weight:700;color:var(--purple);width:80px;text-align:right;flex-shrink:0;}
+.timeline{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.tl-item{display:flex;gap:20px;padding:18px 0;border-bottom:1px solid var(--purple-mid);}
+.tl-item:last-child{border-bottom:none;}
+.tl-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--purple-pale);border:2px solid var(--purple-mid);}
+.tl-body{flex:1;}
+.tl-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:4px;}
+.tl-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.tl-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:24px;padding-right:24px;}.stat-row{grid-template-columns:1fr;}.split-compare{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Module 2 · Positioning Article</div>
+  <h1>Why AI in Tech Support Is the Most Career-Changing Skill You Can Add Right Now</h1>
+  <p class="hero-sub">The gap between tech professionals who can use AI tools and those who can diagnose problems, verify outputs, and apply critical judgment to AI suggestions is growing fast — and so is the salary difference between them.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Something Significant Is Happening in Technical Roles Right Now</h2>
+    <p>In technical support, operations, and IT environments, there is a shift happening that doesn't get enough attention. It isn't that AI is replacing tech professionals — it's that AI is <mark>splitting tech professionals into two groups</mark>: those who use AI tools reactively, accepting their outputs at face value, and those who use AI diagnostically, knowing how to read its suggestions, verify its conclusions, and apply judgment when it gets things wrong.</p>
+    <p>The gap between those two groups is widening. And the salary difference, the career trajectory difference, and the job security difference between them is already showing up in real hiring data.</p>
+    <p>This module exists to put you in the second group.</p>
+    <div class="pull-quote"><p>AI doesn't replace the tech professional who can think. It makes that person extraordinarily more productive — and makes the person who can't think critically about AI outputs increasingly replaceable.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Numbers Behind the Shift</h2>
+    <p>This isn't speculation. The workforce data from the last two years tells a clear story about where technical roles are heading and which skills are commanding premium compensation.</p>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-number">78%</div>
+        <div class="stat-label">of IT managers report that AI tools have been deployed in their support and operations environments — but fewer than half say staff are using them effectively (CompTIA State of Tech Workforce 2024)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3.2×</div>
+        <div class="stat-label">faster incident resolution time reported by teams that use AI diagnostic tools with trained human oversight compared to teams using AI tools without structured verification habits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">28%</div>
+        <div class="stat-label">average salary premium for tech support and operations roles that specifically require AI workflow skills over equivalent roles without that requirement (LinkedIn Workforce Report 2024)</div>
+      </div>
+    </div>
+    <p>The pattern is the same one that emerged when EHR systems arrived in healthcare, when CRM platforms became standard in sales, and when cloud infrastructure replaced on-premise servers in IT. <mark>Every time a powerful tool enters a field, the professionals who learn to use it critically — not just operationally — separate themselves from the field.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What "Using AI in Tech Support" Actually Means</h2>
+    <p>There is a version of using AI in tech support that doesn't create a career advantage. That version looks like this: an AI tool surfaces a suggestion, the tech professional follows it, the problem may or may not be solved. This is AI as a slightly faster search engine — and it doesn't separate anyone from anyone.</p>
+    <p>The version that creates a career advantage looks completely different. It involves four skills that this module directly builds:</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">Diagnostic thinking with AI</div>
+        <div class="card-desc">Understanding what signals AI is reading — logs, alerts, error codes, performance metrics — and being able to interpret both what AI concludes from them and what it might be missing. This is the skill that lets you use AI to diagnose faster without losing accuracy.</div>
+        <div class="card-note">Covered in Lesson 2.1</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">✅</div>
+        <div class="card-title">Verification of AI outputs</div>
+        <div class="card-desc">Knowing how to spot the subtle errors AI produces — wrong root cause identification, hallucinated fix procedures, high-confidence wrong answers — before they cause larger problems. This is the skill that makes you trustworthy in an AI-augmented environment.</div>
+        <div class="card-note">Covered in Lesson 2.2</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">Workflow integration across roles</div>
+        <div class="card-desc">Understanding how AI fits into technical workflows differently depending on whether you're in support, development, operations, or analysis — and how to coordinate effectively with other roles when AI is involved in the handoffs between them.</div>
+        <div class="card-note">Covered in Lesson 2.3</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <div class="card-title">Critical judgment about AI suggestions</div>
+        <div class="card-desc">The capstone skill: knowing when to trust, when to verify, when to override, and when to escalate an AI suggestion. This is the judgment that no tool can automate — and the one that defines the career ceiling for everyone in a technical role that uses AI.</div>
+        <div class="card-note">Covered in Lesson 2.4</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What This Looks Like in Real Roles</h2>
+    <p>The career difference between someone who has these skills and someone who doesn't isn't subtle. Here's what it looks like across two tech professionals in equivalent roles, working in the same AI-augmented environment:</p>
+    <div class="split-compare">
+      <div class="compare-box before">
+        <div class="compare-label before-label">Without AI diagnostic skills</div>
+        <div class="compare-role">Tech Support Analyst — Level 1</div>
+        <div class="compare-item">Receives AI-suggested fix, applies it, waits to see if it works</div>
+        <div class="compare-item">When AI is wrong, escalates to senior staff</div>
+        <div class="compare-item">Treats AI confidence scores as reliability guarantees</div>
+        <div class="compare-item">Can't explain why AI suggested what it did</div>
+        <div class="compare-item">Limited advancement path in AI-augmented environments</div>
+      </div>
+      <div class="compare-box after">
+        <div class="compare-label after-label">With AI diagnostic skills</div>
+        <div class="compare-role">Tech Support Analyst — Advancement Track</div>
+        <div class="compare-item">Reviews AI suggestion against system signals before applying</div>
+        <div class="compare-item">Catches AI errors before they become larger incidents</div>
+        <div class="compare-item">Understands what confidence scores mean and don't mean</div>
+        <div class="compare-item">Can explain and document the diagnostic reasoning chain</div>
+        <div class="compare-item">Trusted with higher-complexity problems, faster advancement</div>
+      </div>
+    </div>
+    <p>Both of these people may be using the same AI tools. The difference isn't access to technology — it's the quality of thinking they bring to the technology they already have access to.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Where These Skills Pay Off in the Market</h2>
+    <p>The salary premium for AI-integrated technical skills is real and already visible in current job postings. Here's how it maps across common technical role types:</p>
+    <div class="salary-band">
+      <div class="sb-label">💼 Salary Premium Range — AI-Integrated vs. Standard Technical Roles</div>
+      <div class="sb-row">
+        <div class="sb-title">IT Support / Help Desk</div>
+        <div class="sb-bar-wrap"><div class="sb-bar" style="width:45%"></div></div>
+        <div class="sb-val">+15–22%</div>
+      </div>
+      <div class="sb-row">
+        <div class="sb-title">Systems / Network Operations</div>
+        <div class="sb-bar-wrap"><div class="sb-bar" style="width:65%"></div></div>
+        <div class="sb-val">+22–30%</div>
+      </div>
+      <div class="sb-row">
+        <div class="sb-title">DevOps / Site Reliability</div>
+        <div class="sb-bar-wrap"><div class="sb-bar" style="width:80%"></div></div>
+        <div class="sb-val">+28–38%</div>
+      </div>
+      <div class="sb-row">
+        <div class="sb-title">IT Operations Analyst</div>
+        <div class="sb-bar-wrap"><div class="sb-bar" style="width:72%"></div></div>
+        <div class="sb-val">+25–35%</div>
+      </div>
+      <div class="sb-row">
+        <div class="sb-title">AI Workflow / Implementation Specialist</div>
+        <div class="sb-bar-wrap"><div class="sb-bar" style="width:95%"></div></div>
+        <div class="sb-val">+35–50%</div>
+      </div>
+    </div>
+    <p>The premium is highest in roles where the volume and complexity of AI-generated outputs is greatest — which is also where the cost of getting things wrong is highest. <mark>The market pays more for people who can be trusted with AI, not just people who have access to it.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Shifts This Module Will Produce in You</h2>
+    <p>This isn't a module about learning to click buttons in an AI tool. By the end of Lessons 2.1 through 2.4, three things should be different about how you approach technical work:</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot">1</div>
+        <div class="tl-body">
+          <div class="tl-label">Shift One</div>
+          <div class="tl-title">From passive user to active evaluator</div>
+          <div class="tl-desc">Right now, most tech professionals receive AI suggestions and decide whether to apply them. After this module, you'll understand what the AI is actually doing — what signals it read, why it reached its conclusion, what it might have missed — which means you become an active participant in the diagnostic process rather than a passive executor of tool outputs.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">2</div>
+        <div class="tl-body">
+          <div class="tl-label">Shift Two</div>
+          <div class="tl-title">From individual tool user to workflow thinker</div>
+          <div class="tl-desc">AI tools don't operate in isolation — they sit inside workflows that connect support, development, operations, and analysis teams. After this module, you'll understand how AI fits differently into each of those roles, how handoffs work when AI is involved, and what breaks down when teams integrate AI poorly. That systems-level understanding is what hiring managers mean when they say they want someone who "gets AI" — not just someone who knows a product.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">3</div>
+        <div class="tl-body">
+          <div class="tl-label">Shift Three</div>
+          <div class="tl-title">From uncertain to confident under AI pressure</div>
+          <div class="tl-desc">One of the most common experiences in AI-augmented tech environments is uncertainty: AI has given a high-confidence suggestion, the team is expecting action, and the tech professional isn't sure whether to trust it. After this module, you'll have a framework — not a rule to follow blindly, but a set of questions, verification habits, and judgment principles — that lets you act with confidence even when AI outputs are uncertain.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A tech manager is reviewing two candidates for an IT Operations Analyst role. Both have 3 years of experience and know the same AI monitoring tools. What is the most likely deciding factor between them in the current market?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Which candidate learned the AI tools first — earlier adoption signals stronger technical initiative</button>
+        <button class="qopt" onclick="cq(this,false)">Which candidate has more certifications in the specific AI platforms the company uses</button>
+        <button class="qopt" onclick="cq(this,true)">Which candidate can demonstrate that they verify AI outputs, understand diagnostic reasoning, and apply judgment when AI suggestions conflict with system reality — not just that they know how to use the tools</button>
+        <button class="qopt" onclick="cq(this,false)">Which candidate is faster at applying AI-suggested fixes, since speed is the primary operational advantage of AI tools</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI is splitting technical professionals into two groups: those who use AI reactively and those who use it diagnostically, with critical judgment and verification habits. The salary premium for the second group is already 15–50% higher depending on the role — and the gap is growing.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The four skills this module builds — diagnostic thinking with AI, output verification, workflow integration, and critical judgment — are what separate a tech professional who "uses AI tools" from one who can be trusted with them in high-stakes technical environments. The second description is what hiring managers in 2025 are actively seeking and paying a significant premium to find.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>By the end of Module 2, three things should shift: how you evaluate AI suggestions (from passive to active), how you think about AI in workflows (from individual tools to connected systems), and how you act under AI pressure (from uncertain to confident). Those three shifts are what this module is actually building.</p></div>
+    </div>
+  </div>
+
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+// Animate salary bars when visible
+const barObs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll(".sb-bar").forEach(b=>{b.style.width=b.style.width;});}}),{threshold:.3});
+document.querySelectorAll(".salary-band").forEach(el=>barObs.observe(el));
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Tool knowledge is table stakes — both candidates have it. What differentiates candidates in the current market is the ability to think critically about AI outputs: to verify before acting, to understand why AI reached a conclusion, to catch errors before they become incidents, and to apply judgment when AI suggestion conflicts with operational reality. That thinking layer is what this module directly builds, and it's what the 28% average salary premium actually reflects.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("verify AI outputs"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Speed of adoption and certification count matter less than most people expect in a differentiated hiring decision. What tech managers are actually evaluating is judgment — specifically, whether a candidate can be trusted to use AI tools in high-stakes operational environments where errors have real consequences. A candidate who is fast but uncritical is a liability in those environments. A candidate who verifies, understands, and applies judgment is an asset. The premium is for the latter.";}
+}
+</script>
+</body>
+</html>

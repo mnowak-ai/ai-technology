@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is Technical Problem-Solving, Really? A Beginner's Map of How IT Diagnosis Works — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:30px;font-weight:700;color:var(--purple-dark);margin-bottom:18px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:21px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Interactive signal explorer */
+.signal-explorer{margin:24px 0;}
+.signal-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.sig-tab{padding:10px 18px;border-radius:100px;border:2px solid var(--purple-mid);background:var(--white);font-size:13px;font-weight:600;color:var(--gray-muted);cursor:pointer;transition:all .2s;}
+.sig-tab.active{background:var(--purple);border-color:var(--purple);color:white;}
+.sig-panel{display:none;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:28px;animation:fadeIn .3s ease;}
+.sig-panel.active{display:block;}
+.sig-icon{font-size:32px;margin-bottom:10px;}
+.sig-name{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sig-tagline{font-size:14px;color:var(--purple);font-weight:600;margin-bottom:14px;}
+.sig-what{font-size:15px;line-height:1.7;color:var(--gray-text);margin-bottom:16px;}
+.sig-example{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:18px;margin-bottom:14px;}
+.sig-example-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sig-code{font-family:monospace;font-size:13px;background:#1E1B2E;color:#C9B8FF;border-radius:8px;padding:12px 16px;line-height:1.7;white-space:pre-wrap;word-break:break-word;}
+.sig-what-means{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.sig-professional{background:var(--purple-pale);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.6;color:var(--purple-dark);margin-top:12px;}
+.sig-professional strong{font-weight:700;}
+/* Root cause vs symptom simulator */
+.rca-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.rca-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.rca-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.rca-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;}
+.rca-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:20px;margin-bottom:16px;}
+.rca-sc-label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+.rca-sc-text{font-size:15px;font-weight:600;color:var(--purple-dark);margin-bottom:12px;}
+.rca-choices{display:flex;flex-direction:column;gap:8px;}
+.rca-choice{background:var(--gray-soft);border:2px solid var(--purple-mid);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:14px;transition:all .2s;text-align:left;}
+.rca-choice:hover{border-color:var(--purple);background:var(--purple-pale);}
+.rca-choice.symptom-fix{background:#FFF8F8;border-color:#FFC5C5;color:var(--red);pointer-events:none;}
+.rca-choice.root-fix{background:var(--green-pale);border-color:#9DE0BC;color:var(--green);pointer-events:none;}
+.rca-choice span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px;opacity:.7;}
+.rca-feedback{font-size:14px;line-height:1.65;padding:14px 18px;border-radius:10px;margin-top:10px;display:none;}
+.rca-feedback.show{display:block;animation:fadeIn .35s ease;}
+.rca-feedback.s-fb{background:#FFF8F8;color:var(--red);}
+.rca-feedback.r-fb{background:var(--green-pale);color:var(--green);}
+/* Anatomy of an IT system */
+.system-map{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:24px 0;}
+.sys-layer{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;text-align:center;}
+.sys-icon{font-size:28px;margin-bottom:8px;}
+.sys-name{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sys-desc{font-size:12px;line-height:1.55;color:var(--gray-muted);}
+.sys-examples{margin-top:8px;}
+.sys-tag{display:inline-block;background:var(--purple-pale);color:var(--purple);font-size:11px;font-weight:600;border-radius:6px;padding:2px 8px;margin:2px;}
+/* Framework */
+.framework{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.fw-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.fw-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.fw-sub{font-size:15px;color:var(--gray-muted);margin-bottom:20px;}
+.fw-steps{display:flex;flex-direction:column;gap:10px;}
+.fw-step{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 20px;display:flex;gap:14px;}
+.fw-num{width:32px;height:32px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:700;flex-shrink:0;}
+.fw-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.fw-detail{font-size:13px;line-height:1.55;color:var(--gray-text);}
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:24px;padding-right:24px;}.system-map{grid-template-columns:1fr;}.signal-tabs{flex-direction:column;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Module 2 · Positioning Article</div>
+  <h1>What Is Technical Problem-Solving, Really? A Beginner's Map of How IT Diagnosis Works</h1>
+  <p class="hero-sub">Before AI diagnosis makes sense, the underlying discipline needs to exist in your head. This article builds the mental model of technical problem-solving that everything in Module 2 depends on — from system signals to root causes to the moment a human expert has to make a call.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>If You've Never Worked in a Technical Operations Environment</h2>
+    <p>The lessons in Module 2 assume you're about to enter — or are already in — a world where systems produce streams of data, things break in non-obvious ways, and fixing them requires a systematic process of investigation before any solution is attempted.</p>
+    <p>If that world is unfamiliar to you, this article is where you need to start. Not because you'll become an IT expert from reading it — but because <mark>the concepts of signals, symptoms, root causes, and diagnostic workflows are the vocabulary everything else in this module is built on.</mark> Without them, watching AI diagnose a problem is like watching someone speak a language you don't know.</p>
+    <p>With them, every lesson in Module 2 snaps into place.</p>
+    <div class="pull-quote"><p>A system problem is never random. Something caused it. Diagnosis is the disciplined process of working backward from what you can see to what actually happened.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What a "System" Actually Is</h2>
+    <p>When tech professionals talk about "the system," they usually mean a collection of components that work together to deliver something — a website, an application, a database, a network connection. Each component has a job. When one fails, others are often affected in ways that aren't immediately obvious.</p>
+    <p>Think of it like a restaurant kitchen. The front-of-house staff (the user-facing part) can't take orders if the kitchen (the backend) is down. The kitchen can't cook if the walk-in cooler (the database) isn't working. The walk-in cooler can't run if the electrical system (the infrastructure) has a problem. A customer complaining that their food is late doesn't know — and doesn't care — which layer failed. But the people responsible for keeping the kitchen running need to know exactly which one did.</p>
+    <p>IT systems work the same way. They have layers:</p>
+    <div class="system-map">
+      <div class="sys-layer">
+        <div class="sys-icon">🖥️</div>
+        <div class="sys-name">Infrastructure Layer</div>
+        <div class="sys-desc">The physical and virtual foundation — servers, networks, storage, cloud resources</div>
+        <div class="sys-examples">
+          <span class="sys-tag">Servers</span>
+          <span class="sys-tag">Networks</span>
+          <span class="sys-tag">Storage</span>
+          <span class="sys-tag">Cloud VMs</span>
+        </div>
+      </div>
+      <div class="sys-layer">
+        <div class="sys-icon">⚙️</div>
+        <div class="sys-name">Application Layer</div>
+        <div class="sys-desc">The software that runs on top of infrastructure — databases, APIs, services, code</div>
+        <div class="sys-examples">
+          <span class="sys-tag">Databases</span>
+          <span class="sys-tag">APIs</span>
+          <span class="sys-tag">Services</span>
+          <span class="sys-tag">Web Apps</span>
+        </div>
+      </div>
+      <div class="sys-layer">
+        <div class="sys-icon">👤</div>
+        <div class="sys-name">User / Experience Layer</div>
+        <div class="sys-desc">What users interact with — interfaces, portals, dashboards, response times</div>
+        <div class="sys-examples">
+          <span class="sys-tag">UI / UX</span>
+          <span class="sys-tag">Portals</span>
+          <span class="sys-tag">Dashboards</span>
+          <span class="sys-tag">Performance</span>
+        </div>
+      </div>
+    </div>
+    <p>Why does this matter for diagnosis? Because <mark>a problem often appears at one layer but originates in another.</mark> A user seeing a slow-loading page (user layer) might be caused by a database connection timeout (application layer) triggered by a server running out of memory (infrastructure layer). The visible problem and the actual problem are three layers apart — and treating the visible problem without finding the actual one doesn't fix anything.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Types of System Signals — And What They're Telling You</h2>
+    <p>Systems communicate through signals. Learning to read those signals is the foundational skill of technical problem-solving — and the starting point for everything AI diagnostic tools do. Click each signal type to see what it looks like in the real world:</p>
+    <div class="signal-explorer">
+      <div class="signal-tabs">
+        <button class="sig-tab active" onclick="showSig('errors')">🔴 Errors</button>
+        <button class="sig-tab" onclick="showSig('logs')">📋 Logs</button>
+        <button class="sig-tab" onclick="showSig('alerts')">🔔 Alerts</button>
+        <button class="sig-tab" onclick="showSig('abnormal')">📊 Abnormal Behavior</button>
+      </div>
+      <div class="sig-panel active" id="sig-errors">
+        <div class="sig-icon">🔴</div>
+        <div class="sig-name">Errors</div>
+        <div class="sig-tagline">The system telling you something broke — right now, explicitly</div>
+        <div class="sig-what">Errors are direct failure messages. They tell you something specific went wrong — a connection failed, a file wasn't found, a process crashed, a threshold was exceeded. They're the most visible type of signal because they usually stop something from working.</div>
+        <div class="sig-example">
+          <div class="sig-example-label">🖥️ Real Example — Database Connection Error</div>
+          <div class="sig-code">ERROR: Connection timed out to DB-Main [Retry 1/3]
+ERROR: Connection timed out to DB-Main [Retry 2/3]
+ERROR: Connection timed out to DB-Main [Retry 3/3] — FAILED
+CRITICAL: Database service unresponsive</div>
+        </div>
+        <div class="sig-what-means">This error sequence tells a tech professional that the application tried three times to connect to the main database, failed all three times, and now the database service isn't responding at all. The application depending on that database is likely down or degraded.</div>
+        <div class="sig-professional"><strong>What a professional does:</strong> Errors are not the diagnosis — they're the starting point. The question is not "what does the error say?" but "what caused the condition the error is reporting?" Those are different questions with different answers.</div>
+      </div>
+      <div class="sig-panel" id="sig-logs">
+        <div class="sig-icon">📋</div>
+        <div class="sig-name">Logs</div>
+        <div class="sig-tagline">The system's running record of everything that happened — your historical evidence trail</div>
+        <div class="sig-what">Logs are timestamped records of events in a system. Unlike errors (which flag failures), logs capture everything — successful operations, warnings, state changes, user actions, and failures. They are the primary evidence source for diagnosing what led up to a problem.</div>
+        <div class="sig-example">
+          <div class="sig-example-label">🖥️ Real Example — System Log Sequence</div>
+          <div class="sig-code">10:45:12 INFO: Service 'UserAuth' started successfully
+10:45:15 WARN: High latency detected on API gateway
+10:45:18 ERROR: Connection timed out to DB-Main [Retry 1/3]
+10:45:21 ERROR: Connection timed out to DB-Main [Retry 2/3]
+10:45:24 ERROR: Connection timed out to DB-Main [Retry 3/3] — FAILED
+10:45:27 CRITICAL: Database service unresponsive</div>
+        </div>
+        <div class="sig-what-means">Reading this log chronologically, a professional can see that the UserAuth service started fine (INFO), then high latency appeared on the API gateway (WARN) before any database errors — which means the gateway problem appeared before the database problem. That sequencing is a diagnostic clue: the gateway issue may have caused or contributed to the database connection failures, not the other way around.</div>
+        <div class="sig-professional"><strong>What a professional does:</strong> Reads logs for sequence, not just content. The order of events often matters as much as the events themselves. A warning that appears before a critical error is a different diagnostic situation than one that appears after.</div>
+      </div>
+      <div class="sig-panel" id="sig-alerts">
+        <div class="sig-icon">🔔</div>
+        <div class="sig-name">Alerts</div>
+        <div class="sig-tagline">Proactive notifications triggered when thresholds are crossed — the early warning system</div>
+        <div class="sig-what">Alerts are pre-configured notifications that fire when a metric crosses a defined threshold — CPU usage exceeds 95%, memory reaches 85% capacity, error rate spikes above baseline. Unlike errors (which report something that already broke), alerts are designed to catch problems before they become outages.</div>
+        <div class="sig-example">
+          <div class="sig-example-label">🖥️ Real Example — Active Alert Dashboard</div>
+          <div class="sig-code">🔴 CRITICAL — Database: High CPU Usage (&gt;95%) | Status: New
+🔴 CRITICAL — API Gateway: 5xx Error Rate Spike | Status: New
+🟡 WARNING  — Storage: Volume /data reaching capacity (85%) | Status: Acknowledged</div>
+        </div>
+        <div class="sig-what-means">This alert panel shows two critical and one warning. The storage warning was already acknowledged — someone knew about it. But the two criticals are new. They arrived at roughly the same time, which suggests the database CPU overload and the API Gateway error rate spike may be connected — potentially two effects of the same underlying cause, not two separate problems.</div>
+        <div class="sig-professional"><strong>What a professional does:</strong> Looks for alerts that co-occur. Multiple alerts firing at the same time often point to a single root cause rather than multiple independent problems. Pattern recognition across alerts is one of the most valuable diagnostic skills — and one AI tools are specifically designed to assist with.</div>
+      </div>
+      <div class="sig-panel" id="sig-abnormal">
+        <div class="sig-icon">📊</div>
+        <div class="sig-name">Abnormal Behavior</div>
+        <div class="sig-tagline">Performance deviations that aren't errors yet — but indicate something is wrong</div>
+        <div class="sig-what">Abnormal behavior is the hardest signal to read because it doesn't announce itself. It's a metric that's higher or lower than it normally is — response times that are unusually slow, memory usage that's gradually climbing, network throughput that's dropped without a clear trigger. No error has fired. No alert has crossed a threshold. But something is off.</div>
+        <div class="sig-example">
+          <div class="sig-example-label">🖥️ Real Example — Key Performance Indicators</div>
+          <div class="sig-code">DB Server CPU Load:     98%  ████████████████████ ← Abnormal (normal: ~40%)
+API Gateway Memory:  28GB/32GB ██████████████████  ← Approaching limit
+Network Throughput:   8 Mbps  ████                ← Abnormal (normal: ~80 Mbps)</div>
+        </div>
+        <div class="sig-what-means">None of these are error messages — they're readings. But a professional who knows the system's normal ranges can see immediately that the DB server is running at more than twice its normal CPU load, the API gateway memory is nearly exhausted, and network throughput has dropped to about 10% of normal. That combination of abnormalities, seen together, suggests a serious systemic problem even before any explicit error fires.</div>
+        <div class="sig-professional"><strong>What a professional does:</strong> Develops a sense of normal ranges for key metrics in their environment. Abnormal behavior can only be identified if you know what normal looks like — which is why experienced tech professionals are more effective than AI at catching subtle deviations in systems they know well.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Most Important Distinction in All of Technical Problem-Solving</h2>
+    <p>Every single concept in Module 2 depends on understanding the difference between a symptom and a root cause. This distinction is so fundamental that it shapes every professional diagnostic decision — and every AI diagnostic suggestion you will ever evaluate.</p>
+    <p>A <strong>symptom</strong> is what you can observe. A <strong>root cause</strong> is what actually produced the symptom. Treating the symptom makes the visible problem go away temporarily. Fixing the root cause makes the underlying problem go away permanently.</p>
+    <p>In the scenario below, read each option and decide: is this treating the symptom, or fixing the root cause?</p>
+    <div class="rca-sim">
+      <div class="rca-label">🔬 Symptom vs. Root Cause Simulator</div>
+      <div class="rca-title">The Scenario</div>
+      <div class="rca-sub">Your company's customer portal is loading very slowly. Users are complaining. The database server is showing 98% CPU load. A tech professional investigates and finds that a new software deployment from this morning added an unoptimized database query that runs thousands of times per minute.</div>
+      <div class="rca-scenario">
+        <div class="rca-sc-label">🩹 Option A</div>
+        <div class="rca-sc-text">Restart the database server to clear the CPU overload and restore normal portal speed</div>
+        <div class="rca-choices" id="choices-a">
+          <button class="rca-choice" onclick="rcaChoice('a','symptom')"><span>My answer</span>This fixes the symptom — it addresses the observable CPU overload</button>
+          <button class="rca-choice" onclick="rcaChoice('a','root')"><span>My answer</span>This fixes the root cause — it eliminates the underlying problem</button>
+        </div>
+        <div class="rca-feedback" id="fb-a"></div>
+      </div>
+      <div class="rca-scenario">
+        <div class="rca-sc-label">🔧 Option B</div>
+        <div class="rca-sc-text">Roll back the morning's deployment and fix the unoptimized database query before redeploying</div>
+        <div class="rca-choices" id="choices-b">
+          <button class="rca-choice" onclick="rcaChoice('b','symptom')"><span>My answer</span>This fixes the symptom — it addresses the observable CPU overload</button>
+          <button class="rca-choice" onclick="rcaChoice('b','root')"><span>My answer</span>This fixes the root cause — it eliminates the underlying problem</button>
+        </div>
+        <div class="rca-feedback" id="fb-b"></div>
+      </div>
+    </div>
+    <p>Option A gets the portal working again — temporarily. But the unoptimized query is still in the code. As soon as the database restarts and traffic picks up, the CPU will spike again. <mark>A fix that doesn't address the root cause will produce the same problem again — often repeatedly, until the organization is worn down enough to finally look deeper.</mark></p>
+    <p>This is why diagnosis — the process of identifying root cause — is treated as a separate discipline from resolution. You cannot fix what you don't understand.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Five-Step Diagnostic Process</h2>
+    <p>Professional IT diagnosis follows a consistent process. It varies in complexity and duration depending on the problem — a straightforward hardware failure might move through these steps in minutes; a complex multi-system failure might take hours. But the logic is always the same:</p>
+    <div class="framework">
+      <div class="fw-label">🔍 The Diagnostic Process</div>
+      <div class="fw-title">How Tech Professionals Investigate a System Problem</div>
+      <div class="fw-sub">Each step builds on the last. Skipping steps — especially the early ones — is the most common source of diagnostic errors.</div>
+      <div class="fw-steps">
+        <div class="fw-step">
+          <div class="fw-num">1</div>
+          <div>
+            <div class="fw-q">Recognize that something is wrong</div>
+            <div class="fw-detail">An alert fires, a user reports a problem, a metric deviates from normal, an error appears in a log. Before diagnosis can begin, the problem must be noticed. This sounds obvious — but in complex systems generating thousands of data points, noticing the right signal at the right time is itself a skill.</div>
+          </div>
+        </div>
+        <div class="fw-step">
+          <div class="fw-num">2</div>
+          <div>
+            <div class="fw-q">Gather all available evidence</div>
+            <div class="fw-detail">Read logs from the relevant time window. Check alert dashboards. Pull performance metrics. Talk to users about what they experienced and when. Review recent changes — deployments, configuration updates, infrastructure modifications — that might be related. The goal is to collect all available signals before forming any hypothesis.</div>
+          </div>
+        </div>
+        <div class="fw-step">
+          <div class="fw-num">3</div>
+          <div>
+            <div class="fw-q">Form hypotheses about possible root causes</div>
+            <div class="fw-detail">Based on the evidence gathered, generate a list of possible causes — ranked by likelihood. This is where AI diagnostic tools are most useful: they can analyze patterns across thousands of data points and propose possible causes with confidence scores. But this is also where human judgment is most important: AI hypotheses must be evaluated against operational context the AI doesn't have.</div>
+          </div>
+        </div>
+        <div class="fw-step">
+          <div class="fw-num">4</div>
+          <div>
+            <div class="fw-q">Test and eliminate hypotheses</div>
+            <div class="fw-detail">Work through possible causes systematically — testing each one against available evidence, eliminating those that don't fit, and gathering additional data where needed. This is not guessing and checking — it's systematic investigation. The goal is to narrow possible causes to a confirmed single root cause.</div>
+          </div>
+        </div>
+        <div class="fw-step">
+          <div class="fw-num">5</div>
+          <div>
+            <div class="fw-q">Confirm root cause and implement a verified fix</div>
+            <div class="fw-detail">Once the root cause is confirmed, implement a fix that addresses it — not just the visible symptom. Then verify that the fix worked: the symptoms should resolve and the system should return to normal performance. Document the diagnosis, the root cause, and the fix for the team's future reference.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>Notice that Step 3 — forming hypotheses — is where AI diagnostic tools enter the process. They don't replace Steps 1, 2, 4, or 5. They accelerate Step 3 by processing more evidence faster than a human analyst can manually. <mark>AI diagnosis is most powerful when it sits inside this five-step framework, not when it replaces it.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A tech professional sees an alert: "Server memory at 92% — threshold exceeded." They immediately restart the server to free the memory. The alert clears. Two hours later, the same alert fires again. What most likely went wrong in their diagnostic process?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The server restart was the wrong fix — they should have rebooted a different server</button>
+        <button class="qopt" onclick="cq(this,false)">The alert threshold was set too low and was causing a false positive</button>
+        <button class="qopt" onclick="cq(this,true)">They treated the symptom (high memory) without identifying the root cause (what was consuming the memory and why). The restart cleared the symptom temporarily, but the underlying cause remained and reproduced the problem</button>
+        <button class="qopt" onclick="cq(this,false)">Server restarts are not a valid technical fix — they should have escalated immediately instead</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>IT systems produce four types of signals — errors (explicit failures), logs (historical event records), alerts (threshold-crossing notifications), and abnormal behavior (performance deviations). Each type requires a different reading skill. All four are what AI diagnostic tools analyze, and understanding what they are is how you evaluate what AI tells you about them.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most critical distinction in technical problem-solving is symptom versus root cause. A symptom is what you observe; a root cause is what produced it. Fixing the symptom makes the problem temporarily invisible. Fixing the root cause makes it stop. AI diagnostic tools help identify possible root causes — but confirming and acting on them requires human judgment.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Professional IT diagnosis follows a five-step process: recognize the problem, gather evidence, form hypotheses, test and eliminate hypotheses, confirm and fix the root cause. AI enters at Step 3 — generating hypotheses faster than humans can manually. It does not replace the steps before or after. This module is about using AI well inside that process, not using AI instead of it.</p></div>
+    </div>
+  </div>
+
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showSig(id){
+  document.querySelectorAll(".sig-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".sig-panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById("sig-"+id).classList.add("active");
+  event.target.classList.add("active");
+}
+const rcaDone={a:false,b:false};
+function rcaChoice(scenario,choice){
+  if(rcaDone[scenario])return;
+  rcaDone[scenario]=true;
+  const choicesBtns=document.querySelectorAll("#choices-"+scenario+" .rca-choice");
+  const fb=document.getElementById("fb-"+scenario);
+  if(scenario==="a"){
+    if(choice==="symptom"){
+      choicesBtns[0].classList.add("root-fix");choicesBtns[1].classList.add("symptom-fix");
+      fb.className="rca-feedback show r-fb";
+      fb.textContent="✅ Correct — this is symptom treatment. Restarting the database clears the immediate CPU overload and restores portal speed temporarily. But the unoptimized query is still in the deployed code. The next time traffic builds up, the CPU will spike again. You've treated what you can see, not what caused it.";
+    } else {
+      choicesBtns[0].classList.add("root-fix");choicesBtns[1].classList.add("symptom-fix");
+      fb.className="rca-feedback show s-fb";
+      fb.textContent="❌ Restarting the server treats the symptom — the high CPU load — not the root cause. The unoptimized database query that's driving the CPU spike is still in the deployed code. As soon as the server is back up and traffic returns, the query runs again and the CPU spikes again.";
+    }
+  } else {
+    if(choice==="root"){
+      choicesBtns[0].classList.add("symptom-fix");choicesBtns[1].classList.add("root-fix");
+      fb.className="rca-feedback show r-fb";
+      fb.textContent="✅ Correct — this is root cause treatment. Rolling back the deployment and fixing the unoptimized query eliminates the actual source of the problem. The CPU overload was a symptom of that query running constantly; fix the query, and the CPU load returns to normal — permanently, not just until traffic picks up again.";
+    } else {
+      choicesBtns[0].classList.add("symptom-fix");choicesBtns[1].classList.add("root-fix");
+      fb.className="rca-feedback show s-fb";
+      fb.textContent="❌ Rolling back the deployment and fixing the query is root cause treatment — it eliminates the actual source of the problem. The correct label here is 'root cause fix,' not 'symptom fix.'";
+    }
+  }
+  choicesBtns.forEach(b=>b.style.pointerEvents="none");
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The restart treated the symptom — high memory usage — but the underlying cause was still present. Whatever was consuming the memory (a memory leak in a process, an unoptimized application, a runaway service) continued running after the restart and drove memory back up. Root cause diagnosis requires understanding what was using the memory and why, then addressing that specifically — not just clearing the symptom by restarting and hoping it doesn't come back.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("treated the symptom"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Server restarts can be a valid technical action — but they are symptom treatment, not root cause diagnosis. The issue here isn't which action was taken; it's that no diagnostic process preceded the action. The tech professional saw an alert, applied a quick fix, and moved on without understanding what was driving the memory consumption. That's the step that was skipped — and why the same problem returned.";}
+}
+</script>
+</body>
+</html>

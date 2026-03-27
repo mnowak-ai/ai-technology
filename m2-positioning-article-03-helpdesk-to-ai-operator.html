@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Helpdesk to AI Operator: How the Tech Support Role Has Evolved and Where It's Going — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:30px;font-weight:700;color:var(--purple-dark);margin-bottom:18px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:21px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Era timeline */
+.era-timeline{margin:24px 0;position:relative;}
+.era-item{display:flex;gap:0;margin-bottom:0;cursor:pointer;}
+.era-connector{width:3px;background:var(--purple-mid);margin:0 18px;flex-shrink:0;position:relative;}
+.era-connector::before{content:"";width:16px;height:16px;border-radius:50%;background:var(--purple-mid);border:3px solid var(--white);position:absolute;left:-7px;top:20px;transition:background .2s;}
+.era-item.active .era-connector::before{background:var(--purple);}
+.era-item:last-child .era-connector{background:linear-gradient(to bottom, var(--purple-mid), transparent);}
+.era-header{flex:1;padding:16px 0 4px;}
+.era-year{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:4px;}
+.era-name{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.era-tagline{font-size:13px;color:var(--gray-muted);}
+.era-body{display:none;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:22px;margin:8px 0 20px 39px;animation:fadeIn .3s ease;}
+.era-item.active .era-body{display:block;}
+.era-body h3{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.era-desc{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:14px;}
+.era-skills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.era-skill{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;border-radius:8px;padding:5px 12px;}
+.era-fear{background:#FFF8F8;border:1px solid #FFC5C5;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--red);margin-bottom:10px;}
+.era-outcome{background:var(--green-pale);border:1px solid #9DE0BC;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--green);}
+/* Skill evolution tracker */
+.skill-evolution{margin:24px 0;}
+.se-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.se-sub{font-size:14px;color:var(--gray-muted);margin-bottom:18px;}
+.se-row{display:grid;grid-template-columns:1fr 40px 1fr;gap:8px;align-items:center;margin-bottom:10px;}
+.se-old{background:#FFF8F8;border:1px solid #FFC5C5;border-radius:10px;padding:12px 14px;font-size:13px;color:var(--gray-text);}
+.se-arrow{text-align:center;font-size:18px;color:var(--purple);}
+.se-new{background:var(--purple-pale);border:1px solid var(--purple-mid);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--purple-dark);font-weight:500;}
+.se-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;opacity:.7;}
+/* What hasn't changed */
+.unchanged-box{background:var(--orange-pale);border:1.5px solid #FCD34D;border-radius:20px;padding:28px;margin:24px 0;}
+.ub-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+.ub-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:#92400E;margin-bottom:12px;}
+.ub-items{display:flex;flex-direction:column;gap:10px;}
+.ub-item{display:flex;gap:12px;align-items:flex-start;}
+.ub-dot{width:8px;height:8px;background:var(--orange);border-radius:50%;flex-shrink:0;margin-top:6px;}
+.ub-text{font-size:14px;line-height:1.65;color:#92400E;}
+/* Future roles */
+.future-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.future-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;transition:all .2s;cursor:default;}
+.future-card:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:0 8px 24px rgba(123,47,190,.1);}
+.fc-icon{font-size:26px;margin-bottom:8px;}
+.fc-role{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.fc-desc{font-size:13px;line-height:1.6;color:var(--gray-muted);margin-bottom:10px;}
+.fc-skills{display:flex;flex-wrap:wrap;gap:6px;}
+.fc-skill{background:var(--purple-pale);color:var(--purple);font-size:11px;font-weight:600;border-radius:6px;padding:3px 8px;}
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:24px;padding-right:24px;}.future-grid{grid-template-columns:1fr;}.se-row{grid-template-columns:1fr 28px 1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Module 2 · Positioning Article</div>
+  <h1>From Helpdesk to AI Operator: How the Tech Support Role Has Evolved and Where It's Going</h1>
+  <p class="hero-sub">Every time a major technology wave arrived in tech support, people worried it would eliminate the role. Every time, the role changed — and the professionals who adapted came out ahead. AI is the latest wave, and the pattern is holding.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>This Has Happened Before</h2>
+    <p>The anxiety that surrounds AI in technical roles — "will it replace me?" "does this change what my job is?" "do I need to learn something completely new?" — isn't new. The same questions were asked when ticketing software arrived in the 1990s, when remote monitoring tools transformed operations in the 2000s, when cloud infrastructure disrupted the entire field in the 2010s.</p>
+    <p>Each of those waves eliminated some tasks. Each created new ones. <mark>The professionals who thrived weren't the ones who resisted the change — they were the ones who learned to work with the new capability before their peers did.</mark></p>
+    <p>AI is following the same pattern. And understanding that pattern — what changed, what stayed the same, and what it produced for the people who adapted — is the most useful frame for approaching everything in Module 2.</p>
+    <div class="pull-quote"><p>Tech support has never been about knowing how things work when they're fine. It has always been about understanding what to do when they're not. That core hasn't changed in fifty years — only the tools for doing it.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Eras of Tech Support</h2>
+    <p>Click each era to see what the role looked like, what new skills it required, and what happened to the professionals who adapted versus those who didn't:</p>
+    <div class="era-timeline" id="eraTimeline">
+
+      <div class="era-item" id="era-1" onclick="toggleEra('era-1')">
+        <div class="era-connector"></div>
+        <div class="era-header">
+          <div class="era-year">1980s – Early 1990s</div>
+          <div class="era-name">Era 1 — The Break-Fix Era</div>
+          <div class="era-tagline">Phone calls, paper logs, and someone who knew how to fix a printer</div>
+        </div>
+        <div class="era-body">
+          <div class="era-desc">Technical support in this era was almost entirely reactive. A user had a problem — a computer wouldn't start, a printer was jammed, a software installation had failed — and they called or walked over to someone who knew how to fix it. Problems were isolated. Documentation was minimal. Knowledge lived in individuals. The "system" was often a single machine, and diagnosis usually meant physically looking at the hardware.</div>
+          <div class="era-skills">
+            <span class="era-skill">Hardware knowledge</span>
+            <span class="era-skill">Telephone problem-solving</span>
+            <span class="era-skill">Basic software troubleshooting</span>
+            <span class="era-skill">Patience with non-technical users</span>
+          </div>
+          <div class="era-fear">🚨 What people feared: "What if they put all this in a manual and don't need a person anymore?" They didn't. The complexity of systems outpaced any written guide.</div>
+          <div class="era-outcome">✅ What actually happened: Demand for tech support grew as computers became more common. The role expanded rather than contracted.</div>
+        </div>
+      </div>
+
+      <div class="era-item" id="era-2" onclick="toggleEra('era-2')">
+        <div class="era-connector"></div>
+        <div class="era-header">
+          <div class="era-year">Mid-1990s – 2000s</div>
+          <div class="era-name">Era 2 — The Ticketing System Era</div>
+          <div class="era-tagline">Structured workflows, SLAs, and the birth of the helpdesk as a formal function</div>
+        </div>
+        <div class="era-body">
+          <div class="era-desc">Ticketing software — platforms like Remedy and later ServiceNow — formalized tech support into a structured workflow. Every problem became a ticket with a category, a priority, an owner, and an SLA. Knowledge base articles began capturing solutions so they could be reused. Escalation tiers were created. The informal "person who knows how to fix things" became the organized helpdesk team with defined processes, performance metrics, and documentation standards.</div>
+          <div class="era-skills">
+            <span class="era-skill">Ticketing system proficiency</span>
+            <span class="era-skill">Process adherence</span>
+            <span class="era-skill">SLA management</span>
+            <span class="era-skill">Knowledge base writing</span>
+            <span class="era-skill">Escalation judgment</span>
+          </div>
+          <div class="era-fear">🚨 What people feared: "The system is going to standardize everything and turn this into a checkbox job. The skill won't matter anymore." The system did standardize — and created more complexity than it removed.</div>
+          <div class="era-outcome">✅ What actually happened: Professionals who mastered ticketing workflows became the people who managed the systems and processes behind them. The floor of the role rose; so did the ceiling.</div>
+        </div>
+      </div>
+
+      <div class="era-item" id="era-3" onclick="toggleEra('era-3')">
+        <div class="era-connector"></div>
+        <div class="era-header">
+          <div class="era-year">2005 – 2015</div>
+          <div class="era-name">Era 3 — The Remote Monitoring Era</div>
+          <div class="era-tagline">Always-on visibility, proactive alerts, and the rise of IT operations</div>
+        </div>
+        <div class="era-body">
+          <div class="era-desc">Remote Monitoring and Management (RMM) tools changed the fundamental posture of tech support from reactive to proactive. Instead of waiting for users to report problems, tech professionals could now see system health metrics in real time — CPU load, disk space, network performance, service uptime — across dozens or hundreds of machines simultaneously. This created the modern IT operations function: a team whose job is to monitor, detect, and prevent problems before they reach users.</div>
+          <div class="era-skills">
+            <span class="era-skill">Dashboard monitoring</span>
+            <span class="era-skill">Alert interpretation</span>
+            <span class="era-skill">Proactive maintenance</span>
+            <span class="era-skill">Network fundamentals</span>
+            <span class="era-skill">Multi-system awareness</span>
+          </div>
+          <div class="era-fear">🚨 What people feared: "If the tools can monitor everything automatically, the role becomes just watching screens. It's not skilled work anymore." Watching screens without interpreting them correctly turned out to be a significant problem — and a significant skill.</div>
+          <div class="era-outcome">✅ What actually happened: Alert fatigue became a real challenge. Professionals who could distinguish signal from noise — who knew which alerts mattered and why — became significantly more valuable than those who couldn't. Pattern recognition over monitoring data became a premium skill.</div>
+        </div>
+      </div>
+
+      <div class="era-item" id="era-4" onclick="toggleEra('era-4')">
+        <div class="era-connector"></div>
+        <div class="era-header">
+          <div class="era-year">2010s – Early 2020s</div>
+          <div class="era-name">Era 4 — The Cloud Era</div>
+          <div class="era-tagline">Infrastructure as code, distributed systems, and global on-demand scale</div>
+        </div>
+        <div class="era-body">
+          <div class="era-desc">Cloud infrastructure — AWS, Azure, Google Cloud — fundamentally changed what a "system" meant in technical support. Physical servers gave way to virtual machines, containers, and serverless functions. Infrastructure could be provisioned in minutes through code rather than ordered, shipped, and installed over weeks. But distributed cloud systems are dramatically more complex to diagnose: a problem could originate anywhere across a globally distributed architecture, and the signals are exponentially more numerous and interconnected than in on-premise environments.</div>
+          <div class="era-skills">
+            <span class="era-skill">Cloud platform fundamentals</span>
+            <span class="era-skill">Container & virtualization concepts</span>
+            <span class="era-skill">Infrastructure as code basics</span>
+            <span class="era-skill">Distributed systems thinking</span>
+            <span class="era-skill">API and microservice awareness</span>
+          </div>
+          <div class="era-fear">🚨 What people feared: "Cloud means everything is managed by the provider. IT support becomes irrelevant." Cloud environments generate more support complexity, not less — and require more sophisticated diagnostic skills, not fewer.</div>
+          <div class="era-outcome">✅ What actually happened: Cloud-era IT operations became one of the most in-demand technical disciplines in the industry. Professionals who learned cloud fundamentals and could reason through distributed system failures commanded significant salary premiums.</div>
+        </div>
+      </div>
+
+      <div class="era-item active" id="era-5" onclick="toggleEra('era-5')">
+        <div class="era-connector"></div>
+        <div class="era-header">
+          <div class="era-year">2023 – Present</div>
+          <div class="era-name">Era 5 — The AI Era ← We Are Here</div>
+          <div class="era-tagline">AI-assisted diagnosis, verification-first workflows, and critical judgment at scale</div>
+        </div>
+        <div class="era-body">
+          <div class="era-desc">AI diagnostic tools — platforms like Splunk AI, DataRobot AI Ops, ServiceNow AI, and Google Cloud AI — are now analyzing system signals, surfacing possible root causes, generating fix suggestions, and drafting incident reports faster than human teams can manually process the same information. The volume of data that modern cloud systems produce exceeds what any human team can manually analyze in real time. AI is not optional in enterprise technical environments — it is necessary infrastructure.</div>
+          <div class="era-skills">
+            <span class="era-skill">AI output evaluation</span>
+            <span class="era-skill">Diagnostic verification habits</span>
+            <span class="era-skill">Confidence score interpretation</span>
+            <span class="era-skill">Human-AI workflow design</span>
+            <span class="era-skill">Critical judgment under AI pressure</span>
+          </div>
+          <div class="era-fear">🚨 What people fear now: "AI can diagnose problems faster than I can. It can write incident reports. It can suggest fixes. What's left for me to do?" The same thing that was left after every previous wave — the judgment, the context, the accountability, and the decisions that AI cannot own.</div>
+          <div class="era-outcome">✅ What is happening: Professionals who can evaluate AI diagnostic outputs critically — who can verify suggested root causes, catch AI errors before they become production incidents, and apply contextual judgment that AI doesn't have — are becoming the most valued members of technical teams. This module builds exactly those skills.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Changed — And What Didn't</h2>
+    <p>Every era changed which specific skills were required. The underlying mission of the role — <mark>understand what broke, figure out why, and make sure it doesn't keep breaking</mark> — has never changed. Here's how the skills evolved, not disappeared:</p>
+    <div class="skill-evolution">
+      <div class="se-title">The Skill Evolution Map</div>
+      <div class="se-sub">Old skill → What it became in the AI era</div>
+      <div class="se-row">
+        <div class="se-old"><div class="se-label">Break-Fix Era</div>Knowing how to physically fix a piece of hardware</div>
+        <div class="se-arrow">→</div>
+        <div class="se-new"><div class="se-label">AI Era</div>Knowing how to evaluate an AI-suggested configuration fix before applying it</div>
+      </div>
+      <div class="se-row">
+        <div class="se-old"><div class="se-label">Ticketing Era</div>Categorizing and routing support tickets manually</div>
+        <div class="se-arrow">→</div>
+        <div class="se-new"><div class="se-label">AI Era</div>Reviewing AI-generated ticket classifications and escalation recommendations for accuracy</div>
+      </div>
+      <div class="se-row">
+        <div class="se-old"><div class="se-label">Monitoring Era</div>Reading dashboards and interpreting alerts</div>
+        <div class="se-arrow">→</div>
+        <div class="se-new"><div class="se-label">AI Era</div>Evaluating AI-generated anomaly reports and understanding what the AI may have missed</div>
+      </div>
+      <div class="se-row">
+        <div class="se-old"><div class="se-label">Cloud Era</div>Understanding distributed system failures across infrastructure layers</div>
+        <div class="se-arrow">→</div>
+        <div class="se-new"><div class="se-label">AI Era</div>Applying that systems understanding to validate or challenge AI root cause hypotheses</div>
+      </div>
+    </div>
+    <p>In every case, the AI era skill is the prior skill extended — not replaced. The professional who understands how systems fail can evaluate whether AI's proposed root cause makes sense. The one who can read a monitoring dashboard can evaluate whether AI's anomaly detection caught the right thing. <mark>AI amplifies existing judgment. It doesn't replace it.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="unchanged-box">
+      <div class="ub-label">⚠️ What Has Never Changed Across All Five Eras</div>
+      <div class="ub-title">The constants that AI cannot automate</div>
+      <div class="ub-items">
+        <div class="ub-item"><div class="ub-dot"></div><div class="ub-text"><strong>Accountability for outcomes.</strong> When a fix causes a production outage, or when an ignored alert leads to a system failure, a human is accountable. AI tools are never accountable. This means the professional who applies the fix, or makes the call not to escalate, owns the result — regardless of what the AI suggested.</div></div>
+        <div class="ub-item"><div class="ub-dot"></div><div class="ub-text"><strong>Operational context.</strong> AI diagnostic tools are trained on patterns — they don't know that your organization just had a major infrastructure migration, that the team is understaffed this week, or that the "unusual" behavior pattern flagged is actually scheduled maintenance. That context is always in the human's head, never the AI's.</div></div>
+        <div class="ub-item"><div class="ub-dot"></div><div class="ub-text"><strong>Judgment about when to act and when to wait.</strong> AI will flag anomalies. It will not tell you whether the right response is immediate intervention, watchful monitoring, escalation to a senior engineer, or a call to the business that owns the affected system. That decision is always human.</div></div>
+        <div class="ub-item"><div class="ub-dot"></div><div class="ub-text"><strong>Communication with stakeholders.</strong> Telling a business leader that their critical system is down — what happened, what's being done, when it will be resolved — requires human judgment, empathy, and professional communication. AI drafts are a starting point. Ownership is always human.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Where the Role Is Going: New Titles, Same Core Mission</h2>
+    <p>The AI era is producing new role titles that didn't exist five years ago. None of them require you to become a machine learning engineer. All of them require exactly what this module builds — diagnostic thinking with AI, verification habits, workflow integration knowledge, and critical judgment:</p>
+    <div class="future-grid">
+      <div class="future-card">
+        <div class="fc-icon">🔭</div>
+        <div class="fc-role">AI Operations Specialist</div>
+        <div class="fc-desc">Manages AI monitoring tools across an IT environment. Evaluates AI-generated alerts and root cause suggestions. Defines thresholds and escalation criteria for AI alert systems.</div>
+        <div class="fc-skills">
+          <span class="fc-skill">AI output evaluation</span>
+          <span class="fc-skill">Ops fundamentals</span>
+          <span class="fc-skill">Alert management</span>
+        </div>
+      </div>
+      <div class="future-card">
+        <div class="fc-icon">🔧</div>
+        <div class="fc-role">AI Workflow Implementation Lead</div>
+        <div class="fc-desc">Designs how AI tools fit into technical support and operations workflows. Trains teams on AI tool use, verification habits, and escalation protocols.</div>
+        <div class="fc-skills">
+          <span class="fc-skill">Workflow design</span>
+          <span class="fc-skill">Team training</span>
+          <span class="fc-skill">AI tool knowledge</span>
+        </div>
+      </div>
+      <div class="future-card">
+        <div class="fc-icon">📊</div>
+        <div class="fc-role">Technical AI Quality Analyst</div>
+        <div class="fc-desc">Systematically evaluates AI tool outputs for accuracy and reliability. Identifies failure patterns, documents red flags, and provides feedback to improve AI tool performance over time.</div>
+        <div class="fc-skills">
+          <span class="fc-skill">Output verification</span>
+          <span class="fc-skill">Pattern analysis</span>
+          <span class="fc-skill">Technical documentation</span>
+        </div>
+      </div>
+      <div class="future-card">
+        <div class="fc-icon">🛡️</div>
+        <div class="fc-role">IT Incident Commander (AI-Augmented)</div>
+        <div class="fc-desc">Leads major incident response using AI diagnostic tools for rapid evidence gathering. Makes final decisions on root cause confirmation and resolution approach, with AI providing supporting analysis.</div>
+        <div class="fc-skills">
+          <span class="fc-skill">Diagnostic judgment</span>
+          <span class="fc-skill">Incident leadership</span>
+          <span class="fc-skill">AI-assisted analysis</span>
+        </div>
+      </div>
+    </div>
+    <p>These roles exist because organizations deploying AI tools need people who can use them well — not just operationally, but critically. The demand for that profile is growing faster than the supply. <mark>The professional who builds these skills now is positioning themselves for the fastest-growing segment of the technical job market.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A tech professional with five years of IT operations experience says: "I've already adapted to cloud tools and monitoring platforms. AI is just the next thing to click through — I'll pick it up as I go." What's the most important gap in this perspective?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">They are right — prior tech adaptations do make AI adoption easier, and on-the-job learning is the most effective approach for new tools</button>
+        <button class="qopt" onclick="cq(this,false)">They need to learn programming and machine learning fundamentals before they can use AI tools effectively in operations</button>
+        <button class="qopt" onclick="cq(this,true)">AI in technical environments requires verification habits and critical judgment skills that aren't automatically developed through casual tool use. Unlike prior tools, AI produces plausible-looking outputs that can be wrong — and building the habit of evaluating rather than accepting those outputs requires intentional development, not just accumulated exposure</button>
+        <button class="qopt" onclick="cq(this,false)">Their cloud and monitoring experience is irrelevant to AI operations — these are fundamentally different disciplines</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejson="round"/></svg></div><p>Tech support has evolved through five eras — break-fix, ticketing, remote monitoring, cloud, and now AI. In every previous era, the same fear appeared: "will this tool replace the role?" In every case, the answer was no — the role changed, the required skills evolved, and the professionals who adapted earliest advanced furthest. The pattern is holding in the AI era.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Four things have never changed across all five eras: accountability for outcomes, operational context that lives in humans, judgment about when to act versus wait, and communication with stakeholders. AI doesn't touch any of these. It processes data faster — but the human is still responsible for what happens as a result of the decision made with that data.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI is creating new technical roles — AI Operations Specialist, AI Workflow Implementation Lead, Technical AI Quality Analyst — that don't require programming expertise, but do require exactly what this module builds: diagnostic thinking with AI, verification habits, and critical judgment about AI outputs. The demand for that profile is growing faster than the supply, and the professionals who build these skills intentionally now are entering a favorable market.</p></div>
+    </div>
+  </div>
+
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleEra(id){
+  const item=document.getElementById(id);
+  const wasActive=item.classList.contains("active");
+  document.querySelectorAll(".era-item").forEach(i=>i.classList.remove("active"));
+  if(!wasActive)item.classList.add("active");
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Prior tech adaptations do provide a foundation — the operations background is genuinely valuable. But AI introduces a specific challenge that previous tools didn't: it produces confident-sounding outputs that may be wrong, and casual exposure doesn't build the habit of questioning them. A tech professional who picks up cloud tools through use naturally learns what good output looks like, because cloud tools either work or they don't. AI tools produce plausible wrong answers — which means verification habits must be deliberately built, not accidentally acquired through use.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("verification habits"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Programming and ML expertise aren't required for most technical operations roles using AI. And their prior experience isn't irrelevant — it provides real foundation. The gap isn't in tool familiarity or domain background; it's specifically in the verification and critical judgment habits that AI outputs demand. Unlike prior tools, AI can be wrong in ways that look right — and that specific failure mode requires intentional skill-building to catch reliably.";}
+}
+</script>
+</body>
+</html>
