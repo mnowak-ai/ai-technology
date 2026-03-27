@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Technology Has Always Disrupted Tech Itself — And Why AI Is Different This Time — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;
+  --white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;
+  --green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;
+  --red:#DC2626;--red-pale:#FFF1F1;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.pre-tag{display:inline-flex;align-items:center;gap:8px;background:#FFF7ED;color:#92400E;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid #FDE68A;}
+.pre-tag::before{content:"";width:6px;height:6px;background:#F59E0B;border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:30px;font-weight:700;color:var(--purple-dark);margin-bottom:18px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:21px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Interactive era timeline */
+.era-nav{display:flex;flex-direction:column;gap:0;margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.era-btn{display:flex;align-items:center;gap:16px;padding:18px 22px;cursor:pointer;border:none;background:var(--white);border-bottom:1px solid var(--purple-mid);text-align:left;transition:background .2s;width:100%;}
+.era-btn:last-of-type{border-bottom:none;}
+.era-btn:hover{background:var(--purple-pale);}
+.era-btn.active{background:var(--purple-pale);}
+.era-year{font-family:"Fraunces",serif;font-size:14px;font-weight:700;color:var(--purple);min-width:90px;flex-shrink:0;}
+.era-name{font-size:15px;font-weight:700;color:var(--purple-dark);}
+.era-chevron{margin-left:auto;font-size:12px;color:var(--gray-muted);transition:transform .2s;flex-shrink:0;}
+.era-btn.active .era-chevron{transform:rotate(180deg);}
+.era-panel{display:none;padding:0 22px 22px;background:var(--purple-pale);border-bottom:1px solid var(--purple-mid);}
+.era-panel.open{display:block;animation:fadeIn .25s ease;}
+.era-panel:last-child{border-bottom:none;}
+.ep-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;}
+.ep-col{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px;}
+.ep-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.ep-col-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.ep-col-body strong{color:var(--purple-dark);}
+.ep-quote{font-family:"Fraunces",serif;font-size:16px;font-style:italic;color:var(--purple-dark);margin-top:14px;padding:12px 16px;background:var(--white);border-left:3px solid var(--purple);border-radius:0 10px 10px 0;}
+
+/* The "different this time" comparison */
+.diff-grid{display:flex;flex-direction:column;gap:12px;margin:24px 0;}
+.diff-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.diff-col{border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.diff-col.then{background:var(--gray-soft);}
+.diff-col.now{background:var(--purple-pale);}
+.diff-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.diff-col.then .diff-label{color:var(--gray-muted);}
+.diff-col.now .diff-label{color:var(--purple);}
+.diff-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.diff-body{font-size:14px;line-height:1.6;color:var(--gray-text);}
+
+/* The two responses — interactive */
+.response-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.resp-card{border:1.5px solid var(--purple-mid);border-radius:18px;padding:22px;cursor:pointer;transition:all .2s;}
+.resp-card:hover{border-color:var(--purple);}
+.resp-card.active{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-pale);}
+.resp-icon{font-size:32px;margin-bottom:10px;}
+.resp-title{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.resp-short{font-size:14px;color:var(--gray-muted);margin-bottom:0;}
+.resp-detail{font-size:14px;line-height:1.65;color:var(--gray-text);display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--purple-mid);}
+.resp-card.active .resp-detail{display:block;}
+.resp-outcome{font-size:12px;font-weight:700;border-radius:6px;padding:4px 10px;display:inline-block;margin-top:10px;}
+.resp-outcome.good{background:var(--green-pale);color:var(--green);}
+.resp-outcome.bad{background:var(--red-pale);color:var(--red);}
+
+/* What's actually the same */
+.same-list{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.same-item{display:flex;gap:14px;align-items:flex-start;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.same-icon{font-size:22px;flex-shrink:0;}
+.same-body{flex:1;}
+.same-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.same-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+
+/* Reflection prompt */
+.reflect{background:var(--orange-pale);border:1.5px solid #FDE68A;border-radius:20px;padding:28px;margin:24px 0;}
+.reflect-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--orange);margin-bottom:10px;}
+.reflect-q{font-family:"Fraunces",serif;font-size:20px;color:#78350F;line-height:1.35;margin-bottom:14px;font-weight:700;}
+.reflect-hint{font-size:14px;color:#92400E;line-height:1.65;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){
+  .hero,.content{padding-left:24px;padding-right:24px;}
+  .ep-grid,.diff-row,.response-cards{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero">
+  <div class="pre-tag">Module 1 · Before You Begin</div>
+  <h1>How Technology Has Always Disrupted Tech Itself — And Why AI Is Different This Time</h1>
+  <p class="hero-sub">Every major technology shift has reorganized the people who work with technology. The workers who understood the pattern thrived. The ones who waited for things to settle back down were waiting for something that never came.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>You Are Allowed to Feel Uncertain</h2>
+    <p>Before anything else: if you are entering this certification with some level of anxiety about what AI means for your career, that is an entirely rational response. The field is moving fast. The headlines are loud and frequently contradictory. People you respect are saying very different things about what comes next.</p>
+    <p>That uncertainty is not a sign that you are behind. It is a sign that you are paying attention. <mark>Every major technology wave in the history of the field has produced exactly this feeling in exactly the people who ended up navigating it best.</mark></p>
+    <p>This article exists to give that uncertainty a framework. Because when you understand that this pattern has happened before — and you understand clearly what made the difference between workers who thrived and workers who didn't — the uncertainty becomes something you can act on instead of something that acts on you.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Five Waves That Reorganized Tech Work — Click Each to Explore</h2>
+    <p>Technology has disrupted the people who work with it in every generation. The specific tools change. The pattern does not. Explore each era to see what the disruption looked like, who thrived, and what the lesson was:</p>
+    <div class="era-nav" id="eraTl"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Pattern That Runs Through Every Era</h2>
+    <p>When you look across all five waves, the same dynamic appears every time:</p>
+
+    <div class="same-list">
+      <div class="same-item">
+        <div class="same-icon">🔄</div>
+        <div class="same-body">
+          <div class="same-title">The new technology automates the most repetitive parts of the previous era's work</div>
+          <div class="same-desc">Compilers automated manual machine code. IDEs automated manual file management. Cloud automated manual server provisioning. AI is automating the most repetitive parts of knowledge work — boilerplate generation, log triage, pattern detection, first-draft writing. Every time, this feels threatening. Every time, it frees workers for higher-order tasks.</div>
+        </div>
+      </div>
+      <div class="same-item">
+        <div class="same-icon">📈</div>
+        <div class="same-body">
+          <div class="same-title">The workers who adapted early gained leverage — and that leverage compounded</div>
+          <div class="same-desc">The engineers who learned to use compilers early wrote more software faster than those who resisted. The sysadmins who learned cloud early could manage 10x the infrastructure of those who stayed on-premise. The gap opened early and widened over time. The same dynamic is already visible with AI tools — and the gap is still small.</div>
+        </div>
+      </div>
+      <div class="same-item">
+        <div class="same-icon">🧠</div>
+        <div class="same-body">
+          <div class="same-title">The workers who thrived were not the ones who knew the tool best — they were the ones who had the best judgment about when to use it</div>
+          <div class="same-desc">The engineers who got the most out of compilers weren't the ones who knew the compiler internals. They were the ones who understood what the compiler was doing well and where it needed human oversight. This is exactly the skill this certification builds for AI.</div>
+        </div>
+      </div>
+      <div class="same-item">
+        <div class="same-icon">⏳</div>
+        <div class="same-body">
+          <div class="same-title">The disruption never "settled back down" — it became the new baseline</div>
+          <div class="same-desc">Every worker who waited for assembly language to come back, for on-premise servers to become dominant again, for manual processes to return — waited for something that never happened. The shift became the new normal. Workers who built fluency during the transition owned the new baseline. Workers who waited started from behind.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why AI Is Genuinely Different This Time</h2>
+    <p>The pattern above is real — and it should be reassuring. But this article would not be honest if it stopped there. AI is different from previous waves in ways that matter. Not necessarily scarier, but different:</p>
+
+    <div class="diff-grid">
+      <div class="diff-row">
+        <div class="diff-col then">
+          <div class="diff-label">Every previous wave</div>
+          <div class="diff-title">Automated specific, narrow tasks</div>
+          <div class="diff-body">Compilers automated machine code. Databases automated file management. Cloud automated server provisioning. Each wave automated one specific thing, which freed workers to focus on the adjacent higher-order work.</div>
+        </div>
+        <div class="diff-col now">
+          <div class="diff-label">AI</div>
+          <div class="diff-title">Assists across the entire knowledge work spectrum</div>
+          <div class="diff-body">AI tools assist with writing, coding, analysis, design, research, planning, summarization, communication, and decision support simultaneously. The breadth of what AI can assist with is genuinely new — it is not one task, it is a layer across many.</div>
+        </div>
+      </div>
+      <div class="diff-row">
+        <div class="diff-col then">
+          <div class="diff-label">Every previous wave</div>
+          <div class="diff-title">Required significant time to learn and deploy</div>
+          <div class="diff-body">Learning to use a compiler, building cloud infrastructure, deploying CI/CD pipelines — these took months to years of ramp-up time before they changed how teams worked.</div>
+        </div>
+        <div class="diff-col now">
+          <div class="diff-label">AI</div>
+          <div class="diff-title">Accessible to anyone with a browser in hours</div>
+          <div class="diff-body">GitHub Copilot is active in a code editor within minutes. ChatGPT requires no setup. This low barrier means adoption is faster — and the gap between early adopters and late adopters opens more quickly than in previous waves.</div>
+        </div>
+      </div>
+      <div class="diff-row">
+        <div class="diff-col then">
+          <div class="diff-label">Every previous wave</div>
+          <div class="diff-title">Clear, deterministic outputs</div>
+          <div class="diff-body">A compiler either compiled the code or it didn't. A cloud server either provisioned or it failed. The outputs of previous automation were largely binary and verifiable.</div>
+        </div>
+        <div class="diff-col now">
+          <div class="diff-label">AI</div>
+          <div class="diff-title">Probabilistic outputs that require judgment to evaluate</div>
+          <div class="diff-body">AI outputs are estimates, not facts. They can be wrong confidently. They can hallucinate. They can embed bias invisibly. This requires a new skill that previous technology waves did not: <strong>critical evaluation of outputs you cannot mechanically verify.</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote"><p>Previous tools either worked or they didn't. AI tools work most of the time — which is actually harder to manage, because it makes the failures less obvious and more dangerous.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Two Responses — and Where Each One Leads</h2>
+    <p>History is clear about what happens when a major technology wave arrives. There are two primary responses. Click each to see where it leads:</p>
+    <div class="response-cards" id="responseCards"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Moment to Be Honest With Yourself</h2>
+    <div class="reflect">
+      <div class="reflect-label">💭 Personal Reflection</div>
+      <div class="reflect-q">Which of the five eras in this article hits closest to home for you — and what did the workers who thrived in that era have in common with where you are right now?</div>
+      <div class="reflect-hint">There is no quiz on this one. But it is worth sitting with. The workers who thrived in every previous wave were not the most senior, the most credentialed, or the most technically advanced. They were the ones who understood the shift clearly enough to act on it — while it was still early. You are reading this article before most of the field has built AI fluency. That timing is not an accident. Use it.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A veteran sysadmin says: "I've seen every tech trend come and go. Cloud was supposed to replace everything too — and sysadmins are still here." What's the most important thing this reasoning misses?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">They're right — sysadmins who survived cloud adoption will automatically survive AI adoption the same way</button>
+        <button class="qopt" onclick="cq(this,true)">Sysadmins who survived cloud adoption survived because they learned cloud — not because they waited. The lesson of every previous wave is that the workers who thrived adapted early, not that the technology failed to change things</button>
+        <button class="qopt" onclick="cq(this,false)">They're wrong — AI will definitely eliminate the sysadmin role entirely</button>
+        <button class="qopt" onclick="cq(this,false)">They should focus on learning AI internals and model architecture to stay competitive</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every major technology wave — compilers, personal computers, the internet, cloud, mobile — reorganized how tech workers work. The pattern is consistent: workers who adapted early gained compounding leverage. Workers who waited started from behind after the new baseline was set.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI is genuinely different from previous waves in three ways: it assists across the full breadth of knowledge work (not one narrow task), it is accessible in hours rather than months, and its outputs are probabilistic rather than deterministic — which requires a new skill of critical evaluation that previous waves did not demand.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The workers who thrived in every previous wave were not the ones who knew the most about the new tool's internals. They were the ones with the best judgment about when to use it, when to trust it, and when to override it. That is exactly what this certification builds.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Feeling uncertain right now is rational. The field is genuinely moving fast. But uncertainty plus a clear framework for action is a position of strength — and you now have the historical context to see exactly where you are in a pattern that has played out before.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{
+  const e=document.documentElement;
+  document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";
+});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting)e.target.classList.add("visible");
+}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const eras=[
+  {
+    year:"1950s–1960s",name:"The Compiler Era",emoji:"🖥️",
+    what:"Before compilers, programmers wrote in machine code or assembly — directly in the language the hardware understood. Compilers translated human-readable code into machine instructions automatically. This was a seismic shift.",
+    thrived:"Programmers who learned to write in high-level languages (COBOL, FORTRAN) and trusted compilers to handle the translation. They shipped programs in days that previously took months.",
+    struggled:"Programmers who insisted machine code was the only 'real' programming. Many refused to use compilers, believing the output would be inefficient. They were right that early compilers were imperfect — and wrong that the answer was to avoid them.",
+    lesson:"The tool was imperfect. The workers who thrived used it anyway and learned to spot where it needed human judgment. Sound familiar?",
+    quote:"\"Nobody will ever need more than 640K of RAM.\" — A reminder that the people certain about technology limits are often the least prepared for the next wave."
+  },
+  {
+    year:"1970s–1980s",name:"The Personal Computer Era",emoji:"💾",
+    what:"Computing moved from mainframes (room-sized machines operated by specialists) to personal computers anyone could own. This democratized access to computing — and immediately threatened everyone whose expertise was tied to mainframe operation.",
+    thrived:"Mainframe specialists who recognized the new platform as an opportunity and retrained. Early personal computer adopters who built skills while the barrier to entry was still low. The people who wrote software for PCs when software was still a wide-open frontier.",
+    struggled:"Mainframe operators who insisted personal computers were toys and that serious computing would always require serious hardware. Some of them were correct about early PC limitations — and still missed the entire wave.",
+    lesson:"Expertise in the previous era's technology is not a liability — but anchoring your identity to that technology rather than to the underlying skill is.",
+    quote:"\"There is no reason for any individual to have a computer in their home.\" — Ken Olson, founder of Digital Equipment Corporation, 1977. DEC no longer exists."
+  },
+  {
+    year:"1990s–2000s",name:"The Internet Era",emoji:"🌐",
+    what:"The internet transformed software from products installed on individual machines to services accessed through a browser. Entirely new roles appeared: web developer, network engineer, systems administrator managing internet infrastructure, e-commerce specialist.",
+    thrived:"Engineers who learned web technologies early — HTML, HTTP, then JavaScript, then server-side scripting. Network engineers who understood TCP/IP. Database administrators who figured out how to scale to web traffic. These workers were in extraordinary demand for the next two decades.",
+    struggled:"Software developers whose expertise was in desktop application development and who resisted the web platform. Some treated web development as less rigorous than 'real' software engineering. The market eventually made its view clear.",
+    lesson:"The new platform creates entirely new roles alongside changing existing ones. Workers who built skills for the new platform while it was still emerging owned the next 20 years of the job market.",
+    quote:"\"The internet is just a fad.\" — A quote attributed to many executives in the mid-1990s, none of whom said it publicly after 2001."
+  },
+  {
+    year:"2006–2015",name:"The Cloud Era",emoji:"☁️",
+    what:"AWS launched in 2006 and offered computing infrastructure as a service — rented by the hour instead of owned. What had required a data center full of physical servers could now be provisioned from a browser. This threatened the sysadmins and infrastructure engineers who managed physical servers.",
+    thrived:"Systems administrators who learned cloud platforms early — AWS, then Azure, then GCP. The ones who recognized that cloud did not eliminate infrastructure work, it changed what it looked like. Cloud architects became some of the highest-paid engineers in the industry within a decade.",
+    struggled:"Infrastructure teams that insisted cloud was insecure, unreliable, or not suitable for 'enterprise' workloads. Some organizations delayed cloud adoption by years citing these concerns — and found themselves with higher infrastructure costs, slower deployment cycles, and engineers who left for cloud-native companies.",
+    lesson:"The specific skill of managing physical servers was disrupted. The underlying skill — understanding infrastructure, reliability, performance, and security — became more valuable in the new context, not less.",
+    quote:"\"The cloud is just someone else's computer.\" — A joke that became a T-shirt, usually worn by people who had not yet learned cloud — before they eventually did."
+  },
+  {
+    year:"2022–Present",name:"The AI Era",emoji:"🤖",
+    what:"Large language models became accessible to the general public with the release of ChatGPT in November 2022. Within 18 months, AI tools were embedded in code editors, project management platforms, security systems, data pipelines, and documentation workflows. The disruption is happening now — not as a future scenario.",
+    thrived:"Engineers who started using AI-assisted coding tools early and developed judgment about when to trust and when to verify. DevOps engineers who integrated AI monitoring into their incident response. Analysts who use AI to accelerate data processing while maintaining critical interpretation skills. They are shipping more, managing more, and taking on more complex problems.",
+    struggled:"Tech workers who are treating AI as a trend to wait out — expecting the current tools to be replaced before they invest in learning them. The specific tools will change. The underlying skill of working effectively with AI systems will not.",
+    lesson:"You are in this era right now. The gap between early adopters and late adopters is still small. This is the moment that the workers in the previous four eras who thrived were in when they made their choice.",
+    quote:"\"This is the moment. The people reading this article in 2025 are in the same position as the sysadmins who started learning AWS in 2008 — before it was the obvious move.\""
+  }
+];
+
+const tl=document.getElementById("eraTl");
+eras.forEach((era,i)=>{
+  const btn=document.createElement("button");
+  btn.className="era-btn";
+  btn.innerHTML=`<span class="era-year">${era.emoji} ${era.year}</span><span class="era-name">${era.name}</span><span class="era-chevron">▼</span>`;
+  btn.onclick=()=>{
+    const isOpen=btn.classList.contains("active");
+    document.querySelectorAll(".era-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".era-panel").forEach(p=>p.classList.remove("open"));
+    if(!isOpen){btn.classList.add("active");panel.classList.add("open");}
+  };
+  tl.appendChild(btn);
+
+  const panel=document.createElement("div");
+  panel.className="era-panel";
+  panel.innerHTML=`
+    <div class="ep-grid">
+      <div class="ep-col">
+        <div class="ep-col-title">What changed</div>
+        <div class="ep-col-body">${era.what}</div>
+      </div>
+      <div class="ep-col">
+        <div class="ep-col-title">Who thrived</div>
+        <div class="ep-col-body">${era.thrived}</div>
+      </div>
+      <div class="ep-col">
+        <div class="ep-col-title">Who struggled</div>
+        <div class="ep-col-body">${era.struggled}</div>
+      </div>
+    </div>
+    <div class="ep-quote">📌 The lesson: ${era.lesson}</div>`;
+  tl.appendChild(panel);
+});
+
+const responses=[
+  {
+    icon:"🔄",title:"Adapt Early",
+    short:"Treat the shift as an opportunity while the gap is still small",
+    detail:"Workers who adapted early in every previous wave shared a few things: they did not wait to fully understand the tool before starting to use it, they built judgment about its limitations through actual use (not observation), they talked about it openly in their teams and organizations, and they positioned themselves as the person who could bridge the old way and the new way. This is the highest-leverage moment — when early fluency is still a differentiator.",
+    outcome:"good",outcomeText:"Compounds over time — early fluency becomes deep expertise"
+  },
+  {
+    icon:"⏸️",title:"Wait and See",
+    short:"Hold off until the technology matures and stabilizes",
+    detail:"The 'wait and see' response has a coherent logic: the tools are imperfect, the hype is real, and investing time in something that might change seems wasteful. But in every previous wave, the workers who waited discovered two things: (1) the technology did not go away or stabilize — it accelerated, and (2) the workers who adapted early had built a compounding skill advantage that was very hard to close. The gap that felt safe to let open for one year became a three-year setback.",
+    outcome:"bad",outcomeText:"Compounds the other way — gap widens while others build fluency"
+  }
+];
+
+const rc=document.getElementById("responseCards");
+responses.forEach(r=>{
+  const div=document.createElement("div");
+  div.className="resp-card";
+  div.innerHTML=`<div class="resp-icon">${r.icon}</div><div class="resp-title">${r.title}</div><div class="resp-short">${r.short}</div><div class="resp-detail">${r.detail}<div class="resp-outcome ${r.outcome}">${r.outcomeText}</div></div>`;
+  div.onclick=()=>{
+    const was=div.classList.contains("active");
+    document.querySelectorAll(".resp-card").forEach(c=>c.classList.remove("active"));
+    if(!was)div.classList.add("active");
+  };
+  rc.appendChild(div);
+});
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){
+    fb.className="qfb show cfb";
+    fb.textContent="✅ Correct. This is the most important lesson of the entire historical record: the sysadmins who survived cloud adoption survived because they learned cloud — actively, early, while it was still imperfect and before it was the obvious move. Survival was not automatic. It required a decision to adapt. The same is true now. The veteran's past success in adapting is actually the strongest argument for adapting again — not for assuming adaptation is optional this time.";
+  } else {
+    document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("learned cloud"))o.classList.add("correct");});
+    fb.className="qfb show wfb";
+    fb.textContent="❌ Neither extreme is accurate. AI will not eliminate roles wholesale — but it will also not leave them unchanged. And the path forward is not learning model architecture (which is a specialized engineering field) but building judgment about how to use AI tools effectively in your existing role. The historical record is clear: adapt early, build judgment, and the tools change around you while your skill compounds.";
+  }
+}
+</script>
+</body>
+</html>
