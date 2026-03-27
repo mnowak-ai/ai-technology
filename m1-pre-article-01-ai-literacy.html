@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why AI Literacy Is Now a Non-Negotiable Skill in Every Tech Role — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;
+  --white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;
+  --green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;
+  --red:#DC2626;--red-pale:#FFF1F1;--teal:#0891B2;--teal-pale:#ECFEFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;transition:width .1s;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.pre-tag{display:inline-flex;align-items:center;gap:8px;background:#FFF7ED;color:#92400E;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid #FDE68A;}
+.pre-tag::before{content:"";width:6px;height:6px;background:#F59E0B;border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(34px,5vw,58px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:30px;font-weight:700;color:var(--purple-dark);margin-bottom:18px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:21px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Stat row */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0;}
+.stat-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:22px;text-align:center;}
+.stat-number{font-family:"Fraunces",serif;font-size:40px;font-weight:900;color:var(--purple);line-height:1;}
+.stat-label{font-size:13px;line-height:1.5;color:var(--gray-text);margin-top:8px;}
+
+/* Role shift cards — interactive toggle */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.role-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:18px;padding:20px;cursor:pointer;transition:all .2s;}
+.role-card:hover{border-color:var(--purple);background:var(--purple-pale);}
+.role-card.active{border-color:var(--purple);background:var(--purple-pale);}
+.rc-icon{font-size:26px;margin-bottom:8px;}
+.rc-role{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.rc-before{font-size:13px;color:var(--gray-muted);margin-bottom:0;}
+.rc-after{font-size:13px;line-height:1.6;color:var(--gray-text);display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--purple-mid);}
+.role-card.active .rc-after{display:block;}
+.rc-badge{font-size:11px;font-weight:700;color:var(--purple);background:white;border-radius:6px;padding:3px 10px;display:inline-block;margin-top:8px;}
+
+/* Urgency timeline */
+.timeline{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.tl-item{display:flex;gap:20px;padding:18px 0;border-bottom:1px solid var(--purple-mid);}
+.tl-item:last-child{border-bottom:none;}
+.tl-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--purple-pale);border:2px solid var(--purple-mid);}
+.tl-body{flex:1;}
+.tl-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:4px;}
+.tl-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.tl-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+
+/* Promotion vs threat spectrum */
+.spectrum{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.spectrum-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.spectrum-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.spectrum-sub{font-size:15px;color:var(--gray-muted);margin-bottom:20px;}
+.spec-track{display:flex;gap:0;border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.spec-seg{flex:1;padding:14px 10px;text-align:center;font-size:13px;font-weight:600;}
+.spec-seg.danger{background:#FEE2E2;color:#991B1B;}
+.spec-seg.warning{background:#FEF3C7;color:#92400E;}
+.spec-seg.good{background:#DCFCE7;color:#166534;}
+.spec-seg.great{background:#D1FAE5;color:#065F46;}
+.spec-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.spec-rows{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.spec-row{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;}
+.spec-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.spec-text{font-size:14px;line-height:1.6;color:var(--gray-text);}
+.spec-text strong{color:var(--purple-dark);}
+
+/* Job posting simulation */
+.jd-sim{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;padding:28px;margin:24px 0;position:relative;}
+.jd-sim::before{content:"SIMULATED JOB POSTING";position:absolute;top:-11px;left:20px;background:var(--white);color:var(--purple);font-size:10px;font-weight:700;letter-spacing:.12em;padding:0 8px;}
+.jd-company{font-size:12px;color:var(--gray-muted);margin-bottom:4px;}
+.jd-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.jd-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.jd-tag{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;}
+.jd-section-title{font-size:13px;font-weight:700;color:var(--gray-muted);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;}
+.jd-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.jd-list li{font-size:14px;line-height:1.6;color:var(--gray-text);padding-left:18px;position:relative;}
+.jd-list li::before{content:"•";position:absolute;left:0;color:var(--purple);font-weight:700;}
+.jd-list li.ai-req{color:var(--purple-dark);font-weight:500;}
+.jd-list li.ai-req::before{content:"★";color:var(--purple);}
+.jd-note{font-size:12px;color:var(--gray-muted);margin-top:16px;font-style:italic;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){
+  .hero,.content{padding-left:24px;padding-right:24px;}
+  .stat-row,.role-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero">
+  <div class="pre-tag">Module 1 · Before You Begin</div>
+  <h1>Why AI Literacy Is Now a Non-Negotiable Skill in Every Tech Role</h1>
+  <p class="hero-sub">This is not about hype. It is about what is already happening in hiring, in team structures, and in daily workflows — and what it means for your career starting right now.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Something Real Is Shifting</h2>
+    <p>If you have been in tech for any amount of time, you have watched tools come and go. You have seen frameworks rise and fall. You have sat through product announcements that turned into nothing. It is reasonable to approach AI with the same skepticism.</p>
+    <p>But here is what is different this time: <mark>the shift is already visible in hiring data, team org charts, and day-to-day job descriptions</mark> — not in press releases. Engineers who understand how to work with AI tools are being assigned differently than those who don't. Teams are being restructured around AI-assisted workflows. Job postings for roles that have existed for decades are now including AI fluency as a requirement, not a nice-to-have.</p>
+    <p>This is not a prediction about the future. It is a description of what is already happening — and understanding it clearly is the first step to positioning yourself on the right side of it.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What the Numbers Are Actually Showing</h2>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-number">65%</div>
+        <div class="stat-label">of tech job postings now mention AI tools, AI literacy, or prompt engineering as a requirement or preferred skill — up from under 10% three years ago</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3×</div>
+        <div class="stat-label">Engineers who demonstrate AI fluency are three times more likely to be assigned to high-visibility projects, according to internal promotion data from major tech employers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">82%</div>
+        <div class="stat-label">of tech leaders say AI literacy is now a factor in performance reviews — even for roles that don't formally require it</div>
+      </div>
+    </div>
+    <p>These numbers shift depending on the source and the year. What does not shift is the direction: across every category of tech role, the ability to work effectively with AI tools has moved from optional to expected — and the gap between workers who have built this skill and those who haven't is widening.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How This Looks Different Across Tech Roles</h2>
+    <p>AI literacy does not look the same in every role. Click each role to see what the shift actually means for that position:</p>
+    <div class="role-grid" id="roleGrid"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What a Real Job Posting Looks Like Now</h2>
+    <p>This is a composite of language appearing in actual tech job postings in 2024 and 2025. The ★ items are what didn't appear in postings for the same roles three years ago:</p>
+    <div class="jd-sim">
+      <div class="jd-company">Mid-size SaaS Company · Remote · Full-time</div>
+      <div class="jd-title">Senior Software Engineer — Platform</div>
+      <div class="jd-meta">
+        <span class="jd-tag">$145K–$175K</span>
+        <span class="jd-tag">5+ years experience</span>
+        <span class="jd-tag">Python / TypeScript</span>
+      </div>
+      <div class="jd-section-title">Responsibilities</div>
+      <ul class="jd-list">
+        <li>Design and implement scalable backend services</li>
+        <li>Lead code review processes and mentor junior engineers</li>
+        <li class="ai-req">Incorporate AI-assisted development tools (Copilot, Cursor, or equivalent) into your standard workflow</li>
+        <li class="ai-req">Review and validate AI-generated code before merging — including security and logic checks</li>
+        <li>Collaborate with product and design on feature specifications</li>
+      </ul>
+      <div class="jd-section-title">Requirements</div>
+      <ul class="jd-list">
+        <li>Strong fundamentals in distributed systems</li>
+        <li class="ai-req">Demonstrated ability to work effectively with AI coding tools and evaluate their outputs critically</li>
+        <li class="ai-req">Understanding of AI limitations — including hallucination, bias, and when not to trust a suggestion</li>
+        <li>Experience with CI/CD pipelines and cloud infrastructure</li>
+      </ul>
+      <div class="jd-note">★ items represent language that did not appear in comparable postings 3 years ago. This pattern is consistent across engineering, DevOps, security, data, and IT operations roles.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Groups This Shift Is Creating</h2>
+    <div class="spectrum">
+      <div class="spectrum-label">The Tech Workforce Right Now</div>
+      <div class="spectrum-title">AI Literacy Is Sorting the Field</div>
+      <div class="spectrum-sub">Not into "AI people" and "non-AI people" — into workers with different levels of leverage and visibility.</div>
+      <div class="spec-track">
+        <div class="spec-seg danger">Behind the curve</div>
+        <div class="spec-seg warning">Watching and waiting</div>
+        <div class="spec-seg good">Actively learning</div>
+        <div class="spec-seg great">Using it daily</div>
+      </div>
+      <div class="spec-rows">
+        <div class="spec-row">
+          <div class="spec-icon">⚠️</div>
+          <div class="spec-text"><strong>Behind the curve:</strong> Hasn't engaged with AI tools professionally. Not because of choice — just hasn't prioritized it. At increasing risk of being passed over for high-visibility assignments that require AI-integrated workflows.</div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-icon">👀</div>
+          <div class="spec-text"><strong>Watching and waiting:</strong> Aware of AI but treating it as something to figure out "when things settle down." This is the most common and most dangerous position — the field is not settling, it is accelerating.</div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-icon">📚</div>
+          <div class="spec-text"><strong>Actively learning:</strong> Taking this certification. Building vocabulary, mental models, and hands-on familiarity. Already separating from the first two groups in how they talk about AI in interviews and performance reviews.</div>
+        </div>
+        <div class="spec-row">
+          <div class="spec-icon">🚀</div>
+          <div class="spec-text"><strong>Using it daily:</strong> Has integrated AI tools into their regular workflow. Understands what each tool does well and where to verify. Not smarter than everyone else — just earlier. This is where this certification takes you.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Fear Response — and Why It's Understandable but Wrong</h2>
+    <p>A lot of people entering this certification are carrying some version of a fear: <em>If AI gets good enough, does it take my job?</em> It is worth addressing directly.</p>
+    <p>The honest answer is nuanced. <mark>AI is not replacing tech roles — it is changing what those roles spend their time on.</mark> The parts of tech work that AI handles well — generating boilerplate, finding patterns in logs, suggesting solutions to known problems — are the parts that experienced engineers have always found least interesting anyway. What remains is the harder stuff: architecture decisions, edge case judgment, stakeholder communication, ethical review, security assessment, creative problem-solving.</p>
+    <p>The workers who are genuinely at risk are not the ones who learn AI — they are the ones who don't, while their peers do. The competitive advantage is not in resisting the tool. It is in knowing it well enough to be the person who uses it best and knows when not to trust it.</p>
+    <div class="pull-quote"><p>The question is not whether AI will be part of your tech career. It already is. The question is whether you understand it well enough to use it on your terms.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What This Certification Builds — and Why That Matters</h2>
+    <p>This course does not teach you to build AI systems. It teaches you something more immediately valuable: how to work with them professionally, how to evaluate their outputs critically, how to know when to trust a suggestion and when to push back, and how to talk about all of this in language your team and your managers will understand.</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot">🧠</div>
+        <div class="tl-body">
+          <div class="tl-label">What you'll build first</div>
+          <div class="tl-title">Conceptual foundation</div>
+          <div class="tl-desc">How AI actually works — without math or code. What machine learning is, what pattern recognition means in practice, and why AI makes confident mistakes. This is the mental model that makes every other lesson useful.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">🔍</div>
+        <div class="tl-body">
+          <div class="tl-label">What you'll build next</div>
+          <div class="tl-title">Critical evaluation habits</div>
+          <div class="tl-desc">The ability to look at an AI output and ask the right questions: Is this accurate? Is this complete? Is there a hidden assumption here? Does this decision need human review before we act? This is what separates strong AI users from bad ones.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">💼</div>
+        <div class="tl-body">
+          <div class="tl-label">What you'll finish with</div>
+          <div class="tl-title">Professional fluency</div>
+          <div class="tl-desc">The vocabulary, judgment, and hands-on familiarity to show up in any tech environment and immediately be useful — whether the team uses GitHub Copilot, Jira AI, AWS AI services, or tools that don't exist yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A software engineer says: "I don't need to learn AI tools — I'm already good at my job, and AI is just a fad." What's the most important problem with this reasoning?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">They're right — strong fundamental skills are more valuable than any specific tool</button>
+        <button class="qopt" onclick="cq(this,true)">The shift is already reflected in hiring data and job requirements — "waiting for it to settle" means falling behind peers who are building AI fluency now, while the gap is still small</button>
+        <button class="qopt" onclick="cq(this,false)">They should focus on learning to build AI systems, not just use them</button>
+        <button class="qopt" onclick="cq(this,false)">AI tools will replace their role entirely, so their concern is valid</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI literacy has already moved from optional to expected across tech roles — not as a prediction, but as something visible right now in job postings, promotion decisions, and team structures.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI is not replacing tech workers who understand it. It is changing what their roles spend time on — automating the routine and elevating the judgment-intensive work that experienced professionals do best.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The workers at risk are not the ones learning AI — they are the ones waiting for it to "settle down" while their peers build fluency and visibility. The gap is still small. Starting now matters.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>This certification builds the conceptual foundation, critical evaluation habits, and professional vocabulary that translate directly into how you talk about AI in interviews, how you use these tools on the job, and how your team sees you.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{
+  const e=document.documentElement;
+  document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";
+});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting)e.target.classList.add("visible");
+}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const roles=[
+  {icon:"💻",role:"Software Engineer / Developer",before:"Before: Write code, review code, ship features",after:"Now: AI tools like GitHub Copilot suggest code completions in real time. Engineers who know how to evaluate those suggestions — catching hallucinated library references, logic errors, and security issues — are dramatically faster than those who don't. The skill is judgment, not just coding.",badge:"AI fluency = 30–40% productivity gain for proficient users"},
+  {icon:"🔒",role:"Security Analyst",before:"Before: Monitor alerts, investigate incidents, write reports",after:"Now: AI tools surface anomalies in log data that human analysts would miss in the volume. But AI also generates false positives at high rates and can miss novel attack patterns. The analyst who understands both the capability and the failure mode is the one who builds reliable detection pipelines.",badge:"AI expands threat surface AND detection coverage simultaneously"},
+  {icon:"⚙️",role:"DevOps / SRE Engineer",before:"Before: Manage deployments, respond to incidents, maintain infrastructure",after:"Now: AI-assisted monitoring flags anomalies. AI tools suggest infrastructure optimizations. AI helps write deployment scripts. The SRE who understands what these tools are doing — and when to override them — is the one who builds systems that don't fail silently.",badge:"AI monitoring without human judgment = alert fatigue"},
+  {icon:"📊",role:"Data Analyst / Data Scientist",before:"Before: Query data, build models, present insights",after:"Now: AI tools accelerate the EDA, modeling, and visualization pipeline significantly. But AI-generated analyses embed assumptions that aren't always visible. The analyst who can interrogate those assumptions — and explain them to stakeholders — is worth more than the tool alone.",badge:"AI surfaces patterns — humans decide what they mean"},
+  {icon:"🖥️",role:"IT Operations / Systems Administrator",before:"Before: Manage tickets, maintain systems, support users",after:"Now: AI auto-triage tools categorize and route support tickets. AI monitoring detects system issues before users report them. IT professionals who understand how these systems make decisions — and where to escalate when they're wrong — are the ones teams actually trust.",badge:"AI handles volume — humans handle judgment calls"},
+  {icon:"🎨",role:"UX / UI Designer",before:"Before: Design interfaces, conduct user research, prototype and test",after:"Now: AI tools generate design variations, summarize user research, and surface usability patterns. The designer who treats AI as a creative accelerator — knowing which outputs to develop and which to discard — ships more and better work.",badge:"AI generates options — designers choose and refine"}
+];
+
+const grid=document.getElementById("roleGrid");
+roles.forEach(r=>{
+  const div=document.createElement("div");
+  div.className="role-card";
+  div.innerHTML=`<div class="rc-icon">${r.icon}</div><div class="rc-role">${r.role}</div><div class="rc-before">${r.before}</div><div class="rc-after">${r.after}<span class="rc-badge">${r.badge}</span></div>`;
+  div.onclick=()=>{
+    const was=div.classList.contains("active");
+    document.querySelectorAll(".role-card").forEach(c=>c.classList.remove("active"));
+    if(!was)div.classList.add("active");
+  };
+  grid.appendChild(div);
+});
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){
+    fb.className="qfb show cfb";
+    fb.textContent="✅ Correct. Strong fundamentals matter — but they are table stakes, not a differentiator. The job market data is clear: AI fluency is already embedded in hiring criteria, performance reviews, and project assignments across tech roles. The engineer who waits for AI to \"settle\" is watching peers build a skill advantage that compounds over time. The gap is still small right now. Starting now — with a certification like this one — is exactly the right response.";
+  } else {
+    document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("hiring data"))o.classList.add("correct");});
+    fb.className="qfb show wfb";
+    fb.textContent="❌ The risk is not about replacing people who learn — it is about falling behind people who do. And the path forward is not building AI systems (which requires an entirely different skill set) but understanding them well enough to use them critically and professionally. That is exactly what this certification teaches.";
+  }
+}
+</script>
+</body>
+</html>
