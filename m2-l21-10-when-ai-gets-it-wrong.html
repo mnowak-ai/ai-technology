@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When AI Diagnosis Gets It Wrong — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(32px,5vw,54px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Failure case cards */
+.failure-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.ftab{padding:10px 18px;border-radius:100px;border:2px solid var(--purple-mid);background:var(--white);font-size:13px;font-weight:600;color:var(--gray-muted);cursor:pointer;transition:all .2s;}
+.ftab.active{background:var(--red);border-color:var(--red);color:white;}
+.fpanel{display:none;animation:fadeIn .3s ease;}
+.fpanel.active{display:block;}
+.failure-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:26px;}
+.fc-header{background:#FFF1F1;border:1px solid #FCA5A5;border-radius:12px;padding:16px;margin-bottom:16px;}
+.fc-h-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:4px;}
+.fc-h-title{font-size:16px;font-weight:700;color:var(--purple-dark);}
+.fc-ai-box{background:var(--purple-pale);border-radius:12px;padding:16px;margin-bottom:12px;}
+.fc-ai-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:6px;}
+.fc-ai-output{font-family:monospace;font-size:13px;color:var(--purple-dark);line-height:1.7;white-space:pre-wrap;}
+.fc-what-wrong{background:#FFF8F8;border:1px solid #FFC5C5;border-radius:12px;padding:16px;margin-bottom:12px;}
+.fc-ww-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin-bottom:6px;}
+.fc-ww-text{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.fc-human-catch{background:var(--green-pale);border:1px solid #9DE0BC;border-radius:12px;padding:16px;}
+.fc-hc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:6px;}
+.fc-hc-text{font-size:14px;line-height:1.65;color:var(--gray-text);}
+/* Error type taxonomy */
+.error-types{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.et-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.et-icon{font-size:24px;margin-bottom:8px;}
+.et-name{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.et-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.et-watch{background:var(--orange-pale);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--orange);font-weight:600;margin-top:10px;}
+/* Verification checklist */
+.verification{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:28px;margin:24px 0;}
+.vf-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.vf-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+.vf-items{display:flex;flex-direction:column;gap:10px;}
+.vf-item{display:flex;gap:12px;align-items:flex-start;background:var(--white);border:1.5px solid var(--purple-mid);border-radius:10px;padding:14px;}
+.vf-check{width:22px;height:22px;border:2px solid var(--purple-mid);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.vf-check.checked{background:var(--purple);border-color:var(--purple);}
+.vf-check svg{display:none;}
+.vf-check.checked svg{display:block;}
+.vf-text{font-size:14px;line-height:1.55;color:var(--gray-text);}
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:24px;padding-right:24px;}.error-types{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 2.1 · Using AI to Diagnose Problems</div>
+  <h1>When AI Diagnosis Gets It Wrong: Real IT Failure Cases and What Humans Caught</h1>
+  <p class="hero-sub">AI diagnostic tools are powerful — but they make specific, predictable types of errors. Knowing what those errors look like is the skill that separates a tech professional who uses AI safely from one who uses it dangerously.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why This Is the Most Important Article in This Lesson</h2>
+    <p>Everything you've read in Lesson 2.1 has described what AI diagnostic tools do well: processing massive log volumes, correlating signals across systems, matching patterns to historical failures, surfacing possible root causes with confidence scores. All of that is true and valuable.</p>
+    <p>This article is about the other side: the specific ways AI gets it wrong, and why those errors are often more dangerous than simple failures. A tool that fails obviously is easy to catch. A tool that produces confident, plausible-sounding wrong answers is the kind that causes real production incidents when analysts trust it too completely.</p>
+    <div class="pull-quote"><p>The most dangerous AI diagnostic error isn't a wrong answer with low confidence. It's a wrong answer with high confidence — because that's the one most likely to be acted on without further investigation.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Ways AI Diagnosis Fails — And Real Cases Where It Did</h2>
+    <p>Click each failure type to see what it looks like in practice, what AI reported, what was actually wrong, and how a human analyst caught it:</p>
+    <div class="failure-tabs">
+      <button class="ftab active" onclick="showF('f1')">❌ Pattern Mismatch</button>
+      <button class="ftab" onclick="showF('f2')">❌ Missing Context</button>
+      <button class="ftab" onclick="showF('f3')">❌ Correlation ≠ Causation</button>
+      <button class="ftab" onclick="showF('f4')">❌ Novel Failure</button>
+    </div>
+
+    <div class="fpanel active" id="f1">
+      <div class="failure-card">
+        <div class="fc-header"><div class="fc-h-label">Failure Type: Pattern Mismatch</div><div class="fc-h-title">AI matches current symptoms to a historical failure that had a different underlying cause</div></div>
+        <div class="fc-ai-box">
+          <div class="fc-ai-label">🤖 AI Diagnostic Output</div>
+          <div class="fc-ai-output">Database response time degradation detected
+Pattern match: Similar to Q3 database lock contention incident (91% similarity)
+Probable Cause: Database lock contention (Confidence: 84%)
+Recommended action: Identify and terminate long-running transactions</div>
+        </div>
+        <div class="fc-what-wrong">
+          <div class="fc-ww-label">❌ What Was Actually Wrong</div>
+          <div class="fc-ww-text">The Q3 incident it matched was indeed a lock contention event — but the current situation had identical surface symptoms from a completely different cause: a DBA had run a manual query that left an uncommitted transaction open for 2 hours, creating a different type of blocking that superficially looked like lock contention in the logs. AI's pattern matching found the highest-similarity historical case; it didn't account for the fact that different causes can produce similar log signatures.</div>
+        </div>
+        <div class="fc-human-catch">
+          <div class="fc-hc-label">✅ How the Human Analyst Caught It</div>
+          <div class="fc-hc-text">The analyst asked: "Has anyone run a manual query on this database today?" The DBA confirmed they had run an ad-hoc query 2 hours earlier and hadn't committed it. Terminating that specific session resolved the issue in 30 seconds — without the broader "terminate long-running transactions" action AI recommended, which would have disrupted legitimate active transactions.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fpanel" id="f2">
+      <div class="failure-card">
+        <div class="fc-header"><div class="fc-h-label">Failure Type: Missing Context</div><div class="fc-h-title">AI doesn't know about recent changes, planned events, or organizational factors</div></div>
+        <div class="fc-ai-box">
+          <div class="fc-ai-label">🤖 AI Diagnostic Output</div>
+          <div class="fc-ai-output">CRITICAL: Unusual network traffic pattern detected
+Traffic volume: 340% above baseline (ongoing 45 min)
+Pattern: Consistent with data exfiltration or DDoS precursor activity
+Confidence: 79%
+Recommended action: Isolate affected network segment immediately</div>
+        </div>
+        <div class="fc-what-wrong">
+          <div class="fc-ww-label">❌ What Was Actually Wrong</div>
+          <div class="fc-ww-text">The "unusual traffic" was a planned quarterly data migration that the networking team had scheduled and communicated via email — but that information was not in any data source the AI platform had access to. The pattern genuinely looked anomalous against the historical baseline because it was a scheduled, one-time event with no prior occurrence to compare against. AI's confidence was high because the traffic pattern was real — but it had a completely benign explanation.</div>
+        </div>
+        <div class="fc-human-catch">
+          <div class="fc-hc-label">✅ How the Human Analyst Caught It</div>
+          <div class="fc-hc-text">The analyst remembered seeing an email about a data migration this week. Checking the shared operations calendar confirmed it. "Isolate the network segment" would have interrupted a sanctioned migration that would have taken 6 hours to restart. The fix: integrate the operations calendar into the AI platform's data sources so future planned events are known context.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fpanel" id="f3">
+      <div class="failure-card">
+        <div class="fc-header"><div class="fc-h-label">Failure Type: Correlation ≠ Causation</div><div class="fc-h-title">AI identifies two events that occurred together and assumes one caused the other</div></div>
+        <div class="fc-ai-box">
+          <div class="fc-ai-label">🤖 AI Diagnostic Output</div>
+          <div class="fc-ai-output">Application error rate spike correlated with deployment
+Deployment detected: App-v2.3.1 deployed 14 min before error onset
+Correlation: 0.94 (very high)
+Probable Cause: Regression introduced in App-v2.3.1 (Confidence: 88%)
+Recommended action: Roll back to App-v2.3.0 immediately</div>
+        </div>
+        <div class="fc-what-wrong">
+          <div class="fc-ww-label">❌ What Was Actually Wrong</div>
+          <div class="fc-ww-text">The deployment did happen 14 minutes before the error spike — but investigating the errors showed they were all 502 Gateway errors, not application-level errors. The actual cause was a router firmware update on network infrastructure that happened to complete 12 minutes after the deployment. AI saw high correlation between the deployment timing and the error onset and concluded causation; the actual cause was completely unrelated to the application code.</div>
+        </div>
+        <div class="fc-human-catch">
+          <div class="fc-hc-label">✅ How the Human Analyst Caught It</div>
+          <div class="fc-hc-text">The analyst noticed the errors were 502s — which are network gateway errors, not application errors. That meant rolling back the application wouldn't fix network-layer failures. Checking the network infrastructure change log revealed the router update. Reverting that firmware update restored service. An application rollback would have taken 20 minutes and changed nothing.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fpanel" id="f4">
+      <div class="failure-card">
+        <div class="fc-header"><div class="fc-h-label">Failure Type: Novel Failure</div><div class="fc-h-title">AI has no historical precedent for this type of failure and misclassifies it</div></div>
+        <div class="fc-ai-box">
+          <div class="fc-ai-label">🤖 AI Diagnostic Output</div>
+          <div class="fc-ai-output">Intermittent service degradation — no clear pattern identified
+Closest match: Intermittent network packet loss (38% similarity — LOW)
+Possible Cause A: Network instability (Confidence: 38%)
+Possible Cause B: Application threading issue (Confidence: 22%)
+Possible Cause C: Load balancer misconfiguration (Confidence: 19%)
+Note: Low confidence — manual investigation recommended</div>
+        </div>
+        <div class="fc-what-wrong">
+          <div class="fc-ww-label">❌ What Was Actually Happening</div>
+          <div class="fc-ww-text">All three AI suggestions were wrong. The actual cause was a newly introduced dependency on an external third-party API that had intermittent latency issues — a pattern the AI had no historical data on because this dependency was brand new. The service degradation happened exactly when this new API was called, but AI couldn't correlate the two because it didn't know the new API dependency existed.</div>
+        </div>
+        <div class="fc-human-catch">
+          <div class="fc-hc-label">✅ How the Human Analyst Caught It</div>
+          <div class="fc-hc-text">Low AI confidence scores are actually the most important signal to act on. The analyst took AI's "manual investigation recommended" seriously and looked at what had changed in the last 2 weeks: a new integration with a third-party payment verification API. Checking the API's status page revealed intermittent latency issues on their end. The fix: add circuit breaker logic so the service degrades gracefully when the external API is slow, rather than propagating the delay to users.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Types of AI Diagnostic Errors to Know</h2>
+    <div class="error-types">
+      <div class="et-card">
+        <div class="et-icon">🪞</div>
+        <div class="et-name">Pattern Mismatch</div>
+        <div class="et-desc">AI matches current symptoms to a historical case that produced similar log signatures but had a different root cause. High confidence is most dangerous here — the match looks strong because the surface patterns are genuinely similar.</div>
+        <div class="et-watch">Watch for: High confidence + symptoms that could have multiple causes</div>
+      </div>
+      <div class="et-card">
+        <div class="et-icon">🙈</div>
+        <div class="et-name">Missing Context</div>
+        <div class="et-desc">AI doesn't know about scheduled events, recent manual changes, team decisions, or organizational factors that explain the anomaly. Whatever isn't in AI's data sources doesn't exist for AI.</div>
+        <div class="et-watch">Watch for: Anomalies that look alarming but happened right after a known change</div>
+      </div>
+      <div class="et-card">
+        <div class="et-icon">🔗</div>
+        <div class="et-name">Correlation Mistaken for Causation</div>
+        <div class="et-desc">Two events happened close together in time, and AI concludes the first caused the second. Coincidental timing between unrelated events is common in complex systems that change constantly.</div>
+        <div class="et-watch">Watch for: "Correlated with recent deployment" — always verify error type before rolling back</div>
+      </div>
+      <div class="et-card">
+        <div class="et-icon">🆕</div>
+        <div class="et-name">Novel Failure Mode</div>
+        <div class="et-desc">AI has no historical precedent for this specific failure pattern. Confidence scores will be low, suggestions will be vague. This is when the human analyst's domain knowledge matters most.</div>
+        <div class="et-watch">Watch for: Low confidence + "manual investigation recommended" — take it seriously</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Your Verification Checklist for AI Diagnostic Outputs</h2>
+    <p>These are the questions to apply before acting on any AI diagnostic suggestion — especially high-confidence ones. Check each one off as you work through a real diagnosis:</p>
+    <div class="verification">
+      <div class="vf-label">✅ Pre-Action Verification</div>
+      <div class="vf-title">Apply before acting on any AI diagnostic suggestion</div>
+      <div class="vf-items">
+        <div class="vf-item"><div class="vf-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="vf-text"><strong>Error type check:</strong> What type of errors are being reported? Do they match the layer AI is pointing to (application errors for an application fix, network errors for a network fix)?</div></div>
+        <div class="vf-item"><div class="vf-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="vf-text"><strong>Recent change check:</strong> What changed in the last 24–48 hours? Deployments, config updates, infrastructure changes, scheduled maintenance, new integrations?</div></div>
+        <div class="vf-item"><div class="vf-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="vf-text"><strong>Calendar check:</strong> Is there a planned event (migration, maintenance window, batch job, backup cycle) that could explain this pattern?</div></div>
+        <div class="vf-item"><div class="vf-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="vf-text"><strong>Reversibility check:</strong> Is the suggested action reversible? If AI is wrong, can you undo it quickly without additional disruption?</div></div>
+        <div class="vf-item"><div class="vf-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="vf-text"><strong>Novel situation check:</strong> Is there anything about this situation that AI wouldn't have historical precedent for? New integrations, first-time failure modes, recently added infrastructure?</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">AI reports a network anomaly with 79% confidence: "Traffic consistent with data exfiltration or DDoS precursor." The analyst's first response should be to:</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Immediately isolate the network segment — 79% confidence on a security threat is too high to risk</button>
+        <button class="qopt" onclick="cq(this,true)">Check whether there is a planned event or known change that could explain the unusual traffic before taking any disruptive action — network isolation could interrupt legitimate business operations</button>
+        <button class="qopt" onclick="cq(this,false)">Escalate directly to the security team — anything that might be exfiltration must bypass normal IT operations</button>
+        <button class="qopt" onclick="cq(this,false)">Wait for the confidence score to reach 90% before acting — 79% is not reliable enough for a high-impact action</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI diagnostic tools make four characteristic errors: pattern mismatch (wrong historical case), missing context (planned events, recent changes), correlation mistaken for causation (timing coincidence), and novel failure mode (no historical precedent). Recognizing which type of error might be occurring is the skill that makes verification effective.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>High confidence scores are not protection against wrong diagnoses — they can be the most dangerous outputs because they're most likely to be acted on without investigation. The verification checklist applies especially to high-confidence suggestions. Low confidence scores and "manual investigation recommended" flags are important signals to take seriously, not dismiss.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Five questions before any action: Does the error type match the layer AI is pointing to? What changed recently? Is there a planned event that explains this? Is the suggested action reversible? Is there anything novel about this situation that AI wouldn't have historical data on? Working through these consistently is what turns AI from a liability into an asset.</p></div>
+    </div>
+  </div>
+
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showF(id){document.querySelectorAll(".ftab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".fpanel").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");event.target.classList.add("active");}
+function toggleCheck(el){el.classList.toggle("checked");}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is the Missing Context failure mode in action. Before taking a disruptive action like network isolation, the analyst must verify whether a benign explanation exists. Checking the operations calendar or asking team members about planned events takes 60–90 seconds. Isolating a network segment in error could interrupt a legitimate migration that takes hours to restart. The investigation step is not optional even under time pressure — especially for irreversible high-impact actions.";}
+  else if(btn.textContent.includes("79% confidence")){fb.className="qfb show wfb";fb.textContent="❌ Confidence score alone is not sufficient basis for an immediately disruptive action. 79% confidence means a 21% chance the AI is wrong — which is significant when the action (network isolation) could interrupt legitimate business operations. The verification step takes 60–90 seconds and can prevent costly false positives. Acting on confidence score without investigation is how AI diagnostic errors become IT-caused incidents.";}
+  else if(btn.textContent.includes("security team")){fb.className="qfb show wfb";fb.textContent="❌ Escalating without first checking for a benign explanation means the security team will spend time investigating what turns out to be a planned migration. It also sets a false precedent. The verification step — checking whether there's a planned event — should happen before escalation, not after. A 60-second calendar check before involving the security team is the right sequence.";}
+  else{fb.className="qfb show wfb";fb.textContent="❌ There's no magic confidence threshold above which investigation can be skipped. 90% confidence on a security alert still carries a 10% chance of being wrong — and network isolation is high enough impact that even a 5% error probability warrants the 60-second verification check. The answer isn't to wait for higher confidence; it's to verify before acting, regardless of confidence level.";}
+  if(!correct)document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Check whether"))o.classList.add("correct");});
+}
+</script>
+</body>
+</html>

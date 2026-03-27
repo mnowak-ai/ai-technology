@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Difference Between Monitoring, Alerting, and Diagnosing — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(32px,5vw,54px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Three pillars */
+.three-pillars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:24px 0;}
+.pillar{border-radius:16px;padding:22px;border:1.5px solid;text-align:center;}
+.pillar.mon{background:#F0F7FF;border-color:#93C5FD;}
+.pillar.alert{background:var(--orange-pale);border-color:#FCD34D;}
+.pillar.diag{background:var(--purple-pale);border-color:var(--purple-mid);}
+.pillar-icon{font-size:32px;margin-bottom:10px;}
+.pillar-name{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.pillar-question{font-size:14px;font-weight:600;margin-bottom:10px;}
+.pillar-question.mon{color:#1D4ED8;}
+.pillar-question.alert{color:var(--orange);}
+.pillar-question.diag{color:var(--purple);}
+.pillar-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+/* Flow diagram */
+.flow{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:28px;margin:24px 0;}
+.flow-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.flow-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:20px;}
+.flow-steps{display:flex;align-items:stretch;gap:0;}
+.flow-step{flex:1;background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;position:relative;}
+.flow-step:not(:last-child)::after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--purple);font-weight:700;z-index:1;}
+.fs-icon{font-size:24px;margin-bottom:8px;}
+.fs-name{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.fs-desc{font-size:12px;line-height:1.5;color:var(--gray-muted);}
+.flow-arrow{width:36px;display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:20px;font-weight:700;flex-shrink:0;}
+/* Scenario explorer */
+.scenario-explorer{margin:24px 0;}
+.se-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.se-tab{padding:10px 18px;border-radius:100px;border:2px solid var(--purple-mid);background:var(--white);font-size:13px;font-weight:600;color:var(--gray-muted);cursor:pointer;transition:all .2s;}
+.se-tab.active{background:var(--purple);border-color:var(--purple);color:white;}
+.se-panel{display:none;animation:fadeIn .3s ease;}
+.se-panel.active{display:block;}
+.se-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;}
+.se-stage{margin-bottom:16px;}
+.se-stage-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.se-stage-label.mon{color:#1D4ED8;}
+.se-stage-label.alert{color:var(--orange);}
+.se-stage-label.diag{color:var(--purple);}
+.se-stage-content{background:var(--white);border-radius:10px;padding:14px;font-size:14px;line-height:1.65;color:var(--gray-text);}
+.se-ai-note{background:var(--purple-pale);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--purple-dark);margin-top:8px;}
+.se-human-note{background:var(--orange-pale);border-radius:8px;padding:10px 14px;font-size:13px;color:#92400E;margin-top:6px;}
+/* AI role table */
+.ai-role-table{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:16px;overflow:hidden;}
+.art-header{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--purple);color:white;padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;gap:8px;}
+.art-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:14px 16px;gap:8px;border-top:1px solid var(--purple-mid);font-size:13px;line-height:1.5;}
+.art-row:nth-child(odd){background:var(--gray-soft);}
+.art-cell{color:var(--gray-text);}
+.art-cell.name{font-weight:700;color:var(--purple-dark);}
+.art-cell.high{color:var(--purple);font-weight:600;}
+.art-cell.medium{color:var(--orange);font-weight:600;}
+.art-cell.low{color:var(--gray-muted);}
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:24px;padding-right:24px;}.three-pillars{grid-template-columns:1fr;}.art-header,.art-row{grid-template-columns:1fr 1fr;}.flow-steps{flex-direction:column;}.flow-step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-20px;transform:translateX(-50%);}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 2.1 · Using AI to Diagnose Problems</div>
+  <h1>The Difference Between Monitoring, Alerting, and Diagnosing</h1>
+  <p class="hero-sub">Three words used interchangeably in tech environments — but they refer to three distinct activities with different goals, different tools, and different roles for both AI and the human analyst. Confusing them is one of the most common sources of incomplete incident response.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Three Distinct Activities, Often Conflated</h2>
+    <p>In many technical conversations, "monitoring" is used as a catch-all for the entire activity of keeping an eye on systems and responding when something goes wrong. But this conflation hides three activities that are fundamentally different in purpose, method, and outcome.</p>
+    <p><strong>Monitoring</strong> is continuous observation — watching system metrics, collecting data, maintaining visibility. <strong>Alerting</strong> is threshold notification — automatically signaling when a metric crosses a defined boundary. <strong>Diagnosing</strong> is investigative analysis — determining why a problem exists and what would actually fix it.</p>
+    <p><mark>You can have excellent monitoring and alerting, and still do poor diagnosing. You can have perfect diagnostic skills and be blind to problems because monitoring is inadequate. They're complementary, not interchangeable.</mark></p>
+    <div class="pull-quote"><p>Monitoring shows you the body of water. Alerting tells you when the water level gets too high. Diagnosing figures out why it's rising and where it's coming from. All three are necessary. None substitutes for the others.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Pillars Defined</h2>
+    <div class="three-pillars">
+      <div class="pillar mon">
+        <div class="pillar-icon">👁️</div>
+        <div class="pillar-name">Monitoring</div>
+        <div class="pillar-question mon">"What is the system doing right now?"</div>
+        <div class="pillar-desc">Continuous collection of system metrics — CPU usage, memory, disk I/O, network throughput, response times, error rates. Monitoring produces data. It doesn't interpret it or act on it. The goal is visibility: maintaining an accurate, real-time picture of system state.</div>
+      </div>
+      <div class="pillar alert">
+        <div class="pillar-icon">🔔</div>
+        <div class="pillar-name">Alerting</div>
+        <div class="pillar-question alert">"Is something outside normal thresholds?"</div>
+        <div class="pillar-desc">Automated notification when monitored metrics cross predefined thresholds. Alerting is rules-based: if CPU &gt; 90%, trigger alert. It answers "something crossed a line" but not "why" or "what to do about it." The quality of alerting depends entirely on how well thresholds are configured.</div>
+      </div>
+      <div class="pillar diag">
+        <div class="pillar-icon">🔬</div>
+        <div class="pillar-name">Diagnosing</div>
+        <div class="pillar-question diag">"Why is this happening and what would fix it?"</div>
+        <div class="pillar-desc">Investigative analysis using monitoring data, log evidence, alert context, and domain knowledge to identify root cause. Diagnosis is what bridges the gap between "an alert fired" and "we know what to do." It requires judgment, not just data. This is where both AI tools and human analysts do their most important work.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How They Connect: The Operational Flow</h2>
+    <div class="flow">
+      <div class="flow-label">🔄 The Incident Response Flow</div>
+      <div class="flow-title">Monitoring → Alerting → Diagnosing → Resolution</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="fs-icon">📊</div>
+          <div class="fs-name">Monitor</div>
+          <div class="fs-desc">System generates continuous metrics and log data</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="fs-icon">🔔</div>
+          <div class="fs-name">Alert</div>
+          <div class="fs-desc">Threshold crossed — analyst notified</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="fs-icon">🔬</div>
+          <div class="fs-name">Diagnose</div>
+          <div class="fs-desc">Root cause investigation begins</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="fs-icon">✅</div>
+          <div class="fs-name">Resolve</div>
+          <div class="fs-desc">Root cause addressed, system restored</div>
+        </div>
+      </div>
+    </div>
+    <p>The most common failure point in this chain is between alerting and diagnosing. An alert fires, a human acknowledges it, applies a quick fix — and the incident is marked resolved before diagnosis ever happens. <mark>Alert acknowledgment is not diagnosis. Fix application is not diagnosis. Diagnosis is the investigative step that determines root cause — and it cannot be skipped if you want permanent resolution.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>See All Three in Action</h2>
+    <p>Select a scenario to see how monitoring, alerting, and diagnosing operate as distinct activities — and where AI contributes to each:</p>
+    <div class="scenario-explorer">
+      <div class="se-tabs">
+        <button class="se-tab active" onclick="showSE('mem')">🖥️ Memory Spike</button>
+        <button class="se-tab" onclick="showSE('slow')">🐌 Slow Application</button>
+        <button class="se-tab" onclick="showSE('net')">🌐 Network Dropout</button>
+      </div>
+
+      <div class="se-panel active" id="se-mem">
+        <div class="se-box">
+          <div class="se-stage">
+            <div class="se-stage-label mon">👁️ Monitoring — What the system is reporting</div>
+            <div class="se-stage-content">The monitoring platform has been collecting App-Server-07 memory metrics every 60 seconds for the past 6 hours. Current reading: 87% memory utilization (34.8GB / 40GB). The trend graph shows a steady, gradual increase from 62% six hours ago.
+              <div class="se-ai-note">🤖 AI role: Collects and aggregates metrics continuously, maintains trend data, flags deviation from baseline. No human involvement needed for data collection at this stage.</div>
+            </div>
+          </div>
+          <div class="se-stage">
+            <div class="se-stage-label alert">🔔 Alerting — What threshold was crossed</div>
+            <div class="se-stage-content">Alert fires: "App-Server-07 memory utilization exceeded 85% threshold." The alert includes: current value (87%), duration above threshold (14 minutes), trend direction (rising), and alert priority (Warning).
+              <div class="se-ai-note">🤖 AI role: Evaluates metric against configured threshold, triggers notification, includes contextual data. Rule-based — fires when condition is met.</div>
+              <div class="se-human-note">👤 Human receives the alert. At this point, all the analyst knows is that a threshold was crossed. They don't know why memory is high, whether it's a problem, or what to do about it. Alerting ends here — diagnosing begins.</div>
+            </div>
+          </div>
+          <div class="se-stage">
+            <div class="se-stage-label diag">🔬 Diagnosing — Finding the root cause</div>
+            <div class="se-stage-content">AI diagnostic analysis: "Gradual memory increase matches memory leak pattern (67% confidence). Possible cause: application process with increasing memory allocation over time. Recommend: identify process with highest memory growth rate." The analyst runs the process analysis, identifies a scheduled analytics job running for 10 hours (normally completes in 4). Data team confirms the job is stuck on an oversized dataset.
+              <div class="se-ai-note">🤖 AI role: Pattern-matches trend to historical leak signatures, suggests investigation direction, accelerates evidence gathering.</div>
+              <div class="se-human-note">👤 Human role: Evaluates AI suggestion against operational context (is there a scheduled job that could explain this?), confirms actual cause with data team, decides appropriate action (cancel and restart the job vs. wait for it to complete). Applies organizational knowledge AI doesn't have.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="se-panel" id="se-slow">
+        <div class="se-box">
+          <div class="se-stage">
+            <div class="se-stage-label mon">👁️ Monitoring — What the system is reporting</div>
+            <div class="se-stage-content">API response time monitoring shows customer-facing endpoints averaging 4,200ms response time over the past 8 minutes. Normal baseline is 180ms. Error rate has risen to 8.4%. Database query time metrics show query execution averaging 3,800ms (normal: 40ms).
+              <div class="se-ai-note">🤖 AI role: Collects response time, error rate, and database metrics simultaneously across all endpoints. No human needed for data collection.</div>
+            </div>
+          </div>
+          <div class="se-stage">
+            <div class="se-stage-label alert">🔔 Alerting — What threshold was crossed</div>
+            <div class="se-stage-content">Two alerts fire simultaneously: "API response time &gt; 2,000ms threshold" and "Database query time &gt; 500ms threshold." The coincident timing of both alerts is itself a signal — two thresholds crossing at the same moment often indicates a shared cause.
+              <div class="se-ai-note">🤖 AI role: Fires both alerts, notes coincident timing, flags correlation for diagnostic review. Alert system itself doesn't diagnose — it reports what crossed a line.</div>
+            </div>
+          </div>
+          <div class="se-stage">
+            <div class="se-stage-label diag">🔬 Diagnosing — Finding the root cause</div>
+            <div class="se-stage-content">AI analysis: "Simultaneous API and database latency with high correlation (0.97). Pattern consistent with database resource contention. Possible cause: lock contention or resource exhaustion. Confidence: 76%." Analyst checks active database sessions — finds 847 concurrent connections (normal peak: ~200). Traces to a reporting service that launched at the same time as the latency onset, opening connections without closing them properly (connection leak).
+              <div class="se-human-note">👤 Human role: Confirms AI's resource contention hypothesis using active session data. Identifies specific cause (connection leak in reporting service) that AI flagged as "resource exhaustion" but couldn't specify. Restarts the reporting service — connection count drops, performance restores within 2 minutes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="se-panel" id="se-net">
+        <div class="se-box">
+          <div class="se-stage">
+            <div class="se-stage-label mon">👁️ Monitoring — What the system is reporting</div>
+            <div class="se-stage-content">Network throughput monitoring shows a sudden drop from 950Mbps to near zero on the primary uplink at 14:23:07. Packet loss rate: 99.2%. All servers behind the affected uplink show simultaneous loss of external connectivity.
+              <div class="se-ai-note">🤖 AI role: Continuous network metric collection immediately captures the drop. The simultaneity across all servers (vs. one server having a problem) is captured in the monitoring data and is the first diagnostic clue.</div>
+            </div>
+          </div>
+          <div class="se-stage">
+            <div class="se-stage-label alert">🔔 Alerting — What threshold was crossed</div>
+            <div class="se-stage-content">Critical alert: "Primary uplink throughput at 0% — complete connectivity loss." Secondary alert: "All servers in Zone-A: external connectivity failed." The alerts fire within 4 seconds of the actual event — rapid detection is a core value of well-configured alerting.
+              <div class="se-ai-note">🤖 AI role: Near-instantaneous alert generation. The 4-second lag between event and alert is valuable — manual detection could take minutes in a large environment.</div>
+            </div>
+          </div>
+          <div class="se-stage">
+            <div class="se-stage-label diag">🔬 Diagnosing — Finding the root cause</div>
+            <div class="se-stage-content">AI analysis: "Complete uplink failure — possible causes: physical cable failure, ISP outage, or switch/router failure. No historical pattern match available (novel event). Manual investigation required." Analyst checks: ISP status page (no reported outage), physical cable (intact), switch logs (switch rebooted at 14:23:05 — 2 seconds before the connectivity loss). Switch reboot log shows power supply failure triggering a safety reboot.
+              <div class="se-human-note">👤 Human role: Low AI confidence ("novel event") triggers full manual investigation. Analyst systematically eliminates possible causes. Finds the switch power supply failure in the switch's own logs — a data source AI platform may not have had access to. Orders replacement power supply, activates secondary switch for failover. This is a case where AI correctly identified it couldn't help much and human investigation was the primary diagnostic method.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Where AI Fits in Each Activity</h2>
+    <div class="ai-role-table">
+      <div class="art-header">
+        <div>Activity</div>
+        <div>AI Contribution</div>
+        <div>Human Role</div>
+        <div>AI Reliability</div>
+      </div>
+      <div class="art-row">
+        <div class="art-cell name">Monitoring</div>
+        <div class="art-cell">Automated data collection, trend analysis, baseline calculation, anomaly pre-screening</div>
+        <div class="art-cell">Configure what to monitor; review anomaly flags; adjust baselines over time</div>
+        <div class="art-cell high">Very High — rule-based data collection</div>
+      </div>
+      <div class="art-row">
+        <div class="art-cell name">Alerting</div>
+        <div class="art-cell">Threshold evaluation, alert prioritization, grouping related alerts, reducing alert noise</div>
+        <div class="art-cell">Configure thresholds; tune to reduce false positives; define escalation paths</div>
+        <div class="art-cell high">High — rule-based threshold evaluation</div>
+      </div>
+      <div class="art-row">
+        <div class="art-cell name">Diagnosing</div>
+        <div class="art-cell">Log analysis, pattern matching to historical failures, possible cause ranking, evidence correlation</div>
+        <div class="art-cell">Evaluate AI suggestions; apply organizational context; confirm root cause; make final call</div>
+        <div class="art-cell medium">Medium — judgment-dependent, context-limited</div>
+      </div>
+    </div>
+    <p>AI is most reliable in monitoring and alerting — rule-based activities where accuracy is high and the failure modes are predictable. AI is least reliable in diagnosing — the activity that requires contextual judgment, organizational knowledge, and the ability to recognize when a situation doesn't match any historical pattern. <mark>That's precisely why diagnosis is the activity that most requires a skilled human analyst — not to replace AI, but to evaluate and act on what AI surfaces.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A team lead says: "Our monitoring and alerting are excellent — our AI tool catches everything and pages us immediately." A senior engineer responds: "That's necessary but not sufficient." What is the senior engineer pointing to?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI tool needs to be upgraded to also generate automatic fixes, not just alerts</button>
+        <button class="qopt" onclick="cq(this,false)">Monitoring and alerting coverage should be expanded to include more systems and metrics</button>
+        <button class="qopt" onclick="cq(this,true)">Monitoring and alerting tell you that something is wrong and where — but diagnosis tells you why and what would actually fix it permanently. Without strong diagnostic practice, teams will keep getting paged for the same recurring issues because they're fixing symptoms instead of root causes</button>
+        <button class="qopt" onclick="cq(this,false)">The team lead should reduce alert sensitivity to avoid alert fatigue — catching everything creates too much noise</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Monitoring (what is the system doing?), alerting (has a threshold been crossed?), and diagnosing (why is this happening?) are three distinct activities. Monitoring and alerting tell you that a problem exists and approximately where. Diagnosing determines why it exists and what would actually resolve it permanently. All three are necessary; none substitutes for the others.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI is highly reliable for monitoring and alerting — rule-based activities where data collection and threshold evaluation are consistent and predictable. AI is moderately reliable for diagnosing — the activity most dependent on contextual judgment and organizational knowledge. This is why diagnosing is the activity that most requires skilled human oversight of AI outputs.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most common failure in incident response is treating alert acknowledgment as the end of the process rather than the beginning of diagnosis. Excellent monitoring and alerting that isn't followed by thorough diagnosis produces teams that repeatedly respond to the same incidents — because symptoms are being addressed but root causes are not. Lesson 2.1 is fundamentally about building the diagnostic capability that monitoring and alerting make possible but cannot replace.</p></div>
+    </div>
+  </div>
+
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showSE(id){document.querySelectorAll(".se-tab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".se-panel").forEach(p=>p.classList.remove("active"));document.getElementById("se-"+id).classList.add("active");event.target.classList.add("active");}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Excellent monitoring and alerting solve a detection problem — they tell you something is wrong quickly. But detection without diagnosis produces teams that keep responding to the same alerts because they're applying the same symptom fixes without understanding the underlying cause. The senior engineer is pointing to the diagnostic gap: without the investigative practice of root cause analysis, even the best monitoring and alerting system becomes an expensive paging mechanism for recurring, unfixed problems.";}
+  else if(btn.textContent.includes("automatic fixes")){fb.className="qfb show wfb";fb.textContent="❌ Auto-remediation (AI applying fixes automatically) is a different topic — and one that requires exceptional care, because automated fixes applied to wrong diagnoses can cause significant harm. The senior engineer's point is simpler: the team needs strong diagnostic practice, not more automation.";}
+  else if(btn.textContent.includes("coverage")){fb.className="qfb show wfb";fb.textContent="❌ The issue isn't coverage — the team lead already said their alerting catches everything. The gap is in what happens after the alert fires. Broader monitoring that still doesn't lead to root cause diagnosis just means more alerts for more recurring problems.";}
+  else{fb.className="qfb show wfb";fb.textContent="❌ Alert fatigue is a real problem worth addressing — but reducing alert sensitivity to the point where real problems are missed creates a different risk. The senior engineer isn't commenting on alert volume; they're commenting on what happens after alerts are received. Good alerting plus poor diagnosing still produces recurring incidents.";}
+  if(!correct)document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("why and what"))o.classList.add("correct");});
+}
+</script>
+</body>
+</html>

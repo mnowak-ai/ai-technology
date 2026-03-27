@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Signals to Possible Causes: How AI Diagnoses a System Problem Step by Step — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(32px,5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:18px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:20px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Step-through walkthrough */
+.walkthrough{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.wt-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.wt-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.wt-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;}
+.wt-nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.wt-step-btn{padding:8px 16px;border-radius:100px;border:2px solid var(--purple-mid);background:var(--white);font-size:12px;font-weight:600;color:var(--gray-muted);cursor:pointer;transition:all .2s;}
+.wt-step-btn.active{background:var(--purple);border-color:var(--purple);color:white;}
+.wt-panel{display:none;animation:fadeIn .3s ease;}
+.wt-panel.active{display:block;}
+.wt-stage{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;}
+.wt-heading{font-size:17px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.wt-body{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:14px;}
+.wt-data{background:#1E1B2E;border-radius:12px;padding:14px 18px;font-family:monospace;font-size:12px;color:#C9B8FF;line-height:1.8;margin-bottom:12px;white-space:pre-wrap;word-break:break-word;}
+.wt-insight{background:var(--purple-pale);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.6;color:var(--purple-dark);}
+.wt-insight strong{font-weight:700;}
+.wt-next{background:var(--purple);color:white;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px;transition:all .2s;}
+.wt-next:hover{background:var(--purple-dark);}
+.wt-next:disabled{background:var(--purple-mid);cursor:default;}
+
+/* Confidence score explainer */
+.confidence-viz{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:22px;margin:24px 0;}
+.cv-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;}
+.cv-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.cv-cause{font-size:13px;color:var(--gray-text);flex:1;}
+.cv-bar-wrap{width:160px;background:var(--purple-mid);border-radius:100px;height:8px;overflow:hidden;flex-shrink:0;}
+.cv-bar{height:100%;border-radius:100px;}
+.cv-pct{font-size:13px;font-weight:700;width:36px;text-align:right;flex-shrink:0;}
+.cv-note{font-size:12px;color:var(--gray-muted);margin-top:10px;line-height:1.55;}
+
+.human-eval{background:var(--orange-pale);border:1.5px solid #FCD34D;border-radius:20px;padding:26px;margin:24px 0;}
+.he-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+.he-title{font-size:17px;font-weight:700;color:#92400E;margin-bottom:12px;}
+.he-steps{display:flex;flex-direction:column;gap:10px;}
+.he-step{display:flex;gap:10px;align-items:flex-start;}
+.he-num{width:24px;height:24px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.he-text{font-size:14px;line-height:1.6;color:#92400E;}
+
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:24px;padding-right:24px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 2.1 · Using AI to Diagnose Problems</div>
+  <h1>From Signals to Possible Causes: How AI Diagnoses a System Problem Step by Step</h1>
+  <p class="hero-sub">The diagnostic flow from raw signals to proposed root causes involves specific steps that both AI and human experts work through together. This article walks through the complete process with a real database timeout scenario — showing exactly what data goes in, what AI surfaces, what confidence scores mean, and what the human expert does next.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Diagnosis Is a Process, Not a Button</h2>
+    <p>When people first see AI diagnostic tools in action, a common misconception is that diagnosis happens in one step: data goes in, answer comes out. The reality is more structured — and understanding the structure is what allows you to participate intelligently in the diagnostic process rather than simply accepting or rejecting AI output wholesale.</p>
+    <p>The complete diagnostic flow has five distinct stages. AI handles some of them; humans handle others; some are genuinely collaborative. Walk through the complete process below using a real scenario: a database connection timeout incident in a production e-commerce environment.</p>
+    <div class="pull-quote"><p>AI accelerates the signal-to-hypothesis step by an order of magnitude. The hypothesis-to-decision step still requires a human. Knowing which stage you're at determines what you should do next.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="walkthrough">
+      <div class="wt-label">🔬 Interactive Walkthrough</div>
+      <div class="wt-title">Database Timeout Incident — Complete Diagnostic Flow</div>
+      <div class="wt-sub">Step through the complete process from raw signal ingestion to human expert decision. Use the navigation or the Next button.</div>
+      <div class="wt-nav">
+        <button class="wt-step-btn active" onclick="goStep(0)">1. Signal Ingestion</button>
+        <button class="wt-step-btn" onclick="goStep(1)">2. Pattern Recognition</button>
+        <button class="wt-step-btn" onclick="goStep(2)">3. Cause Hypotheses</button>
+        <button class="wt-step-btn" onclick="goStep(3)">4. Human Evaluation</button>
+        <button class="wt-step-btn" onclick="goStep(4)">5. Resolution</button>
+      </div>
+
+      <div class="wt-panel active" id="wtp-0">
+        <div class="wt-stage">Stage 1 — AI</div>
+        <div class="wt-heading">Raw Signal Ingestion: What the AI Is Reading</div>
+        <div class="wt-body">The AI diagnostic system continuously ingests all available signals from the production environment. At the time of the incident, here is the complete signal picture it is analyzing:</div>
+        <div class="wt-data">LOGS (Last 15 minutes):
+10:43:12 WARN  Network throughput dropped: 80Mbps → 12Mbps
+10:44:58 INFO  Application server started normally
+10:45:15 WARN  API gateway latency: 2,847ms (threshold: 500ms)
+10:45:18 ERROR DB-Main connection timeout [1/3]
+10:45:21 ERROR DB-Main connection timeout [2/3]
+10:45:24 ERROR DB-Main connection timeout [3/3] FAILED
+10:45:27 CRIT  Database service unresponsive
+
+ALERTS (Active):
+🔴 DB Server CPU: 98% (threshold: 90%) — NEW
+🔴 API Gateway: 5xx error rate spike — NEW
+🟡 Storage /data: 85% capacity — ACKNOWLEDGED
+
+METRICS (Current vs. Baseline):
+DB Server CPU:  98%    (baseline: ~40%)
+API Gateway Mem: 28/32GB (baseline: ~16GB)
+Net Throughput:  8 Mbps (baseline: ~80 Mbps)</div>
+        <div class="wt-insight"><strong>What's happening at this stage:</strong> AI is not interpreting yet. It's collecting the complete picture simultaneously — logs, alerts, and metrics across all connected systems. A human analyst might search logs for the database errors. AI ingests everything at once, including the network throughput drop 2 minutes before the first log entry.</div>
+        <button class="wt-next" onclick="goStep(1)">Next: Pattern Recognition →</button>
+      </div>
+
+      <div class="wt-panel" id="wtp-1">
+        <div class="wt-stage">Stage 2 — AI</div>
+        <div class="wt-heading">Pattern Recognition: What the AI Matched</div>
+        <div class="wt-body">After ingesting all signals, AI compares the current data pattern against its training data — millions of historical incidents from similar environments. It identifies three significant pattern matches:</div>
+        <div class="wt-data">PATTERN MATCH #1 (High Confidence):
+Sequence: API gateway latency spike → DB connection timeout cluster
+→ This sequence matches 847 historical incidents in training data
+→ 73% resolved to "Database Deadlock / Resource Exhaustion"
+→ 18% resolved to "Network-induced connection timeout"
+
+PATTERN MATCH #2 (Medium Confidence):
+Metric combination: DB CPU 98% + Memory 28/32GB simultaneously
+→ Matches "resource saturation" pattern
+→ Consistent with heavy query load or memory leak scenarios
+
+PATTERN MATCH #3 (Low Confidence):
+Network throughput drop preceding application errors
+→ Less common pattern — intermittent packet loss can cause
+→ connection timeouts, but usually produces different error sequence</div>
+        <div class="wt-insight"><strong>Key insight:</strong> The AI flagged the network throughput drop at 10:43 — 2 minutes before the first log entry. A human analyst searching logs for "database" or "connection timeout" would likely have missed this entirely. The temporal relationship between the network drop and the subsequent errors is a diagnostic clue the AI surfaced automatically.</div>
+        <button class="wt-next" onclick="goStep(2)">Next: Cause Hypotheses →</button>
+      </div>
+
+      <div class="wt-panel" id="wtp-2">
+        <div class="wt-stage">Stage 3 — AI</div>
+        <div class="wt-heading">Cause Hypotheses: What AI Proposes</div>
+        <div class="wt-body">Based on the pattern matches, AI generates a ranked list of possible root causes with confidence scores and supporting evidence for each:</div>
+        <div class="confidence-viz">
+          <div class="cv-title">AI-Generated Possible Causes</div>
+          <div class="cv-row"><div class="cv-cause"><strong>Database Deadlock</strong> — Concurrent high-priority transactions locking each other; consistent with CPU spike and connection timeout cluster</div><div class="cv-bar-wrap"><div class="cv-bar" style="width:85%;background:#7B2FBE;"></div></div><div class="cv-pct" style="color:#7B2FBE;">85%</div></div>
+          <div class="cv-row"><div class="cv-cause"><strong>Network Congestion / Packet Loss</strong> — Throughput drop at 10:43 preceded errors; intermittent packet loss can produce connection timeouts</div><div class="cv-bar-wrap"><div class="cv-bar" style="width:60%;background:#D97706;"></div></div><div class="cv-pct" style="color:#D97706;">60%</div></div>
+          <div class="cv-row"><div class="cv-cause"><strong>Application Memory Leak</strong> — API gateway memory at 28/32GB is elevated; gradual leak could be causing resource pressure</div><div class="cv-bar-wrap"><div class="cv-bar" style="width:30%;background:#8B7FA0;"></div></div><div class="cv-pct" style="color:#8B7FA0;">30%</div></div>
+          <div class="cv-note">⚠️ These are probabilistic starting points for investigation, not confirmed diagnoses. The 85% score means this pattern most frequently led to this cause in historical data — not that it is definitely the cause in this specific incident.</div>
+        </div>
+        <button class="wt-next" onclick="goStep(3)">Next: Human Evaluation →</button>
+      </div>
+
+      <div class="wt-panel" id="wtp-3">
+        <div class="wt-stage">Stage 4 — HUMAN EXPERT</div>
+        <div class="wt-heading">Human Evaluation: Applying Context AI Doesn't Have</div>
+        <div class="wt-body">The human expert now reviews the AI's proposed causes against operational context — information the AI doesn't have access to. This is where the diagnostic process shifts from AI to human judgment:</div>
+        <div class="wt-data">Human expert review notes:
+
+[Database Deadlock — 85%]
+✓ Plausible: CPU spike is consistent with deadlock scenario
+✓ Plausible: Connection timeout cluster matches deadlock pattern
+→ Check: Were there any large batch jobs or migrations running today?
+→ Found: Yes — a data migration job started at 10:40am (5 min before incident)
+→ This significantly increases likelihood of deadlock as root cause
+
+[Network Congestion — 60%]  
+? Note: We did have a planned network maintenance window ending at 10:45
+→ The throughput drop at 10:43 may be residual from maintenance, not a cause
+→ Need to check network team's maintenance logs to confirm
+→ If maintenance explains the network anomaly, this cause becomes less likely
+
+[Memory Leak — 30%]
+? API gateway memory has been elevated for 3 days (known pre-existing issue)
+→ This predates the incident — less likely to be the acute cause
+→ Still needs addressing, but separately from this incident</div>
+        <div class="wt-insight"><strong>What the human added that AI couldn't:</strong> The data migration job that started at 10:40am. The planned network maintenance window. The 3-day history of elevated gateway memory. All of this context significantly changes the interpretation of AI's proposed causes. Without it, the 60% network cause might look as likely as the 85% deadlock cause. With it, the deadlock cause becomes the clear priority to investigate first.</div>
+        <button class="wt-next" onclick="goStep(4)">Next: Resolution →</button>
+      </div>
+
+      <div class="wt-panel" id="wtp-4">
+        <div class="wt-stage">Stage 5 — HUMAN + AI</div>
+        <div class="wt-heading">Actionable Resolution: Confirmed Cause, Targeted Fix</div>
+        <div class="wt-body">With context applied, the human expert confirms the root cause and implements a targeted fix — not a generic restart, but a specific remediation addressing the confirmed cause:</div>
+        <div class="wt-data">CONFIRMED ROOT CAUSE: Database Deadlock
+Evidence: Migration job at 10:40am created concurrent transactions
+locking critical tables simultaneously with production queries.
+
+IMMEDIATE ACTIONS TAKEN:
+1. Killed the deadlocked transactions (restored service in 4 minutes)
+2. Terminated and rescheduled the migration job for off-peak hours (2am)
+3. Confirmed database returned to normal CPU levels (~38%)
+
+PREVENTIVE ACTIONS:
+1. Updated migration scheduling policy: no large jobs during business hours
+2. Added pre-check: migration jobs must acquire table locks before starting
+3. Set up separate alert for concurrent long-running transactions
+
+DOCUMENTED ROOT CAUSE:
+Migration job competing with production queries for table locks →
+database deadlock → connection timeout cascade → API gateway failure</div>
+        <div class="wt-insight" style="background:var(--green-pale);color:var(--green);border:1px solid #9DE0BC;"><strong>Result:</strong> Service restored in 4 minutes (vs. 35+ minute average for similar incidents without AI-assisted diagnosis). Root cause addressed specifically — no generic restart, no recurrence of the same category of incident. The network maintenance noise and pre-existing memory issue identified as separate items for follow-up.</div>
+        <button class="wt-next" disabled>Walkthrough Complete ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Human Evaluation Added That AI Couldn't</h2>
+    <div class="human-eval">
+      <div class="he-label">👤 The Four Types of Context Humans Provide</div>
+      <div class="he-title">Why the evaluation step isn't optional</div>
+      <div class="he-steps">
+        <div class="he-step"><div class="he-num">1</div><div class="he-text"><strong>Recent operational changes:</strong> The data migration job started 5 minutes before the incident. AI doesn't know your change calendar. Humans do — and connecting a recent change to a current failure is often the fastest path to root cause confirmation.</div></div>
+        <div class="he-step"><div class="he-num">2</div><div class="he-text"><strong>Known pre-existing conditions:</strong> The gateway memory had been elevated for 3 days — a pre-existing issue that predated the incident. Without that context, AI's 30% memory leak suggestion could mislead investigation. Humans track the history; AI sees the current snapshot.</div></div>
+        <div class="he-step"><div class="he-num">3</div><div class="he-text"><strong>Scheduled events and maintenance windows:</strong> The network maintenance window ending at 10:45 likely explained the throughput anomaly — making the 60% network cause significantly less likely. That scheduled event was invisible to AI but immediately relevant to human evaluation.</div></div>
+        <div class="he-step"><div class="he-num">4</div><div class="he-text"><strong>System-specific architecture knowledge:</strong> Knowing which tables the migration job was accessing, which production queries compete for the same locks, and what "deadlock" typically looks like in this specific environment — all of this domain knowledge belongs to the human expert, not the AI.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">In the walkthrough scenario, AI proposed Network Congestion as a 60% confidence possible cause. The human expert ultimately de-prioritized it. What was the deciding factor?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The confidence score was too low — 60% isn't high enough to investigate in an active incident</button>
+        <button class="qopt" onclick="cq(this,true)">Operational context: the human expert knew about a planned network maintenance window ending at 10:45 — the same time the network anomaly appeared. This known scheduled event provided a plausible alternative explanation for the anomaly that made the network-as-root-cause hypothesis significantly less likely in this specific incident</button>
+        <button class="qopt" onclick="cq(this,false)">Network causes are always less likely than database causes when a database error appears in the logs</button>
+        <button class="qopt" onclick="cq(this,false)">The AI's pattern matching was wrong — network congestion never causes database connection timeouts</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The complete signal-to-resolution flow has five stages: signal ingestion (AI), pattern recognition (AI), cause hypothesis generation (AI), human evaluation (human), and resolution (human + AI). The first three happen in seconds; the fourth requires operational context that only the human expert has. Skipping Stage 4 means acting on statistical patterns without the specific context that makes those patterns meaningful in your actual environment.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Operational context — recent changes, scheduled events, pre-existing conditions, architecture-specific knowledge — is what transforms AI's probabilistic hypotheses into confirmed diagnoses. In the walkthrough scenario, a 5-minute-old data migration job completely changed the interpretation of AI's suggestions. No AI system has access to your change calendar. Human evaluation provides it.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>A well-executed AI-assisted diagnosis reduces MTTR (Mean Time to Resolution) dramatically — in the scenario, from 35+ minutes to 4 minutes — not because AI replaced human judgment, but because it handled the signal analysis and pattern recognition stages that would otherwise consume most of the time available for diagnosis. Human judgment then operated on complete, organized information rather than raw data.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+let curStep=0;
+function goStep(n){
+  curStep=n;
+  document.querySelectorAll(".wt-panel").forEach((p,i)=>{p.classList.toggle("active",i===n);});
+  document.querySelectorAll(".wt-step-btn").forEach((b,i)=>{b.classList.toggle("active",i===n);});
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct")||document.querySelector(".qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is exactly the value of human evaluation in AI-assisted diagnosis. A 60% confidence score is not self-evidently low or high — its meaning depends on context. The network anomaly could genuinely have been a cause; in many similar incidents historically, it was. But the human expert knew something the AI didn't: the anomaly appeared at the same time as a scheduled maintenance window ending. That known event provided a sufficient alternative explanation, making the network hypothesis unlikely enough to de-prioritize. Context transforms statistics into judgment.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("maintenance window"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ 60% confidence is not too low to investigate — it's a meaningful lead. And network congestion absolutely can cause database connection timeouts; they share a dependency on network infrastructure. The reason the human de-prioritized the network hypothesis was specific operational context: a planned maintenance window ending at the exact same time explained the anomaly through a different, non-causal mechanism. That's the kind of reasoning that only a human with access to the change calendar and operations schedule can provide.";}
+}
+</script>
+</body>
+</html>
