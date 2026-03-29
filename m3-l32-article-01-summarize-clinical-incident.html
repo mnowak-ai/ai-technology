@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Summarize a Clinical Incident: A Step-by-Step Framework with Real Examples</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:19px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.framework{margin:24px 0;}
+.fw-step{display:flex;gap:0;}
+.fw-left{display:flex;flex-direction:column;align-items:center;width:52px;flex-shrink:0;}
+.fw-dot{width:40px;height:40px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-family:"Fraunces",serif;font-size:16px;font-weight:900;}
+.fw-line{flex:1;width:2px;background:var(--purple-mid);margin:4px 0;}
+.fw-step:last-child .fw-line{display:none;}
+.fw-body{flex:1;padding:6px 0 28px 16px;}
+.fw-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:3px;}
+.fw-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.fw-desc{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:10px;}
+.fw-tip{display:flex;gap:8px;align-items:flex-start;margin-top:6px;}
+.fw-tip-text{font-size:12px;line-height:1.55;color:var(--gray-muted);font-style:italic;}
+.log-box{background:#1E1B2E;border-radius:16px;padding:24px;margin:20px 0;font-family:monospace;font-size:13px;line-height:1.9;color:#C8C0DC;overflow-x:auto;}
+.log-header{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#6B5E8A;margin-bottom:14px;}
+.log-line{display:flex;gap:10px;flex-wrap:wrap;}
+.lt{color:#9B7FD4;font-weight:700;flex-shrink:0;}
+.la{color:#7EBFA8;flex-shrink:0;}
+.lx{color:#E0D8F0;}
+.example-block{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.ex-header{background:var(--purple-pale);padding:16px 24px;border-bottom:1.5px solid var(--purple-mid);}
+.ex-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:4px;}
+.ex-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.ex-tabs{display:flex;border-bottom:1.5px solid var(--purple-mid);}
+.ex-tab{flex:1;padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;border-right:1px solid var(--purple-mid);color:var(--gray-muted);background:var(--white);}
+.ex-tab:last-child{border-right:none;}
+.ex-tab.active{background:var(--purple);color:white;}
+.ex-panel{display:none;padding:20px 24px;}
+.ex-panel.active{display:block;animation:fadeIn .25s ease;}
+.ex-badge{font-size:11px;font-weight:700;text-transform:uppercase;border-radius:6px;padding:3px 10px;display:inline-block;margin-bottom:12px;}
+.ex-badge.bad{background:var(--red-pale);color:var(--red);}
+.ex-badge.good{background:var(--green-pale);color:var(--green);}
+.ex-text{font-size:14px;line-height:1.85;color:var(--gray-text);background:var(--gray-soft);border-radius:12px;padding:16px 18px;white-space:pre-line;}
+.ex-text.good-bg{background:var(--green-pale);}
+.ex-note{margin-top:14px;display:flex;flex-direction:column;gap:6px;}
+.ex-note-item{font-size:13px;line-height:1.55;display:flex;gap:8px;}
+.ex-note-item .ni{flex-shrink:0;font-weight:700;}
+.ai-callout{background:var(--orange-pale);border:1.5px solid #F5D8A0;border-radius:18px;padding:22px 24px;margin:20px 0;}
+.ai-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:6px;}
+.ai-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.ai-text{font-size:14px;line-height:1.75;color:var(--gray-text);}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:20px;}
+.sim-log{background:#1E1B2E;border-radius:14px;padding:20px;margin-bottom:16px;font-family:monospace;font-size:12.5px;line-height:1.9;color:#C8C0DC;overflow-x:auto;}
+.sim-q{font-size:15px;font-weight:600;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:13px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.65;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:32px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:13px;height:13px;}
+.spoint p{font-size:15px;line-height:1.65;margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s;}
+.fade-in.visible{opacity:1;transform:none;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.hero{padding:48px 24px 0}.content{padding:0 24px 48px}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 3.2 · Summarizing Technical Information</div>
+  <h1>How to Summarize a Clinical Incident: A Step-by-Step Framework with Real Examples</h1>
+  <p class="hero-sub">A clinical incident summary is not a transcript of what happened. It is a structured argument about what matters, what went wrong, and what needs to change. Getting that distinction right is what separates useful documentation from overwhelming noise.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <p>Every clinical incident generates raw material: nursing notes, physician orders, medication administration records, monitoring data, shift communications. A busy ICU can generate dozens of entries in a two-hour window. None of that is a summary. A summary is what a human — or increasingly, an AI tool — does next: decides what matters, removes what doesn't, structures what remains, and answers the question the reader is actually asking.</p>
+    <p>Most healthcare workers were never taught how to do this. They were taught to document — to record what happened, what was observed, what was ordered. Summarizing is a different skill. It requires making editorial judgments about importance, identifying the causal chain in a complex event, and writing the "so what" that turns a chronological list into an insight the reader can act on.</p>
+    <div class="pull-quote"><p>The raw incident log tells you what happened at each moment. The incident summary tells you what the incident means — and what needs to happen because of it.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four-Question Framework</h2>
+    <p>A clinical incident summary is not doing its job unless it answers four questions for the reader.</p>
+    <div class="framework">
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">1</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Question One</div>
+          <div class="fw-title">What happened, to whom, and when?</div>
+          <div class="fw-desc">The orienting facts. Not every fact — the ones required to understand the event. Patient identity (de-identified where required), date, time, setting, and a one-sentence description of the incident.</div>
+          <div class="fw-tip"><div class="fw-tip-text">⚠ This is where most incident summaries spend 80% of their words while answering only 20% of what the reader needs. Keep this section tight — two to four sentences maximum.</div></div>
+        </div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">2</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Question Two</div>
+          <div class="fw-title">What was the causal chain?</div>
+          <div class="fw-desc">How did this happen? Not a list of everything that preceded the incident — a specific identification of the conditions, decisions, or failures that produced it. This is the hardest part of incident summarization and the most valuable. The causal chain is what enables the "so what" section to actually prevent recurrence.</div>
+          <div class="fw-tip"><div class="fw-tip-text">⚠ AI tools are particularly poor at causal chain identification. They describe event sequences accurately but rarely identify the decision point or system failure where the chain could have been broken. This section requires human clinical judgment.</div></div>
+        </div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">3</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Question Three</div>
+          <div class="fw-title">What was the patient outcome?</div>
+          <div class="fw-desc">What actually happened to the patient as a result of the incident — not what might have happened, and not the generic severity of this incident type. State actual outcome specifically: harm sustained, harm averted, current status, follow-up required.</div>
+        </div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">4</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Question Four — The "So What"</div>
+          <div class="fw-title">What needs to happen because of this?</div>
+          <div class="fw-desc">The section most incident summaries either omit entirely or fill with vague language that produces no action. The "so what" must be specific: which process, which policy, which training, which system change — and who owns that change by when.</div>
+          <div class="fw-tip"><div class="fw-tip-text">⚠ "Staff should receive additional training" is not a so what. "Charge nurse to schedule medication reconciliation refresher for all evening shift RNs by [date]; pharmacy to update EMAR alert threshold for beta-blockers by [date]" is a so what.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Raw Material: What an Incident Log Actually Looks Like</h2>
+    <p>This is a realistic incident log from a medication error event. It contains everything that was documented. It is not a summary — it is the raw material you summarize from.</p>
+    <div class="log-box">
+      <div class="log-header">Raw Incident Log — Medication Event — 11/14</div>
+      <div class="log-line"><span class="lt">06:02</span><span class="la">RN Chen:</span><span class="lx">Patient awake, c/o mild headache. VS stable. AM meds reviewed.</span></div>
+      <div class="log-line"><span class="lt">06:18</span><span class="la">RN Chen:</span><span class="lx">Administered scheduled AM medications per MAR. Noted Metoprolol 100mg listed — administered as charted.</span></div>
+      <div class="log-line"><span class="lt">06:45</span><span class="la">RN Chen:</span><span class="lx">Patient reports feeling dizzy. BP 88/52. HR 44. Placed in Trendelenburg. MD notified.</span></div>
+      <div class="log-line"><span class="lt">06:47</span><span class="la">Dr. Park:</span><span class="lx">Called to bedside. MAR reviewed. Metoprolol 100mg listed. Patient's home dose is 25mg. Ordered atropine 0.5mg IV, NS bolus 500mL.</span></div>
+      <div class="log-line"><span class="lt">06:55</span><span class="la">RN Chen:</span><span class="lx">Atropine administered. NS bolus running. HR improved to 58. BP 102/66.</span></div>
+      <div class="log-line"><span class="lt">07:10</span><span class="la">Dr. Park:</span><span class="lx">Patient hemodynamically stable. Admission order reviewed — Metoprolol 100mg entered by resident on admission. Home med list showed 25mg. Reconciliation error not caught at admission or during pharmacy review.</span></div>
+      <div class="log-line"><span class="lt">07:22</span><span class="la">Pharmacy:</span><span class="lx">Reviewed admission orders. Metoprolol 100mg entered without cross-reference to home med list. Pharmacist review completed 11/13 at 23:40 — dose not flagged. Investigating alert threshold settings.</span></div>
+      <div class="log-line"><span class="lt">07:45</span><span class="la">Charge RN:</span><span class="lx">Incident report filed. Risk notified. Patient stable. Family notified by Dr. Park at 07:30.</span></div>
+      <div class="log-line"><span class="lt">08:30</span><span class="la">RN Chen:</span><span class="lx">Patient resting, no further symptoms. MAR corrected to Metoprolol 25mg per Dr. Park.</span></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Applying the Framework: Before and After</h2>
+    <p>Here is what happens when that log is summarized poorly — and then what it looks like summarized well using the four-question framework. The facts are identical.</p>
+    <div class="example-block">
+      <div class="ex-header">
+        <div class="ex-label">📄 Incident Summary Comparison</div>
+        <div class="ex-title">Metoprolol Medication Error — 11/14</div>
+      </div>
+      <div class="ex-tabs">
+        <div class="ex-tab active" onclick="switchTab(0)">❌ Weak Summary</div>
+        <div class="ex-tab" onclick="switchTab(1)">✓ Strong Summary</div>
+      </div>
+      <div class="ex-panel active" id="ep0">
+        <div class="ex-badge bad">❌ Common Approach — Reads Like a Log</div>
+        <div class="ex-text">On 11/14, a medication incident occurred involving a patient on the medical floor. The patient received Metoprolol 100mg in the morning. The patient experienced a drop in blood pressure and heart rate. The nurse notified the physician who was called to the bedside. Treatment was administered and the patient recovered. An incident report was filed and risk management was notified. The patient's family was also notified. The MAR was corrected. The patient was stable at end of shift.</div>
+        <div class="ex-note">
+          <div class="ex-note-item"><span class="ni" style="color:var(--red)">✗</span> Reads as a chronological transcript, not an analysis</div>
+          <div class="ex-note-item"><span class="ni" style="color:var(--red)">✗</span> No causal chain — how did 100mg enter the MAR? Why wasn't it caught?</div>
+          <div class="ex-note-item"><span class="ni" style="color:var(--red)">✗</span> No "so what" — what changes to prevent recurrence?</div>
+          <div class="ex-note-item"><span class="ni" style="color:var(--red)">✗</span> Anyone reading this cannot prevent the next occurrence</div>
+        </div>
+      </div>
+      <div class="ex-panel" id="ep1">
+        <div class="ex-badge good">✓ Framework-Driven Summary</div>
+        <div class="ex-text good-bg"><strong>Incident:</strong> Metoprolol overdose secondary to medication reconciliation failure. Patient [ID redacted], Medical Floor, 11/14 at 06:18.
+
+<strong>What happened:</strong> Patient received Metoprolol 100mg — four times her home dose of 25mg — during AM medication administration. The incorrect dose was entered at admission by a resident without cross-referencing the home medication list. Pharmacy reviewed orders at 23:40 on 11/13 and did not flag the discrepancy. No EMAR dose-threshold alert was triggered. RN administered as documented.
+
+<strong>Causal chain — three-point failure:</strong>
+(1) Admission entry error: Resident entered 100mg without verifying against the home medication list, which was available in the chart.
+(2) Pharmacy reconciliation gap: Overnight pharmacist review did not catch a 4× dose discrepancy for a cardiac medication.
+(3) EMAR alert gap: System dose-threshold alert for Metoprolol did not fire, suggesting the threshold is set above 100mg or is inactive for this drug class.
+
+<strong>Patient outcome:</strong> Symptomatic bradycardia (HR 44) and hypotension (BP 88/52) at 06:45. Reversed with atropine 0.5mg IV and 500mL NS bolus. Hemodynamically stable by 07:10. No lasting harm identified. Family notified.
+
+<strong>Required actions:</strong>
+• Pharmacy director: Review EMAR Metoprolol alert threshold by 11/16. If inactive or set above 100mg, correct immediately and audit other beta-blocker alert thresholds.
+• Residency program director: Review medication reconciliation training for admitting residents; confirm home med cross-reference is a required step before order entry. Complete by 11/21.
+• Charge pharmacist: Audit last 30 days of overnight pharmacy reviews for similar dose discrepancies. Report findings to Patient Safety by 11/21.
+• Risk management: Determine if this meets Serious Safety Event criteria. Decision required by 11/15.</div>
+        <div class="ex-note">
+          <div class="ex-note-item"><span class="ni" style="color:var(--green)">✓</span> Four-section structure maps exactly to the four questions</div>
+          <div class="ex-note-item"><span class="ni" style="color:var(--green)">✓</span> Causal chain names all three failure points — each is preventable</div>
+          <div class="ex-note-item"><span class="ni" style="color:var(--green)">✓</span> Every action has an owner, a deliverable, and a deadline</div>
+          <div class="ex-note-item"><span class="ni" style="color:var(--green)">✓</span> A safety committee reading this can act on it immediately</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Part Most Writers Skip: Writing the "So What"</h2>
+    <p>The most common failure in clinical incident summaries is a weak or absent "so what." This happens for understandable reasons: identifying the causal chain requires clinical judgment, the "so what" requires organizational authority to assign action items, and vague language feels safer than specific commitments. But a summary that doesn't produce action has not summarized — it has archived.</p>
+    <p>The test of a "so what" is simple: <mark>could a person reading this section alone know exactly what to do, who is responsible, and by when?</mark> If the answer is no, the section is not finished.</p>
+    <div class="ai-callout">
+      <div class="ai-label">🤖 AI Limitation to Know</div>
+      <div class="ai-title">Why AI Tools Consistently Produce Weak "So What" Sections</div>
+      <div class="ai-text">AI summarization tools perform well on the first three questions — what happened, the event sequence, and patient outcome. They consistently fail at the "so what." Two reasons: First, causal chain identification requires inferential reasoning about system failures, not just event sequencing — AI tools pattern-match to chronology, not to root causes. Second, actionable recommendations require knowing the organizational structure, authority, and staffing capacity of the specific facility — information the AI doesn't have. When AI tools write "so what" sections, they default to: "staff should receive training," "protocols should be reviewed." This sounds reasonable and produces nothing. It is the human reviewer's responsibility to replace generic language with specific, owned, time-bound actions.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🖥️ Simulation — Practice Identifying the Critical Element</div>
+      <div class="sim-title">What Does the Causal Chain Section Must Not Miss?</div>
+      <div class="sim-sub">Read this incident log excerpt. A summary is being drafted. Identify what the causal chain section must include that is most at risk of being omitted.</div>
+      <div class="sim-log"><span style="color:#9B7FD4">14:02</span> <span style="color:#7EBFA8">RN Patel:</span> <span style="color:#E0D8F0">Patient returned from radiology. Alert, oriented. Fall risk band in place.</span>
+<span style="color:#9B7FD4">14:18</span> <span style="color:#7EBFA8">RN Patel:</span> <span style="color:#E0D8F0">Answered call light. Patient attempting to stand unassisted. Instructed to wait. Siderails raised.</span>
+<span style="color:#9B7FD4">14:31</span> <span style="color:#7EBFA8">Aide Kim:</span> <span style="color:#E0D8F0">Responded to call light. Patient found on floor beside bed. Alert. No visible injury.</span>
+<span style="color:#9B7FD4">14:33</span> <span style="color:#7EBFA8">RN Patel:</span> <span style="color:#E0D8F0">Assessed patient on floor. No head strike observed. No apparent fracture. Assisted back to bed. VS stable. Dr. Kim notified.</span>
+<span style="color:#9B7FD4">14:40</span> <span style="color:#7EBFA8">Dr. Kim:</span> <span style="color:#E0D8F0">Patient examined. No acute injury identified. Ordered neuro checks q2h. Incident report filed.</span>
+<span style="color:#9B7FD4">14:55</span> <span style="color:#7EBFA8">Charge RN:</span> <span style="color:#E0D8F0">Reviewed fall prevention measures in place at time of fall. Bed alarm was NOT activated. Per policy, bed alarm is required for all patients with fall risk score ≥3. This patient's score is 4.</span></div>
+      <div class="sim-q">Which element is most critical to include in the causal chain section — and most at risk of being buried or omitted?</div>
+      <div class="sim-opts" id="sc1">
+        <button class="sim-opt" onclick="doSim(this,false,'sc1','sf1')">The 13-minute gap between the first call light (14:18) and the aide's arrival (14:31), which suggests a staffing or response-time issue that needs investigation</button>
+        <button class="sim-opt" onclick="doSim(this,true,'sc1','sf1')">The bed alarm was not activated despite a documented fall risk score of 4 — a direct policy violation that is the proximate preventable cause of the fall, entirely separate from the patient's fall risk level</button>
+        <button class="sim-opt" onclick="doSim(this,false,'sc1','sf1')">The patient's underlying diagnosis and reason for hospitalization, which provide necessary context for why the fall risk score was elevated to begin with</button>
+        <button class="sim-opt" onclick="doSim(this,false,'sc1','sf1')">The fact that no injury occurred, which should lead the causal chain section because it determines how the incident is classified for regulatory reporting</button>
+      </div>
+      <div class="sim-fb" id="sf1"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A quality manager reviews a completed incident summary that concludes: "This event highlights the importance of medication safety and the need for ongoing vigilance across all care settings." What is wrong with this conclusion?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">It is too brief — the conclusion of an incident summary should be at least two paragraphs</button>
+        <button class="qopt" onclick="cq(this,true)">It is a generic statement that produces no action — it could apply to any medication incident at any facility and assigns no responsibility, no deadline, and no specific change</button>
+        <button class="qopt" onclick="cq(this,false)">It is appropriate — conclusions should state broad principles rather than specific actions, which belong in a separate action plan document</button>
+        <button class="qopt" onclick="cq(this,false)">It is too clinical — conclusions for quality committee audiences should be written in administrative rather than clinical language</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>A clinical incident summary answers four questions: what happened and to whom, what was the causal chain, what was the patient outcome, and what needs to happen because of this. A document that answers only the first question is a log, not a summary.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The causal chain section is the hardest and most valuable part. It requires identifying the specific decisions, conditions, or system failures that produced the incident — not just listing events that preceded it. Without a real causal chain, the "so what" cannot be specific, and the incident cannot be prevented from recurring.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI tools produce acceptable summaries for the first three sections and consistently weak "so what" sections. Replacing AI-generated generic recommendations with specific, owned, time-bound action items is the single most important human editing task when reviewing AI-generated incident summaries.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function switchTab(idx){
+  document.querySelectorAll(".ex-tab").forEach((t,i)=>t.classList.toggle("active",i===idx));
+  document.querySelectorAll(".ex-panel").forEach((p,i)=>p.classList.toggle("active",i===idx));
+}
+function doSim(btn,correct,cid,fid){
+  const c=document.getElementById(cid);
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("bed alarm was not activated"))b.classList.add("reveal");});
+  const fb=document.getElementById(fid);
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The bed alarm deactivation is the pivotal causal finding — because it is the difference between a fall that happened despite full protocol compliance (one kind of event, requiring one kind of response) and a fall that happened because a protocol was violated (a different kind of event requiring accountability and compliance review). The log buries this finding in the very last entry — exactly why it's most at risk of being minimized in the summary. The causal chain is: patient documented fall risk score of 4 → bed alarm policy requires activation for score ≥3 → alarm not activated → patient slid from bed undetected → fall. The 13-minute response time is within normal range for a non-emergency call light and is secondary. The outcome (no injury) affects severity classification, not causal analysis.";
+  else fb.textContent="❌ The bed alarm finding is the most critical element, and it's the one most likely to be missed because it appears last in the log. The 13-minute response time is worth noting but is secondary — it's within normal range for a non-emergency call light on a busy floor. Outcome severity doesn't change the causal chain. The underlying diagnosis explains the fall risk score, not the protocol violation. A summary that centers 'no injury occurred' in the causal section has inverted its priorities — the causal chain is about why the fall happened, not what its consequences were.";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is the single most common failure mode in incident summary conclusions. 'Highlights the importance of' and 'underscores the need for ongoing vigilance' are phrases that feel substantive and produce nothing. They apply to any medication incident anywhere and assign no responsibility. The test: could a safety committee member read this and write a specific task on their action list? If not, it is not a conclusion — it is a platitude wearing a conclusion's clothes.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("produces no action"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Length and audience calibration are secondary concerns. The core problem is that this conclusion produces no action — it would be equally problematic at five paragraphs, and equally problematic for any audience. The quality of a conclusion is measured entirely by whether someone can read it and know specifically what to do next.";}
+}
+</script>
+</body>
+</html>

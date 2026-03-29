@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When the AI Summary Is Wrong: How to Catch Errors Before They Cause Harm</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:19px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.error-cards{display:flex;flex-direction:column;gap:0;margin:20px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.err{border-bottom:1px solid var(--purple-mid);}
+.err:last-child{border-bottom:none;}
+.err-h{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;background:var(--white);transition:background .2s;}
+.err-h:hover,.err.open .err-h{background:var(--purple-pale);}
+.err-num{width:34px;height:34px;border-radius:50%;background:var(--red);color:white;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.err-name{font-size:15px;font-weight:700;color:var(--purple-dark);flex:1;}
+.err-risk{font-size:11px;font-weight:700;border-radius:6px;padding:3px 10px;background:var(--red-pale);color:var(--red);}
+.err-arrow{font-size:12px;color:var(--purple);transition:transform .2s;flex-shrink:0;}
+.err.open .err-arrow{transform:rotate(180deg);}
+.err-body{display:none;padding:0 20px 20px;background:var(--white);}
+.err.open .err-body{display:block;animation:fadeIn .25s ease;}
+.err-why{font-size:14px;line-height:1.7;color:var(--gray-text);margin:12px 0;}
+.err-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.err-col{border-radius:12px;padding:14px 16px;}
+.err-col.ai-wrote{background:var(--red-pale);border:1px solid #F5C2C2;}
+.err-col.truth{background:var(--green-pale);border:1px solid #B5D5C0;}
+.err-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.ai-wrote .err-col-label{color:var(--red);}
+.truth .err-col-label{color:var(--green);}
+.err-col-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.err-danger{font-size:13px;line-height:1.65;color:var(--gray-text);background:var(--orange-pale);border-radius:10px;padding:12px 14px;border-left:3px solid var(--orange);}
+.err-danger strong{color:var(--orange);}
+.catch-list{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.catch-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.catch-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:4px;}
+.catch-sub{font-size:14px;color:var(--gray-muted);margin-bottom:18px;}
+.catch-items{display:flex;flex-direction:column;gap:8px;}
+.catch-item{display:flex;gap:12px;align-items:flex-start;background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .2s;}
+.catch-item:hover{border-color:var(--purple);}
+.catch-item.checked{border-color:var(--green);background:var(--green-pale);}
+.c-box{width:22px;height:22px;border:2px solid var(--purple-mid);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.catch-item.checked .c-box{background:var(--green);border-color:var(--green);}
+.c-svg{width:12px;height:12px;display:none;}
+.catch-item.checked .c-svg{display:block;}
+.c-text{font-size:14px;line-height:1.6;flex:1;}
+.catch-item.checked .c-text{color:var(--green);}
+.c-text strong{display:block;margin-bottom:2px;color:var(--purple-dark);}
+.catch-item.checked .c-text strong{color:var(--green);}
+.catch-prog{background:#E5E0EB;border-radius:10px;height:8px;overflow:hidden;margin-top:14px;}
+.catch-bar{height:100%;background:var(--green);width:0%;transition:width .3s;border-radius:10px;}
+.catch-count{font-size:12px;color:var(--gray-muted);margin-top:6px;text-align:right;}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:20px;}
+.source-doc{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;margin-bottom:12px;}
+.source-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:8px;}
+.source-text{font-size:14px;line-height:1.85;color:var(--gray-text);}
+.ai-box{background:#1E1B2E;border-radius:14px;padding:18px;margin-bottom:16px;}
+.ai-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9B7FD4;margin-bottom:10px;}
+.ai-box-text{font-size:13.5px;line-height:1.9;color:#E0D8F0;}
+.err-hl{background:rgba(220,38,38,.3);border-radius:3px;padding:1px 3px;border-bottom:2px dashed #DC2626;}
+.sim-q{font-size:15px;font-weight:600;color:var(--purple-dark);margin:16px 0 12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:13px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.65;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:32px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:13px;height:13px;}
+.spoint p{font-size:15px;line-height:1.65;margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s;}
+.fade-in.visible{opacity:1;transform:none;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.hero{padding:48px 24px 0}.content{padding:0 24px 48px}.err-pair{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 3.2 · Summarizing Technical Information</div>
+  <h1>When the AI Summary Is Wrong: How to Catch Errors Before They Cause Harm</h1>
+  <p class="hero-sub">AI summaries in healthcare make specific, patterned errors. They are not random — they are predictable. Learning which errors to look for, and where, is the skill that makes AI summarization safe to use.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <p>The most dangerous thing about an AI-generated summary error is that it looks exactly like a correct summary. A hallucinated detail appears in the same font, the same confident register, at the same position in the document as a verified fact. A dropped finding — the ambiguous lab result that was actually the most important thing in the source — simply isn't there. You cannot see what's missing unless you know to look for it.</p>
+    <p>AI summarization errors in healthcare follow patterns produced by how large language models generate text: they optimize for plausibility and coherence. This means they fill gaps, resolve ambiguity, and present uncertain information with the same confidence as certain information. <mark>These tendencies produce a specific, learnable set of error types.</mark> Once you know them, catching them becomes a focused review task rather than an open-ended re-reading.</p>
+    <div class="pull-quote"><p>An AI summary error is not like a typo — it does not look wrong. It looks like a well-written sentence about something that didn't happen, or it simply doesn't mention something critical that did.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Five Error Types AI Summaries Make Most Often</h2>
+    <p>These are documented, consistent failure patterns in AI summarization applied to healthcare documentation. Click each error to see a real example and why it matters clinically.</p>
+    <div class="error-cards">
+      <div class="err" id="err1">
+        <div class="err-h" onclick="toggleErr('err1')">
+          <div class="err-num">1</div><div class="err-name">Hallucinated Specifics</div>
+          <div class="err-risk">High Risk</div><div class="err-arrow">▼</div>
+        </div>
+        <div class="err-body">
+          <div class="err-why">The AI generates a plausible-sounding specific — a value, a time, a dose, a name — that does not appear in the source document. Language models predict the most likely next token given context. If surrounding content strongly implies a specific value, the model may generate it even if the source didn't contain it. It is not "making things up" in any intentional sense — it is completing a pattern. The result is identical to making things up.</div>
+          <div class="err-pair">
+            <div class="err-col ai-wrote"><div class="err-col-label">❌ AI Summary Stated</div><div class="err-col-text">"Patient received IV morphine 4mg at 14:30, with pain reduction documented at 15:00 reassessment."</div></div>
+            <div class="err-col truth"><div class="err-col-label">✓ Source Document Said</div><div class="err-col-text">"IV morphine administered at approximately 14:30. Follow-up assessment to be completed." No dose documented. No 15:00 reassessment recorded — it was ordered but the note was never completed.</div></div>
+          </div>
+          <div class="err-danger"><strong>Why this is dangerous:</strong> The AI filled in 4mg (a common morphine dose in context) and invented a reassessment that never happened. The summary now contains a fabricated dose and a fabricated safety check. A future provider reads a document that says morphine 4mg was given and reassessed. Neither is verified.</div>
+        </div>
+      </div>
+      <div class="err" id="err2">
+        <div class="err-h" onclick="toggleErr('err2')">
+          <div class="err-num">2</div><div class="err-name">Ambiguity Resolution — The Most Dangerous Error</div>
+          <div class="err-risk">Highest Risk</div><div class="err-arrow">▼</div>
+        </div>
+        <div class="err-body">
+          <div class="err-why">When source documentation contains ambiguous, contradictory, or uncertain findings, AI tools resolve the ambiguity toward the most plausible interpretation — and present that resolution as a fact. This is the most dangerous error type because the information AI drops or resolves is often the most clinically significant. Equivocal findings, provisional diagnoses, contradictory results, and uncertain causation are exactly what the next provider most needs to know are uncertain.</div>
+          <div class="err-pair">
+            <div class="err-col ai-wrote"><div class="err-col-label">❌ AI Summary Stated</div><div class="err-col-text">"CT chest showed no pulmonary embolism. Patient was treated for community-acquired pneumonia and discharged on Day 4."</div></div>
+            <div class="err-col truth"><div class="err-col-label">✓ Source Document Said</div><div class="err-col-text">"CT chest: No definite filling defect identified; however, image quality limited by patient motion — PE cannot be fully excluded. Team elected to treat empirically for CAP, accepting residual PE uncertainty. Clinical correlation required."</div></div>
+          </div>
+          <div class="err-danger"><strong>Why this is dangerous:</strong> The source documents a deliberate clinical decision to proceed under uncertainty, with that uncertainty explicitly recorded. The AI resolved "PE cannot be fully excluded" into a clean negative. A future provider reading the summary sees a cleared PE workup. The one reading the original understands that PE was never excluded.</div>
+        </div>
+      </div>
+      <div class="err" id="err3">
+        <div class="err-h" onclick="toggleErr('err3')">
+          <div class="err-num">3</div><div class="err-name">Recency Bias — Recent Content Overwrites Important Earlier Content</div>
+          <div class="err-risk">High Risk</div><div class="err-arrow">▼</div>
+        </div>
+        <div class="err-body">
+          <div class="err-why">AI models weight recent content more heavily than earlier content in long documents. In a multi-day hospital chart, this means the final entries — "patient stable, discharge planning underway" — receive disproportionate weight. Earlier entries containing critical findings, treatment rationale, or complications may be compressed or omitted entirely because they appear earlier in the document, even when they are more clinically significant.</div>
+          <div class="err-pair">
+            <div class="err-col ai-wrote"><div class="err-col-label">❌ AI Summary Stated</div><div class="err-col-text">"Patient admitted with chest pain. Treated with heparin and aspirin. Stable. Discharged on Day 3 with cardiology follow-up."</div></div>
+            <div class="err-col truth"><div class="err-col-label">✓ What Was In the Chart</div><div class="err-col-text">Day 1: STEMI, emergent catheterization, LAD stenting. Day 2: Post-procedure VT episode, amiodarone loading. Day 3: Stable, discharged. Cardiologist note: ICD evaluation scheduled — defibrillator implantation may be required within 30 days if EF remains below 35%.</div></div>
+          </div>
+          <div class="err-danger"><strong>Why this is dangerous:</strong> "Stable, cardiology follow-up" erases the STEMI, the arrhythmia, the stent, and the pending ICD decision. Any provider receiving this patient has a fundamentally different clinical picture than the reality requires.</div>
+        </div>
+      </div>
+      <div class="err" id="err4">
+        <div class="err-h" onclick="toggleErr('err4')">
+          <div class="err-num">4</div><div class="err-name">Uniform Confidence — Certain and Uncertain Presented Identically</div>
+          <div class="err-risk">High Risk</div><div class="err-arrow">▼</div>
+        </div>
+        <div class="err-body">
+          <div class="err-why">AI summaries use the same declarative, confident register for all information regardless of how certain the underlying source is. A confirmed lab result, a physician's speculative note, a patient's self-reported history, and a preliminary read that was later revised all appear as equally definitive statements. The source document's hedging language — "may suggest," "cannot exclude," "patient reports," "preliminary" — disappears and is replaced by declarative assertions.</div>
+          <div class="err-pair">
+            <div class="err-col ai-wrote"><div class="err-col-label">❌ AI Summary Stated</div><div class="err-col-text">"MRI confirmed lumbar herniation at L4-L5. Patient has a history of opioid misuse. Inflammatory markers were elevated."</div></div>
+            <div class="err-col truth"><div class="err-col-label">✓ Source Document Said</div><div class="err-col-text">"MRI findings suggestive of L4-L5 disc herniation — final read pending. Patient self-reports prior opioid dependence (remote, states resolved). ESR mildly elevated at 28 — nonspecific; clinical significance unclear."</div></div>
+          </div>
+          <div class="err-danger"><strong>Why this is dangerous:</strong> Three uncertain findings have become three confirmed facts. The pending MRI becomes "confirmed." The self-reported history becomes a chart fact. The nonspecific elevation becomes clinically significant. Together they create a clinical picture stated with more certainty than the evidence supports.</div>
+        </div>
+      </div>
+      <div class="err" id="err5">
+        <div class="err-h" onclick="toggleErr('err5')">
+          <div class="err-num">5</div><div class="err-name">Source Conflation — Details from Another Patient or Encounter</div>
+          <div class="err-risk">High Risk</div><div class="err-arrow">▼</div>
+        </div>
+        <div class="err-body">
+          <div class="err-why">When an AI tool processes multiple patient records in sequence — or a lengthy chart containing multiple admissions — it may conflate information across records. Details from a prior admission, a similar patient encounter, or an adjacent record may appear in a summary attributed to the wrong patient. This is more common with long documents, multi-encounter summaries, and batch-processing tools.</div>
+          <div class="err-pair">
+            <div class="err-col ai-wrote"><div class="err-col-label">❌ AI Summary Stated</div><div class="err-col-text">"Patient has a documented penicillin allergy and a prior history of C. diff infection treated in 2022."</div></div>
+            <div class="err-col truth"><div class="err-col-label">✓ Source Document Said</div><div class="err-col-text">This patient has no documented drug allergies and no prior C. diff history. The patient processed in the adjacent batch had the penicillin allergy and C. diff history.</div></div>
+          </div>
+          <div class="err-danger"><strong>Why this is dangerous:</strong> A false penicillin allergy will cause this patient to be denied effective antibiotic treatment. A false C. diff history triggers unnecessary infection control precautions and testing. Both consequences flow from a summary error that looks entirely plausible on its face.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Your AI Summary Review Checklist</h2>
+    <p>Use this when reviewing any AI-generated summary before it is distributed, filed, or used for clinical decisions. Each item targets one of the five error types.</p>
+    <div class="catch-list">
+      <div class="catch-label">✅ Five-Point AI Summary Check</div>
+      <div class="catch-title">Before You Use or Forward Any AI Summary</div>
+      <div class="catch-sub">Click each item as you verify it against the source document.</div>
+      <div class="catch-items">
+        <div class="catch-item" onclick="doCheck(this)"><div class="c-box"><svg class="c-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><div class="c-text"><strong>Every specific detail exists in the source</strong>For each named value, time, medication, and dose in the summary: verify it appears in the source. Any specific in the summary but not the source is a potential hallucination.</div></div>
+        <div class="catch-item" onclick="doCheck(this)"><div class="c-box"><svg class="c-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><div class="c-text"><strong>Uncertainty in the source survives into the summary</strong>Scan the source for: "may suggest," "cannot exclude," "patient reports," "preliminary," "clinical correlation required." Each must appear in some form in the summary. If the summary states as confirmed what the source stated as uncertain, that is the ambiguity resolution error.</div></div>
+        <div class="catch-item" onclick="doCheck(this)"><div class="c-box"><svg class="c-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><div class="c-text"><strong>Early content is appropriately weighted</strong>Read the first 25% of the source. Is that content proportionally reflected in the summary? If the summary heavily reflects the final section and underweights early findings or earlier admission events, that is recency bias.</div></div>
+        <div class="catch-item" onclick="doCheck(this)"><div class="c-box"><svg class="c-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><div class="c-text"><strong>Declarative statements are supported by confirmed evidence</strong>For each definitive assertion in the summary, verify the source supports that certainty. Self-reported histories, preliminary reads, and nonspecific findings should not appear as confirmed diagnoses or results.</div></div>
+        <div class="catch-item" onclick="doCheck(this)"><div class="c-box"><svg class="c-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><div class="c-text"><strong>Allergies, histories, and identifiers match this specific patient</strong>Verify any allergy, prior diagnosis, or significant history is documented in this patient's chart — not a prior encounter or adjacent record. Critical for multi-encounter summaries and batch-processed tools.</div></div>
+      </div>
+      <div class="catch-prog"><div class="catch-bar" id="catchBar"></div></div>
+      <div class="catch-count" id="catchCount">0 / 5 verified</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🖥️ Error Identification Practice</div>
+      <div class="sim-title">Find the AI Summary Error</div>
+      <div class="sim-sub">Read the source note, then the AI summary. Identify which error type is present and what's most at stake.</div>
+      <div class="source-doc">
+        <div class="source-label">📄 Source — Physician Progress Note</div>
+        <div class="source-text">Patient is a 68F admitted for acute kidney injury, etiology unclear. Cr on admission 3.4 (baseline per patient ~1.2 per her report — no prior labs available to confirm). Renal ultrasound today: no obstruction. Urinalysis: 2+ protein, trace blood, no casts. Findings could suggest intrinsic renal disease vs. prerenal — cannot differentiate on current data. Nephrology consulted; will evaluate tomorrow. <strong>Notably, patient mentions she started ibuprofen 400mg TID approximately 10 days ago for knee pain — this was not in the initial medication history and may be clinically significant as a contributing factor to the AKI.</strong> Will await nephrology before making further diagnostic conclusions. Patient hemodynamically stable. Renal diet initiated.</div>
+      </div>
+      <div class="ai-box">
+        <div class="ai-box-label">🤖 AI-Generated Summary</div>
+        <div class="ai-box-text">68-year-old female admitted with acute kidney injury. Creatinine 3.4 on admission (baseline 1.2). Renal ultrasound negative for obstruction. Urinalysis showed proteinuria and hematuria. <span class="err-hl">Diagnosis: intrinsic renal disease.</span> Nephrology consulted. Patient hemodynamically stable on renal diet.</div>
+      </div>
+      <div class="sim-q">Which error type is most clearly present — and what is its most dangerous consequence?</div>
+      <div class="sim-opts" id="sc1">
+        <button class="sim-opt" onclick="doSim(this,false,'sc1','sf1')">Hallucinated specifics — the AI invented the creatinine baseline of 1.2, which was patient-reported and not confirmed by prior labs</button>
+        <button class="sim-opt" onclick="doSim(this,false,'sc1','sf1')">Recency bias — the AI failed to include the renal diet, which was documented at the end of the note</button>
+        <button class="sim-opt" onclick="doSim(this,true,'sc1','sf1')">Ambiguity resolution — the physician explicitly could not differentiate etiology on current data; the AI resolved this into a definitive diagnosis. The AI also omitted the ibuprofen finding — the most actionable new information in the note.</button>
+        <button class="sim-opt" onclick="doSim(this,false,'sc1','sf1')">Uniform confidence — urinalysis findings were presented with the same certainty as the creatinine value, which is less appropriate</button>
+      </div>
+      <div class="sim-fb" id="sf1"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A physician uses an AI tool to generate a discharge summary from a 6-day hospital chart. She reviews the summary and it reads accurately for the final two days — all medications correct, discharge plan accurate, follow-up instructions match. She approves it. What error is she most likely to have missed?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Hallucinated specifics — the final two days of a complex admission are more likely to contain fabricated values</button>
+        <button class="qopt" onclick="cq(this,false)">Source conflation — 6-day charts are more likely to be confused with other patients' records during processing</button>
+        <button class="qopt" onclick="cq(this,true)">Recency bias — the AI has accurately summarized the final two days but may have compressed or omitted critical events from Days 1–4: the admission presentation, diagnostic workup, complications, and clinical reasoning</button>
+        <button class="qopt" onclick="cq(this,false)">Uniform confidence — discharge plans are well-established by Day 6 and less subject to uncertainty language in the source</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI summary errors are not random — they are patterned. The five types are: hallucinated specifics (details not in the source), ambiguity resolution (uncertain findings presented as confirmed), recency bias (early content underweighted), uniform confidence (hedged language converted to declarative statements), and source conflation (another patient's details attributed to this one).</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The ambiguity resolution error is the most dangerous because it erases precisely the information that matters most. Equivocal findings, provisional diagnoses, and uncertain causation are what the next provider most needs to know are uncertain — and AI tools systematically resolve them into clean declarative statements. Reviewing for this error requires reading the source for hedging language and verifying it survived into the summary.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Reviewing an AI summary without structure misses errors — the brain confirms what it expects to see. The five-point checklist targets each error type specifically and forces verification before a summary is used, filed, or distributed.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleErr(id){document.getElementById(id).classList.toggle("open");}
+function doCheck(item){
+  item.classList.toggle("checked");
+  const c=document.querySelectorAll(".catch-item.checked").length;
+  document.getElementById("catchBar").style.width=(c/5*100)+"%";
+  document.getElementById("catchCount").textContent=c+" / 5 verified";
+}
+function doSim(btn,correct,cid,fid){
+  const c=document.getElementById(cid);
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("Ambiguity resolution"))b.classList.add("reveal");});
+  const fb=document.getElementById(fid);
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct — ambiguity resolution, with two compounding failures. First, the physician's explicit statement that she cannot differentiate intrinsic from prerenal disease on current data has become 'Diagnosis: intrinsic renal disease' — a definitive conclusion that is the opposite of what the note said. Second, the ibuprofen finding — bolded by the physician, flagged as potentially the most clinically significant new information in the note, and the only finding suggesting a reversible cause — is completely absent. This is the classic pattern: AI tools summarize structured, confident sections well and compress or omit the discursive clinical reasoning, which is often where the most important information lives. A nephrologist reading this summary would not know to ask about the ibuprofen.";
+  else fb.textContent="❌ The 1.2 creatinine baseline appears in the source (patient-reported) — it's not hallucinated. The renal diet is in the summary. The ambiguity resolution error is the primary issue: 'cannot differentiate on current data' became 'Diagnosis: intrinsic renal disease' — and the ibuprofen, the most actionable new finding, was completely dropped. Both errors reflect the AI's tendency to resolve ambiguity and omit complex clinical reasoning in favor of clean declarative statements.";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The physician validated what she could see — and what she saw was accurate. But reviewing only the final two days of a 6-day chart is exactly where recency bias hides. An AI processing a long chart produces a summary weighted toward the last 20–30% of the document. The STEMI on Day 1, the arrhythmia on Day 2, the clinical reasoning behind treatment decisions, the complications that shaped the course — all of this may have been compressed in favor of the clean, stable final days. A 6-day chart review that only validates the last two days has not reviewed the summary.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Recency bias"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Recency bias is the most likely error here. The physician saw accurate content — but only looked at the period the AI summarized most accurately. The risk is in the earlier days of the admission, which the AI is most likely to have compressed. Long charts reviewed only at the end are the highest-risk scenario for recency bias.";}
+}
+</script>
+</body>
+</html>
