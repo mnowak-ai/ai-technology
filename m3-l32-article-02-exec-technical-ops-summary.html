@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Summary vs. Technical Summary vs. Operational Summary: Three Very Different Documents</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:19px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;}
+.type-card{border-radius:16px;padding:20px;border:1.5px solid;}
+.type-card.exec{background:#F0F7FF;border-color:#B5CFF5;}
+.type-card.tech{background:var(--green-pale);border-color:#B5D5C0;}
+.type-card.ops{background:var(--orange-pale);border-color:#F5D8A0;}
+.type-icon{font-size:24px;margin-bottom:6px;}
+.type-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.type-card.exec .type-tag{color:#2563EB;}
+.type-card.tech .type-tag{color:var(--green);}
+.type-card.ops .type-tag{color:var(--orange);}
+.type-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.type-rows{display:flex;flex-direction:column;gap:6px;}
+.type-row{font-size:12px;line-height:1.5;color:var(--gray-text);}
+.type-row strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-muted);margin-bottom:1px;}
+.anatomy{margin:24px 0;}
+.anatomy-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.anatomy-tab{padding:9px 18px;border-radius:8px;border:1.5px solid var(--purple-mid);background:var(--white);cursor:pointer;font-size:13px;font-weight:600;color:var(--gray-muted);transition:all .2s;}
+.anatomy-tab.active{background:var(--purple);color:white;border-color:var(--purple);}
+.anatomy-panel{display:none;}
+.anatomy-panel.active{display:block;animation:fadeIn .25s ease;}
+.anatomy-doc{border:1.5px solid var(--purple-mid);border-radius:18px;overflow:hidden;}
+.anatomy-doc-header{padding:14px 20px;border-bottom:1.5px solid var(--purple-mid);}
+.anatomy-doc-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.anatomy-panel.ep .anatomy-doc-type{color:#2563EB;}
+.anatomy-panel.cp .anatomy-doc-type{color:var(--green);}
+.anatomy-panel.op .anatomy-doc-type{color:var(--orange);}
+.anatomy-doc-title{font-size:14px;font-weight:700;color:var(--purple-dark);}
+.anatomy-section{padding:16px 20px;border-bottom:1px solid var(--purple-mid);}
+.anatomy-section:last-child{border-bottom:none;}
+.anatomy-sec-label{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.anatomy-sec-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);}
+.anatomy-sec-why{font-size:10px;color:var(--gray-muted);font-style:italic;}
+.anatomy-sec-text{font-size:13px;line-height:1.75;color:var(--gray-text);background:var(--gray-soft);border-radius:8px;padding:12px;}
+.matrix{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.matrix-row{display:grid;grid-template-columns:160px 1fr 1fr 1fr;border-bottom:1px solid var(--purple-mid);}
+.matrix-row:last-child{border-bottom:none;}
+.matrix-row.header{background:var(--purple);}
+.matrix-cell{padding:12px 14px;font-size:13px;border-right:1px solid var(--purple-mid);}
+.matrix-cell:last-child{border-right:none;}
+.matrix-row.header .matrix-cell{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--white);}
+.matrix-cell.row-label{font-weight:700;font-size:13px;color:var(--purple-dark);background:var(--purple-pale);}
+.matrix-row:not(.header):nth-child(even) .matrix-cell:not(.row-label){background:var(--gray-soft);}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:20px;}
+.sim-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:16px;font-size:14px;line-height:1.75;}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:10px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.55;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:32px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:13px;height:13px;}
+.spoint p{font-size:15px;line-height:1.65;margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s;}
+.fade-in.visible{opacity:1;transform:none;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.hero{padding:48px 24px 0}.content{padding:0 24px 48px}.type-grid{grid-template-columns:1fr}.matrix-row{grid-template-columns:100px 1fr 1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 3.2 · Summarizing Technical Information</div>
+  <h1>Executive Summary vs. Technical Summary vs. Operational Summary: Three Very Different Documents</h1>
+  <p class="hero-sub">Tech professionals are expected to produce all three — often about the same incident — and most have never been explicitly taught the differences. Getting this wrong is why engineers talk past leadership and why postmortems sit unread.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <p>Here is a scenario that plays out in every tech organization every week: a significant incident occurs. By end of day, four people will write about it. The SRE writes a postmortem. The engineering manager briefs the CTO. The ops team updates the runbook. The customer success team drafts external comms. Same incident. Completely different documents — and they should be.</p>
+    <p>The difference between an executive summary, a technical summary, and an operational summary is not vocabulary or length. It is a fundamentally different answer to the question: <mark>what does this reader need to decide, and what information makes that decision possible?</mark></p>
+    <p>When these documents are written as if they are the same thing — which AI tools do by default — the wrong information reaches the wrong decision-maker. Engineering details land in front of a VP who needs to decide about customer communication. A governance ask lands in a technical postmortem where engineers need to understand a stack trace. Both documents fail their purpose.</p>
+    <div class="pull-quote"><p>An executive summary is not a short technical summary. An operational summary is not a technical summary with tickets added. Each is built around a different decision.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Summary Types at a Glance</h2>
+    <div class="type-grid">
+      <div class="type-card exec">
+        <div class="type-icon">📊</div>
+        <div class="type-tag">Executive Summary</div>
+        <div class="type-title">For: CTO, VP Eng, Product, Legal, Comms</div>
+        <div class="type-rows">
+          <div class="type-row"><strong>Primary question answered</strong>What happened, what's the business impact, what decision is needed from leadership?</div>
+          <div class="type-row"><strong>Lead with</strong>Business impact and organizational implication — not stack traces</div>
+          <div class="type-row"><strong>Detail level</strong>No error codes, no config details; financial/reputational/customer impact highlighted</div>
+          <div class="type-row"><strong>Ends with</strong>A specific ask: approve, decide, or unblock something</div>
+          <div class="type-row"><strong>Length</strong>Half a page maximum</div>
+        </div>
+      </div>
+      <div class="type-card tech">
+        <div class="type-icon">🔧</div>
+        <div class="type-tag">Technical Summary</div>
+        <div class="type-title">For: SREs, Engineers, Postmortem Committee</div>
+        <div class="type-rows">
+          <div class="type-row"><strong>Primary question answered</strong>What happened technically, what were the failure points, what does the evidence support?</div>
+          <div class="type-row"><strong>Lead with</strong>The technical root cause — the actual thing that broke</div>
+          <div class="type-row"><strong>Detail level</strong>Specific: error messages, config values, timing, stack traces, dependency graphs</div>
+          <div class="type-row"><strong>Ends with</strong>Technical recommendations and follow-up work items</div>
+          <div class="type-row"><strong>Length</strong>As long as technical specificity requires; typically 1–3 pages</div>
+        </div>
+      </div>
+      <div class="type-card ops">
+        <div class="type-icon">⚙️</div>
+        <div class="type-tag">Operational Summary</div>
+        <div class="type-title">For: On-call leads, Managers, Support, DevOps</div>
+        <div class="type-rows">
+          <div class="type-row"><strong>Primary question answered</strong>What needs to change in process, runbooks, alerts, or tooling — and by when?</div>
+          <div class="type-row"><strong>Lead with</strong>The process or workflow gap that needs closing</div>
+          <div class="type-row"><strong>Detail level</strong>Step-by-step procedures; ticket references; escalation paths; SLO implications</div>
+          <div class="type-row"><strong>Ends with</strong>An action list with owners and deadlines</div>
+          <div class="type-row"><strong>Length</strong>Structured; action list format preferred over narrative</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>One Incident, Three Documents</h2>
+    <p>An AI-powered fraud detection model deployed in production began incorrectly flagging legitimate transactions as fraudulent, causing a 23% false positive rate for 2.5 hours. Below are all three summary types for this same event. Click each tab to see the full document.</p>
+    <div class="anatomy">
+      <div class="anatomy-tabs">
+        <button class="anatomy-tab active" onclick="switchAnat('ep')">📊 Executive Summary</button>
+        <button class="anatomy-tab" onclick="switchAnat('cp')">🔧 Technical Summary</button>
+        <button class="anatomy-tab" onclick="switchAnat('op')">⚙️ Operational Summary</button>
+      </div>
+      <div class="anatomy-panel ep active" id="anat-ep">
+        <div class="anatomy-doc">
+          <div class="anatomy-doc-header">
+            <div class="anatomy-doc-type">Executive Summary</div>
+            <div class="anatomy-doc-title">FraudDetect AI False Positive Event — For CTO and VP Product</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Bottom Line Up Front</span><span class="anatomy-sec-why">— Executives read this first; if they read nothing else, they must have this</span></div>
+            <div class="anatomy-sec-text">On Tuesday from 14:00–16:28, our AI fraud detection model experienced a configuration error that caused it to incorrectly decline approximately 23% of legitimate transactions. Estimated revenue impact: $47K in declined transactions; customer success has identified 312 affected accounts. No actual fraud occurred. Systems are restored and operating normally. A decision is needed on whether to proactively notify affected customers and what SLA credit policy to apply.</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Business Risk Context</span><span class="anatomy-sec-why">— What leadership needs to assess exposure</span></div>
+            <div class="anatomy-sec-text">The root cause was a model threshold change deployed without proper validation — a process gap that engineering is addressing. The more significant risk is reputational: affected customers received false fraud alerts, which is a trust-eroding experience. Customer success is assessing churn risk among enterprise accounts. Legal is reviewing whether SLA breach notifications are required for any customers under uptime commitments.</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Decision Request</span><span class="anatomy-sec-why">— The specific ask; what this summary was written to obtain</span></div>
+            <div class="anatomy-sec-text">Leadership approval requested on two items: (1) Authorize proactive customer notification for the 312 affected accounts, with draft communication ready for review; (2) Approve SLA credit policy for enterprise accounts with contractual uptime guarantees — finance has three options ready for review. Engineering actions are already underway and do not require leadership approval.</div>
+          </div>
+        </div>
+      </div>
+      <div class="anatomy-panel cp" id="anat-cp">
+        <div class="anatomy-doc">
+          <div class="anatomy-doc-header">
+            <div class="anatomy-doc-type">Technical Summary</div>
+            <div class="anatomy-doc-title">FraudDetect AI False Positive Incident — Postmortem Technical Review</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Incident Identification</span></div>
+            <div class="anatomy-sec-text">FraudDetect v3.2 model, production environment. False positive rate elevated from baseline 2.1% to 23.4% between 14:00–16:28 on [date]. 312 unique transactions incorrectly declined. Root cause confirmed: misconfigured decision threshold in deployment config.</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Technical Timeline</span><span class="anatomy-sec-why">— Trajectory-changing events only</span></div>
+            <div class="anatomy-sec-text">13:47 — FraudDetect v3.2 deployed to prod. Config change included: `decision_threshold` lowered from 0.82 to 0.61 (intended for staging experiment, deployed to prod by mistake in the same PR).<br><br>14:03 — False positive rate crosses 10%. No alert fired — monitoring threshold set to 30%.<br><br>14:31 — Customer support escalation: multiple enterprise customers reporting declined payments.<br><br>14:38 — On-call engineer identifies config discrepancy by comparing prod config to expected values in Terraform.<br><br>14:52 — Rollback initiated to FraudDetect v3.1.<br><br>15:12 — Rollback complete. False positive rate returns to baseline 2.1%.<br><br>16:28 — All queued transactions reprocessed. Incident closed.</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Technical Root Cause Analysis</span></div>
+            <div class="anatomy-sec-text">Two technical failures combined: (1) Staging and production configs were managed in the same PR with no environment-specific validation gate. The `decision_threshold` value intended for staging experiments was included in the production deployment without a diff review requiring explicit sign-off. (2) The false positive rate alert threshold (30%) was set too high to catch this incident early — the impact was already significant at 10% false positives, which should have been the alert threshold.</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Technical Recommendations</span></div>
+            <div class="anatomy-sec-text">1. Separate staging and production config files into distinct paths; CI/CD pipeline must block any prod deployment that includes staging-flagged config values.<br>2. Lower FraudDetect false positive alert threshold from 30% to 8% — this incident would have been caught 35 minutes earlier.<br>3. Add automated config validation step: any `decision_threshold` change requires a second reviewer and a canary deployment before full prod rollout.<br>4. Ticket created: FRAUD-2847 (config separation), FRAUD-2848 (alert threshold), FRAUD-2849 (config validation).</div>
+          </div>
+        </div>
+      </div>
+      <div class="anatomy-panel op" id="anat-op">
+        <div class="anatomy-doc">
+          <div class="anatomy-doc-header">
+            <div class="anatomy-doc-type">Operational Summary</div>
+            <div class="anatomy-doc-title">FraudDetect Incident — Action Items for On-Call Lead, DevOps, and Support</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Process Gap Identified</span></div>
+            <div class="anatomy-sec-text">FraudDetect v3.2 shipped a staging config value to production because no environment-specific validation gate exists in the CI/CD pipeline. The false positive rate alert threshold (30%) was set too high to trigger before significant customer impact occurred. These two gaps need immediate remediation.</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Action List</span><span class="anatomy-sec-why">— Owners and deadlines required for each</span></div>
+            <div class="anatomy-sec-text"><strong>Today:</strong><br>
+• Update FraudDetect false positive alert threshold: 30% → 8%. Owner: @jess_sre. Done when: alert config updated and tested in staging, confirmed in prod.<br>
+• Customer success to generate list of 312 affected accounts with transaction IDs and timestamps. Owner: @cs_lead. Done when: spreadsheet in shared drive by 5pm.<br><br>
+<strong>48 hours:</strong><br>
+• DevOps to implement env-specific config path separation in CI/CD. Staging configs must not be deployable to prod without explicit override + second approver. Owner: @devops_lead. Done when: FRAUD-2847 closed and pipeline tested.<br>
+• On-call runbook updated: add step "Check FraudDetect decision_threshold in prod config after any model deployment." Owner: @sre_manager. Done when: runbook PR merged.<br><br>
+<strong>1 week:</strong><br>
+• Automated config validation: any decision_threshold change triggers canary deployment + manual approval gate. Owner: @ml_infra. Done when: FRAUD-2849 closed, pipeline updated.<br>
+• Audit all other ML model deployment configs for similar staging/prod separation gaps. Owner: @ml_platform. Done when: audit report in Confluence.</div>
+          </div>
+          <div class="anatomy-section">
+            <div class="anatomy-sec-label"><span class="anatomy-sec-name">Escalation Trigger</span></div>
+            <div class="anatomy-sec-text">If any enterprise customer with a 99.9% SLA reports a billing dispute related to this incident, escalate immediately to @vp_cs and @legal — do not handle at the support level. @cs_lead has the list of at-risk accounts.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Changes, What Stays Constant</h2>
+    <div class="matrix">
+      <div class="matrix-row header">
+        <div class="matrix-cell">Element</div>
+        <div class="matrix-cell">Executive Summary</div>
+        <div class="matrix-cell">Technical Summary</div>
+        <div class="matrix-cell">Operational Summary</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell row-label">Facts</div>
+        <div class="matrix-cell">✅ Same — never distorted</div>
+        <div class="matrix-cell">✅ Same — never distorted</div>
+        <div class="matrix-cell">✅ Same — never distorted</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell row-label">Lead</div>
+        <div class="matrix-cell">Business impact + decision needed</div>
+        <div class="matrix-cell">Technical root cause</div>
+        <div class="matrix-cell">Process gap to close</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell row-label">Technical detail</div>
+        <div class="matrix-cell">None — impact only</div>
+        <div class="matrix-cell">Full specificity: configs, thresholds, traces</div>
+        <div class="matrix-cell">Only what's needed for runbook / ticket</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell row-label">Ends with</div>
+        <div class="matrix-cell">A governance decision request</div>
+        <div class="matrix-cell">Technical recommendations + tickets</div>
+        <div class="matrix-cell">Action list: owner + deadline</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell row-label">AI-generated?</div>
+        <div class="matrix-cell">⚠ Check for missing decision request and technical leakage</div>
+        <div class="matrix-cell">⚠ Check for omitted failure points and softened root cause</div>
+        <div class="matrix-cell">⚠ Check for vague actions without owners or deadlines</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🖥️ Scenario Practice</div>
+      <div class="sim-title">Identify the Summary Type Mismatch</div>
+      <div class="sim-sub">Read the scenario and identify what went wrong.</div>
+      <div class="sim-scenario">A Head of Platform Engineering is asked by the CEO to give her a quick brief on an API rate-limiting incident that affected three enterprise customers. He sends the CEO a two-page document covering: (1) a background section on how rate limiting works in their architecture, (2) a table of API endpoint hit counts with timestamps in UTC, (3) a comparison of token bucket vs. leaky bucket algorithms and why they chose token bucket, and (4) a list of Terraform changes proposed to fix the configuration. The CEO responds: "Thanks — but what do you need from me?"</div>
+      <div class="sim-q">What type of summary was produced, and what should have been produced instead?</div>
+      <div class="sim-opts" id="simop2">
+        <button class="sim-opt" onclick="doSim2(this,false)">He produced an operational summary when he should have produced a technical summary — the CEO needed more technical depth</button>
+        <button class="sim-opt" onclick="doSim2(this,true)">He produced a technical summary when he should have produced an executive summary — the CEO needed the business impact, the customer exposure, and a specific decision request, not rate limiting architecture or Terraform diffs</button>
+        <button class="sim-opt" onclick="doSim2(this,false)">The summary was appropriate — the CEO's response indicates she understood it; she just needed a follow-up conversation</button>
+        <button class="sim-opt" onclick="doSim2(this,false)">He produced an executive summary when he should have produced an operational summary — the CEO needed action items with owners</button>
+      </div>
+      <div class="sim-fb" id="simfb2"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An AI tool is asked to summarize a production incident for distribution. It produces a comprehensive document covering technical root cause, business impact, customer communication recommendations, runbook updates needed, and SLA implications. What is the primary problem with distributing this document as-is?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq2(this,false)">It is too long — AI summaries should always be kept to one page</button>
+        <button class="qopt" onclick="cq2(this,true)">It was written for no specific audience — it combines all three summary types, which means it serves none of them well and needs to be split before it goes to any specific reader</button>
+        <button class="qopt" onclick="cq2(this,false)">AI tools cannot accurately summarize incidents because they lack access to internal logs</button>
+        <button class="qopt" onclick="cq2(this,false)">SLA implications should never appear in the same document as technical root cause</button>
+      </div>
+      <div class="qfb" id="qfb2"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Executive, technical, and operational summaries are built around three different decisions: whether leadership should act (executive), what the technical evidence supports doing (technical), and what workflow or process changes need to happen (operational). Writing the wrong type for the audience produces the wrong decision — or no decision.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The facts never change across the three types — only the framing, lead, detail level, and ending. Executive summaries end with a governance decision request. Technical summaries end with technical recommendations and tickets. Operational summaries end with a specific action list with owners and deadlines. Missing or vague endings mean the summary hasn't finished its job.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI tools produce comprehensive hybrid summaries by default — they include elements from all three types because they have no way to know which audience will read it. The human reviewer's job is to identify which summary type is needed and restructure the AI output accordingly. Distributing an AI-generated comprehensive summary as-is means no single reader gets what they need.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function switchAnat(type){
+  document.querySelectorAll(".anatomy-tab").forEach((t,i)=>{const types=["ep","cp","op"];t.classList.toggle("active",types[i]===type);});
+  document.querySelectorAll(".anatomy-panel").forEach(p=>p.classList.toggle("active",p.id==="anat-"+type));
+}
+function doSim2(btn,correct){
+  const c=document.getElementById("simop2");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("technical summary when"))b.classList.add("reveal");});
+  const fb=document.getElementById("simfb2");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The CEO's response — 'what do you need from me?' — is the diagnostic signal: she received background and technical detail but no decision request. That's the defining failure of a technical document sent to an executive audience. The exec version would have been: paragraph 1 — three enterprise customers were unable to complete API calls for 2.5 hours due to a rate limiting misconfiguration; estimated impact is X in SLA credits; paragraph 2 — two things needed from you: approval to proactively communicate to affected customers, and sign-off on the SLA credit policy. Everything technical goes in the appendix or the separate postmortem.";
+  else fb.textContent="❌ The CEO's question tells you exactly what was missing: a decision request. Rate limiting architecture, UTC timestamp tables, and Terraform diffs are information for engineers — not for a CEO deciding whether to approve customer communications. The document gave her everything to understand the problem technically and nothing to act on organizationally.";}
+function cq2(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb2");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. An AI comprehensive summary is a useful internal working draft — not a finished deliverable. The CTO needs the executive version: impact, risk, decision needed. The postmortem team needs the technical version: root cause, timeline, tickets. The on-call lead needs the operational version: what changed, what to watch, what to update in the runbook. All three audiences need different documents built from the same facts. Distributing the AI output directly puts the wrong information in front of every reader.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("no specific audience"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Length and technical accuracy aren't the primary issues. A document mixing root cause analysis, business impact, customer communication recommendations, and SLA implications is trying to serve three different audiences simultaneously. The CEO doesn't need the root cause. The SRE doesn't need the SLA credit options. The support team doesn't need either. Split the document first; distribute second.";}
+}
+</script>
+</body>
+</html>

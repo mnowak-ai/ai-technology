@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Summarize a Technical Incident: A Step-by-Step Framework with Real Examples</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:19px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.framework{margin:24px 0;}
+.fw-step{display:flex;gap:0;}
+.fw-left{display:flex;flex-direction:column;align-items:center;width:52px;flex-shrink:0;}
+.fw-dot{width:40px;height:40px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-family:"Fraunces",serif;font-size:16px;font-weight:900;}
+.fw-line{flex:1;width:2px;background:var(--purple-mid);margin:4px 0;}
+.fw-step:last-child .fw-line{display:none;}
+.fw-body{flex:1;padding:0 0 28px 16px;padding-top:6px;}
+.fw-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:3px;}
+.fw-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.fw-desc{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:10px;}
+.fw-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;}
+.fw-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:6px;}
+.fw-box-text{font-size:13px;line-height:1.75;color:var(--gray-text);}
+.example-block{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.ex-header{background:var(--purple-pale);padding:16px 24px;border-bottom:1.5px solid var(--purple-mid);}
+.ex-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:4px;}
+.ex-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.ex-tabs{display:flex;border-bottom:1.5px solid var(--purple-mid);}
+.ex-tab{flex:1;padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;border-right:1px solid var(--purple-mid);color:var(--gray-muted);background:var(--white);transition:all .2s;}
+.ex-tab:last-child{border-right:none;}
+.ex-tab.active{background:var(--purple);color:white;}
+.ex-panel{display:none;padding:20px 24px;}
+.ex-panel.active{display:block;animation:fadeIn .25s ease;}
+.ex-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;border-radius:6px;padding:3px 10px;display:inline-block;margin-bottom:12px;}
+.ex-badge.bad{background:var(--red-pale);color:var(--red);}
+.ex-badge.good{background:var(--green-pale);color:var(--green);}
+.ex-text{font-size:13px;line-height:1.85;color:var(--gray-text);background:var(--gray-soft);border-radius:12px;padding:16px;white-space:pre-wrap;}
+.ex-text.good-bg{background:var(--green-pale);}
+.ex-ann{font-size:13px;line-height:1.55;color:var(--gray-text);display:flex;gap:8px;align-items:flex-start;margin-top:8px;}
+.ai-callout{background:var(--orange-pale);border:1.5px solid #F5D8A0;border-radius:18px;padding:22px 24px;margin:20px 0;}
+.ai-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:6px;}
+.ai-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.ai-text{font-size:14px;line-height:1.75;color:var(--gray-text);}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:20px;}
+.log-box{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:20px;margin-bottom:18px;}
+.log-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:10px;}
+.log-text{font-size:13px;line-height:1.9;color:var(--gray-text);font-family:monospace;}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:10px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:32px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:13px;height:13px;}
+.spoint p{font-size:15px;line-height:1.65;margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s;}
+.fade-in.visible{opacity:1;transform:none;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.hero{padding:48px 24px 0}.content{padding:0 24px 48px}.ex-tabs{flex-direction:column}.ex-tab{border-right:none;border-bottom:1px solid var(--purple-mid)}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 3.2 · Summarizing Technical Information</div>
+  <h1>How to Summarize a Technical Incident: A Step-by-Step Framework with Real Examples</h1>
+  <p class="hero-sub">A raw incident log is not a summary. Turning one into the other is a skill — knowing what to keep, what to cut, how to structure it, and how to write the "so what" that makes it useful to the people who receive it.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <p>Every time a system goes down, a deployment fails, or an AI tool misfires in production, someone has to write the incident summary. Not the raw log — the summary. The document that tells engineering leadership what happened, tells the on-call team what to watch for, and tells the postmortem committee what to change so it doesn't happen again.</p>
+    <p>Most incident summaries are written the same way the incident was experienced: chronologically, with every detail, in the heat of the moment. The result is a document that is technically accurate and nearly impossible to act on. <mark>A good incident summary is not a transcript of what happened. It is a structured argument about what happened and what it means.</mark></p>
+    <div class="pull-quote"><p>The raw incident log is evidence. The incident summary is the case you build from that evidence. They are two different documents with two different jobs.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Five-Step Framework</h2>
+    <p>These steps apply whether you are summarizing a P1 outage, a failed deployment, a security event, or an AI model producing bad outputs in production. Do not write a single word of the summary until you have completed steps 1 through 3.</p>
+    <div class="framework">
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">1</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Before you write</div>
+          <div class="fw-title">Identify the audience and their decision</div>
+          <div class="fw-desc">Every incident summary serves someone who will do something with it. The on-call engineer reading the summary at 3am needs different information than the VP of Engineering reviewing it Monday morning, or the SRE team writing a postmortem, or the customer success team drafting communications. Before writing a single word, name your reader and the specific action your summary needs to enable.</div>
+          <div class="fw-box"><div class="fw-box-label">Ask yourself first</div><div class="fw-box-text">Who reads this? What will they do with it? What decision does this need to inform? If I can't answer these questions, I don't yet know what to summarize.</div></div>
+        </div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">2</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Before you write</div>
+          <div class="fw-title">Read the full log and annotate — don't write yet</div>
+          <div class="fw-desc">Read the complete incident timeline before writing anything. As you read, mark three categories only: (A) events that changed the trajectory — the trigger, the escalation, the intervention, the resolution; (B) the exact moment the incident began and ended; (C) contributing factors. Everything else — status updates, duplicate alerts, routine acknowledgments — is noise.</div>
+          <div class="fw-box"><div class="fw-box-label">Annotation categories</div><div class="fw-box-text">🔴 Trajectory-changing events → must include<br>🟡 Contributing context → include if relevant to audience<br>⚪ Status noise / duplicates → omit</div></div>
+        </div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">3</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Before you write</div>
+          <div class="fw-title">Identify the "so what" before you write the "what"</div>
+          <div class="fw-desc">The "so what" is the technical or business significance of the incident — why this summary needs to exist. Was it a config drift that's probably affecting other services? A silent failure mode in an AI pipeline that nobody has been monitoring? A dependency that's been a latent risk for months? You must know the significance before writing the narrative, or the summary drifts into description instead of insight.</div>
+          <div class="fw-box"><div class="fw-box-label">Complete this before writing</div><div class="fw-box-text">"This incident matters because _____, and the reader needs to know this so that they can _____."</div></div>
+        </div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">4</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">Writing</div>
+          <div class="fw-title">Write in four required sections</div>
+          <div class="fw-desc">Every incident summary has four sections regardless of length. Each does one job. Do not combine them or skip them.</div>
+          <div class="fw-box"><div class="fw-box-label">The four required sections</div><div class="fw-box-text"><strong>1. Incident identification</strong> — What, when, scope of impact. Two to three sentences max. No analysis yet.<br><br><strong>2. Timeline of key events</strong> — What happened, in order, at the detail level your audience needs. Trajectory-changing events only. No noise.<br><br><strong>3. Resolution and current status</strong> — What fixed it, who did it, when. Current system state.<br><br><strong>4. Root cause and recommended action</strong> — The "so what." What this incident reveals, what systemic risk it represents, and what specific action is recommended. This section is why the summary exists.</div></div>
+        </div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-left"><div class="fw-dot">5</div><div class="fw-line"></div></div>
+        <div class="fw-body">
+          <div class="fw-label">After writing</div>
+          <div class="fw-title">Cut everything that doesn't serve the audience's decision</div>
+          <div class="fw-desc">After a full draft, read it from the perspective of your specific audience making their specific decision. Every sentence that doesn't move that decision gets cut or moved to an appendix. This is where most incident summaries go from exhausting to useful.</div>
+          <div class="fw-box"><div class="fw-box-label">The cut test</div><div class="fw-box-text">For each sentence: "If the reader didn't have this, would they make a different decision?" If no — cut it.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Same Incident, Two Summaries</h2>
+    <p>An AI-powered recommendation engine serving a major e-commerce platform began returning null results for approximately 34% of product searches for 47 minutes on a Tuesday afternoon. Below is the raw incident log, a weak summary, and a strong one. Click each tab.</p>
+    <div class="example-block">
+      <div class="ex-header">
+        <div class="ex-label">📋 Full Example — AI Recommendation Engine Outage</div>
+        <div class="ex-title">P1 Incident: RecoEngine returning null on 34% of queries, 47 minutes</div>
+      </div>
+      <div class="ex-tabs">
+        <div class="ex-tab active" onclick="switchEx(0)">📄 Raw Log</div>
+        <div class="ex-tab" onclick="switchEx(1)">❌ Weak Summary</div>
+        <div class="ex-tab" onclick="switchEx(2)">✅ Strong Summary</div>
+      </div>
+      <div class="ex-panel active" id="ep0">
+        <div class="ex-text">14:03 — PagerDuty alert: RecoEngine latency spike, p99 > 8s (threshold: 2s)
+14:04 — Auto-scaling triggered. 3 additional pods spun up.
+14:05 — Alert acknowledged by on-call, @jess_sre
+14:06 — p99 still 11s. Null response rate: 34%. Auto-scaling not helping.
+14:09 — @jess_sre begins investigation. Checks model serving logs.
+14:12 — Model serving logs show: feature store connection timeouts starting at 13:58
+14:14 — Feature store team pinged. No response yet.
+14:17 — @jess_sre checks feature store health dashboard. Status: green (inaccurate — monitoring not updated)
+14:19 — @dev_lead joins bridge. Decides to investigate upstream.
+14:22 — Feature store team responds: "we deployed a schema change at 13:56. Didn't realize downstream dependencies."
+14:24 — Schema change identified: renamed feature column `user_session_id` to `session_uuid`. RecoEngine model hardcoded to old column name.
+14:27 — @jess_sre pushes hotfix: update column name reference in RecoEngine config.
+14:33 — Hotfix deployed to staging. Testing.
+14:39 — Hotfix validated. Deploying to prod.
+14:50 — Null response rate back to baseline (< 0.5%). Incident resolved.
+14:51 — P1 ticket closed. Incident report initiated.
+NOTE: This is the 2nd time a feature store schema change has caused a downstream model failure in 90 days. First incident: Oct 14, also undisclosed schema change.</note></div>
+      </div>
+      <div class="ex-panel" id="ep1">
+        <div class="ex-badge bad">❌ Weak Summary</div>
+        <div class="ex-text">On Tuesday at approximately 2pm, the RecoEngine experienced elevated latency and began returning null results for a significant portion of product searches. The on-call engineer investigated and identified a connection issue with the feature store. A hotfix was deployed and the system was restored within approximately 47 minutes. The incident has been resolved and normal service has resumed. We will review our monitoring and deployment processes as a follow-up action.</div>
+        <div class="ex-ann"><span>❌</span>The root cause (undisclosed schema change breaking a hardcoded column reference) is completely absent — replaced by "a connection issue"</div>
+        <div class="ex-ann"><span>❌</span>"Review our processes" is not a recommended action — it's a platitude that enables no change</div>
+        <div class="ex-ann"><span>❌</span>The pattern — 2nd schema change incident in 90 days — the most important fact in the log — is nowhere</div>
+        <div class="ex-ann"><span>❌</span>Written for no one in particular. Useless to every stakeholder.</div>
+      </div>
+      <div class="ex-panel" id="ep2">
+        <div class="ex-badge good">✅ Strong Summary — For Engineering Leadership & Postmortem Committee</div>
+        <div class="ex-text good-bg">INCIDENT SUMMARY — P1 · RecoEngine Null Response Spike
+Audience: Engineering Leadership, Postmortem Committee
+Impact: 34% of product search queries returned null for 47 minutes (14:03–14:50). Revenue impact under assessment by analytics team.
+
+WHAT HAPPENED
+At 13:56, the Feature Store team deployed a schema change that renamed the column `user_session_id` to `session_uuid`. This change was not communicated to downstream teams. At 14:03, RecoEngine — which had a hardcoded reference to the old column name — began returning null results for any query that hit the renamed column. Auto-scaling did not help because the problem was a bad data reference, not a capacity issue. The Feature Store team identified the schema change at 14:22 after being pinged. A hotfix updating the column reference in RecoEngine config was deployed and validated by 14:50.
+
+THREE CONTRIBUTING FAILURES
+1. No change communication protocol: Feature Store deployments do not currently require notification to downstream model owners before schema changes go to production.
+2. Inaccurate status page: Feature Store health dashboard showed "green" during the outage because monitoring only checks service availability, not schema integrity.
+3. Hardcoded configuration: RecoEngine referenced the feature column name in static config rather than a schema-aware abstraction — making any column rename a silent breaking change.
+
+ROOT CAUSE & RECOMMENDED ACTIONS
+This is the second time in 90 days that an undisclosed Feature Store schema change has broken a downstream ML model (previous incident: Oct 14). This is a systemic coordination failure, not a one-off deployment error.
+
+Recommended for committee action:
+• Immediate: Mandatory downstream notification before any Feature Store schema change touches production
+• 30 days: Feature Store schema changes require approval from all registered downstream model owners (RecoEngine, PersonalizationEngine, SearchRanker)
+• 30 days: Status page monitoring updated to include schema validation checks, not just service availability
+• 60 days: Audit all ML model configs for hardcoded feature column references; migrate to schema registry pattern</div>
+        <div class="ex-ann"><span>✅</span>Written for a specific audience making a specific decision (systemic changes)</div>
+        <div class="ex-ann"><span>✅</span>Three contributing failures named explicitly — each addressable independently</div>
+        <div class="ex-ann"><span>✅</span>The 90-day pattern is the headline finding — this is the "so what" that justifies systemic action, not a one-off fix</div>
+        <div class="ex-ann"><span>✅</span>Specific recommended actions with owners and timeframes the committee can vote on</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="ai-callout">
+      <div class="ai-label">🤖 AI Dimension</div>
+      <div class="ai-title">When AI Summarizes Incidents Involving AI Systems</div>
+      <div class="ai-text">AI incident summarization tools — whether Jira's AI, Confluence AI, or custom LLM pipelines — are increasingly used to auto-draft postmortem summaries from incident timelines. When the incident itself involved an AI system misbehaving, a specific risk emerges: AI summarization tools tend to soften technical failure details. They describe "a data issue" rather than naming the specific model config that hardcoded a schema reference it shouldn't have. They say "monitoring gaps" rather than "the status page was showing green because no one configured it to check schema integrity." Vague summaries of AI failures protect the status quo. Specific ones enable the systemic fixes that prevent the next incident.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🖥️ Practice</div>
+      <div class="sim-title">Apply the Framework</div>
+      <div class="sim-sub">Read the raw incident log below. Then identify what the "root cause and recommended action" section must communicate.</div>
+      <div class="log-box">
+        <div class="log-label">⚠ Raw Incident Log — AI Code Review Tool</div>
+        <div class="log-text">09:15 — Dev reports: Copilot-integrated code review assistant (ReviewBot v2.1) is approving PRs without flagging SQL injection vulnerabilities.
+09:18 — Security team pinged.
+09:22 — Security confirms: 3 PRs merged to main in the past 24 hrs contain unsanitized user inputs in SQL queries. ReviewBot approved all three.
+09:35 — Engineering lead pulls ReviewBot v2.1 config. Finds: security ruleset last updated 8 months ago. New SQL injection patterns added to OWASP in April not reflected.
+09:41 — ReviewBot v2.1 disabled pending ruleset update.
+09:55 — Security begins manual audit of last 30 days of PRs reviewed by ReviewBot.
+10:30 — Audit complete: 7 additional PRs contain potential SQL injection vectors. All pre-date today. None have been exploited (confirmed by WAF logs).
+11:00 — Ruleset updated with current OWASP patterns. ReviewBot v2.2 deployed.
+11:15 — Affected PRs flagged for remediation. Tech leads notified.
+NOTE: ReviewBot v2.1 had been running with the outdated ruleset for 8 months. No automated process exists to alert when AI tool rulesets go stale relative to current security standards.</div>
+      </div>
+      <div class="sim-q">Which of the following best describes what the "root cause and recommended action" section must communicate?</div>
+      <div class="sim-opts" id="sop1">
+        <button class="sim-opt" onclick="doSim(this,false)">That ReviewBot approved three vulnerable PRs and the tool has been updated to v2.2 with the current ruleset — the immediate issue is resolved</button>
+        <button class="sim-opt" onclick="doSim(this,false)">That the engineer who approved the ReviewBot config 8 months ago should be responsible for auditing all affected PRs</button>
+        <button class="sim-opt" onclick="doSim(this,true)">That there is no automated process to detect when AI tool rulesets become stale relative to current standards — meaning any AI security tool in the organization could silently be operating on outdated rules, and every such tool needs an immediate ruleset audit plus a recurring currency check mechanism</button>
+        <button class="sim-opt" onclick="doSim(this,false)">That ReviewBot v2.1 should be permanently decommissioned in favor of a human code review process</button>
+      </div>
+      <div class="sim-fb" id="sfb1"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Why must you identify the "so what" before writing the chronological timeline section?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Because incident management platforms require the significance statement to appear before the timeline</button>
+        <button class="qopt" onclick="cq(this,true)">Because knowing the significance tells you which events in the raw log are trajectory-changing and which are noise — without it, you include everything and the summary becomes a transcript</button>
+        <button class="qopt" onclick="cq(this,false)">Because the significance section is hardest to write and should be done first when energy is highest</button>
+        <button class="qopt" onclick="cq(this,false)">Because ITIL and NIST incident management standards require this sequencing</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>A technical incident summary is a structured argument, not a transcript. The five-step framework: identify audience and decision, read and annotate the log, identify the "so what" before writing the "what," write in four sections (identification, timeline, resolution, root cause/action), then cut everything that doesn't serve the decision.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The root cause and recommended action section is why the summary exists. "Review our processes" is not a recommended action — it's a platitude. Recommended actions must be specific, name an owner, and have a timeframe. A summary without these has not finished its job.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When AI tools contribute to an incident and are also used to summarize it, verify that the specific technical failure is named and the scope of ongoing risk is quantified. AI-generated incident summaries tend to soften technical specifics — vague summaries of AI failures leave the underlying systemic risk unaddressed.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function switchEx(i){document.querySelectorAll(".ex-tab").forEach((t,j)=>t.classList.toggle("active",i===j));document.querySelectorAll(".ex-panel").forEach((p,j)=>p.classList.toggle("active",i===j));}
+function doSim(btn,correct){
+  const c=document.getElementById("sop1");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("no automated process"))b.classList.add("reveal");});
+  const fb=document.getElementById("sfb1");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The final note in the raw log is the most important sentence: no automated process exists to detect when AI tool rulesets become stale. That's not a ReviewBot problem — it's an organizational AI governance problem. If it's true for ReviewBot, it's likely true for every AI-powered security, quality, or compliance tool in the stack. The root cause section must surface this scope and name the systemic fix: an inventory of all AI tools with security or compliance rulesets, a freshness audit of each, and a recurring check mechanism going forward. Fixing ReviewBot without addressing the pattern leaves every other tool silently at risk.";
+  else fb.textContent="❌ The immediate resolution matters, but it's not the root cause. Individual accountability doesn't fix a process gap. And decommissioning ReviewBot throws away a useful tool rather than fixing why it went stale. The most important insight from this log is the last line: there is no automated process to detect ruleset staleness — which means this same failure mode is latent in every other AI tool in the organization. That systemic risk is the root cause. The summary must name it and propose a fix.";}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The 'so what' is your editorial lens. If you know the significance is a systemic coordination failure between teams, you know to include the 90-day pattern, the three contributing failures, and the config hardcoding issue — because those are the facts that support the systemic conclusion. Without knowing the significance first, every event in the log looks potentially important, and the summary collapses into a 40-item timeline that nobody reads.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("which events"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The sequencing is about editorial discipline, not platform requirements or energy management. The 'so what' acts as a filter: it tells you which events are signal and which are noise. Without it first, you write everything, and the summary becomes the log.";}
+}
+</script>
+</body>
+</html>

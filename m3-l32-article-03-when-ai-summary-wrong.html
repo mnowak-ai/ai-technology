@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When the AI Summary Is Wrong: How to Catch Errors in AI-Generated Summaries Before They Cause Harm</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:19px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.error-patterns{display:flex;flex-direction:column;gap:0;margin:20px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.ep-card{cursor:pointer;border-bottom:1px solid var(--purple-mid);}
+.ep-card:last-child{border-bottom:none;}
+.ep-header{padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.ep-num{width:34px;height:34px;border-radius:50%;background:var(--red);color:white;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ep-title-group{flex:1;}
+.ep-title{font-size:15px;font-weight:700;color:var(--purple-dark);}
+.ep-subtitle{font-size:12px;color:var(--gray-muted);margin-top:2px;}
+.ep-risk{font-size:11px;font-weight:700;border-radius:6px;padding:3px 10px;background:var(--red-pale);color:var(--red);}
+.ep-arrow{font-size:11px;color:var(--purple);transition:transform .2s;flex-shrink:0;}
+.ep-card.open .ep-arrow{transform:rotate(180deg);}
+.ep-body{display:none;padding:0 20px 20px;}
+.ep-card.open .ep-body{display:block;animation:fadeIn .25s ease;}
+.ep-explain{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:14px;}
+.ep-example{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.ep-col{border-radius:12px;padding:14px 16px;}
+.ep-col.source{background:var(--gray-soft);border:1px solid var(--purple-mid);}
+.ep-col.ai-out{background:var(--red-pale);border:1px solid #F5C2C2;}
+.ep-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.ep-col.source .ep-col-label{color:var(--gray-muted);}
+.ep-col.ai-out .ep-col-label{color:var(--red);}
+.ep-col-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.ep-catch{background:var(--green-pale);border-radius:10px;padding:12px 14px;}
+.ep-catch-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:5px;}
+.ep-catch-text{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.detection{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.det-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.det-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.det-sub{font-size:14px;color:var(--gray-muted);margin-bottom:16px;}
+.det-items{display:flex;flex-direction:column;gap:8px;}
+.det-item{display:flex;gap:12px;align-items:flex-start;background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .2s;}
+.det-item:hover{border-color:var(--purple);}
+.det-item.checked{border-color:var(--green);background:var(--green-pale);}
+.det-cb{width:22px;height:22px;border:2px solid var(--purple-mid);border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.det-item.checked .det-cb{background:var(--green);border-color:var(--green);}
+.det-cb svg{display:none;width:12px;height:12px;}
+.det-item.checked .det-cb svg{display:block;}
+.det-text{font-size:14px;line-height:1.6;flex:1;}
+.det-item.checked .det-text{color:var(--green);}
+.det-progress-bg{background:#E5E0EB;border-radius:10px;height:8px;overflow:hidden;margin-top:14px;}
+.det-progress-bar{height:100%;background:var(--green);border-radius:10px;width:0%;transition:width .3s;}
+.det-count{font-size:12px;color:var(--gray-muted);margin-top:6px;text-align:right;}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:20px;}
+.source-doc{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;margin-bottom:14px;}
+.source-doc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:8px;}
+.source-doc-text{font-size:13px;line-height:1.85;color:var(--gray-text);}
+.ai-summary-doc{background:var(--orange-pale);border:1.5px solid #F5D8A0;border-radius:14px;padding:18px;margin-bottom:16px;}
+.ai-summary-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:8px;}
+.ai-summary-text{font-size:13px;line-height:1.85;color:var(--gray-text);}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:10px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.55;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:32px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:13px;height:13px;}
+.spoint p{font-size:15px;line-height:1.65;margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s;}
+.fade-in.visible{opacity:1;transform:none;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.hero{padding:48px 24px 0}.content{padding:0 24px 48px}.ep-example{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Lesson 3.2 · Summarizing Technical Information</div>
+  <h1>When the AI Summary Is Wrong: How to Catch Errors Before They Cause Problems</h1>
+  <p class="hero-sub">AI summarization tools make specific, patterned errors — not random ones. They hallucinate details, drop ambiguous information that's often the most important, and present uncertain findings with the same confidence as confirmed ones. Knowing the patterns is how you catch them.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <p>The error that most people expect from AI summaries is the outright fabrication — a made-up metric, a feature that wasn't shipped, a team that wasn't involved. These errors exist. But they're not the most common or the most insidious errors in AI-generated technical summaries.</p>
+    <p>The more dangerous errors are the ones that look right. The summary that drops the engineering team's explicit uncertainty about whether a fix is durable — because the AI patterns to confident conclusions. The summary that presents a "suspected" root cause as "confirmed" — because the AI resolves ambiguity into assertion. The summary that omits the one detail that changes the entire picture — because that detail appeared once, tentatively, and the AI down-weighted it.</p>
+    <p>These errors are harder to catch because they require knowing what should be there that isn't. <mark>You cannot catch AI summary errors by reading for what's wrong. You have to read for what's missing.</mark></p>
+    <div class="pull-quote"><p>An AI summary that's 95% accurate and drops one ambiguous but critical finding isn't a good summary with a small error. It's a document that sends your team in the wrong direction with full confidence.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Five Patterned Error Types in AI Technical Summaries</h2>
+    <p>These are documented error patterns from evaluations of AI summarization tools across engineering and IT contexts — Jira AI, Confluence AI, GitHub Copilot, and custom LLM pipelines. Click each to see how it manifests and how to catch it.</p>
+    <div class="error-patterns">
+      <div class="ep-card" id="epc1">
+        <div class="ep-header" onclick="toggleEp('epc1')">
+          <div class="ep-num">1</div>
+          <div class="ep-title-group">
+            <div class="ep-title">Ambiguity Deletion</div>
+            <div class="ep-subtitle">The AI drops uncertain findings because it cannot resolve them cleanly</div>
+          </div>
+          <div class="ep-risk">Very Common · High Risk</div>
+          <div class="ep-arrow">▼</div>
+        </div>
+        <div class="ep-body">
+          <div class="ep-explain">AI summarization tools optimize for coherent, readable output. Engineering uncertainty — "we believe this is the root cause but haven't ruled out X," "this fix should work but we're monitoring," "the data is inconclusive" — disrupts narrative coherence. The AI's solution is often to drop the hedging entirely, or resolve it into a definitive statement. The result: the summary is more confident than the engineering team actually was.</div>
+          <div class="ep-example">
+            <div class="ep-col source"><div class="ep-col-label">📄 Source — Postmortem Notes</div><div class="ep-col-text">"We believe the memory leak in the worker pool is the root cause, but we haven't ruled out a race condition in the job scheduler. We're deploying the memory fix and monitoring for 48 hours before closing this as resolved."</div></div>
+            <div class="ep-col ai-out"><div class="ep-col-label">❌ AI Summary</div><div class="ep-col-text">"Root cause: memory leak in the worker pool. Fix deployed. Incident resolved."</div></div>
+          </div>
+          <div class="ep-catch"><div class="ep-catch-label">✓ How to catch it</div><div class="ep-catch-text">For every root cause or resolution in the summary, check the source: does the source express the same level of certainty? Find "we believe," "we suspect," "pending monitoring," "not yet confirmed," and "possible" in the original — then verify they appear in the summary with the same hedging. If the summary says "resolved" and the source says "monitoring," that's ambiguity deletion.</div></div>
+        </div>
+      </div>
+      <div class="ep-card" id="epc2">
+        <div class="ep-header" onclick="toggleEp('epc2')">
+          <div class="ep-num">2</div>
+          <div class="ep-title-group">
+            <div class="ep-title">Recency Bias in Long Logs</div>
+            <div class="ep-subtitle">The AI over-weights what happened last and under-weights what happened first</div>
+          </div>
+          <div class="ep-risk">Common · Moderate Risk</div>
+          <div class="ep-arrow">▼</div>
+        </div>
+        <div class="ep-body">
+          <div class="ep-explain">When AI tools summarize long incident timelines, Slack threads, or multi-day engineering discussions, they tend to give disproportionate weight to information near the end — because that information is most salient in the model's context window when generating the summary. Critical early context — the initial triggering condition, the first engineer's diagnosis, a warning that was raised and dismissed — can be significantly compressed or dropped in favor of recent resolution steps.</div>
+          <div class="ep-example">
+            <div class="ep-col source"><div class="ep-col-label">📄 Source — 6-hour incident thread</div><div class="ep-col-text">At hour 1, @dev_lead raised a concern: "This looks like it could be related to the config change we made to the cache TTL last week — same pattern as the October incident." This hypothesis was set aside when another engineer found a more immediate fix. The cache TTL concern was never revisited.</div></div>
+            <div class="ep-col ai-out"><div class="ep-col-label">❌ AI Summary</div><div class="ep-col-text">"The team identified and resolved a database connection pool exhaustion issue. Monitoring confirmed normal operation by end of day." The cache TTL concern raised in hour 1 — which may represent a latent risk — is completely absent.</div></div>
+          </div>
+          <div class="ep-catch"><div class="ep-catch-label">✓ How to catch it</div><div class="ep-catch-text">For long source documents, verify that early critical context — the initial trigger, early hypotheses that were set aside, warnings raised and dismissed — are represented. If the summary focuses almost entirely on resolution steps and the final hour of activity, check whether important early signals were dropped.</div></div>
+        </div>
+      </div>
+      <div class="ep-card" id="epc3">
+        <div class="ep-header" onclick="toggleEp('epc3')">
+          <div class="ep-num">3</div>
+          <div class="ep-title-group">
+            <div class="ep-title">Detail Hallucination</div>
+            <div class="ep-subtitle">The AI adds plausible-sounding specifics that aren't in the source</div>
+          </div>
+          <div class="ep-risk">Less Common · Very High Risk</div>
+          <div class="ep-arrow">▼</div>
+        </div>
+        <div class="ep-body">
+          <div class="ep-explain">When the source document is incomplete, uses shorthand, or references things by implication, AI tools sometimes generate the most statistically plausible completion rather than noting the gap. In technical summaries, this produces specific-sounding details — version numbers, metric values, configuration settings, team names — that were never in the source. These hallucinations are particularly dangerous because specificity signals authority. A made-up error code with a precise number reads as more credible than a vague description.</div>
+          <div class="ep-example">
+            <div class="ep-col source"><div class="ep-col-label">📄 Source — Incident Ticket</div><div class="ep-col-text">"API error rate elevated. Team investigated and found a dependency issue with the third-party payment processor. Processor confirmed issue on their end. Resolved after processor pushed a fix."</div></div>
+            <div class="ep-col ai-out"><div class="ep-col-label">❌ AI Summary</div><div class="ep-col-text">"API error rate reached 34% due to a Stripe API v3.2.1 timeout issue affecting the /charges endpoint. Stripe pushed hotfix at 15:42 UTC." The version number, the percentage, the specific endpoint, and the timestamp were all hallucinated — none appear in the source.</div></div>
+          </div>
+          <div class="ep-catch"><div class="ep-catch-label">✓ How to catch it</div><div class="ep-catch-text">Every specific value, version number, percentage, timestamp, and named component in an AI summary must be traceable to the source. If you can't find where a specific detail came from, treat it as a potential hallucination. Never assume specificity equals accuracy — AI tools hallucinate most confidently on numeric and version details.</div></div>
+        </div>
+      </div>
+      <div class="ep-card" id="epc4">
+        <div class="ep-header" onclick="toggleEp('epc4')">
+          <div class="ep-num">4</div>
+          <div class="ep-title-group">
+            <div class="ep-title">Uniform Confidence Presentation</div>
+            <div class="ep-subtitle">Confirmed facts and working hypotheses are presented identically</div>
+          </div>
+          <div class="ep-risk">Very Common · High Risk</div>
+          <div class="ep-arrow">▼</div>
+        </div>
+        <div class="ep-body">
+          <div class="ep-explain">Good engineering documentation distinguishes between confirmed facts, working hypotheses, suspected causes, and open questions. AI summaries flatten these distinctions — presenting confirmed root causes, working theories, and unverified speculation with identical syntactic structure and identical confidence. A reader of the summary has no way to know which findings are solid and which are tentative unless they go back to the source.</div>
+          <div class="ep-example">
+            <div class="ep-col source"><div class="ep-col-label">📄 Source — Engineering Notes</div><div class="ep-col-text">"Confirmed: the deployment at 14:03 introduced the regression (we have the git bisect to prove it). Suspected but not confirmed: the root cause is a race condition in the async job queue — we're still investigating. Open question: whether the staging environment would have caught this."</div></div>
+            <div class="ep-col ai-out"><div class="ep-col-label">❌ AI Summary</div><div class="ep-col-text">"The 14:03 deployment introduced a regression caused by a race condition in the async job queue. The staging environment did not catch the issue." All three — the confirmed fact, the working hypothesis, and the open question — are presented as settled conclusions.</div></div>
+          </div>
+          <div class="ep-catch"><div class="ep-catch-label">✓ How to catch it</div><div class="ep-catch-text">For every finding in the AI summary, determine its epistemic status in the source: confirmed (by what evidence?), suspected (by whom, based on what?), or open question. If the summary presents all findings at the same certainty level, restore the confidence distinctions from the source before distributing.</div></div>
+        </div>
+      </div>
+      <div class="ep-card" id="epc5">
+        <div class="ep-header" onclick="toggleEp('epc5')">
+          <div class="ep-num">5</div>
+          <div class="ep-title-group">
+            <div class="ep-title">Action Status Conflation</div>
+            <div class="ep-subtitle">Completed, in-progress, and planned actions are presented as equivalent</div>
+          </div>
+          <div class="ep-risk">Common · High Risk</div>
+          <div class="ep-arrow">▼</div>
+        </div>
+        <div class="ep-body">
+          <div class="ep-explain">Engineering documents contain three types of actions: done (completed), in-flight (assigned and in progress), and planned (agreed but not yet started). AI summaries frequently conflate all three — listing them in the same tense and format with no status distinction. A reader who doesn't know which actions are complete and which are pending may assume work is done when it isn't, or duplicate work already completed.</div>
+          <div class="ep-example">
+            <div class="ep-col source"><div class="ep-col-label">📄 Source — Postmortem Action Items</div><div class="ep-col-text">"Done: hotfix deployed (JIRA-4821 closed). In progress: alert threshold update, assigned to @jess, due Friday (JIRA-4822 open). Planned: runbook update — not yet assigned, needs owner (JIRA-4823 unassigned)."</div></div>
+            <div class="ep-col ai-out"><div class="ep-col-label">❌ AI Summary</div><div class="ep-col-text">"Action items: hotfix deployment, alert threshold update, and runbook update." Three items, all presented equivalently. No status, no owners, no deadlines. Two of three are not done and the summary gives no indication of that.</div></div>
+          </div>
+          <div class="ep-catch"><div class="ep-catch-label">✓ How to catch it</div><div class="ep-catch-text">For every action item in an AI summary, verify its status: done (when?), in-progress (who owns it, by when?), or planned-not-started (who needs to pick it up?). If all action items appear in the same present tense without status, restore the status distinctions before the summary is distributed — especially to engineering leads who may assume work is done.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The AI Summary Review Checklist</h2>
+    <div class="detection">
+      <div class="det-label">✅ Before You Approve or Forward</div>
+      <div class="det-title">AI Summary Verification Checklist</div>
+      <div class="det-sub">Work through these before distributing any AI-generated technical summary. Click each to mark verified.</div>
+      <div class="det-items">
+        <div class="det-item" onclick="detCheck(this)"><div class="det-cb"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="det-text"><strong>Uncertainty preserved:</strong> Every "we suspect," "not yet confirmed," "pending investigation," and "open question" from the source appears in the summary with the same level of certainty. No hypothesis has been promoted to confirmed root cause.</div></div>
+        <div class="det-item" onclick="detCheck(this)"><div class="det-cb"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="det-text"><strong>Timeline proportional:</strong> For long source documents, early critical context — initial trigger, hypotheses raised and set aside, early warnings — is represented with appropriate weight relative to resolution steps.</div></div>
+        <div class="det-item" onclick="detCheck(this)"><div class="det-cb"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="det-text"><strong>All specifics sourced:</strong> Every specific value, version number, percentage, timestamp, and component name in the summary has been traced to the source document. No specific-sounding detail was assumed accurate without verification.</div></div>
+        <div class="det-item" onclick="detCheck(this)"><div class="det-cb"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="det-text"><strong>Finding confidence differentiated:</strong> Confirmed facts, working hypotheses, suspected causes, and open questions are distinguishable in the summary. Not all presented as resolved conclusions.</div></div>
+        <div class="det-item" onclick="detCheck(this)"><div class="det-cb"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="det-text"><strong>Action status clear:</strong> Completed actions, in-progress work, and planned-but-not-started items are clearly differentiated. No action item is listed in a way that could cause a reader to assume it's done when it isn't.</div></div>
+        <div class="det-item" onclick="detCheck(this)"><div class="det-cb"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="det-text"><strong>Nothing critical is missing:</strong> I have compared the summary to the source. Any finding that was technically significant in the source — including tentative or ambiguous findings — is represented in the summary.</div></div>
+      </div>
+      <div class="det-progress-bg"><div class="det-progress-bar" id="detBar"></div></div>
+      <div class="det-count" id="detCount">0 / 6 verified</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🖥️ Spot the Error</div>
+      <div class="sim-title">Identify the AI Summary Error</div>
+      <div class="sim-sub">Read the source and the AI summary. Identify the most significant error.</div>
+      <div class="source-doc">
+        <div class="source-doc-label">📄 Source — Engineering Lead's Incident Notes</div>
+        <div class="source-doc-text">The ML pipeline began producing degraded recommendations at approximately 09:00. We've traced this to a training data issue — a batch job that ran on Sunday pulled from a stale S3 snapshot that was 72 hours old instead of the expected 24-hour-old snapshot. We've pushed a retrained model using the correct dataset and recommendations quality looks restored based on our online metrics. HOWEVER — I want to be clear that we haven't identified why the batch job grabbed the wrong snapshot. We have a theory (a timestamp comparison bug in the data pipeline) but we haven't confirmed it. I would not say this is fully resolved. We are monitoring and investigating the root cause in parallel. Do not communicate to customers that this is resolved until we understand why it happened.</div>
+      </div>
+      <div class="ai-summary-doc">
+        <div class="ai-summary-label">🤖 AI-Generated Summary</div>
+        <div class="ai-summary-text">The ML recommendation pipeline experienced degraded output beginning at 09:00 due to a training data freshness issue. The batch job incorrectly pulled from a stale S3 snapshot (72 hours old instead of 24 hours). Root cause: a timestamp comparison bug in the data pipeline. The team retrained the model with correct data and restored normal recommendation quality. Incident resolved. Customer communication can proceed.</div>
+      </div>
+      <div class="sim-q">Which error pattern is most significant in this AI summary?</div>
+      <div class="sim-opts" id="simop3">
+        <button class="sim-opt" onclick="doSim3(this,false)">Recency bias — the summary over-weights the resolution and under-weights the 09:00 trigger</button>
+        <button class="sim-opt" onclick="doSim3(this,false)">Detail hallucination — the "72 hours old" detail wasn't in the source</button>
+        <button class="sim-opt" onclick="doSim3(this,true)">Ambiguity deletion combined with uniform confidence — the engineering lead explicitly stated the root cause is unconfirmed, investigation is ongoing, and customer communication should NOT proceed. The AI summary presents all of this as resolved and authorizes the exact customer communication the engineer said not to send.</button>
+        <button class="sim-opt" onclick="doSim3(this,false)">Action status conflation — the summary doesn't distinguish between completed and in-progress actions</button>
+      </div>
+      <div class="sim-fb" id="simfb3"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Why are AI summary errors that delete or resolve ambiguity more dangerous than errors that include incorrect specific details?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq3(this,false)">They are not — hallucinated specifics (wrong metrics, wrong version numbers) are always more dangerous</button>
+        <button class="qopt" onclick="cq3(this,true)">Because incorrect specifics (wrong numbers, wrong version) are likely to be caught during normal engineering verification, while missing uncertainty goes undetected — engineers reading the confident summary don't know they should be skeptical, and may close investigations or communicate externally based on false certainty</button>
+        <button class="qopt" onclick="cq3(this,false)">Because incident management platforms specifically flag ambiguity deletion as a higher-severity error</button>
+        <button class="qopt" onclick="cq3(this,false)">They are equally dangerous and should be reviewed with the same priority</button>
+      </div>
+      <div class="qfb" id="qfb3"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI summaries make patterned, not random, errors. The five patterns: ambiguity deletion (uncertain findings dropped or resolved into false confidence), recency bias (recent resolution over-represented, early signals lost), detail hallucination (plausible-sounding specifics added that aren't in the source), uniform confidence presentation (confirmed and suspected findings presented identically), and action status conflation (done, in-progress, and planned actions undifferentiated).</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>You cannot catch AI summary errors by reading for what's wrong — you have to read for what's missing. The six-point checklist: uncertainty preserved, timeline proportional, all specifics sourced, finding confidence differentiated, action status clear, nothing critical missing. Every specific value in an AI summary must be traceable to the source.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most dangerous AI summary errors suppress engineering uncertainty — because a team reading a confident summary may close an investigation they should keep open, or send external communications before the situation is actually understood. An AI summary that says "incident resolved" when the engineer wrote "do not communicate as resolved" has not just misrepresented the situation — it has potentially driven the wrong organizational action.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleEp(id){document.getElementById(id).classList.toggle("open");}
+let detChecked=0;
+function detCheck(item){
+  item.classList.toggle("checked");
+  detChecked=document.querySelectorAll(".det-item.checked").length;
+  document.getElementById("detBar").style.width=(detChecked/6*100)+"%";
+  document.getElementById("detCount").textContent=detChecked+" / 6 verified";
+}
+function doSim3(btn,correct){
+  const c=document.getElementById("simop3");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("Ambiguity deletion"))b.classList.add("reveal");});
+  const fb=document.getElementById("simfb3");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The engineering lead's note is remarkable for its explicit and emphatic warnings: 'we haven't confirmed it,' 'I would not say this is fully resolved,' 'do not communicate to customers that this is resolved until we understand why it happened.' The AI summary discards every one of these qualifiers and adds the exact opposite: 'Incident resolved. Customer communication can proceed.' This isn't a summary error — it's an authorization error. Anyone who reads only the AI summary and acts on it will send customer communications the engineering lead explicitly prohibited. The AI has converted engineering uncertainty into organizational action that the engineer specifically tried to prevent.";
+  else fb.textContent="❌ The 72-hour detail is in the source. The timing and recency issues are real but secondary. The critical error is that the engineering lead explicitly stated the root cause is not confirmed, the incident is not resolved, and customer communication should not proceed — and the AI summary presents all of this as confirmed, resolved, and cleared for communication. That's ambiguity deletion at its most consequential: the AI removed uncertainty that was protecting the team from a premature and potentially wrong external communication.";}
+function cq3(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb3");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Wrong specifics tend to conflict with other data in the engineering environment — a wrong version number gets caught when someone checks the deployment log; a wrong metric gets caught when someone pulls the dashboard. Missing uncertainty is invisible. If the summary says 'root cause confirmed: race condition' and the source said 'suspected but not confirmed,' the engineer reading the summary has no signal that they should keep investigating. They may close the ticket, write up the postmortem, and move on — leaving a latent risk unaddressed because the AI summary told them the work was done when it wasn't.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("goes undetected"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The risk calculus is about catchability. Wrong specifics (hallucinations) tend to be caught during normal engineering verification — you check the deployment log, you look at the dashboard, you notice the version number is wrong. Missing uncertainty is invisible. The engineer reading a confident summary doesn't know their skepticism should be higher. There is no signal that tells them 'by the way, the AI dropped all the hedging from this paragraph.' They reason from the confidence the summary presents, and may close investigations or communicate externally prematurely.";}
+}
+</script>
+</body>
+</html>
