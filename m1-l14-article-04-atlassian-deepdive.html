@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlassian Deep Dive: How AI in Jira and OpsGenie Changes Real Workflows — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.product-tabs{display:flex;gap:8px;margin:16px 0 14px;flex-wrap:wrap;}
+.ptab{padding:10px 20px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.ptab.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.ppanel{display:none;}
+.ppanel.show{display:block;animation:fadeIn .2s ease;}
+.feature-list{display:flex;flex-direction:column;gap:14px;margin:16px 0;}
+.feature{border:1.5px solid var(--purple-mid);border-radius:18px;overflow:hidden;}
+.feature-header{display:flex;gap:14px;align-items:flex-start;padding:16px 20px;cursor:pointer;background:var(--white);transition:background .2s;}
+.feature-header:hover,.feature.open .feature-header{background:var(--purple-pale);}
+.feature-icon{font-size:22px;flex-shrink:0;}
+.feature-meta{flex:1;}
+.feature-name{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.feature-tagline{font-size:13px;color:var(--gray-muted);}
+.feature-chevron{font-size:12px;color:var(--gray-muted);transition:transform .2s;margin-top:4px;}
+.feature.open .feature-chevron{transform:rotate(180deg);}
+.feature-body{display:none;border-top:1px solid var(--purple-mid);padding:18px 20px;}
+.feature.open .feature-body{display:block;animation:fadeIn .2s ease;}
+.feature-what{font-size:15px;line-height:1.7;margin-bottom:12px;}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fg-col{border-radius:10px;padding:12px 14px;}
+.fg-col.does{background:var(--green-pale);border:1.5px solid var(--green);}
+.fg-col.doesnt{background:var(--red-pale);border:1.5px solid var(--red);}
+.fg-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.fg-col.does .fg-label{color:var(--green);}
+.fg-col.doesnt .fg-label{color:var(--red);}
+.fg-items{display:flex;flex-direction:column;gap:4px;}
+.fg-item{font-size:13px;line-height:1.5;}
+.honest-box{background:var(--orange-pale);border:1.5px solid #FDE68A;border-radius:12px;padding:14px 16px;margin-top:12px;}
+.honest-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:6px;}
+.honest-text{font-size:14px;line-height:1.65;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.feature-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.4 · AI in Modern Tech Workflows</div>
+  <h1>Atlassian Deep Dive: How AI in Jira and OpsGenie Changes Real Workflows for Engineering and IT Teams</h1>
+  <p class="hero-sub">The certification video uses Atlassian as its real-world AI example. This article gives you what the slide can't: what Atlassian's AI features actually do, how they work in practice, and where the honest limitations are for teams relying on them daily.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Two Products, Two Workflow Problems AI Is Solving</h2>
+    <p>Atlassian Intelligence — Atlassian's umbrella term for AI features across their product suite — addresses two distinct workflow problems that engineering and IT teams deal with constantly: <mark>ticket management overhead in Jira</mark> and <mark>alert noise and incident coordination in OpsGenie</mark>. The AI approaches these differently, and the limitations are different too.</p>
+    <p>Explore each product and its key AI features in depth. Click any feature to understand what it actually does — and what it doesn't:</p>
+    <div class="product-tabs" id="productTabs"></div>
+    <div id="productPanels"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The best way to think about Atlassian's AI is as a very fast first-pass analyst. It handles pattern-matching at scale. The human's job shifts from doing the pattern-matching to evaluating whether the AI's pattern-matching was correct for this specific situation.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">An engineering team uses Jira's AI auto-triage to route incoming bug reports. The AI correctly routes 87% of tickets and misroutes 13%. A developer notices that the misrouted tickets are disproportionately from a new product line that launched 3 months ago. What's the most likely explanation and the right response?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The AI has a bug that needs to be reported to Atlassian for a fix</button>
+        <button class="qopt" onclick="doQ(this,true)">The model was trained on ticket data from before the new product line launched, so it has insufficient training signal for the new ticket patterns. The right response is to provide feedback on misrouted tickets (improving the model over time) and to establish explicit routing rules for new product line tickets until the model has learned the pattern</button>
+        <button class="qopt" onclick="doQ(this,false)">The team should disable AI routing for all tickets since 13% error rate is too high</button>
+        <button class="qopt" onclick="doQ(this,false)">The new product line team is filing tickets incorrectly, which is causing the routing failures</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Jira's AI features (auto-triage, summarization, duplicate detection, sprint planning assistance) handle pattern-matching in ticket data well. They work best on established, well-represented ticket patterns — and degrade on novel categories, new product areas, or teams with inconsistent ticket hygiene.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>OpsGenie's AI features (alert correlation, noise reduction, on-call routing, post-incident summarization) can dramatically reduce alert volume — but require ongoing calibration, and poorly configured suppression rules can hide real incidents alongside noise.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The consistent pattern: Atlassian AI handles volume. Humans handle judgment about whether the AI's pattern-matching was correct for the specific situation, and maintain the feedback loops that keep the AI improving over time.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const products=[
+  {label:"Jira AI",features:[
+    {icon:"🏷️",name:"AI Auto-Triage and Routing",tagline:"Automatically classifies and routes incoming issues based on content and history",
+     what:"When a new issue is created, Jira AI analyzes the title, description, and reporter context to suggest (or automatically apply) a priority level, issue type, and team or component assignment. It learns from how similar historical tickets were classified and assigned.",
+     does:["Routes common ticket patterns accurately (70-90% in well-established categories)","Suggests priority based on language cues and historical patterns","Identifies the relevant team for well-established product areas","Learns from corrections over time — human overrides feed back into routing improvement"],
+     doesnt:["Understand the business context of why a ticket matters","Route novel ticket types accurately until it has seen enough examples","Account for current team capacity, sprint load, or urgency factors not in the ticket text","Distinguish between a vague ticket that's actually critical and a detailed ticket that's low priority"],
+     honest:"Auto-triage accuracy is highly dependent on ticket quality and routing consistency history. Teams with inconsistent historical routing teach the model inconsistent patterns. New product areas with limited ticket history will see notably higher misrouting rates until the model builds signal."},
+    {icon:"📝",name:"AI Issue Summarization",tagline:"Generates summaries of long tickets, comment threads, and linked issues",
+     what:"For tickets with extensive comment histories — common in long-running bugs and feature discussions — Jira AI can generate a summary of the current state, key decisions made, and outstanding questions. Useful for bringing new team members up to speed quickly.",
+     does:["Summarizes factual content from comments and descriptions accurately","Identifies the most recent status update and who made decisions","Reduces time-to-context for new reviewers on long tickets","Works well for documentation-heavy tickets with clear textual content"],
+     doesnt:["Capture context from linked systems (Slack, Confluence, email) not in the ticket","Understand implicit team knowledge or verbal decisions not documented in the ticket","Correctly weigh the importance of different comments — it treats all comments equally","Generate accurate summaries when comments contain code snippets, screenshots, or ambiguous technical shorthand"],
+     honest:"Summarization is most reliable for tickets where the conversation is documented in the ticket itself. Teams that make decisions in Slack and then update the ticket minimally will get incomplete summaries that appear complete."},
+    {icon:"🔗",name:"Duplicate Detection",tagline:"Flags tickets that may be duplicates of existing open issues",
+     what:"Jira AI compares new incoming tickets against existing open issues using semantic similarity — looking for similar symptoms, error messages, and described behaviors. It surfaces potential duplicates for human review rather than automatically merging them.",
+     does:["Catches obvious duplicates with similar language and symptoms","Surfaces related issues that might inform the resolution even if not exact duplicates","Reduces duplicate ticket proliferation in high-volume queues","Improves over time as more tickets are linked and merged — learns from confirmed duplicates"],
+     doesnt:["Catch duplicates described in completely different language with no surface similarity","Automatically merge duplicates — human review is always required","Understand that two tickets describing different symptoms have the same root cause","Work well for new issue types with limited comparison corpus"],
+     honest:"Duplicate detection catches the easy ones. The hard duplicates — same issue, completely different description, reported by users with very different technical vocabularies — still require human judgment. Don't expect it to eliminate all duplicate triage work."},
+    {icon:"📊",name:"Sprint Planning Assistance",tagline:"Suggests sprint composition and identifies risks based on historical velocity data",
+     what:"Jira AI analyzes historical sprint completion data, team velocity trends, and current backlog to suggest sprint scope and flag tickets with high uncertainty or dependencies that might cause spillover.",
+     does:["Calculates realistic sprint capacity based on historical velocity","Flags tickets that have historically taken longer than estimated (a risk signal)","Identifies dependency chains that might create blockers","Surfaces backlog items that have been repeatedly deferred (aging backlog)"],
+     doesnt:["Account for team member vacation, onboarding, or morale","Understand which tickets are strategically most important to ship","Know about external deadlines, customer commitments, or business context","Replace the judgment call about which hard tradeoffs to make when scope exceeds capacity"],
+     honest:"Sprint planning suggestions are statistically sound but contextually blind. They're a good starting point for the planning conversation — not a replacement for it. The hard sprint planning decisions (what gets cut, what gets pushed, what's the real commitment) require the human judgment that knows the business context."},
+  ]},
+  {label:"OpsGenie AI",features:[
+    {icon:"🔔",name:"Alert Correlation and Grouping",tagline:"Groups related alerts from multiple monitoring sources into unified incidents",
+     what:"When multiple monitoring systems fire alerts around the same time, OpsGenie AI analyzes timing, affected services, and alert patterns to group them into a single incident. Instead of receiving 40 separate alerts, the on-call engineer sees one grouped incident with the correlated alerts as supporting evidence.",
+     does:["Dramatically reduces alert volume during incidents (often 80-90% reduction in alert count)","Identifies the likely primary failure when multiple systems are affected simultaneously","Creates a coherent incident narrative from fragmented alerts across systems","Reduces on-call cognitive load during high-severity events"],
+     doesnt:["Always correctly identify the root cause — correlation is not causation","Group novel incident types correctly until it has seen similar patterns","Account for alert sources not integrated with OpsGenie","Eliminate the need for human investigation of correlated alerts — grouping is a starting hypothesis, not a diagnosis"],
+     honest:"Alert correlation is one of OpsGenie's most valuable AI features and also one of the most dangerous if over-trusted. 'These alerts are correlated' does not mean 'this is definitely one incident with this root cause.' Cascading failures can look like correlation when they're actually sequential — grouping them as one incident may delay investigation of the underlying cascade."},
+    {icon:"🔕",name:"Noise Reduction and Smart Suppression",tagline:"Learns which alert patterns are consistently non-actionable and suppresses them",
+     what:"OpsGenie AI learns from which alerts engineers consistently dismiss, snooze, or close without action. It builds suppression rules for alert patterns that are reliably non-actionable in your specific environment, reducing the volume of notifications that reach engineers.",
+     does:["Reduces false positive alert volume significantly over time","Learns environment-specific patterns (your normal is different from everyone else's normal)","Adapts suppression as your environment changes (though may lag behind rapid changes)","Creates reviewable suppression logs that humans can audit"],
+     doesnt:["Guarantee that suppressed alerts won't occasionally contain real incidents","Suppress alerts based on current context — it suppresses based on historical patterns","Update suppression rules instantaneously when environment changes occur","Replace human review of suppression logic — suppression rules should be audited periodically"],
+     honest:"Smart suppression is the feature most likely to cause a major incident if misconfigured or over-trusted. A real incident that matches a pattern previously seen as non-actionable will be suppressed. Regular audits of suppression logic, especially after infrastructure changes, are essential professional practice."},
+    {icon:"👤",name:"Intelligent On-Call Routing",tagline:"Routes incidents to the right team member based on expertise and context",
+     what:"When an incident is created, OpsGenie AI considers the service affected, the type of incident, current on-call rotation, and team member expertise history to recommend or automatically route to the most appropriate responder.",
+     does:["Routes common incident types to historically relevant responders quickly","Accounts for on-call schedule and availability in routing decisions","Learns which engineers most effectively resolve which types of incidents","Reduces escalation time for well-understood incident categories"],
+     doesnt:["Know when an engineer is in a meeting, exhausted from a prior incident, or dealing with another high-priority task","Route novel incident types accurately — it has no expertise signal for new issue categories","Account for team knowledge that isn't encoded in historical resolution patterns","Replace judgment about when to escalate beyond the automatic routing"],
+     honest:"Routing accuracy drops significantly for novel incident types and in periods following major organizational changes (new team members, restructuring, new service ownership). The on-call schedule is only one input — an engineer's actual availability and current workload aren't captured."},
+    {icon:"📋",name:"Post-Incident AI Summarization",tagline:"Generates timeline and summary documentation from incident data",
+     what:"After an incident is resolved, OpsGenie AI generates a draft post-incident report including a timeline of alerts, who was paged, when they acknowledged, what actions were taken, and how the incident was resolved — drawn from the alert and action history in the system.",
+     does:["Accurately reconstructs the timeline of alerts and acknowledgments","Saves significant time on the mechanical documentation parts of post-incident review","Creates consistent documentation structure across incidents","Ensures key factual details aren't omitted from the timeline"],
+     doesnt:["Generate the root cause analysis — that requires human investigation","Write the 'lessons learned' or remediation actions — those require judgment","Capture context that happened in Slack, phone calls, or other channels outside OpsGenie","Replace the post-incident meeting where the team processes what happened and what to change"],
+     honest:"AI summarization handles the mechanical timeline reconstruction well. The value of a post-incident review — understanding why it happened, what failed in the process, and what to change — requires human participation and judgment that AI cannot provide. Don't let AI summarization replace the post-incident meeting; use it to reduce the prep time for it."},
+  ]},
+];
+
+const tabsEl=document.getElementById("productTabs"),panelsEl=document.getElementById("productPanels");
+products.forEach((p,i)=>{
+  const btn=document.createElement("button");btn.className="ptab"+(i===0?" active":"");btn.textContent=p.label;
+  btn.onclick=()=>{document.querySelectorAll(".ptab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".ppanel").forEach(pp=>pp.classList.remove("show"));btn.classList.add("active");document.getElementById("pp"+i).classList.add("show");};
+  tabsEl.appendChild(btn);
+  const panel=document.createElement("div");panel.className="ppanel"+(i===0?" show":"");panel.id="pp"+i;
+  const featHTML=p.features.map(f=>`
+    <div class="feature">
+      <div class="feature-header" onclick="toggleFeature(this.parentElement)">
+        <div class="feature-icon">${f.icon}</div>
+        <div class="feature-meta"><div class="feature-name">${f.name}</div><div class="feature-tagline">${f.tagline}</div></div>
+        <div class="feature-chevron">▼</div>
+      </div>
+      <div class="feature-body">
+        <div class="feature-what">${f.what}</div>
+        <div class="feature-grid">
+          <div class="fg-col does"><div class="fg-label">✓ What it does well</div><div class="fg-items">${f.does.map(d=>`<div class="fg-item">• ${d}</div>`).join("")}</div></div>
+          <div class="fg-col doesnt"><div class="fg-label">✗ What it doesn't do</div><div class="fg-items">${f.doesnt.map(d=>`<div class="fg-item">• ${d}</div>`).join("")}</div></div>
+        </div>
+        <div class="honest-box"><div class="honest-label">⚖️ Honest assessment</div><div class="honest-text">${f.honest}</div></div>
+      </div>
+    </div>`).join("");
+  panel.innerHTML=`<div class="feature-list">${featHTML}</div>`;
+  panelsEl.appendChild(panel);
+});
+
+function toggleFeature(el){const was=el.classList.contains("open");document.querySelectorAll(".feature").forEach(f=>f.classList.remove("open"));if(!was)el.classList.add("open");}
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a classic training data currency/completeness issue. The model learned routing patterns from ticket history before the new product line existed, so it has no training signal for those ticket types. It's routing them based on superficial similarities to existing patterns — often incorrectly. The right response is twofold: provide feedback on misrouted tickets (corrections improve the model) and create explicit routing rules for the new product line until the model has enough examples to learn the pattern reliably. Disabling AI routing entirely would be an overreaction.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("insufficient training signal"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. A 13% error rate concentrated in a new product area is not a bug — it's expected behavior from a model with insufficient training data for the new category. The fix isn't to disable AI routing or blame the team's ticket writing; it's to address the data gap through feedback and explicit rules while the model builds signal.";}
+}
+</script>
+</body>
+</html>

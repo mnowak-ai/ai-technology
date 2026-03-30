@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Day in the Life: How AI Changes Real Tech Workflows — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.role-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 14px;}
+.rtab{padding:10px 18px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.rtab.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.rpanel{display:none;}
+.rpanel.show{display:block;animation:fadeIn .2s ease;}
+.day-timeline{display:flex;flex-direction:column;gap:0;}
+.dt-item{display:flex;gap:18px;position:relative;}
+.dt-item:not(:last-child)::after{content:"";position:absolute;left:26px;top:52px;width:2px;height:calc(100% - 32px);background:var(--purple-mid);}
+.dt-left{flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+.dt-dot{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid;flex-shrink:0;}
+.dt-dot.ai{background:var(--purple-pale);border-color:var(--purple);}
+.dt-dot.human{background:var(--gray-soft);border-color:var(--gray-muted);}
+.dt-dot.both{background:var(--green-pale);border-color:var(--green);}
+.dt-body{flex:1;padding:6px 0 24px;}
+.dt-time{font-size:12px;font-weight:700;color:var(--gray-muted);margin-bottom:4px;}
+.dt-title{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.dt-desc{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.dt-tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;padding:3px 10px;border-radius:6px;margin-bottom:8px;}
+.dt-tag.ai-tag{background:var(--purple-pale);color:var(--purple);}
+.dt-tag.human-tag{background:var(--gray-soft);color:var(--gray-muted);border:1px solid var(--purple-mid);}
+.dt-tag.both-tag{background:var(--green-pale);color:var(--green);}
+.dt-insight{background:var(--purple-pale);border-radius:10px;padding:9px 12px;margin-top:8px;font-size:13px;line-height:1.6;color:var(--purple-dark);border-left:3px solid var(--purple);}
+.role-header{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:18px;padding:20px 24px;margin-bottom:16px;}
+.role-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.role-context{font-size:15px;color:var(--gray-muted);}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 20px;padding:12px 16px;background:var(--gray-soft);border-radius:12px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-muted);}
+.legend-dot{width:12px;height:12px;border-radius:50%;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.4 · AI in Modern Tech Workflows</div>
+  <h1>A Day in the Life: How AI Changes the Actual Workflow of a Software Engineer, DevOps Engineer, Security Analyst, and Data Scientist</h1>
+  <p class="hero-sub">Abstract descriptions of AI in tech work don't stick. Concrete workdays do. This article walks through a real shift for four different roles — showing exactly when AI appears, what the person does with it, and what human judgment remains essential every step of the way.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Four Roles, Four Workdays</h2>
+    <p>The most important thing this article can show you: AI doesn't replace what these people do. It changes <em>where</em> they spend their time and <em>what decisions they own</em>. In every role, the human judgment becomes more concentrated at the points where it matters most — and AI handles the pattern-matching that used to take hours.</p>
+    <p>Select a role to walk through a realistic workday:</p>
+    <div class="role-tabs" id="roleTabs"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>AI-primary task</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gray-muted)"></div>Human-primary task</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Human + AI collaboration</div>
+    </div>
+    <div id="rolePanels"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The pattern across all four roles is the same: AI compresses the time spent on pattern-recognition and first-draft generation, freeing humans to spend more time on judgment, context, and the decisions that actually require understanding the specific situation.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">Across all four roles in this article, what is the consistent pattern in how AI changes the workday?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">AI handles all the difficult technical tasks while humans focus on communication and coordination</button>
+        <button class="qopt" onclick="doQ(this,false)">AI replaces junior-level work while human judgment is only needed for senior-level decisions</button>
+        <button class="qopt" onclick="doQ(this,true)">AI compresses time spent on pattern recognition, first-draft generation, and data processing — concentrating human time on judgment, context application, verification, and decisions that require understanding the specific situation</button>
+        <button class="qopt" onclick="doQ(this,false)">AI makes the work faster but doesn't change what skills are valuable in each role</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Across all four roles, AI handles pattern recognition, first-draft generation, anomaly flagging, and data processing. Humans own verification, context application, judgment calls, and decisions that require understanding the specific situation — not just the pattern.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI doesn't eliminate roles — it shifts where time is spent. Engineers spend less time on boilerplate; more on architecture and review. Security analysts spend less time on routine triage; more on investigation. Data scientists spend less time on preprocessing; more on interpretation and decision framing.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The professionals who thrive are the ones who use AI to handle the pattern-matching while developing deeper judgment about when AI outputs require scrutiny. The skill is knowing when to trust, when to verify, and when to override — not just knowing how to use the tools.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const roles=[
+  {icon:"💻",label:"Software Engineer",
+   context:"Mid-level backend engineer at a SaaS company. Stack: Python, PostgreSQL, AWS. Uses GitHub Copilot, Sourcegraph Cody, and an AI code review integration.",
+   timeline:[
+     {time:"9:00 AM",type:"both",icon:"🎯",title:"Sprint planning with AI ticket summarization",desc:"Jira AI has summarized the sprint backlog and flagged dependencies. The engineer reads the summaries but adds her own context: she knows one of the 'independent' tickets actually depends on a database migration that isn't in the backlog.",tag:"Human + AI",insight:"AI spots patterns in ticket metadata. The human spots the missing context from last week's conversation that didn't make it into Jira."},
+     {time:"9:30 AM",type:"ai",icon:"🤖",title:"Copilot-assisted feature implementation",desc:"Working on a new API endpoint, Copilot suggests completions for standard patterns — the request parsing, the database query structure, the response formatting. The engineer accepts most completions for boilerplate, edits some for her team's specific conventions, and writes the business logic herself.",tag:"AI-primary",insight:"Copilot is accurate on standard patterns, faster than typing. The engineer still writes the actual business logic — the part that's specific to this application."},
+     {time:"11:00 AM",type:"human",icon:"🔍",title:"Code review of a colleague's PR",desc:"An AI code review tool has already flagged two potential issues: a missing null check and a SQL query that could be optimized. The engineer reviews these, confirms one is a real issue and one is a false positive, then does her own review for architecture decisions, naming conventions, and whether the implementation matches the intended design.",tag:"Human-primary",insight:"The AI catches the easy technical patterns. The human catches whether the implementation is actually solving the right problem the right way."},
+     {time:"1:30 PM",type:"both",icon:"🐛",title:"Debugging a production issue with AI log analysis",desc:"A performance degradation was reported. The engineer uses an AI log analysis tool to identify the pattern in error logs — it surfaces that the slowdown started after last Thursday's deployment and correlates with specific user actions. The engineer uses this as a starting point for investigation, not a conclusion.",tag:"Human + AI",insight:"AI processes thousands of log lines in seconds to find the pattern. The human investigates the specific code path to understand why."},
+     {time:"3:00 PM",type:"ai",icon:"📝",title:"AI-assisted documentation drafting",desc:"The new API endpoint needs documentation. The engineer uses an AI tool to generate a first draft from the code and docstrings, then edits it for accuracy, adds example requests and responses, and fixes several details the AI got wrong about the specific parameter behavior.",tag:"AI-primary",insight:"AI generates 80% of the documentation structure correctly. The human corrects the 20% that required understanding the code's actual behavior, not just its shape."},
+     {time:"4:30 PM",type:"human",icon:"🏗️",title:"Architecture discussion — AI is not in the room",desc:"The team discusses how to handle a new scalability requirement. AI doesn't participate. This is the conversation where the engineer's value is clearest: understanding the business context, the team's capabilities, the existing technical debt, and the tradeoffs between options. These require judgment that pattern-matching can't provide.",tag:"Human-primary",insight:"The most complex, highest-value technical work happens here without AI. The human's judgment, experience, and organizational context are the inputs — not pattern matching on training data."},
+   ]},
+  {icon:"⚙️",label:"DevOps Engineer",
+   context:"DevOps/SRE at a fintech company. Manages Kubernetes infrastructure, CI/CD pipelines, and on-call rotation. Uses Datadog AI Insights, PagerDuty AI, and GitHub Actions.",
+   timeline:[
+     {time:"8:00 AM",type:"ai",icon:"📊",title:"Morning infrastructure health review via AI dashboard",desc:"Datadog's AI Insights shows overnight anomalies with severity scores and preliminary root cause analysis. Three low-severity items are dismissed as expected batch job behavior. One medium-severity memory usage pattern warrants a closer look.",tag:"AI-primary",insight:"AI processes overnight metrics automatically. The human's job at 8am is to validate the AI's severity assessments, not to find anomalies in raw data."},
+     {time:"8:45 AM",type:"both",icon:"🔬",title:"Investigating the flagged memory pattern",desc:"The memory trend started 3 days ago. The DevOps engineer correlates it with a deployment from that day, checks git history, and identifies a likely cause — a cache that isn't being cleared properly. The AI surfaced the pattern; the human traced the cause.",tag:"Human + AI",insight:"The AI told him something changed. The human figured out what and why by applying knowledge of the system that the AI doesn't have."},
+     {time:"10:00 AM",type:"both",icon:"🚀",title:"Deployment pipeline review and approval",desc:"A developer has triggered a deployment pipeline. AI pre-checks have run: test coverage adequate, no security vulnerabilities flagged, performance benchmarks within tolerance. The DevOps engineer reviews the AI checklist, reads the diff for anything the automated checks might miss, and approves.",tag:"Human + AI",insight:"AI handles the routine pre-deployment validation. The human reads the actual changes — because sometimes the code is correct but the intent is wrong."},
+     {time:"2:00 PM",type:"human",icon:"🆘",title:"On-call incident response",desc:"PagerDuty alerts a database connection pool exhaustion. The AI has already correlated the alert with a traffic spike and suggested a connection limit increase. The engineer investigates before acting — a traffic spike to that service shouldn't exhaust the pool at current levels. Turns out a connection leak was introduced in this morning's deployment.",tag:"Human-primary",insight:"The AI's suggestion (increase limits) would have masked the real problem. The human's instinct that the numbers didn't add up led to finding the actual cause."},
+     {time:"4:00 PM",type:"ai",icon:"📋",title:"AI-assisted incident report drafting",desc:"Post-incident, the engineer uses AI to draft the timeline section of the incident report from the Datadog and PagerDuty logs. She writes the root cause analysis and lessons learned herself — the AI doesn't know why the connection leak happened or what the team should do differently.",tag:"AI-primary",insight:"Timeline reconstruction from logs is tedious and AI does it well. Root cause analysis and recommendations require understanding the system and the team — the human writes those."},
+   ]},
+  {icon:"🔒",label:"Security Analyst",
+   context:"Security analyst at a healthcare tech company. Manages SIEM alerts, threat hunting, and incident response. Uses Microsoft Sentinel AI, CrowdStrike Falcon AI, and Snyk for code scanning.",
+   timeline:[
+     {time:"8:30 AM",type:"ai",icon:"🚨",title:"SIEM alert triage — AI-scored queue",desc:"Microsoft Sentinel has scored overnight alerts by severity and likelihood. The high-confidence, low-severity alerts (known-safe internal traffic patterns) were auto-suppressed. The analyst starts with the medium-confidence alerts that couldn't be auto-classified.",tag:"AI-primary",insight:"AI handles the easy cases — alerts that match known patterns cleanly. The analyst's attention goes to the ambiguous cases where pattern matching is insufficient."},
+     {time:"9:30 AM",type:"both",icon:"🕵️",title:"Threat hunting with AI query assistance",desc:"Based on a threat intelligence report, the analyst wants to hunt for indicators of compromise in their environment. She uses an AI assistant to translate the IOC patterns into KQL queries for Sentinel, then reviews each query before running it — the AI got the structure right but one query was too broad and would have returned excessive noise.",tag:"Human + AI",insight:"AI writes the query structure correctly. The human reviews it for specificity and potential false positive volume — knowledge that requires understanding both the query language and the environment."},
+     {time:"11:00 AM",type:"human",icon:"⚠️",title:"Escalated alert investigation — potential exfiltration",desc:"An alert has been escalated: a user account with elevated privileges accessed and downloaded an unusual volume of files at 11pm. The AI scored this as high-priority. The analyst investigates: checks the user's recent activity, their job function, whether they have a legitimate reason for the access, and whether the downloaded files contain sensitive data. The investigation takes 45 minutes.",tag:"Human-primary",insight:"This is the work the AI set up. The analyst applies organizational context — who this person is, what their role is, what's normal for them — that the AI fundamentally doesn't have access to."},
+     {time:"2:00 PM",type:"ai",icon:"🔍",title:"Code security scanning on new pull request",desc:"Snyk's AI has flagged three issues in a developer's PR: a dependency with a known vulnerability, a potential SQL injection point, and a hardcoded credential. The analyst reviews all three — two are genuine, one is a false positive from a test file that won't go to production.",tag:"AI-primary",insight:"Pattern-based vulnerability detection is exactly what AI does well. The analyst's job is validating which are real issues in this specific context."},
+     {time:"3:30 PM",type:"human",icon:"📋",title:"Security policy review for new AI tool deployment",desc:"The company wants to deploy an AI customer service chatbot. The analyst reviews it from a security perspective: what data will it access? Where does the conversation data go? What prompt injection risks exist? What happens if a user attempts to extract system prompt contents? None of this is automated.",tag:"Human-primary",insight:"Security review of new AI systems requires understanding AI-specific attack vectors — prompt injection, data leakage, model extraction. This is expertise the human brings; there's no AI that does security review of AI systems automatically."},
+   ]},
+  {icon:"📊",label:"Data Scientist",
+   context:"Data scientist at a retail tech company. Builds and maintains recommendation models, works with Python/Spark, and presents findings to business stakeholders. Uses GitHub Copilot, DataRobot, and Jupyter AI.",
+   timeline:[
+     {time:"9:00 AM",type:"ai",icon:"🔄",title:"Automated model performance monitoring review",desc:"DataRobot has sent overnight model monitoring reports. The recommendation model's accuracy metrics have declined 3% week-over-week. The system suggests retraining with recent data. The data scientist reviews the report before deciding whether to retrain — 3% may be noise, seasonal variation, or signal.",tag:"AI-primary",insight:"AI monitors model performance continuously. The human interprets whether the drift is meaningful and decides whether intervention is warranted — a judgment call requiring business context."},
+     {time:"9:30 AM",type:"both",icon:"📈",title:"Exploratory data analysis with AI assistance",desc:"A new dataset of user behavior has arrived. The data scientist uses Jupyter AI to generate initial EDA code — summary statistics, distribution plots, correlation matrices. She runs it, reviews the outputs, and identifies three patterns worth investigating that the automated summary didn't flag as notable.",tag:"Human + AI",insight:"AI generates the standard EDA quickly. The human spots the interesting anomaly in the data that doesn't show up in automated summaries because it requires understanding what would be surprising in this business context."},
+     {time:"11:30 AM",type:"both",icon:"🤖",title:"Model development with AutoML baseline",desc:"Building a new churn prediction model, the data scientist runs DataRobot AutoML to establish a baseline. The AutoML finds a gradient boosting model with 84% AUC. She then investigates whether the AutoML model captures the business logic correctly — specifically whether it's using any proxy variables that could create compliance issues.",tag:"Human + AI",insight:"AutoML generates the technical baseline. The human evaluates it against business requirements, compliance constraints, and operational reality that the model knows nothing about."},
+     {time:"2:00 PM",type:"human",icon:"🎯",title:"Stakeholder presentation — translating model to business decision",desc:"Presenting model findings to the marketing team. The model predicts which customers are likely to churn. The data scientist's job in this meeting: explain what the model does and doesn't know, help the team understand what actions to take, and keep them from over-interpreting the confidence intervals. AI cannot do this.",tag:"Human-primary",insight:"Translating technical findings into business decisions while managing stakeholder understanding of uncertainty is the data scientist's highest-value work. It requires communication, judgment, and domain knowledge that pattern matching cannot replicate."},
+     {time:"4:00 PM",type:"ai",icon:"📝",title:"AI-assisted report generation",desc:"The data scientist uses AI to draft the technical appendix of her model documentation — data sources, preprocessing steps, feature engineering decisions, model architecture. She writes the executive summary and business recommendations herself.",tag:"AI-primary",insight:"Documentation of technical steps is well-suited to AI. The judgment about which findings matter for business decisions and what actions to recommend is the human's responsibility."},
+   ]},
+];
+
+const tabsEl=document.getElementById("roleTabs"),panelsEl=document.getElementById("rolePanels");
+roles.forEach((r,i)=>{
+  const btn=document.createElement("button");btn.className="rtab"+(i===0?" active":"");
+  btn.innerHTML=`<span>${r.icon}</span>${r.label}`;
+  btn.onclick=()=>{document.querySelectorAll(".rtab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".rpanel").forEach(p=>p.classList.remove("show"));btn.classList.add("active");document.getElementById("rp"+i).classList.add("show");};
+  tabsEl.appendChild(btn);
+  const panel=document.createElement("div");panel.className="rpanel"+(i===0?" show":"");panel.id="rp"+i;
+  const timelineHTML=r.timeline.map(t=>`
+    <div class="dt-item">
+      <div class="dt-left"><div class="dt-dot ${t.type==="ai"?"ai":t.type==="human"?"human":"both"}">${t.icon}</div></div>
+      <div class="dt-body">
+        <div class="dt-time">${t.time}</div>
+        <div><span class="dt-tag ${t.type==="ai"?"ai-tag":t.type==="human"?"human-tag":"both-tag"}">${t.tag}</span></div>
+        <div class="dt-title">${t.title}</div>
+        <div class="dt-desc">${t.desc}</div>
+        <div class="dt-insight">💡 ${t.insight}</div>
+      </div>
+    </div>`).join("");
+  panel.innerHTML=`<div class="role-header"><div class="role-title">${r.icon} ${r.label}</div><div class="role-context">${r.context}</div></div><div class="day-timeline">${timelineHTML}</div>`;
+  panelsEl.appendChild(panel);
+});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is the consistent pattern across all four roles: AI handles pattern recognition, first-draft generation, data processing, and anomaly detection. Humans spend their time on the work that requires judgment — verification, context application, interpreting what patterns mean in a specific situation, and making decisions with organizational knowledge that the model doesn't have. The work becomes less about finding patterns and more about understanding what patterns mean.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("concentrating human time"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. The pattern is more nuanced than a difficulty split or a seniority split. AI compresses time across difficulty levels — it handles both easy boilerplate AND complex pattern recognition. And AI definitely changes what skills are valuable: context application, verification, and judgment become more important, not equally important. The shift is about where human attention goes, not just about speed.";}
+}
+</script>
+</body>
+</html>

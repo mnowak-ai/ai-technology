@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who's Responsible When AI Causes a Production Incident? — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.scenario-explorer{border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;margin:24px 0;}
+.se-header{background:var(--purple-pale);padding:16px 22px;border-bottom:1px solid var(--purple-mid);}
+.se-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.se-sub{font-size:14px;color:var(--gray-muted);margin-top:3px;}
+.se-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:14px 22px;border-bottom:1px solid var(--purple-mid);background:var(--gray-soft);}
+.setab{padding:8px 16px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.setab.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.sepanel{display:none;padding:20px 22px;}
+.sepanel.show{display:block;animation:fadeIn .2s ease;}
+.scenario-what{font-size:15px;line-height:1.7;margin-bottom:16px;padding:14px 16px;background:var(--gray-soft);border-radius:12px;border-left:4px solid var(--purple);}
+.accountability-chain{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.acc-row{display:flex;gap:0;border:1.5px solid var(--purple-mid);border-radius:12px;overflow:hidden;}
+.acc-party{width:140px;flex-shrink:0;padding:12px 14px;font-size:13px;font-weight:700;color:var(--white);display:flex;align-items:center;}
+.acc-party.dev{background:#5B21B6;}
+.acc-party.devops{background:#1D4ED8;}
+.acc-party.security{background:#B91C1C;}
+.acc-party.org{background:#374151;}
+.acc-party.vendor{background:#065F46;}
+.acc-verdict{flex:1;padding:12px 16px;font-size:14px;line-height:1.55;background:var(--white);}
+.acc-verdict strong{color:var(--purple-dark);}
+.verdict-box{border-radius:12px;padding:14px 16px;}
+.verdict-box.shared{background:var(--orange-pale);border:1.5px solid #FDE68A;}
+.verdict-box.primary{background:var(--red-pale);border:1.5px solid var(--red);}
+.verdict-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.verdict-box.shared .verdict-label{color:var(--orange);}
+.verdict-box.primary .verdict-label{color:var(--red);}
+.verdict-text{font-size:14px;line-height:1.65;}
+.protect-items{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.protect-item{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:15px 18px;}
+.protect-icon{font-size:20px;flex-shrink:0;}
+.protect-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.protect-desc{font-size:14px;line-height:1.6;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.acc-party{width:100px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.4 · AI in Modern Tech Workflows</div>
+  <h1>Who's Responsible When AI Causes a Production Incident? Understanding Accountability in Technical Environments</h1>
+  <p class="hero-sub">When AI-generated code introduces a vulnerability, when an AI monitoring system misses a critical alert, when an AI recommendation causes data loss — who is accountable? The answer shapes how every professional should interact with AI tools at work.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Core Principle: Using AI Doesn't Transfer Your Accountability</h2>
+    <p>The most important thing to understand about AI accountability in tech work: <mark>using an AI tool does not transfer your professional responsibility for the outcomes of that tool's suggestions to the tool, its vendor, or anyone else.</mark></p>
+    <p>This is not a legal technicality. It's a practical reality that affects how you should approach every interaction with AI in your professional work. When you ship AI-generated code, you have reviewed and shipped that code. When you act on an AI security recommendation, you have made that security decision. When you deploy an AI model that turns out to have biased outputs, you have deployed a model with biased outputs.</p>
+    <p>The accountability chain runs through you — not around you. Understanding this chain helps you understand what professional practice looks like in an AI-augmented environment. Explore these real-world accountability scenarios:</p>
+    <div class="scenario-explorer fade-in">
+      <div class="se-header">
+        <div class="se-title">Accountability Scenarios: Who Owns What</div>
+        <div class="se-sub">Click each scenario to understand how accountability distributes in practice</div>
+      </div>
+      <div class="se-tabs" id="seTabs"></div>
+      <div id="sePanels"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The engineer who ships AI-generated code owns that code. The analyst who acts on an AI recommendation owns that decision. "The AI told me to" is not a professional defense — and in some contexts, not a legal one either.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Protects You Professionally When Things Go Wrong</h2>
+    <p>Accountability doesn't mean you'll always be blamed when AI fails. It means you'll be evaluated on how you exercised professional judgment in using the tool. These practices create a defensible professional record:</p>
+    <div class="protect-items" id="protectItems"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A developer uses GitHub Copilot to implement an authentication flow. The AI generates code that contains a JWT validation vulnerability — it doesn't verify the algorithm claim in the token header. The developer reviews the code briefly, doesn't notice the issue, and ships it. Later, the vulnerability is exploited. Who is primarily accountable?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">GitHub / Microsoft — Copilot generated the vulnerable code</button>
+        <button class="qopt" onclick="doQ(this,false)">No one — this is a known risk of AI-assisted development that organizations accept when they adopt these tools</button>
+        <button class="qopt" onclick="doQ(this,true)">The developer — they reviewed and shipped the code, making it their professional responsibility. Security-sensitive code like authentication flows is exactly the category that requires careful review rather than light scanning. The AI-generated nature of the code doesn't transfer accountability to the vendor</button>
+        <button class="qopt" onclick="doQ(this,false)">The security team — they should have caught the vulnerability in code review</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Using an AI tool does not transfer your professional accountability for outcomes. The engineer who ships code owns it. The analyst who acts on a recommendation owns that decision. AI is a tool — you are the professional using it.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Accountability is distributed in most AI-assisted incidents: the engineer who shipped code, the team that reviewed it, the organization that established the verification standards, and sometimes the vendor who provided the tool all share portions of accountability. Understanding this distribution helps you understand what professional practice looks like.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The practices that protect you professionally: proportional verification for high-stakes outputs, documented reasoning for significant decisions, established team standards for AI output review, and active human judgment rather than passive acceptance of AI recommendations.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const scenarios=[
+  {label:"Vulnerable Code",title:"AI-generated code introduces a security vulnerability",
+   what:"A developer uses GitHub Copilot to write a password reset flow. The AI generates code that uses MD5 for token hashing — insecure but syntactically correct. The developer reviews the code, doesn't recognize the security problem, and ships it. The vulnerability is later exploited.",
+   chain:[
+     {party:"Developer",cls:"dev",verdict:"<strong>Primary accountability.</strong> Reviewed and shipped the code. Security-sensitive code requires scrutiny proportional to its risk. MD5 for security tokens is a well-documented vulnerability that should be caught in review."},
+     {party:"Dev Team",cls:"devops",verdict:"<strong>Shared accountability.</strong> Code review processes should include security-aware review for authentication code. If the PR was merged without security-focused review, the process failed."},
+     {party:"Organization",cls:"org",verdict:"<strong>Process accountability.</strong> Did the organization have standards for AI-assisted code review in security-sensitive areas? If not, the process gap is an organizational failure alongside the individual one."},
+     {party:"Vendor",cls:"vendor",verdict:"<strong>Minimal accountability.</strong> Tools like Copilot generate code based on training patterns and explicitly disclaim fitness for specific security contexts. Using AI for security-critical code without additional review is a known risk the developer accepted."},
+   ],
+   verdict:"shared",verdictText:"Accountability is distributed but not equal. The developer has primary accountability for shipping code they were responsible for reviewing. The team and organization share accountability for whether adequate review standards existed."},
+  {label:"Missed Alert",title:"AI monitoring misses a critical incident",
+   what:"A database is experiencing degraded performance. The AI monitoring system classifies the degradation pattern as a known false positive pattern and suppresses the alert. By the time the issue is discovered manually, 4 hours of transaction data has been corrupted.",
+   chain:[
+     {party:"DevOps Team",cls:"devops",verdict:"<strong>Primary accountability.</strong> They configured the suppression rules and thresholds. If the suppression rule was too broad, the team that configured it owns that decision."},
+     {party:"Organization",cls:"org",verdict:"<strong>Shared accountability.</strong> What was the process for validating suppression rules before deployment? Was there a review process for monitoring configuration changes?"},
+     {party:"Vendor",cls:"vendor",verdict:"<strong>Limited but real accountability.</strong> If the AI's classification of the pattern as a false positive was itself a model error — not a suppression rule decision — the vendor's model calibration is relevant. This requires investigation."},
+   ],
+   verdict:"primary",verdictText:"Configuration accountability sits with whoever set the suppression rules. If no one reviewed whether the suppression was appropriate for this pattern, the process for making those decisions needs examination."},
+  {label:"Biased Outputs",title:"Deployed AI model produces discriminatory recommendations",
+   what:"A company deploys a vendor-provided AI tool for automated resume screening. Six months later, they discover the tool is systematically scoring resumes with female-coded names lower. The vendor's model had the bias; the company deployed it without bias testing.",
+   chain:[
+     {party:"Dev/IT Team",cls:"dev",verdict:"<strong>Deployment accountability.</strong> The team that deployed the tool without bias evaluation is accountable for that decision — even though they didn't create the bias."},
+     {party:"Organization",cls:"org",verdict:"<strong>Primary accountability.</strong> The organization that used a discriminatory tool for employment decisions has both legal and ethical accountability for the discriminatory outcomes, regardless of where the bias originated."},
+     {party:"Vendor",cls:"vendor",verdict:"<strong>Shared accountability.</strong> The vendor that sold a biased model for employment screening has significant accountability — both moral and potentially legal depending on jurisdiction and representations made about the tool."},
+   ],
+   verdict:"shared",verdictText:"Multiple parties share accountability here, but the organization that deployed the tool and made employment decisions based on its outputs has the primary operational accountability. 'The vendor built it' is not a sufficient defense when the tool causes discriminatory harm."},
+  {label:"Data Loss",title:"Acting on an AI recommendation causes data deletion",
+   what:"An AI operations assistant recommends deleting a set of 'unused' files to free disk space during a storage alert. A DevOps engineer executes the recommendation without fully verifying what the files are. The deleted files turn out to be database transaction logs needed for point-in-time recovery. Recovery fails; 6 hours of data is lost.",
+   chain:[
+     {party:"DevOps Eng",cls:"devops",verdict:"<strong>Primary accountability.</strong> Executed an irreversible action without verifying what was being deleted. Irreversible actions — especially those involving data deletion — require verification before execution, regardless of AI confidence."},
+     {party:"Organization",cls:"org",verdict:"<strong>Process accountability.</strong> Did the organization have standards requiring human verification before AI-recommended data deletion? If not, the process gap contributed to the incident."},
+     {party:"AI Tool",cls:"vendor",verdict:"<strong>Tool design question.</strong> Should an operations AI recommend irreversible data deletion without requiring explicit confirmation and showing the complete list of affected files? Tool design that makes dangerous actions easy is a design failure."},
+   ],
+   verdict:"primary",verdictText:"The engineer who executed an irreversible action without verification has primary accountability. Irreversibility is one of the clearest signals in the Trust/Verify framework that human verification is required before action."},
+];
+
+const tabsEl=document.getElementById("seTabs"),panelsEl=document.getElementById("sePanels");
+scenarios.forEach((s,i)=>{
+  const btn=document.createElement("button");btn.className="setab"+(i===0?" active":"");btn.textContent=s.label;
+  btn.onclick=()=>{document.querySelectorAll(".setab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".sepanel").forEach(p=>p.classList.remove("show"));btn.classList.add("active");document.getElementById("sep"+i).classList.add("show");};
+  tabsEl.appendChild(btn);
+  const panel=document.createElement("div");panel.className="sepanel"+(i===0?" show":"");panel.id="sep"+i;
+  const chainHTML=s.chain.map(c=>`<div class="acc-row"><div class="acc-party ${c.cls}">${c.party}</div><div class="acc-verdict">${c.verdict}</div></div>`).join("");
+  panel.innerHTML=`<div class="scenario-what">${s.what}</div><div class="accountability-chain">${chainHTML}</div><div class="verdict-box ${s.verdict}"><div class="verdict-label">${s.verdict==="shared"?"⚖️ Verdict: Distributed accountability":"⚠️ Verdict: Clear primary accountability"}</div><div class="verdict-text">${s.verdictText}</div></div>`;
+  panelsEl.appendChild(panel);
+});
+
+const protectData=[
+  {icon:"🔍",title:"Apply proportional verification — documented",desc:"For high-stakes, security-sensitive, or irreversible actions, apply and document your verification process. If you checked the authentication library against the official docs before shipping, that's a materially different professional position than accepting Copilot's output unreviewed."},
+  {icon:"📋",title:"Follow — and help establish — team standards for AI-assisted work",desc:"Teams with explicit standards for how AI outputs are reviewed and what categories require additional scrutiny create accountability frameworks that protect everyone. If your team doesn't have these standards, raising the topic is itself professionally valuable."},
+  {icon:"💬",title:"Document your reasoning for significant decisions",desc:"When you override an AI recommendation, when you accept a recommendation after scrutiny, when you choose not to act on an alert — brief documentation of your reasoning creates a record that demonstrates professional judgment rather than passive acceptance."},
+  {icon:"⚠️",title:"Flag AI limitations that your organization should know about",desc:"If you discover that an AI tool used in your environment has a systematic limitation — high false positive rates in specific categories, poor performance on certain code patterns, biased outputs in specific contexts — flagging this up the chain is a professional responsibility, not optional."},
+  {icon:"❓",title:"Ask questions about AI tools before deploying them",desc:"Before your organization deploys a new AI tool, asking about training data recency, bias testing, false positive rates, and what human review is expected creates a professional record that the tool was evaluated thoughtfully — and may prevent accountability exposure from deploying a tool with known limitations."},
+];
+const pEl=document.getElementById("protectItems");
+protectData.forEach(p=>{const div=document.createElement("div");div.className="protect-item";div.innerHTML=`<div class="protect-icon">${p.icon}</div><div><div class="protect-title">${p.title}</div><div class="protect-desc">${p.desc}</div></div>`;pEl.appendChild(div);});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The developer reviewed and shipped the code — that makes them primarily accountable for it, including its security properties. Authentication flows are exactly the category of code that requires careful security review because the consequences of vulnerabilities are severe. The AI-generated origin of the code doesn't shift accountability to the vendor. GitHub's ToS explicitly disclaim that Copilot outputs are fit for any particular purpose. The security team's review is a second line of defense — valuable, but the developer's review is the primary one for code they wrote and shipped.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("reviewed and shipped"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. GitHub/Microsoft's tools explicitly disclaim fitness for specific security contexts — and the developer accepted those terms when using the tool. Accountability doesn't disappear in AI-assisted incidents; it distributes. The security team shares some accountability if the PR was merged without security review. But the developer who wrote, reviewed, and shipped the code owns that code — including its vulnerabilities.";}
+}
+</script>
+</body>
+</html>

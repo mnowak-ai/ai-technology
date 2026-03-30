@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI in Code Review: What It Catches, What It Misses, and What Human Reviewers Still Own — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.split-table{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:24px 0;}
+.st-header{display:grid;grid-template-columns:1fr 1fr;background:var(--gray-soft);border-bottom:1px solid var(--purple-mid);}
+.st-col-head{padding:14px 18px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.st-col-head.catches{color:var(--green);}
+.st-col-head.misses{color:var(--red);}
+.st-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--purple-mid);}
+.st-row:last-child{border-bottom:none;}
+.st-cell{padding:12px 18px;font-size:14px;line-height:1.55;}
+.st-cell.catches{border-right:1px solid var(--purple-mid);}
+.st-cell.catches::before{content:"✓ ";color:var(--green);font-weight:700;}
+.st-cell.misses::before{content:"✗ ";color:var(--red);font-weight:700;}
+.human-owns{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.ho-item{display:flex;gap:14px;border:1.5px solid var(--purple-mid);border-radius:14px;padding:15px 18px;background:var(--white);}
+.ho-icon{font-size:20px;flex-shrink:0;}
+.ho-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ho-desc{font-size:14px;line-height:1.6;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.st-header,.st-row{grid-template-columns:1fr;}.st-cell.catches{border-right:none;border-bottom:1px solid var(--purple-mid);}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.4 · AI in Modern Tech Workflows</div>
+  <h1>AI in Code Review: What AI Catches, What It Misses, and What Human Reviewers Still Own</h1>
+  <p class="hero-sub">AI code review is one of the most common AI use cases in software development — and one of the most misunderstood. Understanding exactly what AI catches and what it systematically misses changes how you use it and how much you trust it.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>What AI Code Review Actually Does</h2>
+    <p>AI code review tools — GitHub Copilot Code Review, Snyk Code, SonarQube with AI, CodeRabbit, and similar — analyze code changes against learned patterns from large codebases. <mark>They excel at pattern-based detection: finding code that matches known bad patterns. They are systematically weak at anything requiring understanding of intent, business context, or system-level reasoning.</mark></p>
+    <p>This table shows what AI code review reliably catches vs. what it consistently misses in practice:</p>
+    <div class="split-table fade-in">
+      <div class="st-header">
+        <div class="st-col-head catches">✓ AI catches reliably</div>
+        <div class="st-col-head misses">✗ AI consistently misses</div>
+      </div>
+      <div class="st-row"><div class="st-cell catches">Known vulnerability patterns — SQL injection, XSS, path traversal, hardcoded credentials</div><div class="st-cell misses">Business logic errors — code that is technically correct but implements the wrong behavior</div></div>
+      <div class="st-row"><div class="st-cell catches">Style and convention violations (when rules are configured)</div><div class="st-cell misses">Architecture decisions — whether the approach is appropriate for the problem</div></div>
+      <div class="st-row"><div class="st-cell catches">Missing null checks, potential NPEs, unhandled exceptions in common patterns</div><div class="st-cell misses">Whether tests actually test the right things — AI can check coverage, not correctness</div></div>
+      <div class="st-row"><div class="st-cell catches">Dependency vulnerabilities (outdated packages with known CVEs)</div><div class="st-cell misses">Security implications specific to this system's architecture or data flows</div></div>
+      <div class="st-row"><div class="st-cell catches">Code duplication that violates DRY principles</div><div class="st-cell misses">Whether this change will interact correctly with other systems or features</div></div>
+      <div class="st-row"><div class="st-cell catches">Common performance anti-patterns (N+1 queries, inefficient loops on simple data)</div><div class="st-cell misses">Subtle race conditions or concurrency issues that depend on execution context</div></div>
+      <div class="st-row"><div class="st-cell catches">Missing access control checks when the pattern is well-established</div><div class="st-cell misses">Authorization logic that's correct syntactically but wrong for the permission model</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Human Code Reviewers Still Own — and Must Own</h2>
+    <div class="human-owns">
+      <div class="ho-item"><div class="ho-icon">🧠</div><div><div class="ho-title">Does this code actually solve the right problem?</div><div class="ho-desc">AI can verify that code matches a pattern. It cannot verify that the pattern solves what the ticket was asking for, aligns with what the product manager specified, or matches what the customer actually needs. Business logic correctness is entirely a human responsibility.</div></div></div>
+      <div class="ho-item"><div class="ho-icon">🏗️</div><div><div class="ho-title">Is this the right architectural approach?</div><div class="ho-desc">AI can flag when code doesn't match existing patterns. It cannot assess whether the existing patterns are appropriate, whether a different architecture would be significantly better, or whether this change creates technical debt that will matter in six months. Architecture judgment requires system-level understanding.</div></div></div>
+      <div class="ho-item"><div class="ho-icon">🔐</div><div><div class="ho-title">Security implications specific to this system</div><div class="ho-desc">AI catches known vulnerability patterns. It cannot assess security implications specific to how this codebase uses data, what the threat model is for this specific application, or whether a technically-valid authorization pattern creates a logical access control gap in this particular permission model.</div></div></div>
+      <div class="ho-item"><div class="ho-icon">🧪</div><div><div class="ho-title">Are the tests actually testing the right things?</div><div class="ho-desc">AI can check test coverage metrics. It cannot evaluate whether the tests are testing the right behavior, whether edge cases that matter for this specific feature are covered, or whether the tests will still pass when they should fail. Test quality is a human judgment.</div></div></div>
+      <div class="ho-item"><div class="ho-icon">📚</div><div><div class="ho-title">Knowledge transfer and team learning</div><div class="ho-desc">Code review is also how teams share knowledge — how a senior engineer helps a junior one understand better patterns, how the team maintains shared understanding of the codebase, how new members learn conventions that aren't captured in automated rules. AI cannot do this.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>AI code review is a first-pass analyst, not a second reviewer. It handles pattern-matching at scale and frees human reviewers to focus on the work that actually requires understanding the system — the architecture, the business logic, and the security implications that are specific to this codebase.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">An AI code review tool gives a pull request a "pass" with no significant issues flagged. The code implements a new user permissions feature. A human reviewer should prioritize reviewing which of the following?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Style and naming conventions — these are what humans catch that AI misses</button>
+        <button class="qopt" onclick="doQ(this,false)">Dependency versions — AI doesn't check these thoroughly</button>
+        <button class="qopt" onclick="doQ(this,true)">The authorization logic — specifically whether the permission checks correctly implement the intended access model for this system, whether edge cases in the permission model are handled, and whether the implementation could create unintended access paths. AI passes correct-looking authorization code; only a human can verify it implements the right permissions for this application</button>
+        <button class="qopt" onclick="doQ(this,false)">The test coverage percentage — AI often misses inadequate test coverage</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI code review reliably catches known vulnerability patterns, style violations, common null/exception patterns, and dependency CVEs. It consistently misses business logic errors, architecture decisions, system-specific security implications, and whether tests test the right things.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>An AI "pass" on a code review does not mean the code is correct, appropriate, or secure. It means the code doesn't match known bad patterns. Human review remains essential for everything requiring understanding of intent, architecture, and system context.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Security-sensitive code — authentication, authorization, payment flows, data access — requires human review regardless of AI results, because the most dangerous authorization bugs are logically correct code that implements the wrong access model.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Authorization logic is exactly the category where AI's pattern-based review is most dangerous. AI will pass code that syntactically follows permission check patterns correctly — but it cannot verify that those permission checks implement the right access model for this specific application's permission system. A permissions feature where the code looks correct but grants unintended access is one of the most serious security failures, and it's systematically in AI's blind spot.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("authorization logic"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Style and naming conventions are actually what AI catches well when rules are configured. Dependency versions are also something AI tools check thoroughly. Test coverage percentage is reported by AI tools but coverage isn't the same as test quality — and both are still less critical than the authorization logic for a permissions feature.";}
+}
+</script>
+</body>
+</html>

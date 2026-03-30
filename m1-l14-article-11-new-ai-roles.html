@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How AI Is Creating Entirely New Tech Roles — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.role-grid{display:flex;flex-direction:column;gap:16px;margin:24px 0;}
+.rg-card{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.rg-header{display:flex;gap:14px;align-items:center;padding:16px 20px;background:var(--purple-pale);cursor:pointer;transition:background .2s;}
+.rg-header:hover{background:var(--purple-mid);}
+.rg-icon{font-size:26px;flex-shrink:0;}
+.rg-meta{flex:1;}
+.rg-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);margin-bottom:2px;}
+.rg-exists-since{font-size:12px;color:var(--gray-muted);font-weight:600;}
+.rg-chevron{font-size:12px;color:var(--purple);transition:transform .2s;}
+.rg-card.open .rg-chevron{transform:rotate(180deg);}
+.rg-body{display:none;border-top:1px solid var(--purple-mid);padding:18px 20px;background:var(--white);}
+.rg-card.open .rg-body{display:block;animation:fadeIn .2s ease;}
+.rg-row{display:grid;grid-template-columns:140px 1fr;gap:16px;margin-bottom:12px;align-items:flex-start;}
+.rg-row:last-child{margin-bottom:0;}
+.rg-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);padding-top:2px;}
+.rg-value{font-size:14px;line-height:1.65;}
+.path-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.path-chip{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:6px;padding:4px 10px;font-size:12px;}
+.salary-bar{display:flex;align-items:center;gap:10px;}
+.salary-num{font-size:15px;font-weight:700;color:var(--purple-dark);}
+.salary-trend{background:var(--green-pale);color:var(--green);font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.maturity{display:flex;gap:6px;align-items:center;}
+.mat-dot{width:10px;height:10px;border-radius:50%;}
+.mat-label{font-size:13px;}
+.skills-needed{display:flex;flex-wrap:wrap;gap:6px;}
+.sk{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--purple-dark);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.rg-row{grid-template-columns:1fr;gap:4px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.4 · AI in Modern Tech Workflows</div>
+  <h1>How AI Is Creating Entirely New Tech Roles That Didn't Exist Five Years Ago</h1>
+  <p class="hero-sub">Every major technology wave creates new job categories that didn't exist before it. AI is doing the same. This article profiles the roles emerging right now — what they do, what they pay, and what skills position you for them today.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Roles the AI Wave Is Creating</h2>
+    <p>These aren't speculative future roles — they're titles appearing in job postings right now, with salaries, career paths, and skill requirements that are becoming clearer as the market matures. <mark>The opportunity window is open: these roles are in high demand and short supply.</mark> Click each to see the full profile:</p>
+    <div class="role-grid" id="roleGrid"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The pattern in every previous technology wave: the people who understood the technology deeply enough to explain it, govern it, and shape how it was used — not just use it — were the ones who built the most durable careers. That's the opportunity window this certification is designed to help you access.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">Which of these new AI roles is currently most accessible to someone with a general software engineering background who hasn't worked specifically in ML or AI before?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">AI Safety Researcher — safety work requires the deepest understanding of model internals</button>
+        <button class="qopt" onclick="doQ(this,true)">AI Engineer (LLM Integration) — engineers who can build applications using LLM APIs, implement RAG systems, and evaluate output quality are in high demand with skills that transfer directly from software engineering backgrounds</button>
+        <button class="qopt" onclick="doQ(this,false)">Prompt Engineer — this role is primarily about writing prompts, which doesn't require technical background</button>
+        <button class="qopt" onclick="doQ(this,false)">AI Product Manager — product management requires product experience more than technical background</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>New roles emerging from AI: AI/LLM Engineer (building with foundation models), Prompt Engineer (optimizing AI interactions), AI Product Manager (product strategy for AI features), AI Safety Researcher (ensuring safe model behavior), AI Governance Specialist (compliance and risk). All are in high demand and short supply.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most accessible entry from a general tech background: AI Engineer (LLM integration). The skills transfer directly from software engineering, and the demand is enormous as every company builds LLM-powered features.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The skills to build now: LLM API integration, evaluation framework design, prompt engineering, RAG systems, and AI governance basics. These appear across multiple new role profiles and represent durable capability regardless of which specific role you pursue.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const roles=[
+  {icon:"⚡",title:"AI Engineer / LLM Engineer",exists:"Title emerged 2022–2023; now one of the most-posted AI roles",
+   what:"Builds products and features using foundation models (GPT-4, Claude, Gemini) via APIs rather than training models from scratch. Implements RAG (Retrieval-Augmented Generation) systems, designs evaluation frameworks, and integrates AI capabilities into production applications.",
+   salary:"$160,000–$230,000",trend:"↑ Rapidly rising",
+   paths:["Software Engineer","Backend Developer","Full-stack Engineer"],
+   skills:["LLM API integration","RAG systems","Vector databases","Prompt engineering","Evaluation frameworks","Python"],
+   maturity:"high",maturityLabel:"High — well-defined role, many openings"},
+  {icon:"✍️",title:"Prompt Engineer",exists:"Title emerged 2022; increasingly being absorbed into other roles",
+   what:"Designs, tests, and optimizes prompts and system prompts for AI systems. Works across product, engineering, and operations to ensure AI tools produce reliable, high-quality outputs. May also build evaluation pipelines and manage prompt versioning.",
+   salary:"$90,000–$150,000",trend:"→ Stabilizing",
+   paths:["Technical Writer","QA Engineer","Product Manager","Any tech role with AI tool experience"],
+   skills:["Prompt design and testing","LLM behavior understanding","Evaluation design","Documentation","Domain expertise"],
+   maturity:"med",maturityLabel:"Medium — role definition still evolving; often absorbed into other titles"},
+  {icon:"📦",title:"AI Product Manager",exists:"Title emerging 2023–2024; growing fast at AI-native companies",
+   what:"Owns the product strategy for AI-powered features or products. Translates business problems into AI product specifications, manages the ethical and UX implications of AI features, and communicates AI capabilities and limitations to stakeholders and leadership.",
+   salary:"$150,000–$200,000",trend:"↑ Rising",
+   paths:["Product Manager","Technical Product Manager","Software Engineer with product interest"],
+   skills:["Product strategy","AI capabilities/limitations understanding","Stakeholder communication","Evaluation design","Ethics and responsible AI basics","Data intuition"],
+   maturity:"med",maturityLabel:"Medium — well-defined at AI-first companies; emerging at traditional tech companies"},
+  {icon:"🛡️",title:"AI Safety Researcher / Engineer",exists:"Title existed in research labs 2018+; enterprise versions emerging 2023–2024",
+   what:"Evaluates AI systems for safety, reliability, and alignment with intended behavior. Designs red-teaming exercises, builds evaluation frameworks for model behavior, researches failure modes, and contributes to internal safety standards.",
+   salary:"$170,000–$280,000 (research); $140,000–$190,000 (enterprise)",trend:"↑ Strong growth",
+   paths:["ML Researcher","Software Engineer with security background","AI/ML Engineer","Academic researcher"],
+   skills:["ML model internals understanding","Red-teaming / adversarial testing","Evaluation framework design","Statistical analysis","Research methodology"],
+   maturity:"low",maturityLabel:"Early — well-defined at AI labs, still emerging at enterprise companies"},
+  {icon:"⚖️",title:"AI Governance Specialist",exists:"Title emerging strongly 2023–2024 driven by EU AI Act and corporate risk awareness",
+   what:"Ensures AI systems meet legal, ethical, and organizational standards. Conducts bias audits, writes AI risk assessments, develops AI use policies, and represents the organization in regulatory contexts. Bridges technical AI understanding with legal and risk management.",
+   salary:"$120,000–$170,000",trend:"↑ Very rapid growth",
+   paths:["Compliance / Risk Manager","Legal professional with tech interest","Any tech role with governance interest","Policy analyst"],
+   skills:["Regulatory frameworks (EU AI Act, NIST AI RMF)","Bias auditing","Risk assessment","Policy writing","Technical AI understanding","Cross-functional communication"],
+   maturity:"low",maturityLabel:"Early but accelerating fast — regulatory pressure creating urgent demand"},
+];
+
+const rgEl=document.getElementById("roleGrid");
+roles.forEach(r=>{
+  const div=document.createElement("div");div.className="rg-card";
+  const matColor=r.maturity==="high"?"#276749":r.maturity==="med"?"#D97706":"#7B2FBE";
+  div.innerHTML=`<div class="rg-header" onclick="toggleRG(this.parentElement)">
+    <div class="rg-icon">${r.icon}</div>
+    <div class="rg-meta"><div class="rg-title">${r.title}</div><div class="rg-exists-since">${r.exists}</div></div>
+    <div class="rg-chevron">▼</div>
+  </div>
+  <div class="rg-body">
+    <div class="rg-row"><div class="rg-label">What it does</div><div class="rg-value">${r.what}</div></div>
+    <div class="rg-row"><div class="rg-label">Salary (US, 2024)</div><div class="rg-value"><div class="salary-bar"><span class="salary-num">${r.salary}</span><span class="salary-trend">${r.trend}</span></div></div></div>
+    <div class="rg-row"><div class="rg-label">Paths in</div><div class="rg-value"><div class="path-chips">${r.paths.map(p=>`<span class="path-chip">${p}</span>`).join("")}</div></div></div>
+    <div class="rg-row"><div class="rg-label">Skills needed</div><div class="rg-value"><div class="skills-needed">${r.skills.map(s=>`<span class="sk">${s}</span>`).join("")}</div></div></div>
+    <div class="rg-row"><div class="rg-label">Role maturity</div><div class="rg-value"><div class="maturity"><div class="mat-dot" style="background:${matColor}"></div><span class="mat-label">${r.maturityLabel}</span></div></div></div>
+  </div>`;
+  rgEl.appendChild(div);
+});
+function toggleRG(el){const was=el.classList.contains("open");document.querySelectorAll(".rg-card").forEach(r=>r.classList.remove("open"));if(!was)el.classList.add("open");}
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. AI Engineer (LLM integration) is the most accessible from a software engineering background because the core skills transfer directly: API integration, software architecture, testing and evaluation, and production engineering. The new skills are LLM-specific (RAG systems, prompt engineering, model evaluation) but build on a solid engineering foundation. AI Safety Research requires deeper model internals knowledge. Prompt Engineering is often absorbed into other roles and doesn't require technical background. AI PM requires product experience.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("AI Engineer (LLM"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. AI Safety Research at a deep level requires understanding model internals that typically requires ML research experience. Prompt Engineering doesn't primarily require technical background — it's more about understanding AI behavior and domain expertise. AI Product Management requires product management experience more than technical background. AI Engineer (LLM Integration) has the most direct skill transfer from software engineering.";}
+}
+</script>
+</body>
+</html>

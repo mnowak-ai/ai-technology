@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The People Who Build and Maintain AI Systems — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.role-cards{display:flex;flex-direction:column;gap:14px;margin:24px 0;}
+.rc{border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;}
+.rc-header{display:flex;gap:16px;align-items:flex-start;padding:18px 22px;cursor:pointer;background:var(--white);transition:background .2s;}
+.rc-header:hover,.rc.open .rc-header{background:var(--purple-pale);}
+.rc-icon{font-size:28px;flex-shrink:0;}
+.rc-meta{flex:1;}
+.rc-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.rc-tagline{font-size:14px;color:var(--gray-muted);}
+.rc-chevron{font-size:12px;color:var(--gray-muted);transition:transform .2s;margin-top:8px;}
+.rc.open .rc-chevron{transform:rotate(180deg);}
+.rc-body{display:none;border-top:1px solid var(--purple-mid);padding:20px 22px;background:var(--purple-pale);}
+.rc.open .rc-body{display:block;animation:fadeIn .2s ease;}
+.rc-section{margin-bottom:14px;}
+.rc-section:last-child{margin-bottom:0;}
+.rc-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.rc-section-text{font-size:15px;line-height:1.7;}
+.skill-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.skill-chip{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:6px;padding:4px 10px;font-size:13px;}
+.skill-chip.core{background:var(--purple-pale);border-color:var(--purple);color:var(--purple-dark);font-weight:600;}
+.path-items{display:flex;flex-direction:column;gap:8px;margin:24px 0;}
+.path-item{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:14px 16px;}
+.path-icon{font-size:18px;flex-shrink:0;}
+.path-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.path-desc{font-size:13px;line-height:1.6;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.4 · AI in Modern Tech Workflows</div>
+  <h1>Technical Roles: The People Who Build, Maintain, and Improve AI Systems in Enterprise Environments</h1>
+  <p class="hero-sub">Most of this certification has focused on using AI tools. This article opens a different door: the career path of building and operating the AI systems themselves. For students interested in the technical side of AI, this is your career map.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Roles That Keep AI Systems Running</h2>
+    <p>There's a common misconception that "working in AI" means being a machine learning researcher. In practice, <mark>the majority of AI jobs in enterprise environments are operational roles</mark> — engineering, infrastructure, governance, and data — that keep AI systems running reliably and responsibly in production. Click each role to explore what it involves:</p>
+    <div class="role-cards" id="roleCards"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Getting Into These Roles From Where You Are</h2>
+    <p>Each of these roles is accessible from different starting points. Here are the most common paths:</p>
+    <div class="path-items">
+      <div class="path-item"><div class="path-icon">💻</div><div><div class="path-title">Software Engineer → ML Engineer or AI Engineer</div><div class="path-desc">The most common path. Add: ML framework experience (PyTorch/TensorFlow), experience with LLM APIs, understanding of model evaluation. Cloud ML certifications (AWS ML Specialty, Google Cloud ML Engineer) help with signal.</div></div></div>
+      <div class="path-item"><div class="path-icon">⚙️</div><div><div class="path-title">DevOps/SRE → MLOps Engineer</div><div class="path-desc">Highly transferable. Add: model deployment patterns (model serving, feature stores, experiment tracking), ML-specific monitoring (data drift, model drift, performance degradation). MLflow, Kubeflow, or Vertex AI experience is valuable.</div></div></div>
+      <div class="path-item"><div class="path-icon">📊</div><div><div class="path-title">Data Analyst → Data Engineer or ML Engineer</div><div class="path-desc">Add: pipeline orchestration (Airflow, Prefect), data quality and validation frameworks, feature engineering at scale, distributed computing (Spark). Python engineering skills beyond analysis scripting.</div></div></div>
+      <div class="path-item"><div class="path-icon">🔒</div><div><div class="path-title">Any Tech Role → AI Governance Specialist</div><div class="path-desc">Fastest-growing path right now. Add: AI regulatory frameworks (EU AI Act, NIST AI RMF), bias evaluation methods, AI audit processes, risk assessment frameworks. Legal or policy background is a differentiator.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The most accessible AI career pivot right now is toward MLOps and AI governance — both are undersupplied relative to demand, and both draw heavily on skills that already exist in DevOps and general tech operations backgrounds.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A DevOps engineer is interested in moving into AI-related work. They have 4 years of experience with Kubernetes, CI/CD pipelines, and observability. Which path is most directly accessible to them?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">ML Researcher — DevOps experience shows technical depth valuable in research environments</button>
+        <button class="qopt" onclick="doQ(this,true)">MLOps Engineer — their existing skills (container orchestration, CI/CD, observability) map directly to MLOps responsibilities. The delta is learning ML-specific deployment patterns, model monitoring tools, and experiment tracking frameworks</button>
+        <button class="qopt" onclick="doQ(this,false)">AI Governance Specialist — DevOps engineers understand systems risk better than anyone</button>
+        <button class="qopt" onclick="doQ(this,false)">Data Engineer — pipeline work is closely related to DevOps infrastructure</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The AI roles in highest demand in enterprise environments are operational: MLOps Engineer, AI/ML Engineer, Data Engineer, and AI Governance Specialist. These roles build and maintain AI systems in production — the majority of AI career opportunity exists here, not in research.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every major tech role has a direct path to AI-adjacent work. DevOps → MLOps is the most direct. Software engineering → ML/AI engineering adds ML frameworks and LLM APIs. Any technical role → AI governance adds regulatory and risk frameworks.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI governance is the fastest-growing and most undersupplied AI career path right now. Organizations facing regulatory pressure (EU AI Act, NIST AI RMF) need people who understand both AI systems and risk management — a combination that's currently rare.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const roles=[
+  {icon:"🚀",title:"MLOps Engineer",tagline:"The SRE for machine learning systems",
+   what:"MLOps (Machine Learning Operations) engineers build and maintain the infrastructure that gets ML models from development into production — and keeps them running reliably once they're there. This is one of the fastest-growing roles in enterprise tech.",
+   day:"Deploying and versioning models using tools like MLflow or Vertex AI. Building model serving infrastructure. Setting up data drift and model performance monitoring. Automating retraining pipelines when performance degrades. Running A/B tests between model versions. Post-incident review when model degradation causes product issues.",
+   skills:["Kubernetes / container orchestration","CI/CD pipeline experience","MLflow, Kubeflow, or similar","Model serving frameworks (TensorFlow Serving, Triton)","Data drift detection","Experiment tracking"],
+   coreSkills:["Kubernetes","CI/CD","MLflow","Model monitoring"],
+   salary:"$140,000–$190,000 (US, 2024)"},
+  {icon:"🤖",title:"ML Engineer / AI Engineer",tagline:"Builds the models and integrates them into products",
+   what:"ML Engineers build, train, evaluate, and fine-tune machine learning models. AI Engineers (a newer title) tend to focus more on integrating existing foundation models (LLMs, vision models) into products via APIs rather than training from scratch.",
+   day:"Fine-tuning a foundation model on company data. Building a RAG (Retrieval-Augmented Generation) pipeline for internal knowledge access. Evaluating model outputs for quality and safety. Debugging why a model is underperforming on specific inputs. Collaborating with product teams to translate product requirements into model specifications.",
+   skills:["Python (strong)","PyTorch or TensorFlow","LLM APIs (OpenAI, Anthropic, Gemini)","Prompt engineering","Embedding models and vector databases","Model evaluation frameworks"],
+   coreSkills:["PyTorch/TF","LLM APIs","RAG systems","Evaluation"],
+   salary:"$150,000–$220,000 (US, 2024)"},
+  {icon:"🗄️",title:"Data Engineer",tagline:"Builds the pipelines that feed AI systems",
+   what:"Data Engineers build and maintain the data infrastructure that AI systems depend on. No good data pipeline = no good AI. Data quality, data governance, and data availability are the foundation that everything else is built on.",
+   day:"Building ingestion pipelines from production systems into data warehouses. Implementing data quality checks and validation. Creating feature stores for ML model inputs. Managing data lineage and documentation. Working with data scientists to ensure the data they need is available, clean, and accessible.",
+   skills:["SQL (expert)","Python / Spark","Airflow or Prefect (orchestration)","Data warehouse (Snowflake, BigQuery)","dbt (data transformation)","Data quality frameworks"],
+   coreSkills:["SQL","Spark","Airflow","dbt","Data quality"],
+   salary:"$130,000–$170,000 (US, 2024)"},
+  {icon:"⚖️",title:"AI Governance Specialist / Responsible AI",tagline:"Ensures AI systems are safe, fair, and compliant",
+   what:"AI Governance is the fastest-growing and most undersupplied role in enterprise AI. As organizations face regulatory pressure (EU AI Act, forthcoming US frameworks) and reputational risk from AI failures, they need people who understand both AI systems and risk management.",
+   day:"Conducting bias audits on deployed models. Writing AI risk assessments for new AI system deployments. Developing AI use policies for the organization. Evaluating vendor AI tools for compliance with internal standards and external regulations. Creating model cards and transparency documentation. Participating in regulatory submissions.",
+   skills:["AI ethics frameworks","Bias evaluation methods","EU AI Act / NIST AI RMF","Risk assessment","Technical AI understanding","Policy writing"],
+   coreSkills:["Bias auditing","Regulatory frameworks","Risk assessment","AI policy"],
+   salary:"$120,000–$160,000 (US, 2024) — rapidly rising"},
+];
+
+const rcEl=document.getElementById("roleCards");
+roles.forEach(r=>{
+  const div=document.createElement("div");div.className="rc";
+  div.innerHTML=`<div class="rc-header" onclick="toggleRC(this.parentElement)"><div class="rc-icon">${r.icon}</div><div class="rc-meta"><div class="rc-title">${r.title}</div><div class="rc-tagline">${r.tagline}</div></div><div class="rc-chevron">▼</div></div>
+  <div class="rc-body">
+    <div class="rc-section"><div class="rc-section-label">What this role does</div><div class="rc-section-text">${r.what}</div></div>
+    <div class="rc-section"><div class="rc-section-label">A typical day</div><div class="rc-section-text">${r.day}</div></div>
+    <div class="rc-section"><div class="rc-section-label">Core skills needed</div><div class="skill-chips">${r.coreSkills.map(s=>`<span class="skill-chip core">${s}</span>`).join("")}${r.skills.filter(s=>!r.coreSkills.includes(s)).map(s=>`<span class="skill-chip">${s}</span>`).join("")}</div></div>
+    <div class="rc-section"><div class="rc-section-label">Salary range (US, 2024)</div><div class="rc-section-text">${r.salary}</div></div>
+  </div>`;
+  rcEl.appendChild(div);
+});
+function toggleRC(el){const was=el.classList.contains("open");document.querySelectorAll(".rc").forEach(r=>r.classList.remove("open"));if(!was)el.classList.add("open");}
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. MLOps is the most direct path for a DevOps engineer. Kubernetes experience maps directly to model serving infrastructure. CI/CD experience maps directly to model deployment pipelines. Observability experience maps directly to model monitoring. The additional skills needed — MLflow, model-specific monitoring, experiment tracking — are a smaller delta than any other AI role transition.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("MLOps Engineer"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. ML Research requires deep mathematical and statistical training that isn't typically built in a DevOps background. Data engineering draws on similar infrastructure skills but is more SQL and pipeline oriented. AI governance is accessible but draws more on risk and policy skills than infrastructure operations. MLOps is the most direct match for a DevOps skill set.";}
+}
+</script>
+</body>
+</html>
