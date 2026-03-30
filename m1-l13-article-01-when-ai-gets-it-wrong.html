@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When AI Gets It Wrong in Tech: Real Failure Cases and What They Teach Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.case-studies{display:flex;flex-direction:column;gap:16px;margin:24px 0;}
+.cs{border:1.5px solid var(--red);border-radius:22px;overflow:hidden;}
+.cs-header{display:flex;gap:16px;padding:20px 24px;background:var(--red-pale);cursor:pointer;align-items:flex-start;}
+.cs-icon{font-size:28px;flex-shrink:0;}
+.cs-meta{flex:1;}
+.cs-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:4px;}
+.cs-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--red);line-height:1.3;}
+.cs-chevron{font-size:12px;color:var(--red);transition:transform .2s;margin-top:4px;}
+.cs.open .cs-chevron{transform:rotate(180deg);}
+.cs-body{display:none;border-top:1.5px solid var(--red);background:var(--white);}
+.cs-body.open{display:block;animation:fadeIn .25s ease;}
+.cs-section{padding:18px 24px;border-bottom:1px solid var(--purple-mid);}
+.cs-section:last-child{border-bottom:none;}
+.cs-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.cs-section-label.what{color:var(--gray-muted);}
+.cs-section-label.why{color:var(--red);}
+.cs-section-label.lesson{color:var(--green);}
+.cs-section p{font-size:15px;line-height:1.7;margin:0;}
+.lesson-box{background:var(--green-pale);border:1.5px solid var(--green);border-radius:12px;padding:14px 16px;margin-top:10px;}
+.lesson-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:6px;}
+.lesson-text{font-size:14px;line-height:1.65;color:var(--green);}
+.patterns{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.pattern{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.pattern-num{width:32px;height:32px;background:var(--purple);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:14px;font-weight:700;flex-shrink:0;}
+.pattern-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.pattern-desc{font-size:14px;line-height:1.6;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.3 · Strengths &amp; Limitations of AI</div>
+  <h1>When AI Gets It Wrong in Tech: Real Failure Cases and What They Teach Us</h1>
+  <p class="hero-sub">Abstract warnings about AI limitations don't stick. Concrete stories do. This article covers documented AI failures in technical environments — what went wrong, why the failure was predictable, and what it teaches you about working with AI tools safely.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Why These Stories Matter More Than Abstract Warnings</h2>
+    <p>Every certification about AI limitations says the same things: AI can be wrong, AI can be biased, AI requires human oversight. These warnings are true — and they bounce off most people because they're abstract. <mark>Concrete failures told as stories produce the mental models that abstract warnings never do.</mark></p>
+    <p>The cases below are not freak accidents or edge cases. They are predictable failures of specific AI patterns — patterns that appear in tools you will use, in environments like the ones you work in. Understanding why each failure happened is what converts a cautionary tale into professional judgment. Click each case to explore what went wrong and why:</p>
+    <div class="case-studies" id="caseStudies"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Patterns These Failures Share</h2>
+    <p>These aren't random failures. Across every case, the same failure patterns appear. Recognizing them in your own environment is the skill this article builds:</p>
+    <div class="patterns" id="patterns"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>Every AI failure in this article was predictable given what we know about how AI systems work. The goal isn't to avoid using AI — it's to understand these failure modes well enough to catch them before they become incidents.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">Amazon's recruiting AI penalized resumes that included the word "women's" (as in "women's chess club"). The most accurate explanation for why this failure occurred is:</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The engineers who built the AI were biased against women and encoded that bias intentionally</button>
+        <button class="qopt" onclick="doQ(this,false)">The AI made a random error that could have equally penalized any demographic group</button>
+        <button class="qopt" onclick="doQ(this,true)">The AI learned from 10 years of Amazon's own hiring data, which reflected the tech industry's historical pattern of hiring more men than women. The model correctly learned the pattern in the data — which was itself a biased pattern. The training data encoded the status quo, and the model replicated it</button>
+        <button class="qopt" onclick="doQ(this,false)">The AI had insufficient training data and would have performed correctly with more data</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI failures in technical environments are not freak accidents. They are predictable consequences of specific AI characteristics: learning from biased data, lacking organizational context, failing on novel inputs outside training distribution, and generating confident outputs regardless of accuracy.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The same failure patterns appear across every domain: biased training data produces biased outputs, overconfidence masks uncertainty, distribution shift causes performance degradation, and removed human oversight turns individual failures into compounding cascades.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The goal is not avoiding AI tools — it's understanding failure modes well enough to catch them before they become incidents. That's the professional value of studying these cases.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const cases=[
+  {icon:"🤖",label:"Case Study — Recruiting AI",title:"Amazon's Hiring AI Penalized Women's Resumes (2018)",
+   what:"Amazon built a machine learning model to automatically screen resumes. The model was trained on 10 years of Amazon's own hiring data. After deployment, the team discovered the model was systematically penalizing resumes that included the word 'women's' — as in 'women's chess club' or 'women's university' — and downgraded graduates of all-women's colleges.",
+   why:"Amazon's tech industry hiring had been predominantly male for the decade represented in the training data. The model did exactly what it was supposed to do: it learned what successful hires had in common. The problem was that what successful hires had in common — historically — was being male. The model learned to replicate the existing bias in hiring, not to improve on it. Engineers tried to remove specific gender terms but found the model continued finding proxies for gender and downgrading them.",
+   lesson:"Biased historical data produces biased models — even when no one intends the bias. The model learned the pattern that was in the data. The pattern in the data reflected the status quo, not the ideal. Any AI system trained on historical outcomes will encode those outcomes, including all their embedded inequities. Amazon discontinued the tool."},
+  {icon:"📈",label:"Case Study — Algorithmic Trading",title:"Knight Capital's $440M Trading Algorithm Loss (2012)",
+   what:"Knight Capital Group deployed new trading software at market open on August 1, 2012. Within 45 minutes, the algorithm had executed millions of erroneous trades, accumulating a $440 million loss. The error wiped out the firm, which was subsequently acquired.",
+   why:"The automated trading system had a legacy code path that was no longer supposed to be active but was inadvertently re-enabled during a software deployment. When triggered, this path placed trades without the normal risk checks. Because the system operated at machine speed with no human checkpoints during the 45 minutes of active trading, there was no opportunity for human intervention until the damage was catastrophic.",
+   lesson:"Automated systems without human checkpoints can fail at machine speed. A mistake that a human would have caught in seconds became a $440M loss because no human was in the loop at the moment of failure. The failure was not in the AI's judgment — it was in the system design that removed human oversight at the critical decision point. Speed without oversight is a failure mode, not a feature."},
+  {icon:"🚗",label:"Case Study — Autonomous Vehicles",title:"Uber Autonomous Vehicle Fatality — Failure to Classify Pedestrian (2018)",
+   what:"An Uber self-driving vehicle struck and killed a pedestrian in Tempe, Arizona, at night. The pedestrian was crossing the road outside a crosswalk, walking a bicycle. The vehicle's perception system detected an object 6 seconds before impact but failed to correctly classify it as a pedestrian and therefore failed to initiate emergency braking.",
+   why:"The system cycled through multiple classifications for the object before impact — bicycle, vehicle, other. This classification uncertainty caused the emergency braking system to be suppressed, because the system was designed not to brake on uncertain classifications to avoid false positive emergency stops. The pedestrian crossing outside a crosswalk was an unusual combination of factors that the training data did not represent well.",
+   lesson:"Novel situations — inputs that differ from training distribution — are exactly when AI systems fail most dangerously. The system was well-tested for common pedestrian scenarios. This specific scenario (pedestrian + bicycle, outside crosswalk, at night) was an edge case outside normal training representation. AI systems need explicit handling for uncertainty — not suppression of protective responses when classification is uncertain."},
+  {icon:"🔒",label:"Case Study — Security AI",title:"Microsoft's AI Code Review Missed Security Vulnerabilities (2021–2023)",
+   what:"Research published across multiple security studies found that GitHub Copilot — trained on public code repositories — frequently generated code with security vulnerabilities, including SQL injection vectors, path traversal vulnerabilities, and hardcoded credentials. Studies found that when developers accepted Copilot suggestions without critical review, vulnerability rates in their code increased compared to developers who wrote code manually.",
+   why:"Public code repositories contain enormous amounts of vulnerable code. Copilot was trained on this code without the ability to distinguish secure from insecure patterns in context — it learned what code looks like, not what secure code looks like. When asked to generate code for security-sensitive operations, it produced code that matched common patterns in its training data, including the insecure ones.",
+   lesson:"AI trained on data containing bad examples learns bad patterns alongside good ones. For security-sensitive code, the base rate of vulnerabilities in training data matters enormously. This is why AI code review tools that flag potential vulnerabilities are valuable — but they cannot be the only security check, and accepting AI-generated code without security review is a professional risk."},
+  {icon:"🏥",label:"Case Study — Medical AI",title:"Sepsis Prediction AI With High False Positive Rate (2019–2021)",
+   what:"Epic Systems' sepsis prediction model, deployed at many hospitals, was found in independent studies to have a much higher false positive rate in real-world use than its published accuracy suggested. Clinicians reported that the model flagged so many patients who did not develop sepsis that nurses and physicians began ignoring its alerts — including in cases where patients actually did develop sepsis.",
+   why:"The model performed well on its training and validation dataset. In deployment, the real-world patient population and clinical documentation patterns differed enough from the training distribution that false positive rates were significantly higher. When alert burden became too high, clinicians adapted by discounting all alerts — a behavioral response that the model designers did not account for.",
+   lesson:"Model performance on test data does not predict operational performance. And even technically accurate AI systems can fail operationally if their alert burden causes human override behavior that defeats the system's purpose. Alert fatigue — the behavioral consequence of high false positive rates — is a failure mode that cannot be assessed from benchmark metrics alone."},
+];
+
+const csEl=document.getElementById("caseStudies");
+cases.forEach(c=>{
+  const div=document.createElement("div");div.className="cs";
+  div.innerHTML=`<div class="cs-header" onclick="toggleCS(this.parentElement)"><div class="cs-icon">${c.icon}</div><div class="cs-meta"><div class="cs-label">${c.label}</div><div class="cs-title">${c.title}</div></div><div class="cs-chevron">▼</div></div><div class="cs-body"><div class="cs-section"><div class="cs-section-label what">What happened</div><p>${c.what}</p></div><div class="cs-section"><div class="cs-section-label why">Why it happened — the AI failure mode</div><p>${c.why}</p></div><div class="cs-section"><div class="cs-section-label lesson">What it teaches</div><div class="lesson-box"><div class="lesson-label">✓ Lesson for your practice</div><div class="lesson-text">${c.lesson}</div></div></div></div>`;
+  csEl.appendChild(div);
+});
+
+function toggleCS(el){const body=el.querySelector(".cs-body");const isOpen=body.classList.contains("open");document.querySelectorAll(".cs-body").forEach(b=>b.classList.remove("open"));document.querySelectorAll(".cs-chevron").forEach(c=>c.style.transform="");document.querySelectorAll(".cs").forEach(c=>c.classList.remove("open"));if(!isOpen){body.classList.add("open");el.querySelector(".cs-chevron").style.transform="rotate(180deg)";el.classList.add("open");}}
+
+const patternsData=[
+  {num:"1",title:"Biased training data produces biased outputs — silently",desc:"Amazon's recruiting AI didn't announce that it was biased. It produced confident recommendations that reflected historical bias encoded in training data. AI systems do not flag when their outputs embed training data biases — they produce outputs that look identical to correct outputs."},
+  {num:"2",title:"Automation without human checkpoints fails at machine speed",desc:"Knight Capital's algorithm executed 45 minutes of catastrophic trades before anyone intervened. The speed advantage of automation becomes a speed disadvantage when errors occur. Every automated system needs human checkpoints calibrated to the speed and consequences of its decisions."},
+  {num:"3",title:"Distribution shift — novel inputs fall outside training patterns",desc:"Uber's system handled common pedestrian scenarios correctly. The specific combination of factors in the Tempe incident was underrepresented in training. AI systems fail most dangerously at the edges — novel inputs that their training data didn't cover adequately."},
+  {num:"4",title:"Operational behavior differs from benchmark performance",desc:"Epic's sepsis model had good benchmark metrics. In real clinical environments, false positive rates were high enough to produce alert fatigue — a behavioral failure mode that benchmark testing cannot detect. Test data is not production data."},
+  {num:"5",title:"Confident outputs regardless of actual certainty",desc:"In every case, the AI system produced outputs that appeared confident. None of these systems flagged their own uncertainty at the moments when uncertainty was highest. The appearance of confidence is not evidence of correctness."},
+];
+
+const pEl=document.getElementById("patterns");
+patternsData.forEach(p=>{const div=document.createElement("div");div.className="pattern";div.innerHTML=`<div class="pattern-num">${p.num}</div><div><div class="pattern-title">${p.title}</div><div class="pattern-desc">${p.desc}</div></div>`;pEl.appendChild(div);});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is one of the most important concepts in AI bias: the model did exactly what it was designed to do. It learned patterns from historical data. The problem was that historical data encoded historical bias — a decade in which Amazon's tech hiring was predominantly male. The model faithfully learned and reproduced that pattern. This is why 'the AI is biased' and 'the engineers were biased' are different statements. Biased training data produces biased models regardless of engineer intent.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("training data"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. The engineers didn't encode bias intentionally — the model learned from historical hiring data that reflected the tech industry's historical demographics. Nor was it random — the bias was systematic and directional. More data wouldn't have helped if that data represented the same historical pattern. The source of the bias was the data's reflection of the status quo, not the size of the dataset or the intentions of the engineers.";}
+}
+</script>
+</body>
+</html>

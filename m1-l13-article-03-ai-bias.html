@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Bias in Technical Systems — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+.bias-sources{display:flex;flex-direction:column;gap:12px;margin:24px 0;}
+.bias-src{border:1.5px solid var(--purple-mid);border-radius:18px;overflow:hidden;}
+.bias-src-header{display:flex;gap:12px;align-items:center;padding:16px 20px;cursor:pointer;background:var(--white);transition:background .2s;}
+.bias-src-header:hover,.bias-src.open .bias-src-header{background:var(--purple-pale);}
+.bias-src-icon{font-size:20px;flex-shrink:0;}
+.bias-src-title{font-size:15px;font-weight:700;color:var(--purple-dark);flex:1;}
+.bias-src-chevron{font-size:12px;color:var(--gray-muted);transition:transform .2s;}
+.bias-src.open .bias-src-chevron{transform:rotate(180deg);}
+.bias-src-body{display:none;border-top:1px solid var(--purple-mid);padding:16px 20px;background:var(--purple-pale);font-size:15px;line-height:1.7;}
+.bias-src.open .bias-src-body{display:block;animation:fadeIn .2s ease;}
+.bias-src-body p{margin-bottom:8px;}
+.bias-src-body p:last-child{margin-bottom:0;}
+.bias-ex{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:14px;line-height:1.6;}
+.bias-ex-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:5px;}
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.case-card{border:1.5px solid var(--purple-mid);border-radius:18px;padding:18px;}
+.case-domain{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.case-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.case-desc{font-size:14px;line-height:1.6;color:var(--gray-text);}
+.case-impact{background:var(--red-pale);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:13px;color:var(--red);}
+.case-impact-label{font-weight:700;margin-bottom:2px;}
+.accountability{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.acc-item{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:15px 18px;}
+.acc-icon{font-size:20px;flex-shrink:0;}
+.acc-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.acc-desc{font-size:14px;line-height:1.6;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.case-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.3 · Strengths &amp; Limitations of AI</div>
+  <h1>AI Bias in Technical Systems: Why Biased Training Data Creates Biased Outputs — and Why That's Everyone's Problem</h1>
+  <p class="hero-sub">AI bias isn't just an ethics topic — it's a technical reality with operational consequences. Understanding where bias comes from, how it manifests in tech systems, and what your professional accountability looks like is essential for anyone deploying or maintaining AI tools.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Bias Is Not Intentional — That's What Makes It Harder to Fix</h2>
+    <p>When people hear "AI bias," they often imagine deliberate discrimination encoded by bad actors. The reality is more structurally troubling: <mark>AI bias typically emerges from ordinary data collection and model training processes, without anyone intending it.</mark> The engineers who build these systems are not trying to discriminate. The discrimination emerges from the data — and from the gap between what the data represents and what the real world actually looks like.</p>
+    <p>This matters because "we didn't intend it" doesn't eliminate the harm, doesn't reduce the professional accountability of the people who deploy the system, and doesn't make the outputs any less discriminatory in their impact.</p>
+    <p>Understanding where bias enters AI systems tells you where to look for it and what questions to ask. Expand each source below:</p>
+    <div class="bias-sources" id="biasSources"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Bias Looks Like in Technical Environments</h2>
+    <p>These are documented examples from technical contexts — not hypotheticals. Each represents a real pattern that appears in systems tech professionals build, deploy, and maintain:</p>
+    <div class="case-grid" id="caseGrid"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>Deploying an AI system makes you accountable for its outputs — including biases you didn't create and didn't know were there. "I didn't build the model" is not a defense when the system you deployed causes discriminatory harm.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Your Professional Accountability for Bias You Didn't Create</h2>
+    <p>Tech professionals who deploy and maintain AI systems inherit accountability for those systems' outputs — including their biases. This accountability is real, professional, and sometimes legal. Here's what it looks like in practice:</p>
+    <div class="accountability" id="accountability"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A DevOps team deploys a vendor-provided AI tool for automated infrastructure scaling decisions. Six months later, they discover the tool systematically under-allocates resources for services with names associated with lower-priority internal teams. The vendor's model was trained on data from other companies that had similar prioritization patterns. What is the team's professional responsibility?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">None — the vendor is responsible for bias in their model, not the deploying team</button>
+        <button class="qopt" onclick="doQ(this,false)">Document the bias in a report and wait for the vendor to release a fixed model version</button>
+        <button class="qopt" onclick="doQ(this,true)">Immediately assess the operational impact, remediate affected services, and implement monitoring for this and similar bias patterns going forward — deploying a system makes you accountable for its outputs in your environment, regardless of whether the bias originated in the vendor's model</button>
+        <button class="qopt" onclick="doQ(this,false)">The bias is only a problem if it produces errors that affect production SLAs — internal team prioritization is an acceptable training data pattern</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI bias typically emerges from ordinary data collection and training processes, not intentional discrimination. The most common sources: biased historical data, underrepresentation in training sets, proxy variables, and measurement bias in labels.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Bias in technical systems has concrete operational consequences: facial recognition that fails for certain demographics, hiring tools that penalize protected characteristics, content moderation that enforces unequal standards, credit systems that amplify historical inequity.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Deploying a system transfers accountability for its outputs to you — including biases you didn't create. "The vendor built it" is not a defense when the system causes discriminatory harm in your environment.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const biasSources=[
+  {icon:"📚",title:"Historical data encodes historical inequity",body:"Training data collected from the past reflects the inequities of the past. A hiring model trained on historical hiring decisions learns from decisions made by humans who — consciously or not — favored certain groups. The model learns to replicate those decisions, not to improve on them. The bias in the data becomes the bias in the model.",example:"Example in tech: A resume screening tool trained on 10 years of tech hiring data learns that resumes with certain names, certain schools, or certain activity affiliations are statistically associated with being hired. It replicates those associations precisely — including associations that reflect historical discrimination."},
+  {icon:"📊",title:"Underrepresentation in training data",body:"When certain groups are underrepresented in training data, the model's performance is systematically worse for those groups — not because the model is actively biased, but because it has learned less from fewer examples. The model performs well on what it has seen most.",example:"Example in tech: Facial recognition systems trained predominantly on lighter-skinned faces perform substantially worse on darker-skinned faces — not from discriminatory intent, but from underrepresentation in the training set. The NIST Face Recognition Vendor Testing found error rates up to 100x higher for darker-skinned women than for lighter-skinned men."},
+  {icon:"🔄",title:"Proxy variables encode protected characteristics",body:"Even without explicitly including protected characteristics (race, gender, disability status) in training data, the model can learn proxy variables that correlate with them. ZIP code correlates with race due to historical residential segregation. Name correlates with gender and ethnicity. Job titles correlate with gender. The model learns the proxy and reproduces the associated bias.",example:"Example in tech: A job recommendation AI trained to maximize engagement learns that users in certain ZIP codes click on certain job types. It recommends those jobs to users in those ZIP codes — effectively encoding race-correlated job recommendations through a geographic proxy."},
+  {icon:"🏷️",title:"Label bias — the humans who labeled the training data had biases",body:"Many AI training datasets require humans to label examples. Those human labelers bring their own biases. In content moderation datasets, labelers may apply different standards to similar content from different communities. In medical datasets, historical diagnostic biases get encoded in the labels. The model learns to replicate whatever the labelers labeled — including their inconsistencies.",example:"Example in tech: A content moderation classifier trained on human-labeled examples may learn that content using African American Vernacular English is labeled as 'aggressive' at higher rates than semantically similar content in standard American English — because the human labelers applied different standards."},
+];
+
+const bsEl=document.getElementById("biasSources");
+biasSources.forEach(s=>{
+  const div=document.createElement("div");div.className="bias-src";
+  div.innerHTML=`<div class="bias-src-header" onclick="toggleBias(this.parentElement)"><div class="bias-src-icon">${s.icon}</div><div class="bias-src-title">${s.title}</div><div class="bias-src-chevron">▼</div></div><div class="bias-src-body"><p>${s.body}</p><div class="bias-ex"><div class="bias-ex-label">Tech context example</div>${s.example}</div></div>`;
+  bsEl.appendChild(div);
+});
+function toggleBias(el){const body=el.querySelector(".bias-src-body");const isOpen=el.classList.contains("open");document.querySelectorAll(".bias-src").forEach(s=>{s.classList.remove("open");s.querySelector(".bias-src-body").style.display="none";});if(!isOpen){el.classList.add("open");body.style.display="block";}}
+
+const cases=[
+  {domain:"Security",title:"Facial recognition error disparities",desc:"Commercial facial recognition systems have documented error rates substantially higher for darker-skinned women than for lighter-skinned men — in some systems, up to 100x higher. Systems deployed for security access control or law enforcement identification can produce false matches at dramatically different rates by demographic.",impact:"Impact: Systems deployed without demographic performance testing create security gaps and discriminatory outcomes that appear as technical failures rather than bias."},
+  {domain:"Hiring & HR",title:"AI resume screening and protected characteristics",desc:"Resume screening AI trained on historical hiring data learns associations between hiring decisions and attributes that correlate with protected characteristics: school names, graduation year patterns, activity affiliations, and even name-based correlations.",impact:"Impact: Organizations face legal exposure under employment discrimination law when AI screening tools produce outcomes that disparately impact protected classes, regardless of intent."},
+  {domain:"IT Operations",title:"Predictive maintenance disparities",desc:"Predictive maintenance models trained primarily on data from newer equipment may fail to correctly predict failures in older equipment that serves different user populations. Alert systems calibrated on one environment's baseline may perform differently when deployed across environments with different demographics or usage patterns.",impact:"Impact: Teams relying on AI maintenance predictions without validating across their full equipment and usage population may have systematically blind spots."},
+  {domain:"Content & Moderation",title:"Content moderation at unequal rates",desc:"Content moderation AI trained on labeled examples may enforce different standards for semantically similar content from different communities — with certain dialects, cultural references, or linguistic patterns triggering moderation at higher rates.",impact:"Impact: Platforms deploying content moderation AI without demographic auditing may systematically suppress certain community voices at higher rates than others, creating legal and reputational risk."},
+];
+
+const cgEl=document.getElementById("caseGrid");
+cases.forEach(c=>{const div=document.createElement("div");div.className="case-card";div.innerHTML=`<div class="case-domain">${c.domain}</div><div class="case-title">${c.title}</div><div class="case-desc">${c.desc}</div><div class="case-impact"><div class="case-impact-label">⚠️ Professional implication</div>${c.impact}</div>`;cgEl.appendChild(div);});
+
+const accItems=[
+  {icon:"🔍",title:"Before deployment: ask about bias testing",desc:"Ask vendors what demographic or subgroup performance testing was done. Request performance metrics broken down by relevant demographic groups. If a vendor cannot provide this data, treat the model as untested for bias — and determine whether your use case requires that testing before deployment."},
+  {icon:"📊",title:"After deployment: monitor for disparate impact",desc:"Implement monitoring that can detect whether AI system outputs differ systematically across user groups, ticket types, geographic areas, or other dimensions that may correlate with protected characteristics. Disparate impact may only become visible through monitoring over time."},
+  {icon:"⚡",title:"When bias is discovered: act, don't defer",desc:"Discovering bias in a deployed system creates an immediate accountability obligation. Documenting it and waiting for a vendor patch is not sufficient when the bias is causing real harm. Assess impact, implement interim safeguards, communicate transparently with affected stakeholders, and escalate remediation."},
+  {icon:"📝",title:"Documentation: maintain records of what was evaluated",desc:"Professional and legal accountability is substantially easier to navigate when there's documentation of what bias evaluation was performed before deployment, what was found, and what decisions were made. 'We didn't know' is less defensible than 'we tested X, Y, and Z, found no bias, and were not aware of W.'"},
+];
+
+const accEl=document.getElementById("accountability");
+accItems.forEach(a=>{const div=document.createElement("div");div.className="acc-item";div.innerHTML=`<div class="acc-icon">${a.icon}</div><div><div class="acc-title">${a.title}</div><div class="acc-desc">${a.desc}</div></div>`;accEl.appendChild(div);});
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Deploying a system transfers accountability for its operational behavior to the deploying team — including bias that originated elsewhere. 'The vendor built it' doesn't eliminate the obligation to assess and remediate harm the system causes in your environment. The correct immediate response is to address the operational impact, implement monitoring, and work with the vendor on remediation — not to wait passively.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Immediately assess"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Vendor accountability doesn't eliminate deployer accountability — both exist. And internal prioritization patterns that produce systematically unequal resource allocation are exactly the kind of outcome that creates reputational and operational risk, regardless of whether SLAs are technically met. Documentation alone without remediation is insufficient when bias is actively causing operational disparities.";}
+}
+</script>
+</body>
+</html>

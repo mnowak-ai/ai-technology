@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trust or Verify? A Framework for Acting on AI Recommendations — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+/* Interactive decision framework */
+.framework{border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;margin:24px 0;}
+.fw-header{background:var(--purple-pale);padding:18px 22px;border-bottom:1px solid var(--purple-mid);}
+.fw-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.fw-sub{font-size:14px;color:var(--gray-muted);margin-top:3px;}
+.fw-body{padding:20px 22px;}
+.fw-question{margin-bottom:20px;}
+.fw-q-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.fw-q-text{font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.fw-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fw-option{border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;transition:all .2s;background:var(--white);}
+.fw-option:hover{border-color:var(--purple);background:var(--purple-pale);}
+.fw-option.selected-high{border-color:var(--red);background:var(--red-pale);}
+.fw-option.selected-low{border-color:var(--green);background:var(--green-pale);}
+.fw-option-title{font-size:14px;font-weight:700;color:var(--gray-text);margin-bottom:3px;}
+.fw-option-desc{font-size:12px;color:var(--gray-muted);}
+.fw-result{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px;margin-top:16px;display:none;}
+.fw-result.show{display:block;animation:fadeIn .3s ease;}
+.fw-result-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.fw-result.trust .fw-result-label{color:var(--green);}
+.fw-result.verify .fw-result-label{color:var(--orange);}
+.fw-result.override .fw-result-label{color:var(--red);}
+.fw-result.trust{background:var(--green-pale);border-color:var(--green);}
+.fw-result.verify{background:var(--orange-pale);border-color:#FDE68A;}
+.fw-result.override{background:var(--red-pale);border-color:var(--red);}
+.fw-result-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;margin-bottom:8px;}
+.fw-result.trust .fw-result-title{color:var(--green);}
+.fw-result.verify .fw-result-title{color:var(--orange);}
+.fw-result.override .fw-result-title{color:var(--red);}
+.fw-result-text{font-size:14px;line-height:1.7;}
+.fw-reset{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:100px;padding:8px 20px;font-size:13px;font-weight:700;color:var(--purple);cursor:pointer;margin-top:12px;transition:all .2s;}
+.fw-reset:hover{background:var(--purple-pale);}
+/* Four factors */
+.factors{display:flex;flex-direction:column;gap:12px;margin:24px 0;}
+.factor{border:1.5px solid var(--purple-mid);border-radius:18px;overflow:hidden;}
+.factor-header{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;background:var(--white);transition:background .2s;}
+.factor-header:hover,.factor.open .factor-header{background:var(--purple-pale);}
+.factor-icon{font-size:22px;flex-shrink:0;}
+.factor-title{font-size:16px;font-weight:700;color:var(--purple-dark);flex:1;}
+.factor-chevron{font-size:12px;color:var(--gray-muted);transition:transform .2s;}
+.factor.open .factor-chevron{transform:rotate(180deg);}
+.factor-body{display:none;border-top:1px solid var(--purple-mid);padding:18px 20px;background:var(--purple-pale);}
+.factor.open .factor-body{display:block;animation:fadeIn .2s ease;}
+.factor-body p{font-size:15px;line-height:1.7;margin-bottom:10px;}
+.factor-body p:last-child{margin-bottom:0;}
+.factor-examples{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.fe{background:var(--white);border-radius:10px;padding:12px 14px;border:1.5px solid var(--purple-mid);}
+.fe-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.fe.trust .fe-label{color:var(--green);}
+.fe.verify .fe-label{color:var(--orange);}
+.fe-text{font-size:13px;line-height:1.5;}
+/* Practical examples table */
+.examples-table{margin:24px 0;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;}
+.et-header{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--gray-soft);border-bottom:1px solid var(--purple-mid);}
+.et-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--purple-mid);}
+.et-row:last-child{border-bottom:none;}
+.et-cell{padding:12px 16px;font-size:14px;}
+.et-header .et-cell{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);}
+.verdict-trust{display:inline-block;background:var(--green-pale);color:var(--green);font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;}
+.verdict-verify{display:inline-block;background:var(--orange-pale);color:var(--orange);font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;}
+.verdict-reject{display:inline-block;background:var(--red-pale);color:var(--red);font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.fw-options,.factor-examples,.et-header,.et-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.3 · Strengths &amp; Limitations of AI</div>
+  <h1>Trust or Verify? A Framework for Deciding When to Act on AI Recommendations and When to Check First</h1>
+  <p class="hero-sub">The skill isn't knowing AI is fallible — it's knowing when a specific output in a specific context needs verification before action. This article gives you a practical framework for making that call without becoming so skeptical you lose the productivity gains.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Two Failure Modes This Framework Prevents</h2>
+    <p>Most guidance about AI verification falls into one of two useless extremes: "always trust AI outputs" (dangerous) or "always verify AI outputs" (unworkable). Neither reflects how experienced practitioners actually use these tools.</p>
+    <p><mark>The practical skill is calibrated verification</mark> — knowing which outputs in which contexts need scrutiny, which can be acted on with light review, and which should be overridden regardless of AI confidence. This calibration develops through experience, but it can be accelerated by understanding the factors that should drive it.</p>
+    <p>Use the interactive framework below to practice applying these factors to specific scenarios. Then explore each factor in depth:</p>
+
+    <div class="framework fade-in">
+      <div class="fw-header">
+        <div class="fw-title">The Trust/Verify Decision Framework</div>
+        <div class="fw-sub">Answer the four questions below to get a verification recommendation for your scenario</div>
+      </div>
+      <div class="fw-body" id="fwBody"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Factors — In Depth</h2>
+    <p>These four factors are the determinants of verification effort. Click each to understand the reasoning behind it:</p>
+    <div class="factors" id="factors"></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practical Examples: Trust, Verify, or Override?</h2>
+    <div class="examples-table">
+      <div class="et-header">
+        <div class="et-cell">AI Output</div>
+        <div class="et-cell">Key factors</div>
+        <div class="et-cell">Verdict</div>
+      </div>
+      <div class="et-row"><div class="et-cell">Copilot suggests a standard Python sort function</div><div class="et-cell">Common pattern, well-documented, reversible, low stakes</div><div class="et-cell"><span class="verdict-trust">Trust with light review</span></div></div>
+      <div class="et-row"><div class="et-cell">Code assistant suggests a specific JWT validation library</div><div class="et-cell">Security-sensitive, specific claim, potentially outdated</div><div class="et-cell"><span class="verdict-verify">Verify against docs</span></div></div>
+      <div class="et-row"><div class="et-cell">Security alert: critical severity, unusual user behavior</div><div class="et-cell">High consequence, potentially irreversible account lockout, novel pattern</div><div class="et-cell"><span class="verdict-verify">Verify before action</span></div></div>
+      <div class="et-row"><div class="et-cell">Monitoring AI suggests scaling up production database</div><div class="et-cell">Infrastructure change, costly, potential service impact, novel recommendation</div><div class="et-cell"><span class="verdict-verify">Verify + human approval</span></div></div>
+      <div class="et-row"><div class="et-cell">AI code reviewer flags SQL concatenation in internal admin tool</div><div class="et-cell">Security pattern match, well-understood vulnerability class, worth checking</div><div class="et-cell"><span class="verdict-verify">Verify data flow</span></div></div>
+      <div class="et-row"><div class="et-cell">AI suggests deleting a production database to resolve storage alert</div><div class="et-cell">Irreversible, catastrophic consequence, contradicts organizational knowledge</div><div class="et-cell"><span class="verdict-reject">Override — do not act</span></div></div>
+      <div class="et-row"><div class="et-cell">Ticket classifier auto-routes a low-priority help request</div><div class="et-cell">Reversible routing, low stakes, well-trained category</div><div class="et-cell"><span class="verdict-trust">Trust</span></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The goal is not maximum skepticism. It's calibrated skepticism — applied proportionally to consequence, reversibility, and what you know about the model's reliability in this specific context.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A DevOps engineer receives an AI recommendation to roll back a recent deployment after a performance degradation alert. The rollback would take the service offline for approximately 3 minutes. The AI has an 89% confidence score. What's the most appropriate response?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Execute the rollback immediately — 89% confidence is high enough to act on without additional verification</button>
+        <button class="qopt" onclick="doQ(this,false)">Reject the recommendation — 89% confidence means an 11% chance of being wrong, which is too high for production changes</button>
+        <button class="qopt" onclick="doQ(this,true)">Verify the recommendation before acting: check whether the recent deployment actually correlates with the performance degradation, confirm the rollback plan and expected restoration time, get appropriate approval — then decide. Consequence (service outage) and partial irreversibility (rollback changes may have their own complications) both indicate verification before action</button>
+        <button class="qopt" onclick="doQ(this,false)">Ask the AI to explain its reasoning in more detail before deciding whether to act</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The practical skill is calibrated verification — applying scrutiny proportionally to risk, not uniformly to all outputs. Maximum skepticism eliminates productivity gains; zero skepticism creates professional risk.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Four factors drive verification effort: consequence of being wrong (stakes), reversibility of the action, how novel the output is relative to training patterns, and your organizational knowledge of the specific context.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Confidence scores are an input to the decision, not the decision itself. High confidence in a high-consequence, irreversible action still requires verification. Low confidence in a low-stakes, easily reversible action may be acceptable to act on.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+// Framework state
+let scores={consequence:null,reversibility:null,novelty:null,context:null};
+const questions=[
+  {key:"consequence",label:"Factor 1: Consequence",text:"What happens if this AI output is wrong and you act on it?",opts:[{title:"High consequence",desc:"Data loss, security breach, service outage, significant cost",val:"high"},{title:"Low consequence",desc:"Easily correctable, limited impact, affects non-critical systems",val:"low"}]},
+  {key:"reversibility",label:"Factor 2: Reversibility",text:"If you act on this recommendation and it turns out to be wrong, how hard is it to undo?",opts:[{title:"Hard to reverse",desc:"Deletes data, sends communications, exposes systems, breaks prod",val:"high"},{title:"Easily reversible",desc:"Configuration change, routing decision, routing, adding resources",val:"low"}]},
+  {key:"novelty",label:"Factor 3: Novelty",text:"How well does this scenario match what the AI was trained on?",opts:[{title:"Novel / edge case",desc:"Unusual pattern, new library, recent CVE, your specific environment",val:"high"},{title:"Common pattern",desc:"Well-documented approach, standard algorithm, heavily represented in training data",val:"low"}]},
+  {key:"context",label:"Factor 4: Your Organizational Knowledge",text:"Does this recommendation align with what you know about your specific system?",opts:[{title:"Contradicts what I know",desc:"Conflicts with system history, team conventions, or recent context",val:"high"},{title:"Consistent with what I know",desc:"Matches expectations, aligns with recent behavior, makes sense",val:"low"}]},
+];
+
+function calcResult(){
+  const highs=Object.values(scores).filter(v=>v==="high").length;
+  if(highs>=3)return{cls:"override",label:"⚠️ High verification required",title:"Verify before acting — and consider override",text:"Three or more high-risk factors indicate this output needs careful verification before action. The combination of high consequence, limited reversibility, novelty, or conflicting organizational knowledge represents a scenario where AI errors are most dangerous and least detectable. Treat this as a candidate for human review, independent verification, or escalation."};
+  if(highs>=2)return{cls:"verify",label:"🔍 Verification recommended",title:"Check before acting",text:"Two or more high-risk factors indicate verification is warranted before acting on this recommendation. The AI output may be correct, but the risk profile justifies the additional step. The verification effort should be proportional to the specific factors — checking documentation, testing in staging, or getting a second opinion."};
+  if(highs===1)return{cls:"verify",label:"👁️ Light verification",title:"Quick check, then proceed",text:"One high-risk factor suggests a light verification step is appropriate. For most outputs in this category, a quick sanity check — does this make sense? does it match what I know? — is sufficient before acting."};
+  return{cls:"trust",label:"✓ Proceed with confidence",title:"Trust the output — review-as-you-go",text:"All factors are low-risk for this output. The AI is operating in well-trained territory, the consequence of error is manageable, and the action is reversible. Accept with light review and move on — over-verifying low-risk outputs is itself a productivity cost."};
+}
+
+function renderFramework(){
+  const fwBody=document.getElementById("fwBody");
+  let html="";
+  questions.forEach((q,i)=>{
+    const answered=scores[q.key]!==null;
+    html+=`<div class="fw-question" id="fwq${i}" style="${i>0&&!scores[questions[i-1].key]?'opacity:0.4;pointer-events:none':''}">`;
+    html+=`<div class="fw-q-label">${q.label}</div><div class="fw-q-text">${q.text}</div>`;
+    html+=`<div class="fw-options">`;
+    q.opts.forEach(opt=>{
+      const sel=scores[q.key]===opt.val;
+      const cls=sel?(opt.val==="high"?"selected-high":"selected-low"):"";
+      html+=`<div class="fw-option ${cls}" onclick="selectFactor('${q.key}','${opt.val}')"><div class="fw-option-title">${opt.title}</div><div class="fw-option-desc">${opt.desc}</div></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  const allAnswered=Object.values(scores).every(v=>v!==null);
+  if(allAnswered){
+    const r=calcResult();
+    html+=`<div class="fw-result show ${r.cls}"><div class="fw-result-label">${r.label}</div><div class="fw-result-title">${r.title}</div><div class="fw-result-text">${r.text}</div></div><button class="fw-reset" onclick="resetFramework()">Try another scenario</button>`;
+  }
+  fwBody.innerHTML=html;
+}
+
+function selectFactor(key,val){scores[key]=val;renderFramework();}
+function resetFramework(){scores={consequence:null,reversibility:null,novelty:null,context:null};renderFramework();}
+renderFramework();
+
+const factorsData=[
+  {icon:"⚡",title:"Consequence — what happens if the AI is wrong?",body:"The most important factor. The verification effort should be proportional to what failure costs. A wrong recommendation in a low-stakes context — misrouting a ticket, suggesting a suboptimal but working algorithm — is recoverable. A wrong recommendation in a high-stakes context — deleting data, authorizing a security action, deploying to production — may not be.",trust:"Low consequence: auto-routing tickets, logging configuration changes, adding monitoring tags",verify:"High consequence: security alerts suggesting account actions, deployment decisions, infrastructure changes"},
+  {icon:"↩️",title:"Reversibility — can you undo it if it's wrong?",body:"Reversible actions can be acted on with less scrutiny than irreversible ones, because the cost of being wrong is bounded. Irreversible actions — particularly those that delete data, expose systems, or send communications — deserve scrutiny proportional to their permanence.",trust:"Easily reversible: scaling resources up, adding firewall rules you can remove, routing configuration",verify:"Hard to reverse: deleting records, sending notifications to users, public-facing configuration changes"},
+  {icon:"🔬",title:"Novelty — how well does this match training data?",body:"AI is most reliable on common patterns well-represented in training data. Novel situations — your specific environment, new libraries, recent vulnerability classes, edge cases — are exactly where the model has the least signal and the highest hallucination risk. The more unusual the situation, the more scrutiny the output deserves.",trust:"Common patterns: standard algorithms, well-documented APIs, established security patterns with thousands of training examples",verify:"Novel patterns: your organization's specific infrastructure, new library versions, unusual configurations, edge cases"},
+  {icon:"🧠",title:"Organizational context — does it match what you know?",body:"You have organizational context the model doesn't. Your knowledge of the system's history, the team's conventions, the recent changes, and the specific environment should inform how you evaluate AI recommendations. Recommendations that conflict with what you know deserve investigation — not automatic deference to AI confidence.",trust:"Consistent with knowledge: recommendation aligns with expected system behavior and team conventions",verify:"Conflicts with knowledge: recommendation contradicts recent context, system history, or what the team knows about this specific situation"},
+];
+
+const factorsEl=document.getElementById("factors");
+factorsData.forEach(f=>{
+  const div=document.createElement("div");div.className="factor";
+  div.innerHTML=`<div class="factor-header" onclick="toggleFactor(this.parentElement)"><div class="factor-icon">${f.icon}</div><div class="factor-title">${f.title}</div><div class="factor-chevron">▼</div></div><div class="factor-body"><p>${f.body}</p><div class="factor-examples"><div class="fe trust"><div class="fe-label">✓ Trust tier examples</div><div class="fe-text">${f.trust}</div></div><div class="fe verify"><div class="fe-label">⚠ Verify tier examples</div><div class="fe-text">${f.verify}</div></div></div></div>`;
+  factorsEl.appendChild(div);
+});
+function toggleFactor(el){const body=el.querySelector(".factor-body");const isOpen=el.classList.contains("open");document.querySelectorAll(".factor").forEach(f=>{f.classList.remove("open");f.querySelector(".factor-body").style.display="none";});if(!isOpen){el.classList.add("open");body.style.display="block";}}
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This output scores high on consequence (3-minute service outage affects users), partial reversibility (the rollback may introduce its own complications), and potentially novelty (what exactly caused the degradation?). The 89% confidence score is useful context but not the decision — asking the AI to explain itself is not verification, since the model can generate plausible-sounding explanations of incorrect recommendations. The right verification is checking the deployment correlation in actual metrics, reviewing the rollback procedure, and getting appropriate approval before executing a production change.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Verify the recommendation"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. 89% confidence is neither a mandate to act nor a reason to reject — it's one input. The consequence and reversibility factors both point toward verification before action. And asking the AI to explain its reasoning is not verification; a model can generate a confident, detailed, and entirely wrong explanation of its recommendation. The only real verification is checking the actual evidence: does the deployment timeline match the degradation? What does the rollback actually involve?";}
+}
+</script>
+</body>
+</html>

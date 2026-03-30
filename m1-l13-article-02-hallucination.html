@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is AI Hallucination? — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+/* Hallucination demo — spot the hallucination */
+.spot-sim{border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;margin:24px 0;}
+.spot-header{background:var(--purple-pale);padding:18px 22px;border-bottom:1px solid var(--purple-mid);}
+.spot-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.spot-sub{font-size:14px;color:var(--gray-muted);margin-top:3px;}
+.spot-body{padding:20px 22px;}
+.spot-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.spot-tab{padding:8px 16px;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);color:var(--gray-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.spot-tab.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.spot-panel{display:none;}
+.spot-panel.show{display:block;animation:fadeIn .2s ease;}
+.spot-output{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;margin-bottom:12px;font-size:14px;line-height:1.8;position:relative;}
+.spot-output code{font-family:"Courier New",monospace;background:rgba(123,47,190,0.08);padding:1px 5px;border-radius:3px;font-size:13px;}
+.halluc{background:var(--red-pale);border-bottom:2px solid var(--red);cursor:pointer;border-radius:2px;padding:1px 2px;}
+.halluc:hover{background:var(--red);}
+.halluc:hover,.halluc.revealed{color:white;}
+.halluc.revealed{background:var(--red);}
+.reveal-btn{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:100px;padding:7px 18px;font-size:13px;font-weight:700;color:var(--purple);cursor:pointer;transition:all .2s;margin-bottom:12px;}
+.reveal-btn:hover{background:var(--purple-pale);}
+.halluc-list{display:flex;flex-direction:column;gap:8px;}
+.halluc-item{background:var(--red-pale);border:1.5px solid var(--red);border-radius:12px;padding:12px 14px;display:none;}
+.halluc-item.show{display:block;animation:fadeIn .2s ease;}
+.halluc-item-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:5px;}
+.halluc-item-text{font-size:14px;line-height:1.6;}
+/* Why it happens */
+.why-cards{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.why-card{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.why-icon{font-size:22px;flex-shrink:0;}
+.why-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.why-desc{font-size:14px;line-height:1.6;}
+/* High-risk scenarios */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0;}
+.risk-card{border-radius:16px;padding:18px;border:1.5px solid;}
+.risk-card.high{background:var(--red-pale);border-color:var(--red);}
+.risk-card.med{background:var(--orange-pale);border-color:#FDE68A;}
+.risk-card.low{background:var(--green-pale);border-color:var(--green);}
+.risk-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.risk-card.high .risk-label{color:var(--red);}
+.risk-card.med .risk-label{color:var(--orange);}
+.risk-card.low .risk-label{color:var(--green);}
+.risk-title{font-size:15px;font-weight:700;color:var(--gray-text);margin-bottom:6px;}
+.risk-examples{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.risk-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.3 · Strengths &amp; Limitations of AI</div>
+  <h1>What Is AI Hallucination? Why AI Confidently Makes Things Up — and Why That's Especially Dangerous in Tech</h1>
+  <p class="hero-sub">AI hallucination is not a quirk or a bug to be fixed. It's a structural consequence of how language models work. Every tech professional using AI tools needs to understand what it is, why it happens, and when it's most likely to occur.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>What Hallucination Actually Means</h2>
+    <p>AI hallucination refers to outputs that are confidently stated but factually incorrect, fabricated, or nonexistent. A language model hallucinates when it generates content that sounds authoritative but has no basis in reality.</p>
+    <p>The term "hallucination" is a bit misleading — it implies the AI is experiencing something. What's actually happening is simpler and more structural: <mark>the model is generating statistically plausible text that has no grounding in verified facts.</mark> It is predicting what words should come next based on patterns, not checking what's actually true.</p>
+    <p>In tech work, hallucinations appear in specific, high-stakes forms. Click each scenario below to see what a real hallucination looks like in that context — then click "Reveal hallucinations" to see what's wrong:</p>
+    <div class="spot-sim fade-in">
+      <div class="spot-header">
+        <div class="spot-title">Spot the Hallucination</div>
+        <div class="spot-sub">Real AI output patterns — can you identify what's fabricated before it's revealed?</div>
+      </div>
+      <div class="spot-body">
+        <div class="spot-tabs" id="spotTabs"></div>
+        <div id="spotPanels"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why Hallucination Happens — The Structural Explanation</h2>
+    <p>Hallucination is not a bug that will be patched. It's a consequence of how language models generate output:</p>
+    <div class="why-cards">
+      <div class="why-card"><div class="why-icon">🎲</div><div><div class="why-title">Token prediction doesn't verify truth</div><div class="why-desc">Language models generate text by predicting the next token based on probability, not by looking up facts. A model generating a library name predicts what library name is statistically likely in this context — it doesn't check whether that library exists.</div></div></div>
+      <div class="why-card"><div class="why-icon">🔗</div><div><div class="why-title">Plausibility and truth are different things</div><div class="why-desc">The model's training objective was to generate text that looks like good text — coherent, contextually appropriate, well-structured. That training objective optimizes for plausibility, not accuracy. Plausible-sounding fabrications satisfy the training objective perfectly.</div></div></div>
+      <div class="why-card"><div class="why-icon">📚</div><div><div class="why-title">Training data gaps create inference gaps</div><div class="why-desc">When asked about something underrepresented in training data — a new library, a specific API endpoint, an obscure configuration option — the model generates by analogy from similar things it does know about. The result sounds authoritative but is constructed, not recalled.</div></div></div>
+      <div class="why-card"><div class="why-icon">🚫</div><div><div class="why-title">The model cannot flag its own uncertainty reliably</div><div class="why-desc">Language models do not have a reliable internal signal for "I don't know this." They generate with the same confident tone whether they're drawing on strong training data or fabricating by analogy. The confidence in the output does not correlate with its accuracy.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>When Hallucination Is Most Likely in Tech Work</h2>
+    <p>Not all AI outputs are equally likely to be hallucinated. Understanding the risk profile helps you know where to apply the most scrutiny:</p>
+    <div class="risk-grid">
+      <div class="risk-card high">
+        <div class="risk-label">🔴 Highest hallucination risk</div>
+        <div class="risk-title">Specific technical details about recent or niche topics</div>
+        <div class="risk-examples">Exact API method names and parameters for newer libraries · Specific version differences in behavior · CVE details for recent vulnerabilities · Configuration options in niche tools · Internal tool documentation</div>
+      </div>
+      <div class="risk-card high">
+        <div class="risk-label">🔴 Highest hallucination risk</div>
+        <div class="risk-title">Citations, references, and sources</div>
+        <div class="risk-examples">Academic paper titles and authors · Documentation links and URLs · Security advisories and bulletin numbers · Specific benchmark study results · Standards document section numbers</div>
+      </div>
+      <div class="risk-card med">
+        <div class="risk-label">🟡 Moderate hallucination risk</div>
+        <div class="risk-title">Implementation details for common but complex tasks</div>
+        <div class="risk-examples">Correct parameter ordering for less-common APIs · Edge case handling in established libraries · Platform-specific behavior differences · Security-sensitive implementation patterns</div>
+      </div>
+      <div class="risk-card low">
+        <div class="risk-label">🟢 Lower hallucination risk</div>
+        <div class="risk-title">Common patterns well-represented in training data</div>
+        <div class="risk-examples">Standard algorithm implementations · Common design patterns · Established language idioms · Well-documented frameworks with millions of examples in training</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>The most dangerous hallucinations are the ones that look exactly like correct output. A fabricated library that follows real naming conventions. An invented API endpoint that matches the pattern of real ones. A plausible-sounding CVE number. These don't look wrong — they look authoritative.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A developer uses an AI coding assistant to find the correct method for parsing JWT tokens in a specific Python library. The assistant confidently provides a method name and example. The developer copies it directly into their code. What should the developer have done instead?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Nothing different — AI coding assistants are trained on library documentation and are reliable for specific API details</button>
+        <button class="qopt" onclick="doQ(this,false)">Verify the method exists by asking the AI a follow-up question to confirm it's correct</button>
+        <button class="qopt" onclick="doQ(this,true)">Verify against the library's actual documentation or run the code in a test environment first — specific API method names are exactly the category of technical detail most likely to be hallucinated, especially for libraries with less training data coverage</button>
+        <button class="qopt" onclick="doQ(this,false)">Only use the AI's output if the library is well-known, since obscure libraries have higher hallucination rates</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Hallucination is a structural consequence of how language models generate output — predicting statistically plausible text rather than verifying facts. It is not a bug that will be fully eliminated.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The highest-risk hallucination categories in tech work: specific API details, library names and parameters for newer tools, citations and references, and CVE/security bulletin specifics. These categories combine high specificity with lower training data representation.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most dangerous hallucinations look exactly like correct output. Fabricated library names that follow real naming conventions, invented API endpoints that match real patterns, plausible-sounding CVE numbers — these require verification against ground truth to catch.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The verification habit is non-negotiable for specific technical details: check library documentation directly, run code in a test environment before production, verify CVE numbers against official databases. Asking the AI to confirm is not verification — the model can hallucinate its own confirmation.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const scenarios=[
+  {label:"📦 Package names",output:`To implement rate limiting in your Python API, you can use the <span class="halluc" data-h="0">flask-limiter-redis</span> library along with <span class="halluc" data-h="1">ratelimit-core</span> for the underlying token bucket algorithm. Install with: <code>pip install flask-limiter-redis ratelimit-core redis-throttle</code>. Then import: <code>from flask_limiter_redis import RateLimiterRedis</code>`,hallucinations:[{label:"Hallucination #1","flask-limiter-redis" :"The real package is 'Flask-Limiter'. 'flask-limiter-redis' follows the naming convention but is a fabricated package name that doesn't exist on PyPI."},{label:"Hallucination #2","ratelimit-core":"This package does not exist. The model generated a plausible-sounding dependency for the algorithm it described — but there is no 'ratelimit-core' package."}]},
+  {label:"🔒 Security CVEs",output:`The vulnerability you're describing matches <span class="halluc" data-h="0">CVE-2023-44487</span>, commonly known as HTTP/2 Rapid Reset, which was patched in nginx 1.25.3. However, you should also check <span class="halluc" data-h="1">CVE-2023-51764</span> which affects the authentication middleware in your version specifically.`,hallucinations:[{label:"Real CVE — but verify","CVE-2023-44487":"CVE-2023-44487 is a real CVE for the HTTP/2 Rapid Reset attack. However, always verify CVE details against official databases — models sometimes mix up version numbers, affected systems, or patch details."},{label:"Hallucination #2","CVE-2023-51764":"This specific CVE number and description should be verified against the National Vulnerability Database. AI models frequently fabricate or misattribute CVE numbers, especially for 'specific version' claims."}]},
+  {label:"📖 Documentation references",output:`According to the <span class="halluc" data-h="0">AWS SDK for Python Developer Guide, Section 4.2.1</span>, the recommended pattern for handling throttling exceptions uses exponential backoff. The <span class="halluc" data-h="1">boto3.exceptions.ThrottlingException</span> class provides built-in retry logic that you can configure via the <code>max_retries</code> parameter.`,hallucinations:[{label:"Hallucination #1","AWS SDK Section 4.2.1":"AWS documentation doesn't use this section numbering. The model fabricated a plausible-sounding documentation reference. Always verify documentation references by searching the actual docs."},{label:"Hallucination #2","boto3.exceptions.ThrottlingException":"The actual exception class in boto3 for throttling is 'ClientError' with an error code check. 'ThrottlingException' follows a plausible naming pattern but is not the correct class name."}]},
+  {label:"🖥️ API methods",output:`To check disk usage in the Kubernetes API, call <span class="halluc" data-h="0">client.CoreV1Api().read_node_disk_usage(node_name=node)</span>. This returns a <span class="halluc" data-h="1">V1NodeDiskUsage</span> object with <code>.usage.storage</code> and <code>.usage.ephemeral_storage</code> properties.`,hallucinations:[{label:"Hallucination #1","read_node_disk_usage":"This method does not exist in the Kubernetes Python client. Disk usage is retrieved through node metrics, not a dedicated CoreV1Api method. The method name follows real Kubernetes API naming patterns — which is exactly why it's dangerous."},{label:"Hallucination #2","V1NodeDiskUsage":"This object class does not exist in the Kubernetes API. The model generated a plausible Kubernetes resource type name following the 'V1' prefix convention. The model fabricated both the method and its return type."}]},
+];
+
+const tabsEl=document.getElementById("spotTabs"),panelsEl=document.getElementById("spotPanels");
+scenarios.forEach((s,i)=>{
+  const btn=document.createElement("button");btn.className="spot-tab"+(i===0?" active":"");btn.textContent=s.label;
+  btn.onclick=()=>{document.querySelectorAll(".spot-tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".spot-panel").forEach(p=>p.classList.remove("show"));btn.classList.add("active");document.getElementById("sp"+i).classList.add("show");};
+  tabsEl.appendChild(btn);
+  const panel=document.createElement("div");panel.className="spot-panel"+(i===0?" show":"");panel.id="sp"+i;
+  const hallucItems=s.hallucinations.map((h,hi)=>`<div class="halluc-item" id="hi${i}_${hi}"><div class="halluc-item-label">❌ ${h.label}</div><div class="halluc-item-text">${Object.values(h)[1]}</div></div>`).join("");
+  panel.innerHTML=`<div class="spot-output">${s.output}</div><button class="reveal-btn" onclick="revealHallucinations(${i})">Reveal hallucinations →</button><div class="halluc-list">${hallucItems}</div>`;
+  panelsEl.appendChild(panel);
+});
+
+function revealHallucinations(i){
+  const panel=document.getElementById("sp"+i);
+  panel.querySelectorAll(".halluc").forEach(h=>h.classList.add("revealed"));
+  panel.querySelectorAll(".halluc-item").forEach(item=>item.classList.add("show"));
+  panel.querySelector(".reveal-btn").textContent="✓ Hallucinations revealed";
+  panel.querySelector(".reveal-btn").disabled=true;
+}
+
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Specific API method names are among the highest-risk hallucination categories — the model generates plausible-sounding names that follow real API naming conventions, which makes them hard to distinguish from correct names without checking. Asking the AI to confirm is not verification: the model can confidently confirm a method it just fabricated. The only reliable check is the actual library documentation or running the code in a test environment.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Verify against"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. AI coding assistants are trained on library documentation — but documentation changes, and training data has a cutoff. More importantly, the model can generate plausible-looking API details by analogy from similar libraries rather than from actual training data about this specific library. Asking the AI to confirm is not verification; it can confidently confirm incorrect information.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Difference Between AI Confidence and AI Accuracy — AI in Technology Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--red:#DC2626;--red-pale:#FFF1F1;--orange:#D97706;--orange-pale:#FFFBEB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.06;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.5;}
+/* The same language, different certainty — interactive demo */
+.lang-demo{border:1.5px solid var(--purple-mid);border-radius:22px;overflow:hidden;margin:24px 0;}
+.ld-header{background:var(--purple-pale);padding:16px 22px;border-bottom:1px solid var(--purple-mid);}
+.ld-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.ld-sub{font-size:14px;color:var(--gray-muted);margin-top:3px;}
+.ld-body{padding:20px 22px;}
+.ld-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.ld-pair:last-child{margin-bottom:0;}
+.ld-output{border-radius:14px;padding:16px;border:1.5px solid;}
+.ld-output.high-acc{background:var(--green-pale);border-color:var(--green);}
+.ld-output.low-acc{background:var(--red-pale);border-color:var(--red);}
+.ld-output-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.ld-output.high-acc .ld-output-label{color:var(--green);}
+.ld-output.low-acc .ld-output-label{color:var(--red);}
+.ld-output-text{font-size:14px;line-height:1.65;font-style:italic;color:var(--gray-text);border-bottom:1px solid rgba(0,0,0,.1);padding-bottom:8px;margin-bottom:8px;}
+.ld-output-truth{font-size:13px;color:var(--gray-muted);}
+.ld-section-divider{font-size:13px;font-weight:700;color:var(--purple);text-align:center;margin-bottom:10px;}
+/* Calibration concept */
+.calib{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.calib-card{border-radius:18px;padding:20px;border:1.5px solid;}
+.calib-card.good{background:var(--green-pale);border-color:var(--green);}
+.calib-card.bad{background:var(--red-pale);border-color:var(--red);}
+.calib-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.calib-card.good .calib-label{color:var(--green);}
+.calib-card.bad .calib-label{color:var(--red);}
+.calib-title{font-size:16px;font-weight:700;margin-bottom:8px;}
+.calib-desc{font-size:14px;line-height:1.6;}
+.calib-example{background:rgba(255,255,255,.6);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:13px;line-height:1.55;}
+/* What to do about it */
+.habits{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.habit{display:flex;gap:14px;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:15px 18px;}
+.habit-icon{font-size:20px;flex-shrink:0;}
+.habit-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.habit-desc{font-size:14px;line-height:1.6;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.3;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .35s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:24px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:26px;color:var(--purple-dark);margin-bottom:20px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:24px;height:24px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:16px;line-height:1.65;margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.hero,.content{padding-left:20px;padding-right:20px;}.ld-pair,.calib{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in">
+  <div class="lesson-tag">Lesson 1.3 · Strengths &amp; Limitations of AI</div>
+  <h1>The Difference Between AI Confidence and AI Accuracy — and Why Conflating Them Is a Professional Risk</h1>
+  <p class="hero-sub">AI presents all outputs in the same confident tone regardless of whether it's right. 95% confidence and 55% confidence look identical in natural language. This article gives you the vocabulary and habits to navigate that problem in daily tech work.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Core Problem: AI Sounds the Same Whether It's Right or Wrong</h2>
+    <p>Human experts signal uncertainty. A doctor says "I'm fairly confident this is X, but we should run a test to confirm." A senior engineer says "I think this is a race condition, but I'd want to look at the logs first." Confidence in the statement tracks — imperfectly, but meaningfully — with confidence in the underlying knowledge.</p>
+    <p>AI systems do not do this reliably. <mark>A language model generates confident-sounding text regardless of whether the underlying probability distribution is tight (strong signal) or scattered (guessing from analogy).</mark> The same authoritative tone accompanies a well-supported answer and a hallucinated one. The user has to supply the uncertainty that the model cannot signal itself.</p>
+    <p>The demonstration below shows what this looks like in practice — the same confident-sounding language, drastically different accuracy:</p>
+    <div class="lang-demo fade-in">
+      <div class="ld-header">
+        <div class="ld-title">Same Language, Different Accuracy</div>
+        <div class="ld-sub">Both outputs sound equally confident — but only one is actually reliable</div>
+      </div>
+      <div class="ld-body">
+        <div class="ld-section-divider">Category 1: Code completion for a well-known algorithm</div>
+        <div class="ld-pair">
+          <div class="ld-output high-acc">
+            <div class="ld-output-label">✓ High accuracy output</div>
+            <div class="ld-output-text">"To implement binary search in Python, you can use the bisect module: bisect.bisect_left(arr, target) returns the insertion point for target in arr, which you can use to check whether target exists."</div>
+            <div class="ld-output-truth">Truth: Correct. Binary search via bisect is a well-established pattern with millions of training examples.</div>
+          </div>
+          <div class="ld-output low-acc">
+            <div class="ld-output-label">❌ Low accuracy output (on a novel library)</div>
+            <div class="ld-output-text">"To implement rate limiting with the fastapi-limiter-v2 library, use the @limit decorator: @limit(calls=10, period=60). The RateLimiter class handles the Redis connection automatically."</div>
+            <div class="ld-output-truth">Truth: This library doesn't exist as described. The method names and class names are hallucinated from patterns in similar libraries.</div>
+          </div>
+        </div>
+        <div class="ld-section-divider">Category 2: Security alert assessment</div>
+        <div class="ld-pair">
+          <div class="ld-output high-acc">
+            <div class="ld-output-label">✓ High accuracy — well-trained pattern</div>
+            <div class="ld-output-text">"This alert pattern matches SQL injection attempt signatures: the payload contains UNION SELECT with single quotes and comment sequences (--). Confidence: 94%. Recommended action: block this request and review server logs."</div>
+            <div class="ld-output-truth">Truth: SQL injection pattern matching is well-established with extensive training data. 94% confidence here is meaningful.</div>
+          </div>
+          <div class="ld-output low-acc">
+            <div class="ld-output-label">❌ Same confidence tone, novel attack type</div>
+            <div class="ld-output-text">"This alert pattern matches a newly emerged lateral movement technique using compressed PowerShell payloads. Confidence: 91%. The attack signature matches CVE-2024-38773 indicators of compromise."</div>
+            <div class="ld-output-truth">Truth: A novel technique that emerged after the model's training cutoff. The CVE number may be hallucinated. The model is pattern-matching from similar historical techniques — the 91% confidence does not reflect actual knowledge of this specific attack.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Calibration — What It Means and Why It Matters</h2>
+    <p>In probability and machine learning, a model is "well-calibrated" if its confidence scores accurately reflect its actual accuracy — if it says 90% confidence on things it gets right 90% of the time. Many AI models are not well-calibrated:</p>
+    <div class="calib">
+      <div class="calib-card good">
+        <div class="calib-label">✓ Well-calibrated model</div>
+        <div class="calib-title">Confidence tracks accuracy</div>
+        <div class="calib-desc">When the model says 90% confidence, it's right approximately 90% of the time. When it says 60% confidence, it's right approximately 60% of the time. You can use confidence scores to calibrate your verification effort.</div>
+        <div class="calib-example">If a well-calibrated anomaly detector says "85% confidence this is a real incident," 85% of similar alerts will turn out to be real incidents. The score is a useful input to the triage decision.</div>
+      </div>
+      <div class="calib-card bad">
+        <div class="calib-label">❌ Poorly calibrated model</div>
+        <div class="calib-title">Confidence does not track accuracy</div>
+        <div class="calib-desc">The model says 90% confidence on things it gets right 60% of the time. The confidence score provides a false sense of certainty that leads to under-verification of outputs that are actually uncertain.</div>
+        <div class="calib-example">If a poorly calibrated model says "92% confidence this is a real incident," the score tells you nothing reliable about the actual probability. You cannot use the confidence score to calibrate your verification effort — you need independent verification instead.</div>
+      </div>
+    </div>
+    <p>The practical problem: you usually don't know whether the model you're using is well-calibrated or not. Vendors rarely publish calibration data. This is why the default should be independent verification for high-stakes outputs, regardless of confidence score.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="pull-quote"><p>Confidence is how certain the model is about its output. Accuracy is whether the output is actually correct. These are correlated in good models — but they are not the same thing, and in many real-world AI deployments, the correlation is weaker than users assume.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Professional Habits for Navigating Confidence Without Over-Trusting It</h2>
+    <div class="habits">
+      <div class="habit"><div class="habit-icon">📊</div><div><div class="habit-title">Use confidence as one input, not the decision</div><div class="habit-desc">Confidence scores are useful for prioritization — high confidence outputs may warrant less scrutiny than low confidence ones, all else being equal. But high confidence alone is not sufficient for high-consequence actions. Consequence, reversibility, and novelty (from the Trust/Verify framework) all matter alongside confidence.</div></div></div>
+      <div class="habit"><div class="habit-icon">🔬</div><div><div class="habit-title">Know the high-uncertainty categories for your tool</div><div class="habit-desc">Every AI tool has categories where it's more and less reliable — where confidence tracks accuracy well and where it doesn't. For code tools: common patterns vs. novel libraries. For security tools: known attack patterns vs. emerging techniques. For monitoring: well-established baselines vs. novel infrastructure. Learn your tool's weak spots, and apply more scrutiny there regardless of confidence score.</div></div></div>
+      <div class="habit"><div class="habit-icon">🔍</div><div><div class="habit-title">Verify specific claims against ground truth</div><div class="habit-desc">For specific, verifiable claims — API method names, CVE numbers, documentation references, specific performance benchmarks — verify against the authoritative source, not against the AI's own confidence. The model cannot verify its own claims; it can only generate plausible-sounding confirmation of them.</div></div></div>
+      <div class="habit"><div class="habit-icon">📐</div><div><div class="habit-title">Ask vendors about calibration, not just accuracy</div><div class="habit-desc">When evaluating AI tools, ask whether calibration data is available: how closely do confidence scores track actual accuracy across different input categories? A well-calibrated model lets you use confidence scores as a real triage signal. A poorly calibrated model requires you to treat all confidence levels with similar skepticism.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Knowledge Check</div>
+      <div class="quiz-q">A security analyst's AI threat detection tool flags an alert as "CRITICAL — 97% confidence: active data exfiltration." The analyst has never seen this specific alert type before, and it conflicts with what she knows about the user's recent activity. What should she do?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Act immediately on the alert — 97% confidence leaves only a 3% chance of being wrong, which is well within acceptable risk tolerance for a critical security incident</button>
+        <button class="qopt" onclick="doQ(this,false)">Dismiss the alert — if it conflicts with her organizational knowledge, the AI is probably wrong</button>
+        <button class="qopt" onclick="doQ(this,true)">Investigate independently: check the actual network logs, file access records, and user activity before acting — the 97% confidence reflects pattern matching strength, not ground truth verification; her conflicting organizational context is a genuine signal to investigate rather than override with AI confidence</button>
+        <button class="qopt" onclick="doQ(this,false)">Escalate to senior security staff and let them decide based on the confidence score</button>
+      </div>
+      <div class="qfb" id="qfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Carry Forward</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI generates confident-sounding language regardless of underlying certainty. 97% confidence and 55% confidence produce outputs that sound equally authoritative in natural language. The user has to supply the uncertainty the model cannot signal.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Calibration is the relationship between confidence scores and actual accuracy. Well-calibrated models let you use confidence as a meaningful triage signal. Poorly calibrated models — which are common — require independent verification regardless of stated confidence.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Use confidence as one input to the decision — not the decision itself. Combine it with consequence, reversibility, novelty relative to training data, and your own organizational knowledge of the specific situation.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The 97% confidence reflects the model's pattern-matching certainty, not independent verification of actual data exfiltration. The analyst's conflicting organizational knowledge — she knows this user's recent activity doesn't fit the pattern — is a legitimate signal that warrants investigation, not dismissal. The correct response is independent verification against the actual data sources: network logs, file access records, user activity timeline. Acting immediately on confidence alone, or dismissing the alert because it conflicts with prior knowledge, are both worse than investigating.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Investigate independently"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. 97% confidence is not ground truth — it's pattern match strength. Acting immediately on confidence alone, without checking the actual evidence, is exactly what this article warns against. Dismissing the alert because it conflicts with prior knowledge is also wrong — both the AI and the analyst's prior knowledge could be partly right. The right answer is investigating the actual evidence to determine which signal is more accurate in this specific case.";}
+}
+</script>
+</body>
+</html>
