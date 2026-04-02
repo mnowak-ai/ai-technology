@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Privacy and Knowledge Sharing: What You Cannot Put in a Wiki, Slack, or Shared Drive</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Never-share categories */
+.never-card{background:var(--white);border:2px solid var(--red);border-radius:18px;margin:16px 0;overflow:hidden;}
+.nc-header{background:var(--red-pale);padding:14px 22px;display:flex;align-items:center;gap:12px;border-bottom:1.5px solid #F5C2C2;}
+.nc-icon{font-size:20px;}
+.nc-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:#7F1D1D;}
+.nc-body{padding:18px 22px;}
+.nc-body p{font-size:15px;line-height:1.8;color:var(--gray-text);margin-bottom:10px;}
+.nc-examples{background:var(--gray-soft);border-radius:10px;padding:12px 16px;margin:10px 0;}
+.nc-ex-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:6px;}
+.nc-ex-items{display:flex;flex-direction:column;gap:4px;}
+.nc-ex-item{font-size:13px;line-height:1.5;color:var(--gray-text);display:flex;gap:8px;}
+.nc-ex-item::before{content:"⚠";color:var(--red);flex-shrink:0;}
+.nc-why{background:#FFF1F1;border-top:1px solid #F5C2C2;padding:12px 22px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+.nc-why strong{color:var(--red);}
+/* Decision matrix */
+.matrix{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.matrix th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.matrix td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.matrix tr:last-child td{border-bottom:none;}
+.matrix tr:nth-child(even) td{background:var(--gray-soft);}
+.tag-ok{display:inline-block;background:var(--green-pale);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+.tag-restricted{display:inline-block;background:var(--orange-pale);color:var(--orange);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+.tag-never{display:inline-block;background:var(--red-pale);color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+/* Safe alternatives */
+.alt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.alt-col{border-radius:14px;padding:18px;}
+.alt-col.dont{background:var(--red-pale);border:1.5px solid #F5C2C2;}
+.alt-col.do{background:var(--green-pale);border:1.5px solid #B5D5C0;}
+.alt-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.alt-col.dont .alt-label{color:var(--red);}
+.alt-col.do .alt-label{color:var(--green);}
+.alt-text{font-size:13px;line-height:1.75;color:var(--gray-text);}
+/* Sim / Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:14px;font-size:14px;line-height:1.75;color:var(--gray-text);}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.4 — Knowledge Sharing & Collaboration</div>
+  <h1>Data Privacy and Knowledge Sharing: What You Cannot Put in a Wiki, Slack, or Shared Drive</h1>
+  <p class="hero-sub">Knowledge sharing platforms are not automatically compliant storage. Putting the wrong information in the wrong place is a career-ending mistake — and it happens more often than most engineers realize.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>The False Assumption Most Engineers Make</h2>
+    <p>When engineers think "knowledge sharing," they think about solving the documentation problem — getting information out of people's heads and into a place where the team can find it. That's the right instinct. But it comes with a critical assumption that often goes unexamined: that sharing platforms like wikis, Slack, and shared drives are appropriate places for any work-related information.</p>
+    <p>They're not. <mark>Knowledge sharing platforms are not compliance-controlled environments by default — and storing certain types of information in them creates real legal exposure, regulatory violations, and security vulnerabilities.</mark> The engineer who pastes customer PII into a Slack thread to debug an issue isn't being careless about knowledge sharing. They're potentially creating a data breach.</p>
+    <div class="pull-quote"><p>The question isn't whether information should be shared. It's whether this platform is the right place to share it — and whether the people who can access it should be able to.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Five Categories That Must Never Go in General Wikis, Slack, or Shared Drives</h2>
+
+    <div class="never-card">
+      <div class="nc-header"><div class="nc-icon">🚫</div><div class="nc-title">Customer PII and Personal Data</div></div>
+      <div class="nc-body">
+        <p>Any information that identifies or could identify a specific customer — names, email addresses, phone numbers, IP addresses tied to identity, transaction histories — is regulated under GDPR, CCPA, HIPAA (for health data), and other frameworks depending on your industry and user geography.</p>
+        <div class="nc-examples">
+          <div class="nc-ex-label">Common ways this ends up in the wrong place</div>
+          <div class="nc-ex-items">
+            <div class="nc-ex-item">Pasting a customer's email or order ID into Slack to debug a support ticket</div>
+            <div class="nc-ex-item">Exporting a sample of user data to a shared drive for ML model testing</div>
+            <div class="nc-ex-item">Documenting a bug with real user data as the example in a Jira ticket or wiki page</div>
+            <div class="nc-ex-item">Including customer-identifiable information in a postmortem timeline</div>
+          </div>
+        </div>
+      </div>
+      <div class="nc-why"><strong>Why this matters:</strong> Most wiki and Slack tools are not GDPR/CCPA Article 28 compliant data processors. Storing customer PII in them means that data is now in a system without appropriate access controls, retention policies, or deletion capabilities — all required by law.</div>
+    </div>
+
+    <div class="never-card">
+      <div class="nc-header"><div class="nc-icon">🚫</div><div class="nc-title">Internal Security Findings, Vulnerabilities, and Penetration Test Results</div></div>
+      <div class="nc-body">
+        <p>Security vulnerability details — open CVEs in your systems, pen test findings, details of known attack vectors — must be handled through controlled disclosure processes with restricted access. Documenting them in a general team wiki or discussing them in broad Slack channels creates a roadmap for anyone who gains unauthorized access to your systems.</p>
+        <div class="nc-examples">
+          <div class="nc-ex-label">Examples of what cannot go in general channels</div>
+          <div class="nc-ex-items">
+            <div class="nc-ex-item">A Confluence page documenting all open security vulnerabilities with severity ratings</div>
+            <div class="nc-ex-item">A Slack thread discussing the specific endpoint affected by a newly discovered CVE before patching</div>
+            <div class="nc-ex-item">A shared drive folder with the full penetration test report (including exploit details)</div>
+            <div class="nc-ex-item">A wiki page describing your authentication bypass edge case "for awareness"</div>
+          </div>
+        </div>
+      </div>
+      <div class="nc-why"><strong>Why this matters:</strong> If your Confluence or Slack is ever compromised, all documented vulnerabilities become immediately exploitable by the attacker. Security findings belong in dedicated, access-controlled security management tools — not general knowledge bases.</div>
+    </div>
+
+    <div class="never-card">
+      <div class="nc-header"><div class="nc-icon">🚫</div><div class="nc-title">Unreleased Product Details, Revenue Figures, and M&A Information</div></div>
+      <div class="nc-body">
+        <p>Specific unannounced product features, revenue projections, strategic acquisition plans, and competitor analysis involving non-public information are material non-public information (MNPI). For publicly traded companies, improper disclosure of MNPI is a securities violation. For all companies, it's a breach of confidentiality obligations to employees, investors, and partners.</p>
+        <div class="nc-examples">
+          <div class="nc-ex-label">Where this commonly goes wrong</div>
+          <div class="nc-ex-items">
+            <div class="nc-ex-item">A product roadmap wiki page with unannounced feature launch dates and pricing</div>
+            <div class="nc-ex-item">Slack threads discussing Q3 revenue before the earnings call</div>
+            <div class="nc-ex-item">A shared drive folder with due diligence materials from an ongoing acquisition</div>
+          </div>
+        </div>
+      </div>
+      <div class="nc-why"><strong>Why this matters:</strong> Most engineering wikis and Slack workspaces don't have the access controls required for confidential business information. Information shared broadly "for alignment" often reaches people — including contractors, integration partners, or former employees with retained access — who shouldn't have it.</div>
+    </div>
+
+    <div class="never-card">
+      <div class="nc-header"><div class="nc-icon">🚫</div><div class="nc-title">AI Training Data Containing Personal Information</div></div>
+      <div class="nc-body">
+        <p>This is a newer and rapidly evolving area of risk. When teams document model training data, share sample datasets for debugging ML issues, or store feature engineering examples with real user data, they're creating data governance problems that most organizations haven't yet caught up with.</p>
+        <div class="nc-examples">
+          <div class="nc-ex-label">Common ML team mistakes</div>
+          <div class="nc-ex-items">
+            <div class="nc-ex-item">Attaching a CSV of real user transactions to a Jira ticket for a model debugging session</div>
+            <div class="nc-ex-item">Storing sample training data in a shared Confluence space to illustrate a feature engineering decision</div>
+            <div class="nc-ex-item">Using real customer data in wiki examples when synthetic data would work equally well</div>
+          </div>
+        </div>
+      </div>
+      <div class="nc-why"><strong>Why this matters:</strong> Data minimization principles under GDPR and CCPA require that personal data be stored only where necessary and with appropriate controls. General wikis and shared drives don't qualify — and ML teams that store real user data in these places are creating compliance exposure that could survive long after the data seems "irrelevant."</div>
+    </div>
+
+    <div class="never-card">
+      <div class="nc-header"><div class="nc-icon">🚫</div><div class="nc-title">Credentials, API Keys, and Secrets — Even "Temporary" Ones</div></div>
+      <div class="nc-body">
+        <p>This one is well-known but still happens constantly. Credentials shared in Slack "just for now," API keys pasted into wiki pages for a quick demo, passwords in a shared Google Sheet for a new tool. Even after the credential is rotated, the original may be preserved in Slack history, wiki edit history, or shared drive version history indefinitely.</p>
+        <div class="nc-examples">
+          <div class="nc-ex-label">The specific mistakes that get teams in trouble</div>
+          <div class="nc-ex-items">
+            <div class="nc-ex-item">"Temporary" API keys in Slack threads that are never rotated</div>
+            <div class="nc-ex-item">Database connection strings in Confluence pages for "convenience during onboarding"</div>
+            <div class="nc-ex-item">Shared service account passwords in a team Google Sheet</div>
+          </div>
+        </div>
+      </div>
+      <div class="nc-why"><strong>Why this matters:</strong> Credentials shared in collaboration tools are effectively public to anyone with access to those tools — current and former employees, integration partners, anyone whose account is compromised. Use secrets management tools (Vault, AWS Secrets Manager, 1Password Teams) exclusively. No exceptions.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Quick Decision Matrix — Where Does It Go?</h2>
+    <table class="matrix">
+      <thead><tr><th>Information type</th><th>Wiki</th><th>Slack</th><th>Shared drive</th><th>Where it does belong</th></tr></thead>
+      <tbody>
+        <tr><td>System architecture diagrams</td><td><span class="tag-ok">OK</span></td><td><span class="tag-ok">OK</span></td><td><span class="tag-ok">OK</span></td><td>Any standard team knowledge platform</td></tr>
+        <tr><td>Customer PII / personal data</td><td><span class="tag-never">Never</span></td><td><span class="tag-never">Never</span></td><td><span class="tag-never">Never</span></td><td>GDPR-compliant data warehouse with access controls</td></tr>
+        <tr><td>Open security vulnerabilities</td><td><span class="tag-never">Never</span></td><td><span class="tag-restricted">Security channel only</span></td><td><span class="tag-never">Never</span></td><td>Security ticketing system with restricted access</td></tr>
+        <tr><td>Credentials and API keys</td><td><span class="tag-never">Never</span></td><td><span class="tag-never">Never</span></td><td><span class="tag-never">Never</span></td><td>Secrets manager (Vault, AWS Secrets Manager)</td></tr>
+        <tr><td>Pen test / audit reports</td><td><span class="tag-never">Never</span></td><td><span class="tag-never">Never</span></td><td><span class="tag-restricted">Restricted, need-to-know only</span></td><td>Security-controlled shared drive with DLP controls</td></tr>
+        <tr><td>Anonymized/synthetic sample data</td><td><span class="tag-ok">OK</span></td><td><span class="tag-ok">OK</span></td><td><span class="tag-ok">OK</span></td><td>Standard team platforms — synthetic data is safe</td></tr>
+        <tr><td>Unreleased roadmap details</td><td><span class="tag-restricted">Restricted wiki</span></td><td><span class="tag-restricted">Private channel</span></td><td><span class="tag-restricted">Restricted folder</span></td><td>Access-controlled space matching information classification</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Safe Alternative Pattern</h2>
+    <p>For each scenario where a privacy violation is tempting, there's a compliant alternative that accomplishes the same knowledge sharing goal.</p>
+    <div class="alt-grid">
+      <div class="alt-col dont"><div class="alt-label">❌ Don't</div><div class="alt-text">Paste a real customer's email address into Slack to debug why their account isn't working.</div></div>
+      <div class="alt-col do"><div class="alt-label">✅ Do instead</div><div class="alt-text">Use the customer's internal ID (which is not PII) in Slack. Pull up their account in your internal admin tool where access is logged and controlled.</div></div>
+    </div>
+    <div class="alt-grid">
+      <div class="alt-col dont"><div class="alt-label">❌ Don't</div><div class="alt-text">Attach a CSV of real user transactions to a Jira ticket so the ML team can reproduce a model bug.</div></div>
+      <div class="alt-col do"><div class="alt-label">✅ Do instead</div><div class="alt-text">Use a synthetic dataset that reproduces the same feature distribution without real user data. Most ML bugs can be reproduced with properly structured fake data.</div></div>
+    </div>
+    <div class="alt-grid">
+      <div class="alt-col dont"><div class="alt-label">❌ Don't</div><div class="alt-text">Document a known authentication vulnerability on a general Confluence page to "raise awareness."</div></div>
+      <div class="alt-col do"><div class="alt-label">✅ Do instead</div><div class="alt-text">File a security ticket in your restricted security tracking system. Reference the ticket number in general channels without details.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It</div>
+      <div class="sim-title">Is this appropriate to share?</div>
+      <div class="sim-sub">An engineer is writing a postmortem for a payment processing incident. They want to document the incident thoroughly. Which of the following should NOT be included in the Confluence postmortem page?</div>
+      <div class="sim-q">Which element should be removed from the public-facing postmortem?</div>
+      <div class="sim-opts" id="s1opts">
+        <button class="sim-opt" onclick="doSim(this,false)">The timeline showing when the incident started, was detected, and was resolved</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The root cause: a memory leak in payment-service v4.1.2 introduced in PR #2341</button>
+        <button class="sim-opt" onclick="doSim(this,true)">A sample of the 12 failed transactions used to validate the fix, including customer email addresses, transaction amounts, and merchant names</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The action items: fix the memory leak, update the alert rule, schedule the post-incident review</button>
+      </div>
+      <div class="sim-fb" id="s1fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An engineer says: "I shared a customer's email in Slack to debug their issue, but I deleted the message right after. There's no privacy risk." What's wrong with this reasoning?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Deleting a Slack message removes all traces of it from the platform's systems</button>
+        <button class="qopt" onclick="cq(this,true)">Deleting a message doesn't remove it from Slack's retention logs, any compliance exports, the recipients' message history, or any third-party integrations that may have processed it. The exposure happened at the moment of sharing — deletion doesn't retroactively undo the compliance violation or the access by everyone who saw it before deletion.</button>
+        <button class="qopt" onclick="cq(this,false)">The risk depends on whether the customer data was deleted within 24 hours</button>
+        <button class="qopt" onclick="cq(this,false)">This is acceptable as long as the Slack workspace has enterprise security enabled</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Five categories that must never go in general wikis, Slack, or shared drives: customer PII and personal data, security vulnerabilities and pen test findings, unreleased product details and financial information, AI training data containing personal information, and credentials of any kind. Each has a compliant alternative that accomplishes the same knowledge sharing goal.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most common mistake is using real data "just to debug" or "just temporarily." There's no such thing as temporary data in a collaboration tool — Slack retention policies, wiki edit histories, and shared drive version histories preserve content indefinitely. The safer default is synthetic data for all debugging and documentation examples.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Knowledge sharing is a positive organizational practice — but it requires knowing which information belongs where. When in doubt, ask: does this platform have the access controls, retention policies, and compliance certifications required for this type of data? If you don't know, assume the answer is no and ask your security or legal team before sharing.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("s1opts");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("email addresses"))b.classList.add("reveal");});
+  const fb=document.getElementById("s1fb");fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. Customer email addresses, transaction amounts tied to identifiable customers, and merchant names that could reveal customer purchasing behavior are PII or PII-adjacent. A Confluence postmortem page is not a GDPR-compliant data environment. The validation can be documented without real customer data: 'Fix was validated against 12 affected transactions — all confirmed processing correctly post-rollback.' The count, outcome, and methodology are all documentable. The customer data is not.";
+  else fb.textContent="❌ The timeline, root cause, and action items are all appropriate for a Confluence postmortem — they contain no personal data and are standard elements of technical documentation. The element that must be removed is the transaction sample with customer identifiers. Confluence is not a compliant environment for storing customer PII, even as validation evidence. Document the validation outcome without the data: reference the internal transaction IDs (not customer emails), or simply state that validation was performed and confirmed.";}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Slack message deletion removes the message from the chat interface but doesn't erase it from Slack's backend logs, the organization's compliance export (if enabled), the DMs or channel history of anyone who saw the message before deletion, or any third-party tools integrated with Slack (e.g., compliance archiving tools, bots that may have read the message). Under GDPR, the data was processed the moment it entered Slack's systems — deletion doesn't undo that processing or erase logs. The violation happened at the moment of sharing.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("retention logs"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Message deletion in Slack is a UI action, not a data destruction action. Enterprise security settings affect encryption and access controls, not data retention or compliance logging. The 24-hour window is not a recognized exception under any major privacy regulation. The core issue is that personal data entered Slack's systems — which are not GDPR Article 28 compliant data processors for most organizations. That happened at the moment of sharing, not at the moment of deletion.";}
+}
+</script>
+</body>
+</html>

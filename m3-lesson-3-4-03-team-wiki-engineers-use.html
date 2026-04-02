@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Build a Team Wiki That Engineers Actually Use</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Failure patterns */
+.failure{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;margin:12px 0;display:flex;gap:14px;}
+.f-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.f-title{font-size:14px;font-weight:700;color:var(--red);margin-bottom:5px;}
+.f-desc{font-size:13px;line-height:1.65;color:var(--gray-text);}
+/* Page anatomy */
+.anatomy{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:20px 0;}
+.anatomy-header{background:var(--purple-pale);padding:14px 22px;}
+.anatomy-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.anatomy-rows{padding:0;}
+.anatomy-row{display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid var(--purple-mid);}
+.anatomy-row:last-child{border-bottom:none;}
+.ar-field{padding:14px 18px;font-size:13px;font-weight:700;color:var(--purple-dark);background:var(--gray-soft);border-right:1px solid var(--purple-mid);}
+.ar-desc{padding:14px 18px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+/* Ownership model */
+.own-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.own-table th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.own-table td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.own-table tr:last-child td{border-bottom:none;}
+.own-table tr:nth-child(even) td{background:var(--gray-soft);}
+/* Decay signals */
+.decay-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.decay-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.dc-icon{font-size:20px;margin-bottom:6px;}
+.dc-title{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.dc-desc{font-size:12px;line-height:1.6;color:var(--gray-text);}
+/* Sim / Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:14px;font-size:14px;line-height:1.75;color:var(--gray-text);}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.4 — Knowledge Sharing & Collaboration</div>
+  <h1>How to Build a Team Wiki That Engineers Actually Use</h1>
+  <p class="hero-sub">Most engineering wikis fail within 12 months. Not because engineers are lazy — because the wiki was built without understanding what makes documentation sustainable. Here's what the ones that survive have in common.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Why Most Wikis Fail</h2>
+    <p>The lifecycle of a typical engineering wiki: enthusiastic launch, initial flurry of pages, gradual decay as systems change and nobody updates docs, eventual state where the wiki is more dangerous than useful — engineers who trust it act on outdated information, engineers who don't trust it don't use it, and the team is worse off than before they had it.</p>
+    <p>This happens not because of bad intentions, but because of four specific structural failures that are predictable and preventable.</p>
+    <div class="failure"><div class="f-icon">📂</div><div><div class="f-title">Failure 1: Poor structure — nobody can find anything</div><div class="f-desc">A wiki organized by the team that built it is organized for the team that built it. Engineers who weren't there don't know the mental model. Pages get created in random locations. Over time, finding information requires knowing where it was put — which requires already knowing it.</div></div></div>
+    <div class="failure"><div class="f-icon">👻</div><div><div class="f-title">Failure 2: No ownership — pages decay into inaccuracy</div><div class="f-desc">When a page has no owner, nobody feels responsible for keeping it current. Systems change, configurations shift, procedures evolve — the page doesn't. Stale documentation isn't neutral; it's actively harmful, because engineers who trust it act on wrong information.</div></div></div>
+    <div class="failure"><div class="f-icon">🚫</div><div><div class="f-title">Failure 3: No update culture — documentation is write-once</div><div class="f-desc">Most teams document when they build. Almost none document when they change. The wiki accurately reflects a system as it existed at creation — not as it exists now. Without a cultural expectation that changes to a system include changes to its documentation, the gap grows with every deployment.</div></div></div>
+    <div class="failure"><div class="f-icon">🌊</div><div><div class="f-title">Failure 4: Content overload — everything is documented, nothing is findable</div><div class="f-desc">Some wikis fail by having too much content — meeting notes from 2019, half-finished design docs, duplicate pages with different information, pages that existed for a project that was cancelled. Signal gets buried in noise. Engineers learn quickly that the wiki isn't reliably useful and stop going to it first.</div></div></div>
+    <div class="pull-quote"><p>A wiki nobody trusts is worse than no wiki. It creates false confidence in engineers who use it and friction for everyone who has to verify it against the source of truth.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Anatomy of a Page That Gets Maintained</h2>
+    <p>The best-maintained wiki pages in engineering organizations share a common structure. It's not about length — it's about the metadata that makes a page accountable.</p>
+    <div class="anatomy">
+      <div class="anatomy-header"><div class="anatomy-title">Required elements of a maintainable wiki page</div></div>
+      <div class="anatomy-rows">
+        <div class="anatomy-row"><div class="ar-field">Owner</div><div class="ar-desc">Named individual (not team) responsible for accuracy. Rotates when system ownership rotates. Owner's absence should trigger a handoff, not an abandoned page.</div></div>
+        <div class="anatomy-row"><div class="ar-field">Last reviewed</div><div class="ar-desc">Date the owner last verified the content is accurate. Pages not reviewed in 90 days for runbooks, 180 days for architecture docs, are flagged as potentially stale.</div></div>
+        <div class="anatomy-row"><div class="ar-field">Next review date</div><div class="ar-desc">Scheduled review creates accountability. Without it, "I'll update it when it changes" never happens because the change is always smaller than it needs to be to trigger a review.</div></div>
+        <div class="anatomy-row"><div class="ar-field">Status</div><div class="ar-desc">Current (verified), Draft (under construction), Stale (flagged for update), Deprecated (no longer relevant but preserved for history). Status prevents engineers from acting on content they shouldn't trust.</div></div>
+        <div class="anatomy-row"><div class="ar-field">What changed</div><div class="ar-desc">A brief changelog at the bottom of long-lived pages. Not a full git log — just a human-readable note: "Nov 2024 — updated rollback procedure after infra migration." Builds trust and context.</div></div>
+        <div class="anatomy-row"><div class="ar-field">Related pages</div><div class="ar-desc">Links to adjacent documentation prevent the "now I have to find three more pages" problem. One good network of linked pages beats ten isolated pages.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Ownership: The Most Important Variable</h2>
+    <p>Of all the factors that determine whether a wiki survives, ownership is the most predictive. Pages with named owners that match system ownership get updated. Pages without named owners decay at a rate proportional to how often the system they describe changes.</p>
+    <table class="own-table">
+      <thead><tr><th>Document type</th><th>Who should own it</th><th>Review cadence</th></tr></thead>
+      <tbody>
+        <tr><td>Service runbooks</td><td>On-call rotation lead for that service</td><td>After every incident that involves it; quarterly minimum</td></tr>
+        <tr><td>Architecture decision records</td><td>Tech lead or engineer who made the decision</td><td>When the system changes significantly; annually otherwise</td></tr>
+        <tr><td>Onboarding guides</td><td>Most recent engineer who went through onboarding</td><td>After each new hire onboards and provides feedback</td></tr>
+        <tr><td>API documentation</td><td>Engineer who owns the API</td><td>Every version bump; mandatory for breaking changes</td></tr>
+        <tr><td>Team process docs</td><td>Team lead or process owner</td><td>Quarterly or when process changes</td></tr>
+        <tr><td>Security/compliance docs</td><td>Security or compliance lead</td><td>After any audit finding; annually minimum</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Spotting a Wiki in Decay — The Five Warning Signs</h2>
+    <div class="decay-grid">
+      <div class="decay-card"><div class="dc-icon">📅</div><div class="dc-title">Pages with no review date or review dates 12+ months ago</div><div class="dc-desc">If you don't know when it was last verified, you don't know if you can trust it. Run a quarterly audit for pages past their review date.</div></div>
+      <div class="decay-card"><div class="dc-icon">🔗</div><div class="dc-title">Broken internal links and references to deprecated systems</div><div class="dc-desc">A runbook that says "deploy using the old Jenkins pipeline" when Jenkins was retired 8 months ago is actively dangerous. Broken links are the clearest signal that pages aren't being maintained.</div></div>
+      <div class="decay-card"><div class="dc-icon">👤</div><div class="dc-title">Owner listed as someone who left the company</div><div class="dc-desc">When engineers leave and their pages aren't reassigned, those pages immediately become orphaned. Offboarding checklists should include a step: reassign all wiki page ownership.</div></div>
+      <div class="decay-card"><div class="dc-icon">🗂️</div><div class="dc-title">Duplicate pages with different information</div><div class="dc-desc">Two pages describing the same system with different procedures means someone updated one and not the other. Engineers will find one, trust it, and act on information the other contradicts.</div></div>
+      <div class="decay-card"><div class="dc-icon">🤷</div><div class="dc-title">Engineers asking questions the wiki should answer</div><div class="dc-desc">If the same question gets asked in Slack repeatedly, and the wiki should answer it but doesn't — or the answer is there but not findable — that's a structural wiki failure, not a documentation failure.</div></div>
+      <div class="decay-card"><div class="dc-icon">🔮</div><div class="dc-title">AI tools surfacing the old version</div><div class="dc-desc">Confluence AI, Notion AI, and RAG pipelines index based on recency and authority signals. An outdated page with many backlinks may surface before the current version. Deprecated pages must be explicitly marked, not just abandoned.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It</div>
+      <div class="sim-title">Diagnose the wiki failure</div>
+      <div class="sim-sub">Read the scenario. Identify the primary structural failure causing this wiki problem.</div>
+      <div class="sim-scenario">An SRE team has a Confluence wiki with 340 pages, built up over three years. When engineers search for "database failover procedure," they find four different pages — one from 2021, one from 2022, one a draft from earlier this year, and one that appears to be the current procedure but has a "last updated" date of 11 months ago. During a recent P1 incident, an engineer followed the 2022 procedure (which had more detail and looked more authoritative) instead of the current one — and took two incorrect steps that extended the outage by 30 minutes.</div>
+      <div class="sim-q">What is the primary structural failure here?</div>
+      <div class="sim-opts" id="s1opts">
+        <button class="sim-opt" onclick="doSim(this,false)">Failure 1: Poor structure — the search function returned too many results</button>
+        <button class="sim-opt" onclick="doSim(this,true)">Failure 2 + 4: No ownership and content overload — old pages were never deprecated or removed, so they compete with the current procedure. Without clear status labels and ownership, engineers can't tell which version to trust — and under incident pressure, "more detail" reads as "more authoritative."</button>
+        <button class="sim-opt" onclick="doSim(this,false)">Failure 3: No update culture — the current procedure page wasn't updated often enough</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The engineer made an individual error — they should have checked which page was most recent</button>
+      </div>
+      <div class="sim-fb" id="s1fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team decides to solve their wiki's poor adoption by making it more comprehensive — adding more pages, covering more edge cases, and linking to more related documents. What risk does this approach introduce?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">More pages means more maintenance burden, which may accelerate decay</button>
+        <button class="qopt" onclick="cq(this,false)">Engineers prefer concise documentation and will disengage from an overwhelming wiki</button>
+        <button class="qopt" onclick="cq(this,true)">More content without addressing ownership, update culture, and structure amplifies the existing failure modes. A larger wiki with no ownership is harder to maintain than a smaller one. More pages means more outdated pages, more duplicates, and more noise that buries the signal engineers actually need.</button>
+        <button class="qopt" onclick="cq(this,false)">This is a sound approach — comprehensive documentation builds trust and usage</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Most wikis fail for four predictable reasons: poor structure (nobody can find anything), no ownership (pages decay), no update culture (documentation is write-once), and content overload (signal is buried in noise). Addressing all four is required — fixing just one produces a slightly better failing wiki.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most important variable is ownership. Pages with named owners matched to system ownership get maintained. Pages without owners decay. Every page needs: a named owner, a last-reviewed date, a next-review date, and a status label. These four fields create the accountability structure that makes maintenance happen.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Old pages must be explicitly deprecated — not just abandoned. Stale pages with apparent authority (many links, lots of content) will be found by search and by AI tools and trusted by engineers under pressure. Deprecated status labels and redirects to current versions prevent the "which page do I trust?" problem that caused the scenario in this article's simulation.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("s1opts");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("No ownership"))b.classList.add("reveal");});
+  const fb=document.getElementById("s1fb");fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. This incident was caused by four pages existing simultaneously for the same procedure with no status labels, no clear ownership, and no deprecation of old versions. Under incident pressure, engineers use heuristics to evaluate trustworthiness — length, detail, visual completeness. The 2022 page won on those signals even though it was wrong. The fix isn't better search — it's: (1) mark the 2021 and 2022 pages as 'Deprecated — see [current page]', (2) archive the draft, (3) give the current page an owner, a last-reviewed date, and a status of 'Current.' Then there's no ambiguity.";
+  else fb.textContent="❌ Search returning multiple results isn't the root problem — the problem is that all four results are live, undeprecated, and have equal apparent authority. The update culture failure is secondary — the current page was 11 months old but was presumably still correct (the scenario says the 2022 page had incorrect steps, not that the current page did). The individual error framing misses the system failure: the wiki was structured to create exactly this ambiguity. Four competing pages with no status labels is a wiki design problem, not an engineer judgment problem.";}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Adding more content to a wiki with structural problems is like adding more floors to a building with a cracked foundation. More pages without ownership means more orphaned pages. More pages without an update culture means a faster-growing body of stale content. More links without deprecation means more pathways to outdated information. The fix sequence matters: first address ownership and update culture, then add content. A smaller wiki that's trusted and maintained is more valuable than a comprehensive wiki that nobody believes.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("amplifies the existing"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The maintenance burden and engineer preference arguments are true but secondary. The most significant risk is structural amplification: adding content without fixing ownership and update culture doesn't improve the wiki — it scales its failure modes. More pages means more decay, more duplicates, and more noise. Comprehensive documentation that engineers don't trust is worse than minimal documentation they do trust, because it consumes the same real estate in the wiki with less reliable signal.";}
+}
+</script>
+</body>
+</html>

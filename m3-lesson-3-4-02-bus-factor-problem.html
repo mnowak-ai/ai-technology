@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bus Factor Problem: What Happens When the Expert Leaves</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Bus factor meter */
+.bf-meter{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:24px 0;}
+.bfm-header{background:var(--purple-pale);padding:16px 24px;}
+.bfm-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.bfm-sub{font-size:13px;color:var(--gray-muted);}
+.bfm-rows{padding:0;}
+.bfm-row{display:grid;grid-template-columns:60px 120px 1fr;align-items:center;border-bottom:1px solid var(--purple-mid);padding:14px 20px;gap:16px;}
+.bfm-row:last-child{border-bottom:none;}
+.bfm-score{font-family:"Fraunces",serif;font-size:28px;font-weight:900;text-align:center;}
+.bfm-score.danger{color:var(--red);}
+.bfm-score.warning{color:var(--orange);}
+.bfm-score.ok{color:var(--green);}
+.bfm-label{font-size:13px;font-weight:700;}
+.bfm-label.danger{color:var(--red);}
+.bfm-label.warning{color:var(--orange);}
+.bfm-label.ok{color:var(--green);}
+.bfm-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+/* Knowledge types */
+.knowledge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.kg-card{border-radius:14px;padding:18px;}
+.kg-card.explicit{background:var(--green-pale);border:1.5px solid #B5D5C0;}
+.kg-card.tacit{background:var(--red-pale);border:1.5px solid #F5C2C2;}
+.kg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.kg-card.explicit .kg-label{color:var(--green);}
+.kg-card.tacit .kg-label{color:var(--red);}
+.kg-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.kg-items{display:flex;flex-direction:column;gap:5px;}
+.kg-item{font-size:13px;line-height:1.5;color:var(--gray-text);}
+/* Audit checklist */
+.audit{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:24px 0;}
+.audit-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.audit-sub{font-size:14px;color:var(--gray-muted);margin-bottom:18px;}
+.audit-q{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px dashed var(--purple-mid);}
+.audit-q:last-child{border-bottom:none;}
+.aq-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--purple-mid);background:var(--white);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.aq-check:hover{border-color:var(--purple);}
+.aq-check.checked{background:var(--purple);border-color:var(--purple);}
+.aq-check svg{display:none;}
+.aq-check.checked svg{display:block;}
+.aq-text{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.aq-text strong{color:var(--purple-dark);}
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.step{display:flex;gap:0;}
+.step-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.step-dot{width:38px;height:38px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-size:16px;flex-shrink:0;}
+.step-line{flex:1;width:2px;background:var(--purple-mid);margin:4px 0;}
+.step:last-child .step-line{display:none;}
+.step-body{flex:1;padding:0 0 22px 14px;padding-top:4px;}
+.step-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.step-desc{font-size:14px;line-height:1.65;color:var(--gray-text);}
+/* Sim / Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:14px;font-size:14px;line-height:1.75;color:var(--gray-text);}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.4 — Knowledge Sharing & Collaboration</div>
+  <h1>The Bus Factor Problem: What Happens When the Expert Leaves</h1>
+  <p class="hero-sub">The bus factor is the number of people who would need to be hit by a bus before a project is in serious trouble. For most critical systems, that number is one. Here's why that's a real engineering risk — and what to do about it.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>What the Bus Factor Actually Measures</h2>
+    <p>The bus factor (sometimes called the "lottery factor" — what happens if someone wins the lottery and quits) measures how concentrated critical knowledge is in your team. A bus factor of 1 means a single engineer's absence — vacation, illness, resignation, or reassignment — would leave your team unable to maintain, debug, or evolve a critical system.</p>
+    <p>Most engineering teams underestimate how many of their systems have a bus factor of 1. It's rarely obvious in normal operations — the expert is always there, always available. It only becomes visible during incidents, when they're unavailable, or after they've left.</p>
+    <div class="pull-quote"><p>The bus factor isn't a hypothetical risk. It's an incident waiting for the expert to take a vacation.</p></div>
+
+    <div class="bf-meter">
+      <div class="bfm-header">
+        <div class="bfm-title">Bus Factor Risk Scale</div>
+        <div class="bfm-sub">How many people need to be unavailable before this system is in serious trouble?</div>
+      </div>
+      <div class="bfm-rows">
+        <div class="bfm-row"><div class="bfm-score danger">1</div><div class="bfm-label danger">Critical risk</div><div class="bfm-desc">One person's absence — vacation, sick day, or resignation — puts the system at risk. This is more common than most teams realize, especially for legacy systems and ML pipelines.</div></div>
+        <div class="bfm-row"><div class="bfm-score warning">2</div><div class="bfm-label warning">High risk</div><div class="bfm-desc">Better, but still fragile. Two simultaneous absences — which happen during incidents, holidays, and layoffs — expose the same gap.</div></div>
+        <div class="bfm-row"><div class="bfm-score ok">3+</div><div class="bfm-label ok">Acceptable</div><div class="bfm-desc">Three or more people can maintain the system independently. Knowledge is distributed enough that normal attrition and absence don't create crises.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Two Types of Knowledge — And Why One Is Much Harder to Transfer</h2>
+    <p>When a senior engineer leaves, they take two types of knowledge with them. Understanding the difference is critical to knowing what to prioritize in knowledge transfer.</p>
+    <div class="knowledge-grid">
+      <div class="kg-card explicit">
+        <div class="kg-label">Explicit knowledge — can be documented</div>
+        <div class="kg-title">The "what" and "how"</div>
+        <div class="kg-items">
+          <div class="kg-item">• Architecture diagrams and system design docs</div>
+          <div class="kg-item">• Runbooks and SOPs</div>
+          <div class="kg-item">• API documentation</div>
+          <div class="kg-item">• Deployment procedures</div>
+          <div class="kg-item">• Configuration files and their meaning</div>
+          <div class="kg-item">• Incident histories and postmortems</div>
+        </div>
+      </div>
+      <div class="kg-card tacit">
+        <div class="kg-label">Tacit knowledge — hardest to transfer</div>
+        <div class="kg-title">The "why" and "when"</div>
+        <div class="kg-items">
+          <div class="kg-item">• Why a particular design was chosen over alternatives</div>
+          <div class="kg-item">• Which edge cases to watch for under what conditions</div>
+          <div class="kg-item">• How the system actually behaves vs. how it's documented to behave</div>
+          <div class="kg-item">• Which vendors/services are reliable and which aren't</div>
+          <div class="kg-item">• Unwritten team norms and decision-making patterns</div>
+          <div class="kg-item">• Which warnings can be safely ignored and which can't</div>
+        </div>
+      </div>
+    </div>
+    <p>Most knowledge transfer efforts focus on explicit knowledge — the docs, the runbooks, the diagrams. That's necessary but not sufficient. The tacit knowledge — the judgment, the context, the institutional memory — is what actually makes an expert irreplaceable. And it's almost never written down, because experts don't realize they have it.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Four-Step Bus Factor Reduction Plan</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Audit — identify your bus factor 1 systems</div>
+          <div class="step-desc">For every critical system, ask: if this engineer were unavailable for two weeks, could the rest of the team maintain it? Debug an incident in it? Deploy a fix? If the honest answer is "no" or "maybe," that system has a bus factor of 1. List them — don't assume you already know all of them.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Capture tacit knowledge through structured interviews</div>
+          <div class="step-desc">The most effective knowledge transfer technique is not asking experts to "write documentation." It's interviewing them with specific questions: "What would a new engineer get wrong about this system?" "What's the worst thing that could happen that isn't documented?" "What do you check first when something goes wrong?" Record the answers and turn them into documentation. Experts know the answers — they just need the right questions to surface them.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Shadow and reverse-shadow critical work</div>
+          <div class="step-desc">For each bus factor 1 system, schedule shadowing sessions: a second engineer watches the expert work on real tasks. Then reverse-shadow: the second engineer does the work while the expert watches and corrects. This transfers both explicit procedures and tacit judgment — you can't learn the "feel" of a system from a document alone.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Distribute on-call ownership deliberately</div>
+          <div class="step-desc">The fastest way to force knowledge distribution is to rotate on-call responsibility. Engineers who are on call for a system they don't fully understand quickly identify the documentation gaps — because they feel the gaps acutely when they're paged at 2am. Pair this with postmortem practices that build documentation from every incident.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Bus Factor Audit — Know Your Risk</h2>
+    <p>Run through these questions for a critical system you work on. Check each one that's currently true.</p>
+    <div class="audit">
+      <div class="audit-title">Bus Factor Audit</div>
+      <div class="audit-sub">For a specific critical system on your team</div>
+      <div class="audit-q"><div class="aq-check" onclick="toggleAudit(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="aq-text"><strong>At least two engineers</strong> can independently debug a P1 incident in this system without help</div></div>
+      <div class="audit-q"><div class="aq-check" onclick="toggleAudit(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="aq-text"><strong>The runbook</strong> for this system was last reviewed within 90 days</div></div>
+      <div class="audit-q"><div class="aq-check" onclick="toggleAudit(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="aq-text"><strong>The "why" behind key design decisions</strong> is documented — not just the what and how</div></div>
+      <div class="audit-q"><div class="aq-check" onclick="toggleAudit(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="aq-text"><strong>Known edge cases and failure modes</strong> are documented, not just held in one engineer's memory</div></div>
+      <div class="audit-q"><div class="aq-check" onclick="toggleAudit(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="aq-text"><strong>On-call rotation</strong> includes more than one person who can respond to incidents independently</div></div>
+      <div class="audit-q"><div class="aq-check" onclick="toggleAudit(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="aq-text"><strong>A new team member</strong> could onboard to this system using existing documentation without needing extended expert guidance</div></div>
+    </div>
+    <p style="font-size:14px;color:var(--gray-muted);">If you checked 0–2: bus factor is likely 1. If you checked 3–4: moderate risk. If you checked 5–6: good distribution. The unchecked items are your knowledge transfer priorities.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It</div>
+      <div class="sim-title">What type of knowledge is this?</div>
+      <div class="sim-sub">A senior ML engineer is leaving the company. During their offboarding, they mention the following. Which one represents tacit knowledge that is hardest to transfer through documentation alone?</div>
+      <div class="sim-q">Which of the following is tacit knowledge?</div>
+      <div class="sim-opts" id="s1opts">
+        <button class="sim-opt" onclick="doSim(this,false)">"The model retraining pipeline runs on Mondays at 2am UTC. You can trigger it manually using the run_retrain.sh script in /ml/scripts."</button>
+        <button class="sim-opt" onclick="doSim(this,false)">"The model evaluation metrics are logged to the MLflow dashboard at mlflow.internal. Look for the 'fraud_v3' experiment."</button>
+        <button class="sim-opt" onclick="doSim(this,true)">"The validation accuracy metric looks great in testing but it's actually misleading — it's dominated by the majority class. The number that really matters is precision on the positive class. I've never written that down anywhere but it's the only number I actually look at when evaluating a new model."</button>
+        <button class="sim-opt" onclick="doSim(this,false)">"The model requires Python 3.9+ and the dependencies are in requirements.txt. Don't upgrade to 3.11 yet — there's a known compatibility issue with one of our custom feature transformers."</button>
+      </div>
+      <div class="sim-fb" id="s1fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team lead says: "We're not worried about bus factor — we have excellent documentation for all our systems." Why might this still leave the team at risk?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Documentation becomes outdated quickly, so even excellent docs may be inaccurate within months</button>
+        <button class="qopt" onclick="cq(this,true)">Documentation captures explicit knowledge — what the system does and how to operate it. It rarely captures tacit knowledge: why design decisions were made, which failure modes to watch for under specific conditions, and which documented behaviors don't match how the system actually behaves in production. When the expert leaves, the team loses exactly this judgment — and documentation alone can't replace it.</button>
+        <button class="qopt" onclick="cq(this,false)">Engineers don't read documentation under incident pressure — verbal knowledge transfer is always more reliable</button>
+        <button class="qopt" onclick="cq(this,false)">The team lead is right — excellent documentation is sufficient protection against bus factor risk</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The bus factor measures how many people need to be unavailable before a system is in serious trouble. Most critical systems in most teams have a bus factor of 1 — which means a single vacation, illness, or resignation creates an incident. This is not hypothetical; it's a predictable failure mode.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Explicit knowledge (what and how) can be documented. Tacit knowledge (why and when — the judgment, context, and edge cases) is much harder to transfer and almost never written down. When an expert leaves, the explicit knowledge usually survives. The tacit knowledge usually doesn't.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most effective bus factor reduction techniques: audit which systems have a factor of 1, use structured interviews (not free-form documentation requests) to surface tacit knowledge, shadow and reverse-shadow critical work, and distribute on-call ownership deliberately. AI tools can help capture structured interviews but still cannot extract what the expert doesn't know they know.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleAudit(el){el.classList.toggle("checked");}
+function doSim(btn,correct){
+  const c=document.getElementById("s1opts");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("validation accuracy"))b.classList.add("reveal");});
+  const fb=document.getElementById("s1fb");fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. This is tacit knowledge in its purest form. The engineer knows that a documented metric is actively misleading — and has never written that down. The team will inherit a dashboard that shows a number they'll trust, without knowing that the expert systematically ignored that number and looked at a different one. This kind of undocumented judgment is what makes certain engineers irreplaceable — and what documentation drives, structured interviews, and shadowing sessions are specifically designed to surface before they walk out the door.";
+  else fb.textContent="❌ The other options are all explicit knowledge — schedules, locations, commands, and dependency requirements. These can all be documented straightforwardly and are already partially documented (requirements.txt, script locations, dashboard URLs). The tacit knowledge example is the one that has never been written down precisely because the expert didn't realize it needed to be — they just knew which metric to look at, from experience, without ever formalizing that judgment.";}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Documentation captures the explicit layer of knowledge — the runbooks, the architecture, the deployment procedures. What it almost never captures: the engineer's understanding of why the system behaves differently under specific conditions, which monitoring alerts can be safely ignored vs. which always indicate a real problem, which architectural decisions were made because of constraints that no longer exist (and could be revisited), and how to interpret the gap between documented behavior and actual production behavior. That judgment layer is what takes years to develop — and what leaves when the expert does.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("tacit knowledge"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Documentation staleness is a real problem but it's secondary here. The more fundamental gap is that even perfect, up-to-date documentation doesn't capture tacit knowledge — the 'why' behind decisions, the edge cases discovered through painful experience, the judgment about which alerts matter. Verbal knowledge transfer has its own problems — it's often incomplete, context-dependent, and not preserved. The real answer is that documentation captures a floor of system knowledge, and reducing bus factor requires capturing the ceiling too.";}
+}
+</script>
+</body>
+</html>
