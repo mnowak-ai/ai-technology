@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing a Technical SOP From Scratch: A Full Walkthrough with a Real Example</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* SOP section anatomy */
+.sop-section{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:20px;margin:16px 0;overflow:hidden;}
+.sop-header{background:var(--purple-pale);padding:16px 22px;display:flex;align-items:center;gap:12px;}
+.sop-num{width:32px;height:32px;border-radius:50%;background:var(--purple);color:var(--white);font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sop-name{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.sop-body{padding:18px 22px;}
+.sop-body p{font-size:15px;line-height:1.8;color:var(--gray-text);margin-bottom:12px;}
+.sop-example{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px 18px;margin:10px 0;font-size:13px;line-height:1.8;color:var(--gray-text);}
+.sop-example-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.sop-example code{background:var(--purple-pale);color:var(--purple-dark);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px;}
+
+/* Step builder */
+.step-builder{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.sb-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.sb-sub{font-size:14px;color:var(--gray-muted);margin-bottom:16px;}
+.step-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--purple);color:white;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-content{flex:1;}
+.step-action{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:4px;}
+.step-detail{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.step-code{background:var(--white);border:1px solid var(--purple-mid);border-radius:8px;padding:10px 12px;font-family:monospace;font-size:12px;color:var(--gray-text);margin-top:6px;}
+.step-why{font-size:12px;color:var(--orange);margin-top:4px;font-style:italic;}
+
+/* Doc preview */
+.doc-preview{background:var(--white);border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:24px 0;}
+.dp-header{background:var(--purple-dark);color:var(--white);padding:16px 24px;}
+.dp-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;}
+.dp-meta{font-size:12px;opacity:.7;margin-top:4px;}
+.dp-body{padding:20px 24px;}
+.dp-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;margin-top:16px;}
+.dp-section-title:first-child{margin-top:0;}
+.dp-text{font-size:13px;line-height:1.75;color:var(--gray-text);margin-bottom:8px;}
+.dp-list{list-style:none;padding:0;margin:0 0 8px;}
+.dp-list li{font-size:13px;line-height:1.7;color:var(--gray-text);padding-left:18px;position:relative;margin-bottom:3px;}
+.dp-list li::before{content:"•";position:absolute;left:0;color:var(--purple);}
+.dp-step{display:flex;gap:10px;margin-bottom:8px;}
+.dp-step-num{width:22px;height:22px;border-radius:50%;background:var(--purple);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.dp-step-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+
+/* Stats */
+.stat-band{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+.stat-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;text-align:center;}
+.stat-num{font-family:"Fraunces",serif;font-size:36px;font-weight:900;color:var(--purple);line-height:1;}
+.stat-label{font-size:13px;line-height:1.5;color:var(--gray-text);margin-top:8px;}
+
+/* Compare */
+.compare-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+.cp-col{border-radius:10px;padding:13px;}
+.cp-col.bad{background:var(--red-pale);border:1px solid #F5C2C2;}
+.cp-col.good{background:var(--green-pale);border:1px solid #B5D5C0;}
+.cp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.cp-col.bad .cp-label{color:var(--red);}
+.cp-col.good .cp-label{color:var(--green);}
+.cp-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.3 — Creating SOPs &amp; Guides</div>
+  <h1>Writing a Technical SOP From Scratch: A Full Walkthrough with a Real Example</h1>
+  <p class="hero-sub">SOPs aren't just boring documents IT teams are forced to write. They're the instructions that keep things from going catastrophically wrong at 2am. Here's how to build one that actually works.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>What Is an SOP, Really?</h2>
+    <p>SOP stands for Standard Operating Procedure. In plain terms: it's a document that tells someone exactly how to do a specific task, step by step, so they get the same correct result every time — whether it's their first time or their hundredth.</p>
+    <p>In IT and tech, SOPs cover things like: how to deploy a new version of software, how to respond when a server goes down, how to onboard a new team member, or how to handle a security alert. <mark>A good SOP removes guesswork. A bad SOP creates it.</mark></p>
+    <div class="pull-quote"><p>The goal of an SOP is not to document what happened last time. It's to give the next person a clear path forward — even if that person is you at 3am after four hours of sleep.</p></div>
+    <div class="stat-band">
+      <div class="stat-box"><div class="stat-num">60%</div><div class="stat-label">of IT incidents involve a step that wasn't documented or was documented unclearly</div></div>
+      <div class="stat-box"><div class="stat-num">4×</div><div class="stat-label">faster average resolution time when a current, accurate runbook or SOP exists</div></div>
+      <div class="stat-box"><div class="stat-num">1 in 3</div><div class="stat-label">tech teams have no formal SOP review process — so docs go stale within months</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Seven Sections Every Technical SOP Needs</h2>
+    <p>There's no single universal SOP format, but every effective technical SOP covers the same core territory. Here's each section — what it is, why it matters, and what it looks like in practice.</p>
+    <p>We'll build this SOP together using one real example throughout: <strong>SOP for Responding to an AI Model Degradation Alert in Production.</strong></p>
+
+    <div class="sop-section">
+      <div class="sop-header"><div class="sop-num">1</div><div class="sop-name">Purpose</div></div>
+      <div class="sop-body">
+        <p>One or two sentences. What does this SOP exist to accomplish? Why does the procedure matter? Don't write a paragraph — write a sentence that even a new team member would immediately understand.</p>
+        <p>A weak purpose statement says what the document is. A strong one says why it exists.</p>
+        <div class="compare-pair">
+          <div class="cp-col bad"><div class="cp-label">❌ Weak</div><div class="cp-text">This SOP describes the procedure for AI model degradation alerts.</div></div>
+          <div class="cp-col good"><div class="cp-label">✅ Strong</div><div class="cp-text">This SOP gives on-call engineers a consistent response process for AI model degradation alerts — reducing time to resolution and preventing cascading failures in dependent services.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sop-section">
+      <div class="sop-header"><div class="sop-num">2</div><div class="sop-name">Scope</div></div>
+      <div class="sop-body">
+        <p>Who does this SOP apply to? What systems, environments, or situations does it cover? What does it <em>not</em> cover? Scope prevents the SOP from being used in a situation it wasn't designed for.</p>
+        <div class="sop-example">
+          <div class="sop-example-label">📄 Our Example</div>
+          <strong>Scope:</strong> This SOP applies to all on-call engineers responding to PagerDuty alerts from the <code>ai-inference-prod</code> monitoring policy. It covers degradation events in the production inference cluster only. It does not apply to staging or development environments, or to complete service outages (see SOP-INC-002 for outage response).
+        </div>
+        <p>That last sentence — "it does not apply to..." — is just as important as what it does cover. An engineer under pressure grabs the first SOP they find. Clear scope stops them from following the wrong procedure.</p>
+      </div>
+    </div>
+
+    <div class="sop-section">
+      <div class="sop-header"><div class="sop-num">3</div><div class="sop-name">Roles and Responsibilities</div></div>
+      <div class="sop-body">
+        <p>Who does what? Name the roles (not individual people, since people change) and describe each role's responsibilities in this procedure. This section prevents two engineers from doing the same thing simultaneously — and prevents nobody from doing something critical.</p>
+        <div class="sop-example">
+          <div class="sop-example-label">📄 Our Example</div>
+          <strong>On-Call Engineer (Primary):</strong> Owns the investigation and coordinates response. Makes the call on escalation.<br><br>
+          <strong>ML Platform On-Call:</strong> Consulted for model-specific diagnostics. Paged if the primary engineer cannot identify root cause within 30 minutes.<br><br>
+          <strong>Incident Commander:</strong> Engaged only if the event is escalated to a P1. Coordinates across teams and handles stakeholder communication.
+        </div>
+      </div>
+    </div>
+
+    <div class="sop-section">
+      <div class="sop-header"><div class="sop-num">4</div><div class="sop-name">Prerequisites</div></div>
+      <div class="sop-body">
+        <p>What does the engineer need before they can follow this procedure? Access to which systems? Which credentials? Which tools installed? Don't assume — list it. A person following an SOP for the first time at 2am cannot go find a system access request form mid-incident.</p>
+        <div class="sop-example">
+          <div class="sop-example-label">📄 Our Example</div>
+          <strong>Prerequisites:</strong>
+          <ul style="margin-top:8px;padding-left:20px;font-size:13px;line-height:1.8;color:var(--gray-text);">
+            <li>PagerDuty on-call access for <code>ai-inference-prod</code> policy</li>
+            <li>Read access to Grafana dashboard: AI Inference Service — Production</li>
+            <li>kubectl access to <code>prod-us-east-1</code> cluster (request via <a href="#" style="color:var(--purple);">go/k8s-access</a>)</li>
+            <li>Slack membership: #ai-oncall, #ml-platform</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sop-section">
+      <div class="sop-header"><div class="sop-num">5</div><div class="sop-name">Step-by-Step Procedure</div></div>
+      <div class="sop-body">
+        <p>This is the heart of the SOP. Number every step. Use active voice. One action per step. Include exact commands, not vague directions. Include "why this step matters" notes for any step that an engineer might be tempted to skip.</p>
+        <div class="sop-example">
+          <div class="sop-example-label">📄 Our Example — First 5 Steps</div>
+        </div>
+        <div class="step-builder" style="background:var(--white);border:none;padding:0;margin:8px 0;">
+          <div class="step-row">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-action">Acknowledge the alert in PagerDuty.</div>
+              <div class="step-detail">Click Acknowledge within 5 minutes of the alert firing. This stops the escalation timer and signals to the team that someone is on it.</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-action">Post in #ai-oncall: "Investigating [ALERT NAME] — [timestamp]"</div>
+              <div class="step-detail">This creates a paper trail and prevents a second engineer from starting a parallel investigation.</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-action">Open the AI Inference Service dashboard in Grafana.</div>
+              <div class="step-detail">Check the following panels: Request Latency (p99), Error Rate (5xx), Model Throughput, GPU Utilization. Note which metrics are outside normal range and by how much.</div>
+              <div class="step-code">Dashboard: https://grafana.internal/d/ai-inference-prod</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-action">Check recent deployments in the deployment log.</div>
+              <div class="step-code">kubectl rollout history deployment/inference-api -n ai-prod</div>
+              <div class="step-why">Why: most model degradations happen within 30 minutes of a deployment. If a deployment occurred recently, that's your first hypothesis.</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-action">Check pod health and restart counts.</div>
+              <div class="step-code">kubectl get pods -n ai-prod -l app=inference-api</div>
+              <div class="step-detail">Look for pods in CrashLoopBackOff or with high restart counts. If 2+ pods are in CrashLoopBackOff, proceed to Step 7 (Emergency Rollback).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sop-section">
+      <div class="sop-header"><div class="sop-num">6</div><div class="sop-name">Escalation Path</div></div>
+      <div class="sop-body">
+        <p>When should the engineer stop trying to solve this themselves and get help? Be specific — don't say "escalate when appropriate." Name the conditions, name the people or channels, and name the method.</p>
+        <div class="sop-example">
+          <div class="sop-example-label">📄 Our Example</div>
+          <strong>Escalate to ML Platform On-Call if:</strong> You cannot identify root cause within 30 minutes, or model accuracy metrics have dropped more than 15% from baseline.<br><br>
+          <strong>How:</strong> Page via PagerDuty policy <code>ml-platform-oncall</code>. Also post in #ml-platform with the Grafana link and a summary of what you've checked.<br><br>
+          <strong>Escalate to P1 Incident if:</strong> Error rate exceeds 20% for more than 10 minutes, or more than 3 dependent services are impacted. Engage Incident Commander via #incident-response.
+        </div>
+      </div>
+    </div>
+
+    <div class="sop-section">
+      <div class="sop-header"><div class="sop-num">7</div><div class="sop-name">Review and Revision Schedule</div></div>
+      <div class="sop-body">
+        <p>When does this SOP expire? Who owns it? When should it be reviewed? SOPs without review schedules go stale — and a stale SOP is sometimes worse than no SOP, because it creates false confidence.</p>
+        <div class="sop-example">
+          <div class="sop-example-label">📄 Our Example</div>
+          <strong>Owner:</strong> ML Platform Team (primary contact: on-call rotation lead)<br>
+          <strong>Review Cycle:</strong> Every 90 days, or immediately after any incident where this SOP was used and found to be incomplete or incorrect.<br>
+          <strong>Next Review Date:</strong> [YYYY-MM-DD]<br>
+          <strong>Last Updated:</strong> [YYYY-MM-DD] by [Name/Role]
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What the Finished SOP Looks Like</h2>
+    <p>Here's a compressed view of our complete example SOP. Notice how every section is specific, scannable, and action-oriented. An engineer who has never followed this procedure before should be able to do so correctly on their first try.</p>
+    <div class="doc-preview">
+      <div class="dp-header">
+        <div class="dp-title">SOP-ML-001: AI Model Degradation Alert Response</div>
+        <div class="dp-meta">Owner: ML Platform | Review cycle: 90 days | Version 1.2</div>
+      </div>
+      <div class="dp-body">
+        <div class="dp-section-title">Purpose</div>
+        <div class="dp-text">Give on-call engineers a consistent response process for AI model degradation alerts — reducing time to resolution and preventing cascading failures.</div>
+        <div class="dp-section-title">Scope</div>
+        <div class="dp-text">Applies to: on-call engineers responding to PagerDuty ai-inference-prod alerts. Does not apply to: staging/dev environments, complete outages (see SOP-INC-002).</div>
+        <div class="dp-section-title">Prerequisites</div>
+        <ul class="dp-list">
+          <li>PagerDuty on-call access (ai-inference-prod)</li>
+          <li>Grafana: AI Inference Service — Production</li>
+          <li>kubectl access to prod-us-east-1</li>
+          <li>Slack: #ai-oncall, #ml-platform</li>
+        </ul>
+        <div class="dp-section-title">Procedure</div>
+        <div class="dp-step"><div class="dp-step-num">1</div><div class="dp-step-text">Acknowledge alert in PagerDuty within 5 minutes.</div></div>
+        <div class="dp-step"><div class="dp-step-num">2</div><div class="dp-step-text">Post in #ai-oncall: "Investigating [ALERT NAME] — [timestamp]"</div></div>
+        <div class="dp-step"><div class="dp-step-num">3</div><div class="dp-step-text">Check Grafana dashboard. Note which metrics are out of range.</div></div>
+        <div class="dp-step"><div class="dp-step-num">4</div><div class="dp-step-text">Run: kubectl rollout history deployment/inference-api -n ai-prod. Check for recent deploys.</div></div>
+        <div class="dp-step"><div class="dp-step-num">5</div><div class="dp-step-text">Check pod health. If 2+ pods in CrashLoopBackOff → go to Step 7 (Emergency Rollback).</div></div>
+        <div class="dp-section-title">Escalation</div>
+        <div class="dp-text">30 min without root cause → Page ml-platform-oncall. Error rate >20% for 10 min → P1. Engage #incident-response.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Apply It</div>
+      <div class="sim-title">Which SOP section is this text missing?</div>
+      <p style="font-size:15px;color:var(--gray-muted);margin-bottom:16px;">Read this SOP excerpt and identify what critical section has been left out.</p>
+      <div style="background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:16px;font-size:14px;line-height:1.8;color:var(--gray-text);">
+        <strong>SOP: Database Migration Procedure</strong><br><br>
+        <strong>Purpose:</strong> Run the quarterly database schema migration without data loss or service downtime.<br><br>
+        <strong>Steps:</strong><br>
+        1. Back up the production database.<br>
+        2. Put the service in maintenance mode.<br>
+        3. Run the migration script: <code>./run_migration.sh --env prod</code><br>
+        4. Verify migration completed successfully.<br>
+        5. Take the service out of maintenance mode.<br><br>
+        <strong>Review Cycle:</strong> Annually.
+      </div>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">The Purpose section — it doesn't explain why this matters</button>
+        <button class="sim-opt" onclick="doSim(this,true)">Prerequisites and Scope — there's no information on who this applies to, what access is required, or what environments this covers</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The Steps — "verify migration completed successfully" is too vague and needs more detail</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The Review Cycle — annual is too infrequent for a production database migration</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Most Common SOP Writing Mistakes</h2>
+    <p>Even experienced engineers make these mistakes when writing SOPs for the first time.</p>
+    <div class="compare-pair">
+      <div class="cp-col bad"><div class="cp-label">❌ Mistake 1: Assuming Knowledge</div><div class="cp-text">"Restart the inference service." — Which service? How? Via kubectl, a script, the cloud console? What if the restart fails?</div></div>
+      <div class="cp-col good"><div class="cp-label">✅ Fix It</div><div class="cp-text">"Restart the inference-api deployment: <code>kubectl rollout restart deployment/inference-api -n ai-prod</code>. Wait 2 minutes. If pods don't reach Running state, go to Step 9."</div></div>
+    </div>
+    <div class="compare-pair">
+      <div class="cp-col bad"><div class="cp-label">❌ Mistake 2: Vague Escalation</div><div class="cp-text">"Escalate to the appropriate team if the issue persists." — Which team? How? When is "persists" too long?</div></div>
+      <div class="cp-col good"><div class="cp-label">✅ Fix It</div><div class="cp-text">"If you have not identified root cause within 30 minutes, page the ML Platform on-call via PagerDuty policy ml-platform-oncall."</div></div>
+    </div>
+    <div class="compare-pair">
+      <div class="cp-col bad"><div class="cp-label">❌ Mistake 3: No "What If"</div><div class="cp-text">Steps that assume everything works perfectly and offer no guidance when a step fails.</div></div>
+      <div class="cp-col good"><div class="cp-label">✅ Fix It</div><div class="cp-text">After critical steps, add: "If this command returns an error, see the Troubleshooting section" or "If this fails: [specific next action]."</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team writes an SOP for deploying a new ML model. They include Purpose, Prerequisites, Steps, and Review Cycle. During a real deployment, an engineer gets stuck because they don't know whether to proceed if a specific health check fails — the SOP says nothing about it. What critical section was missing?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Prerequisites — they should have listed the health check tool as a requirement</button>
+        <button class="qopt" onclick="cq(this,false)">Purpose — it wasn't clear enough that health checks were part of the goal</button>
+        <button class="qopt" onclick="cq(this,true)">Escalation Path — without clear criteria for "what to do when a step fails or produces an unexpected result," engineers are left guessing at the worst possible moment. A good escalation section covers both "who to call" and "when to stop and call them."</button>
+        <button class="qopt" onclick="cq(this,false)">Review Cycle — the SOP would have been updated to include health checks if reviewed more recently</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every technical SOP needs seven sections: Purpose, Scope, Roles and Responsibilities, Prerequisites, Step-by-Step Procedure, Escalation Path, and Review Schedule. Skipping any of these creates gaps that surface at the worst moment — during an incident.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Steps must be specific: one action per step, active voice, exact commands, and "what to do if this fails." Vague steps like "restart the service" or "verify success" are the most common causes of SOP failure under pressure.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Write the SOP for the engineer who has never done this before, at 3am, after a PagerDuty alert woke them up. If they can follow it correctly on the first try without asking anyone, it's a good SOP.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("Prerequisites and Scope"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The SOP has steps but no Scope (does this apply to all environments? all team members?) and no Prerequisites (what database access is required? what backup tool? what credentials?). An engineer trying to follow this for the first time has no way to know if they're the right person to run it, or if they have everything they need before starting. The steps themselves are also vague — but the missing Scope and Prerequisites are structural problems that would prevent someone from even getting started safely.";
+  else fb.textContent="❌ The Purpose is clear enough, the steps are indeed vague (especially 'verify migration completed'), and annual review may be too infrequent — but these are improvement opportunities, not missing sections. The critical structural gap is Scope and Prerequisites. Without them, any engineer who finds this SOP has no way to know: Does this apply to me? Do I have what I need to run this? Should I be doing this in the production database or staging first?";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The missing Escalation Path left the engineer with no structured answer to 'what do I do when something unexpected happens?' A complete escalation section defines the conditions that trigger escalation (not just 'if something goes wrong' but specific, observable conditions like 'if the health check returns a non-200 status'), who to contact, how to contact them, and what information to bring. Without this, engineers either give up too early or push forward through uncertainty — both dangerous outcomes.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Escalation Path"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Prerequisites would help ensure the engineer has the right tools, and a better Purpose might frame health checks as success criteria — but neither directly solves the in-the-moment problem. The engineer knew the step was supposed to succeed. They just didn't know what to do when it didn't. That's the Escalation Path: the structured answer to 'what happens when this procedure produces an unexpected result?' It's not just about who to call — it's about defining the conditions that should stop you from proceeding alone.";}
+}
+</script>
+</body>
+</html>

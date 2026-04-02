@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keeping SOPs and Runbooks Current: Building a Review Cycle That Actually Gets Done</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* trigger cards */
+.trigger-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:16px;padding:20px 22px;margin:12px 0;display:flex;gap:16px;align-items:flex-start;}
+.tc-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.tc-body{}
+.tc-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.tc-desc{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.tc-example{font-size:13px;color:var(--gray-muted);margin-top:6px;font-style:italic;}
+
+/* ownership table */
+.own-table{width:100%;border-collapse:collapse;border-radius:16px;overflow:hidden;margin:20px 0;border:1.5px solid var(--purple-mid);}
+.own-table th{background:var(--purple-dark);color:var(--white);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:14px 16px;text-align:left;}
+.own-table td{font-size:13px;line-height:1.6;color:var(--gray-text);padding:12px 16px;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.own-table tr:last-child td{border-bottom:none;}
+.own-table tr:nth-child(even) td{background:var(--gray-soft);}
+
+/* Why it fails */
+.fail-card{background:var(--red-pale);border:1.5px solid #F5C2C2;border-radius:16px;padding:18px 22px;margin:12px 0;}
+.fc-title{font-size:15px;font-weight:700;color:var(--red);margin-bottom:8px;}
+.fc-body{font-size:14px;line-height:1.7;color:var(--gray-text);}
+
+/* fix cards */
+.fix-card{background:var(--green-pale);border:1.5px solid #B5D5C0;border-radius:16px;padding:18px 22px;margin:12px 0;}
+.fx-title{font-size:15px;font-weight:700;color:var(--green);margin-bottom:8px;}
+.fx-body{font-size:14px;line-height:1.7;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.3 — Creating SOPs &amp; Guides</div>
+  <h1>Keeping SOPs and Runbooks Current: Building a Review Cycle That Actually Gets Done</h1>
+  <p class="hero-sub">Every team intends to keep their SOPs up to date. Almost none of them do. Here's what actually works — and why the calendar-based review cycle almost always fails.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Problem With "We Review These Every Quarter"</h2>
+    <p>Most teams that have SOPs and runbooks have a "review process" that looks like this: someone set a recurring calendar invite six months ago for a quarterly review. That invite gets declined, postponed, or ignored. When it does happen, the reviewer skims the document, doesn't find anything obviously wrong, marks it "reviewed," and updates the date.</p>
+    <p>Six months later, during an incident, an engineer follows the runbook — and the dashboard URL returns a 404. The Kubernetes namespace it references no longer exists. The command uses a deprecated flag. <mark>The runbook was "reviewed" two months ago and it's completely wrong.</mark></p>
+    <div class="pull-quote"><p>A document with a "last reviewed" date is not the same as a document that's accurate. The review process matters as much as the review schedule.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why Calendar-Only Review Cycles Fail</h2>
+    <div class="fail-card">
+      <div class="fc-title">❌ Problem 1: Reviews Happen Whether or Not Anything Changed</div>
+      <div class="fc-body">Quarterly reviews don't care if nothing changed or if everything changed. A runbook for a system that was completely re-architected two months ago might not be reviewed until the calendar hits — by which point it's been used and caused confusion.</div>
+    </div>
+    <div class="fail-card">
+      <div class="fc-title">❌ Problem 2: No One Owns the Review</div>
+      <div class="fc-body">A team-level calendar invite doesn't mean a specific person is responsible for a specific document. "The team" reviews it — meaning whoever happens to be available, skimming it, looking for nothing in particular.</div>
+    </div>
+    <div class="fail-card">
+      <div class="fc-title">❌ Problem 3: No One Knows What "Current" Means</div>
+      <div class="fc-body">Reviewers check for obvious errors but don't verify commands, test links, or compare steps against how the system actually works today. The review is a document-level check, not a ground-truth check.</div>
+    </div>
+    <div class="fail-card">
+      <div class="fc-title">❌ Problem 4: Incidents That Should Trigger Reviews Don't</div>
+      <div class="fc-body">Every incident where a runbook was used and found lacking is a perfect opportunity to improve it — immediately, while the memory is fresh. These trigger-based updates almost never happen because the incident team is exhausted, the postmortem is backlogged, and updating the runbook falls off the list.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Actually Works: Trigger-Based Reviews</h2>
+    <p>The most reliable way to keep SOPs and runbooks current is to tie review triggers to real events — not just the calendar. Calendar-based reviews are a fallback. Event-based triggers are the primary mechanism.</p>
+    <p>Here are the five triggers that should automatically kick off a document review:</p>
+
+    <div class="trigger-card">
+      <div class="tc-icon">🔴</div>
+      <div class="tc-body">
+        <div class="tc-title">Trigger 1: Any incident that involved this document</div>
+        <div class="tc-desc">If a runbook was used during an incident — successfully or not — it gets reviewed immediately after the incident is resolved. This is the single most valuable review trigger because it catches real-world gaps while the memory is fresh.</div>
+        <div class="tc-example">Example: An on-call engineer followed a runbook for a Redis cache degradation but found the monitoring URL had changed. That gets fixed the day after the incident — not in three months.</div>
+      </div>
+    </div>
+
+    <div class="trigger-card">
+      <div class="tc-icon">🟠</div>
+      <div class="tc-body">
+        <div class="tc-title">Trigger 2: Any infrastructure or tooling change that touches this procedure</div>
+        <div class="tc-desc">When a system is migrated, a tool is upgraded, or a namespace is renamed, every SOP and runbook that references that system gets flagged for review before the change goes live.</div>
+        <div class="tc-example">Example: A Kubernetes cluster migration from v1.25 to v1.28 should trigger review of every runbook with kubectl commands — some flags and behaviors changed between versions.</div>
+      </div>
+    </div>
+
+    <div class="trigger-card">
+      <div class="tc-icon">🟡</div>
+      <div class="tc-body">
+        <div class="tc-title">Trigger 3: Team membership changes</div>
+        <div class="tc-desc">When the engineer who wrote the runbook leaves the team, or when a new engineer joins and is expected to use it, the document needs a review — ideally as part of knowledge transfer and onboarding.</div>
+        <div class="tc-example">Example: A senior engineer who owns the AI model deployment SOP leaves. During their offboarding, they review and update every procedure they own. The new owner validates it on their second week.</div>
+      </div>
+    </div>
+
+    <div class="trigger-card">
+      <div class="tc-icon">🟢</div>
+      <div class="tc-body">
+        <div class="tc-title">Trigger 4: Quarterly calendar review (as a backstop)</div>
+        <div class="tc-desc">Calendar reviews still happen — but as a catch-all for documents that haven't been triggered by any of the above events. They're not the primary mechanism; they're the safety net.</div>
+        <div class="tc-example">The quarterly review checklist: verify every link works, run each command in staging to confirm it still works, check that every role and contact is current, verify the escalation policy name is still active in PagerDuty.</div>
+      </div>
+    </div>
+
+    <div class="trigger-card">
+      <div class="tc-icon">🤖</div>
+      <div class="tc-body">
+        <div class="tc-title">Trigger 5: AI-assisted staleness detection</div>
+        <div class="tc-desc">Emerging AI tools can scan documentation and flag potential staleness: references to deprecated APIs, tool versions that no longer match current ones, or internal URLs that return errors. Teams using tools like Confluence AI or custom documentation pipelines can automate this scan on a weekly basis.</div>
+        <div class="tc-example">Example: An AI documentation scanner finds that a runbook references "kubectl --generator=deployment/v1beta1" — a flag removed in Kubernetes 1.18. It flags the runbook for immediate review.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Ownership: The Most Ignored Part of SOP Maintenance</h2>
+    <p>A document with no single named owner doesn't get updated. "The team owns it" is not ownership — it's diffused responsibility that no one actually acts on.</p>
+    <p>Every SOP and runbook needs one person named as owner. Not a team. A person. That person is accountable for making sure the document is reviewed on trigger events and that review tasks get completed.</p>
+    <table class="own-table">
+      <thead><tr><th>Model</th><th>How It Works</th><th>Best For</th><th>Failure Mode</th></tr></thead>
+      <tbody>
+        <tr><td><strong>System Owner</strong></td><td>The engineer most familiar with the system owns all runbooks for that system</td><td>Small teams, specialized systems</td><td>Bottleneck when that person is busy or leaves</td></tr>
+        <tr><td><strong>Rotating Owner</strong></td><td>On-call rotation assigns runbook ownership alongside on-call duties</td><td>SRE teams with formal rotation</td><td>Owner doesn't have deep familiarity, reviews are superficial</td></tr>
+        <tr><td><strong>Last Editor Rule</strong></td><td>Whoever last made a significant edit becomes the temporary owner</td><td>Docs-as-code workflows</td><td>Ownership can shift unexpectedly; may surprise contributors</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Apply It</div>
+      <div class="sim-title">Which review trigger should fire first?</div>
+      <p style="font-size:15px;color:var(--gray-muted);margin-bottom:16px;">Your team's inference API runbook was last reviewed 6 weeks ago. Yesterday, the team migrated the AI inference service to a new Kubernetes cluster with a different namespace. The quarterly review is due in 3 weeks. When should the runbook be reviewed?</p>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">At the next quarterly review in 3 weeks — the migration was recent and engineers are still familiar with the changes</button>
+        <button class="sim-opt" onclick="doSim(this,true)">Immediately — the cluster migration is an infrastructure change trigger. Every kubectl command, namespace reference, and cluster context in the runbook may now be wrong. Using an unreviewed runbook after a cluster migration is a significant risk during any incident.</button>
+        <button class="sim-opt" onclick="doSim(this,false)">After the next incident — that's when you'll find out what's actually wrong</button>
+        <button class="sim-opt" onclick="doSim(this,false)">Within a week — give engineers time to settle after the migration before reviewing documentation</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team has a process where two engineers "sign off" on a runbook every quarter during their weekly sync. Both read through it, say it looks fine, and mark it reviewed. Is this a good review process?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Yes — two reviewers are better than one and quarterly is the right frequency</button>
+        <button class="qopt" onclick="cq(this,true)">No — "reads through and says it looks fine" is not a verification process. A real review verifies that every command still works, every link is live, every contact is current, and every system reference still matches the actual environment. Reading a document and not finding obvious errors is not the same as confirming it's accurate.</button>
+        <button class="qopt" onclick="cq(this,false)">Partially — two reviewers is good, but they should also add notes on what they checked</button>
+        <button class="qopt" onclick="cq(this,false)">Yes — if the engineers are experienced with the system, they'll notice anything that's wrong</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Calendar-only review cycles fail for four reasons: they're not tied to real changes, no one person owns the review, reviewers don't know what "verified" means, and incident-based updates almost never happen. A good maintenance system combines trigger-based reviews with a calendar backstop.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The five review triggers: any incident that used the document, any infrastructure change that touches it, team membership changes, the calendar backstop, and AI-assisted staleness detection. Infrastructure change and incident triggers are the most important — they catch the gaps that matter most.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>A real review verifies: every command still works (test it), every link is live (click it), every contact and escalation path is current (confirm it), and every system reference matches the actual environment (check it). Reading and not finding obvious errors is not a verification.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("Immediately"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. A cluster migration is a direct infrastructure change trigger. Every kubectl command in the runbook likely specifies the old cluster context and namespace — running those commands against the new cluster in the wrong namespace during an incident would be a serious operational error. The runbook must be updated before anyone uses it in production. Waiting 3 weeks for the quarterly review or 'until the next incident' means the next incident is the first time engineers discover the runbook is wrong.";
+  else fb.textContent="❌ Waiting is the wrong choice here. The cluster migration directly affects almost every command in an infrastructure runbook — namespaces, cluster contexts, dashboard references. Engineers who haven't memorized every detail of the migration will use the runbook and run commands against the wrong cluster or namespace. The right answer is to update immediately, as part of the migration completion checklist. Infrastructure change is a first-class trigger precisely because the impact is immediate and predictable.";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Reading a runbook and not spotting obvious errors is not the same as verifying it. The failure modes of a stale runbook are often invisible to a reader: a command that looks correct but was deprecated in the current tool version, a dashboard URL that looks like a valid internal URL but redirects to a 404, a PagerDuty policy name that was renamed last month. These don't stand out when you read the document — they only surface when you test it. A real review requires opening a terminal, running the commands in staging, clicking every link, and looking up every contact to confirm they're still active.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("not a verification process"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Adding review notes and having two reviewers are improvements, but they don't fix the core problem. Experienced engineers can miss stale details because they know the system — they fill in gaps mentally without noticing the runbook is missing them. The problem isn't the number of reviewers or whether they document their review. It's that 'reading and checking' is not the same as 'testing and verifying.' Commands need to be run. Links need to be clicked. Contacts need to be confirmed active. A good review process specifies exactly what to check, not just who to check it.";}
+}
+</script>
+</body>
+</html>

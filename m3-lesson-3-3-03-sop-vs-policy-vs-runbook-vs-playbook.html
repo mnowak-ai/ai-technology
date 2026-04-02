@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP vs. Policy vs. Runbook vs. Playbook: Four Documents Tech Teams Confuse Constantly</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Doc definition cards */
+.doc-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;margin:20px 0;overflow:hidden;}
+.dc-header{padding:20px 24px;display:flex;align-items:flex-start;gap:16px;}
+.dc-icon{font-size:28px;flex-shrink:0;margin-top:2px;}
+.dc-title-group{}
+.dc-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:4px;}
+.dc-name{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);line-height:1.2;}
+.dc-tagline{font-size:14px;color:var(--gray-muted);margin-top:4px;font-style:italic;}
+.dc-body{padding:0 24px 20px;}
+.dc-question{font-size:15px;font-weight:600;color:var(--purple-dark);margin-bottom:8px;margin-top:16px;}
+.dc-body p{font-size:14px;line-height:1.8;color:var(--gray-text);margin-bottom:12px;}
+.dc-example{background:var(--gray-soft);border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.75;color:var(--gray-text);margin:8px 0;}
+.dc-example-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:6px;}
+.dc-props{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.dc-prop{background:var(--purple-pale);border-radius:8px;padding:10px 12px;}
+.dc-prop-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:4px;}
+.dc-prop-val{font-size:13px;color:var(--gray-text);line-height:1.5;}
+
+/* Comparison table */
+.comp-table{width:100%;border-collapse:collapse;border-radius:16px;overflow:hidden;margin:20px 0;border:1.5px solid var(--purple-mid);}
+.comp-table th{background:var(--purple-dark);color:var(--white);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:14px 16px;text-align:left;}
+.comp-table td{font-size:13px;line-height:1.6;color:var(--gray-text);padding:12px 16px;border-bottom:1px solid var(--purple-mid);}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table tr:nth-child(even) td{background:var(--gray-soft);}
+.comp-table .doc-label{font-weight:700;color:var(--purple-dark);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.3 — Creating SOPs &amp; Guides</div>
+  <h1>SOP vs. Policy vs. Runbook vs. Playbook: Four Documents Tech Teams Confuse Constantly</h1>
+  <p class="hero-sub">Engineers use these four terms interchangeably. Auditors, regulators, and incident commanders do not. Here's the real difference — and why it matters more than you think.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>Why Confusing These Four Documents Is a Real Problem</h2>
+    <p>It feels like a terminology debate. It isn't. When a compliance auditor asks for your "data handling policy" and you hand them a runbook, they don't accept it — because a runbook is not a policy. When an incident commander grabs what they think is a runbook and starts following it step by step during an outage, but it's actually a general SOP with no real-time escalation steps, the response slows down.</p>
+    <p><mark>The wrong document used in the right moment can be just as harmful as no document at all.</mark> Each of these four types serves a different purpose, lives at a different level of specificity, and is used by different people in different situations.</p>
+    <div class="pull-quote"><p>A policy tells you what must be true. An SOP tells you how to make it true. A runbook tells you what to do right now. A playbook tells you how to handle the whole range of scenarios.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Documents, Defined</h2>
+
+    <div class="doc-card">
+      <div class="dc-header">
+        <div class="dc-icon">📋</div>
+        <div class="dc-title-group">
+          <div class="dc-type">Document Type 1</div>
+          <div class="dc-name">Policy</div>
+          <div class="dc-tagline">What must be true — and who is responsible for it</div>
+        </div>
+      </div>
+      <div class="dc-body">
+        <div class="dc-question">What is it?</div>
+        <p>A policy is a formal statement of what an organization requires, permits, or prohibits. It says <em>what must happen</em> — not how to make it happen. Policies are usually written for compliance, governance, or risk management purposes. They're approved by leadership and apply to everyone in scope.</p>
+        <div class="dc-question">Who uses it?</div>
+        <p>Compliance officers, auditors, legal teams, HR, executives. Engineers reference policies to understand what they're required to do — but they don't execute procedures from a policy document.</p>
+        <div class="dc-props">
+          <div class="dc-prop"><div class="dc-prop-label">Level of detail</div><div class="dc-prop-val">High-level — what, not how</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Updated when</div><div class="dc-prop-val">Annually or with regulatory changes</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Owned by</div><div class="dc-prop-val">Leadership / compliance / legal</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Used during</div><div class="dc-prop-val">Audits, onboarding, governance reviews</div></div>
+        </div>
+        <div class="dc-example">
+          <div class="dc-example-label">📄 Example</div>
+          <strong>AI Model Data Retention Policy:</strong> All data used to train or evaluate AI models in production must be retained for a minimum of 24 months. Data must be stored in encrypted, access-controlled storage. Access logs must be maintained and available for compliance review within 48 hours of request.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="dc-header">
+        <div class="dc-icon">📝</div>
+        <div class="dc-title-group">
+          <div class="dc-type">Document Type 2</div>
+          <div class="dc-name">Standard Operating Procedure (SOP)</div>
+          <div class="dc-tagline">How to do something — the same way, every time</div>
+        </div>
+      </div>
+      <div class="dc-body">
+        <div class="dc-question">What is it?</div>
+        <p>An SOP is a step-by-step procedure for completing a routine task. It's more detailed than a policy and more general than a runbook. SOPs cover repeated, predictable tasks: how to deploy a new service, how to onboard a new engineer, how to run a security access review. They're designed to produce consistent results across different team members.</p>
+        <div class="dc-question">Who uses it?</div>
+        <p>Engineers, operations staff, any team member who needs to complete the procedure. SOPs are often used during planned, scheduled work — not usually during active incidents.</p>
+        <div class="dc-props">
+          <div class="dc-prop"><div class="dc-prop-label">Level of detail</div><div class="dc-prop-val">Step-by-step, but not real-time specific</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Updated when</div><div class="dc-prop-val">Quarterly or after process changes</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Owned by</div><div class="dc-prop-val">Team lead / process owner</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Used during</div><div class="dc-prop-val">Planned, routine procedures</div></div>
+        </div>
+        <div class="dc-example">
+          <div class="dc-example-label">📄 Example</div>
+          <strong>SOP: Deploying a New ML Model to Production</strong> — Steps for creating the deployment artifact, running validation tests, requesting deployment approval, staging rollout, and monitoring post-deployment metrics for 24 hours.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="dc-header">
+        <div class="dc-icon">🔧</div>
+        <div class="dc-title-group">
+          <div class="dc-type">Document Type 3</div>
+          <div class="dc-name">Runbook</div>
+          <div class="dc-tagline">What to do right now — during a specific, active event</div>
+        </div>
+      </div>
+      <div class="dc-body">
+        <div class="dc-question">What is it?</div>
+        <p>A runbook is a document designed to be followed during an active operational event — typically an incident, alert, or time-sensitive procedure. Runbooks are hyper-specific: they tell the engineer exactly what commands to run, exactly what output to look for, and exactly what to do next. They're written for speed and accuracy under pressure.</p>
+        <div class="dc-question">Who uses it?</div>
+        <p>On-call engineers, site reliability engineers (SREs), incident responders. Runbooks are grabbed at the moment an alert fires or an incident begins. They need to be followable by someone who may be tired, stressed, and unfamiliar with this specific system.</p>
+        <div class="dc-props">
+          <div class="dc-prop"><div class="dc-prop-label">Level of detail</div><div class="dc-prop-val">Exact commands, real-time specific</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Updated when</div><div class="dc-prop-val">After every incident that touches it</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Owned by</div><div class="dc-prop-val">On-call team / SRE team</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Used during</div><div class="dc-prop-val">Active incidents and alerts</div></div>
+        </div>
+        <div class="dc-example">
+          <div class="dc-example-label">📄 Example</div>
+          <strong>Runbook: AI Inference Service — High Latency Alert</strong> — Triggered by: PagerDuty alert when p99 latency > 2s for 5 minutes. Step 1: Run kubectl get pods -n ai-prod. Step 2: Check GPU utilization in Grafana. If GPU > 95%: proceed to Step 4 (scaling). If GPU normal: proceed to Step 6 (model version check)…
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="dc-header">
+        <div class="dc-icon">📚</div>
+        <div class="dc-title-group">
+          <div class="dc-type">Document Type 4</div>
+          <div class="dc-name">Playbook</div>
+          <div class="dc-tagline">The complete guide for handling a whole category of situation</div>
+        </div>
+      </div>
+      <div class="dc-body">
+        <div class="dc-question">What is it?</div>
+        <p>A playbook is a collection of procedures, decision trees, and guidelines for handling a broad scenario or category of events. Think of it as the "how we handle X" document — where X is something like "a security breach," "a major outage," or "a compliance audit." A playbook might link to multiple runbooks and SOPs depending on how the situation develops.</p>
+        <div class="dc-question">Who uses it?</div>
+        <p>Incident commanders, security teams, business continuity teams. Playbooks are strategic — they help the right person make decisions at each stage of a complex event. They say: given where we are, here's what to do next.</p>
+        <div class="dc-props">
+          <div class="dc-prop"><div class="dc-prop-label">Level of detail</div><div class="dc-prop-val">Strategic + tactical, covers multiple scenarios</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Updated when</div><div class="dc-prop-val">After major incidents or tabletop exercises</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Owned by</div><div class="dc-prop-val">Incident command / security / leadership</div></div>
+          <div class="dc-prop"><div class="dc-prop-label">Used during</div><div class="dc-prop-val">Complex, multi-stage, or high-severity events</div></div>
+        </div>
+        <div class="dc-example">
+          <div class="dc-example-label">📄 Example</div>
+          <strong>Playbook: AI System Security Incident Response</strong> — Covers the full lifecycle of a security incident affecting AI infrastructure: initial detection, containment decision tree, communication protocol, regulatory notification requirements, forensic preservation steps, recovery procedures, and post-incident review requirements.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Side-by-Side Comparison</h2>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Document</th>
+          <th>Answers</th>
+          <th>Used When</th>
+          <th>Audience</th>
+          <th>Written for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="doc-label">📋 Policy</td><td>What must be true</td><td>Audits, governance</td><td>Compliance, leadership</td><td>Obligation and accountability</td></tr>
+        <tr><td class="doc-label">📝 SOP</td><td>How to do it</td><td>Planned, routine work</td><td>Any team member</td><td>Consistency across people</td></tr>
+        <tr><td class="doc-label">🔧 Runbook</td><td>What to do right now</td><td>Active incident or alert</td><td>On-call engineer</td><td>Speed and accuracy under pressure</td></tr>
+        <tr><td class="doc-label">📚 Playbook</td><td>How to handle the whole thing</td><td>Complex, multi-stage events</td><td>Incident commander</td><td>Decision-making across scenarios</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Apply It</div>
+      <div class="sim-title">Which document type does your security team actually need?</div>
+      <p style="font-size:15px;color:var(--gray-muted);margin-bottom:16px;">A security engineer says: "We need a document that tells our team exactly what commands to run when we detect a potential API key leak in our production logs — step by step, with specific grep patterns to check, specific services to inspect, and escalation steps." What document type are they describing?</p>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">Policy — this is about how the company requires teams to handle security events</button>
+        <button class="sim-opt" onclick="doSim(this,false)">SOP — this is a step-by-step procedure for a security task</button>
+        <button class="sim-opt" onclick="doSim(this,true)">Runbook — this is hyper-specific (exact commands, grep patterns, escalation steps) designed to be used during an active security event, not as a general procedure</button>
+        <button class="sim-opt" onclick="doSim(this,false)">Playbook — this needs to cover the full range of security incident scenarios</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A compliance auditor asks your team for "your AI model access policy." Your team sends them a detailed SOP that describes how engineers request and receive model API access. The auditor rejects it. Why?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Because the SOP wasn't signed by a senior engineer</button>
+        <button class="qopt" onclick="cq(this,true)">Because a policy states organizational requirements (who may access models, under what conditions, what's prohibited) while an SOP describes how those requirements are implemented (the access request steps). Auditors need the policy — the "what must be true" — not the procedure for achieving it.</button>
+        <button class="qopt" onclick="cq(this,false)">Because the SOP was too detailed — auditors want high-level summaries</button>
+        <button class="qopt" onclick="cq(this,false)">Because the SOP referenced internal systems the auditor can't verify</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Policy says what must be true. SOP says how to do something. Runbook says what to do right now. Playbook covers the whole scenario. These aren't stylistic preferences — they're four distinct document types with different audiences, update cycles, and purposes.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Runbooks are designed for use under pressure. They must contain exact commands, specific outputs to look for, and clear decision points — not the general guidance of an SOP. If your "runbook" reads like an SOP, an on-call engineer will lose time during an incident trying to translate general steps into real actions.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When an auditor, regulator, or executive asks for a document by type, they mean the specific type — not the closest thing your team has. Knowing the difference protects your team from compliance failures and ensures the right document is ready before it's urgently needed.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("hyper-specific"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The engineer described a runbook — a document with exact commands, specific patterns to search for, and escalation steps, designed to be used during an active security event. An SOP might cover 'how to conduct a security investigation in general,' but a runbook for a specific scenario (API key leak in production logs) is built for immediate use under pressure. The key signals were: exact commands, grep patterns, real-time use during an active event.";
+  else fb.textContent="❌ A policy covers obligations, not commands. An SOP covers general procedure, not real-time incident response with specific commands. A playbook would cover a broader security incident scenario — it might include multiple runbooks and decision trees. What the engineer described is a runbook: highly specific, command-level detail, designed for one scenario, used during an active event.";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. A compliance auditor asking for a 'policy' wants a formal statement of organizational requirements: who is permitted to access AI models, under what conditions, what data handling is required, what's explicitly prohibited, and who is accountable. An SOP describes the mechanism — the access request workflow, the approval steps — but it doesn't state the organizational commitment. Auditors often work from a compliance framework that expects specific document types in specific places. Sending the wrong type signals that your organization may not have the right governance structure in place.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("what must be true"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The auditor's rejection isn't about signatures, detail level, or internal references. It's about document type. A policy is a governance document that states what the organization requires, permits, and prohibits. An SOP is an operational document that describes how a process works. Auditors need both — but they need them for different reasons. The policy establishes the compliance commitment; the SOP demonstrates the implementation. Sending the SOP when asked for a policy suggests the policy may not exist.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using AI to Draft SOPs: What Works, What Doesn't, and What Must Be Human-Reviewed</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Error card */
+.error-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;margin:20px 0;overflow:hidden;}
+.ec-header{background:var(--orange-pale);border-bottom:1.5px solid #F5D8A0;padding:18px 24px;display:flex;align-items:center;gap:12px;}
+.ec-num{width:34px;height:34px;border-radius:50%;background:var(--orange);color:var(--white);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ec-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:#92400E;}
+.ec-body{padding:20px 24px;}
+.ec-body p{font-size:15px;line-height:1.8;color:var(--gray-text);margin-bottom:12px;}
+.ec-bad{background:var(--red-pale);border:1px solid #F5C2C2;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.75;color:var(--gray-text);font-family:monospace;margin-bottom:8px;}
+.ec-bad-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--red);margin-bottom:5px;}
+.ec-fix{background:var(--green-pale);border:1px solid #B5D5C0;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;color:var(--gray-text);margin-top:8px;}
+.ec-fix-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--green);margin-bottom:5px;}
+
+/* Works / doesn't grid */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+.col-card{border-radius:16px;padding:20px;}
+.col-card.works{background:var(--green-pale);border:1.5px solid #B5D5C0;}
+.col-card.doesnt{background:var(--red-pale);border:1.5px solid #F5C2C2;}
+.col-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;margin-bottom:12px;}
+.col-card.works .col-title{color:var(--green);}
+.col-card.doesnt .col-title{color:var(--red);}
+.col-item{font-size:13px;line-height:1.7;color:var(--gray-text);padding-left:18px;position:relative;margin-bottom:6px;}
+.col-card.works .col-item::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700;}
+.col-card.doesnt .col-item::before{content:"✗";position:absolute;left:0;color:var(--red);font-weight:700;}
+
+/* Review checklist */
+.review-list{margin:20px 0;}
+.rl-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:12px;margin-top:20px;}
+.rl-section-title:first-child{margin-top:0;}
+.rl-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+.rl-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--purple-mid);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.rl-check:hover{border-color:var(--purple);}
+.rl-check.checked{background:var(--purple);border-color:var(--purple);}
+.rl-check svg{display:none;}
+.rl-check.checked svg{display:block;}
+.rl-text{font-size:14px;line-height:1.65;color:var(--gray-text);padding-top:2px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.3 — Creating SOPs &amp; Guides</div>
+  <h1>Using AI to Draft SOPs: What Works, What Doesn't, and What Must Be Human-Reviewed</h1>
+  <p class="hero-sub">AI can write an SOP in 30 seconds. The problem is that a 30-second AI SOP can cause a 6-hour incident if the right human doesn't review it first. Here's what you need to know.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>AI Is Useful for SOPs — With One Big Condition</h2>
+    <p>AI tools like ChatGPT, Claude, GitHub Copilot, and Confluence AI can write the first draft of an SOP in seconds. They know what an SOP looks like. They can generate the structure, populate the sections, and even write plausible-sounding steps. This is genuinely useful.</p>
+    <p>The condition: <mark>the AI does not know your environment, your team, your tools, or your specific configuration</mark>. It knows what SOPs look like in general. It does not know what your production cluster is named, which version of Kubernetes you're running, who your on-call escalation is, or what your team actually does when a deployment fails.</p>
+    <p>That gap between "plausible-sounding" and "accurate for our environment" is exactly where AI-drafted SOPs fail — and in IT, that failure doesn't show up until an incident.</p>
+    <div class="pull-quote"><p>An AI-drafted SOP is a starting point that sounds finished. That's what makes it dangerous if you treat it as finished.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What AI Does Well</h2>
+    <p>Let's be fair. AI tools are genuinely helpful for SOP drafting in specific ways.</p>
+    <div class="two-col">
+      <div class="col-card works">
+        <div class="col-title">✓ What AI Does Well</div>
+        <div class="col-item">Generates complete SOP structure and section headers instantly</div>
+        <div class="col-item">Writes clear, grammatically correct placeholder text for each section</div>
+        <div class="col-item">Suggests standard steps for common procedures (deployments, incident response)</div>
+        <div class="col-item">Identifies sections you might have forgotten to include</div>
+        <div class="col-item">Rewrites vague or passive steps into clearer, active-voice versions</div>
+        <div class="col-item">Formats numbered steps and checklists consistently</div>
+      </div>
+      <div class="col-card doesnt">
+        <div class="col-title">✗ What AI Gets Wrong</div>
+        <div class="col-item">Environment-specific details (cluster names, namespaces, URLs)</div>
+        <div class="col-item">Version-specific commands that differ between your tools and the defaults</div>
+        <div class="col-item">Your team's actual escalation paths and contacts</div>
+        <div class="col-item">Edge cases and failure modes your team has actually encountered</div>
+        <div class="col-item">Steps that were learned the hard way after incidents</div>
+        <div class="col-item">Internal tool names, aliases, and scripts unique to your org</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Five Errors AI Makes Most Often in SOPs</h2>
+    <p>These aren't random mistakes — they're patterns. AI makes these same errors predictably, which means you can learn to spot them fast.</p>
+
+    <div class="error-card">
+      <div class="ec-header"><div class="ec-num">1</div><div class="ec-title">Generic Environment Details</div></div>
+      <div class="ec-body">
+        <p>AI fills in environment details with plausible-sounding placeholders. These look real but aren't. An engineer following the SOP runs a command against a system that doesn't exist — or worse, against the wrong environment.</p>
+        <div class="ec-bad-label">❌ What AI Writes</div>
+        <div class="ec-bad">kubectl get pods -n production</div>
+        <div class="ec-fix-label">✅ What It Should Say (for your team)</div>
+        <div class="ec-fix">kubectl get pods -n ai-prod --context prod-us-east-1-cluster</div>
+        <p style="font-size:13px;color:var(--gray-muted);margin-top:8px;margin-bottom:0;">The AI doesn't know your namespace is <code>ai-prod</code>, not <code>production</code>. It doesn't know your context name. Every environment-specific detail must be verified and replaced.</p>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header"><div class="ec-num">2</div><div class="ec-title">Missing Failure Handling</div></div>
+      <div class="ec-body">
+        <p>AI writes the happy path. It describes what to do when everything works. It almost never includes what to do when a step fails — which is precisely the information an engineer needs most during an incident.</p>
+        <div class="ec-bad-label">❌ What AI Writes</div>
+        <div class="ec-bad">5. Run the database migration script.<br>6. Verify the migration completed successfully.<br>7. Bring the service back online.</div>
+        <div class="ec-fix-label">✅ What It Should Include</div>
+        <div class="ec-fix">5. Run: ./run_migration.sh --env prod<br>   If exit code ≠ 0: DO NOT proceed. Run ./rollback_migration.sh immediately. Page #db-oncall.<br>6. Verify: run ./check_migration_status.sh. Confirm "Migration: COMPLETE" in output.<br>   If status shows PARTIAL or ERROR: stop and page #db-oncall before proceeding.</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header"><div class="ec-num">3</div><div class="ec-title">Outdated or Version-Wrong Commands</div></div>
+      <div class="ec-body">
+        <p>AI training data includes documentation from many versions of many tools. The command it generates may be correct for an older or newer version than what your team uses. This is especially common with Kubernetes, Terraform, and cloud CLIs, which change frequently.</p>
+        <div class="ec-bad-label">❌ What AI Might Write (for an older kubectl version)</div>
+        <div class="ec-bad">kubectl run --generator=deployment/apps.v1beta1 ...</div>
+        <div class="ec-fix-label">✅ Verify Against Your Actual Tool Version</div>
+        <div class="ec-fix">Run: kubectl version --client — then confirm the command matches your version's syntax. Never paste AI-generated commands into production without running them in a non-production environment first.</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header"><div class="ec-num">4</div><div class="ec-title">Generic Escalation Paths</div></div>
+      <div class="ec-body">
+        <p>AI writes escalation sections that sound correct but refer to generic roles, not real people or real channels. "Escalate to the infrastructure team" is useless at 3am. "Page the infrastructure on-call via PagerDuty policy infra-prod-oncall and post in #infra-alerts" is actionable.</p>
+        <div class="ec-bad-label">❌ What AI Writes</div>
+        <div class="ec-bad">If the issue cannot be resolved within the expected timeframe, escalate to the appropriate engineering team for further investigation.</div>
+        <div class="ec-fix-label">✅ What It Should Say</div>
+        <div class="ec-fix">If root cause is not identified within 30 minutes: page ml-platform-oncall in PagerDuty. Post in #ai-oncall with: alert name, what you've checked, current metrics. If error rate exceeds 20% for 10+ minutes: declare P1 in #incident-response.</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header"><div class="ec-num">5</div><div class="ec-title">Missing Team-Specific Context</div></div>
+      <div class="ec-body">
+        <p>Your team has learned things the hard way. There are steps in your procedures that exist because of specific past incidents. AI doesn't know about the incident in Q3 where skipping the cache drain caused a 4-hour recovery. It won't include the warning. Your team's institutional knowledge doesn't make it into an AI-drafted SOP unless a human adds it.</p>
+        <div class="ec-fix-label">✅ What You Must Add</div>
+        <div class="ec-fix">⚠️ Important: Always drain the cache before running this step. In October 2023, a deployment without cache drain caused a 4-hour data inconsistency recovery. See incident report INC-2023-0847.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Apply It</div>
+      <div class="sim-title">What is the most critical problem with this AI-drafted SOP step?</div>
+      <p style="font-size:15px;color:var(--gray-muted);margin-bottom:16px;">An AI tool generated this step for an incident response SOP. Read it carefully and identify the highest-risk issue.</p>
+      <div style="background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:16px;font-size:14px;font-family:monospace;line-height:1.8;color:var(--gray-text);">
+        <strong>Step 4:</strong> Roll back the model deployment to the previous version.<br>
+        Run: <code>./deploy.sh --model inference-api --version previous --rollback true</code><br>
+        Monitor the service health dashboard to confirm the rollback completes successfully.
+      </div>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">The dashboard is not linked — engineers won't know which dashboard to check</button>
+        <button class="sim-opt" onclick="doSim(this,true)"><code>--version previous</code> is not a real version identifier — it's a placeholder. In a real rollback, you need an actual version number (e.g., v2.3.1). Running this command during an incident could target the wrong version or fail entirely.</button>
+        <button class="sim-opt" onclick="doSim(this,false)">There's no success threshold defined — "completes successfully" is too vague</button>
+        <button class="sim-opt" onclick="doSim(this,false)">There's no escalation step if the rollback itself fails</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Non-Negotiable Human Review Checklist</h2>
+    <p>Before any AI-drafted SOP ships to your team, a human with direct knowledge of the procedure must review these items. Check them all.</p>
+    <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:16px 0;">
+      <div class="review-list">
+        <div class="rl-section-title">🔴 Must Fix Before This SOP Ships</div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Every environment name, namespace, cluster name, and URL has been verified against your actual infrastructure</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Every command has been tested in a non-production environment and confirmed to work with your current tool versions</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Escalation paths name specific PagerDuty policies, Slack channels, or people — not generic roles</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Every step that can fail has a "what to do if this fails" instruction</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Team-specific context — lessons learned from past incidents — has been added where relevant</div></div>
+        <div class="rl-section-title">🟡 Check When Relevant</div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Version numbers are specified where commands are version-dependent</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Success criteria are specific and observable (HTTP 200, specific log output) not vague ("confirm the service is healthy")</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">The scope accurately reflects which environments, systems, and roles this applies to</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Your team uses AI to draft an SOP for responding to a database failover event. The AI's draft looks professional, covers all seven SOP sections, and the steps seem logical. A junior engineer reviews it and says it looks good. Should the team use it?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Yes — if it covers all seven sections and looks logical, it's ready to use</button>
+        <button class="qopt" onclick="cq(this,false)">Yes — but only after having a second junior engineer review it for clarity</button>
+        <button class="qopt" onclick="cq(this,true)">No — an AI-drafted SOP for a critical production procedure requires review by a senior engineer who knows the actual failover environment, has access to verify the commands, and can add team-specific context from past incidents. A junior engineer can check clarity, not accuracy.</button>
+        <button class="qopt" onclick="cq(this,false)">No — AI should never be used to draft SOPs for production procedures</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI is great for generating SOP structure and placeholder content quickly. It is not reliable for environment-specific details, commands, escalation paths, or team-specific context — and these are precisely the parts that matter most when an engineer is following the SOP under pressure.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The five errors AI makes most often in SOPs: generic environment details, missing failure handling, outdated or version-wrong commands, generic escalation paths, and missing team-specific context from past incidents. Every AI-drafted SOP should be checked for all five.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>"The AI wrote it" is not a defense in a postmortem. The moment a human approves an SOP, that human owns its accuracy. AI-drafted SOPs for critical production procedures must be reviewed by someone who can verify commands in a real environment — not just someone who can check if it reads well.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("--version previous"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. '--version previous' is not a real version specifier — it's a classic AI placeholder that sounds plausible but doesn't work in practice. A real rollback command needs an actual version identifier (like v2.3.1 or a specific image tag). Running this during an incident could produce an error or, depending on how the script handles invalid versions, roll back to an unintended version. The missing dashboard link and vague success criterion are real issues too — but an ambiguous version identifier in a production rollback is the highest-risk problem.";
+  else fb.textContent="❌ The missing dashboard link and vague success threshold are valid concerns. The absent escalation step is also important. But none of these are as immediately dangerous as running a rollback command with '--version previous' as the version parameter. That's not a real version — it's a placeholder that an AI generated because it sounds right. In a real incident, this command could fail entirely or target the wrong version, turning a recoverable degradation into a longer outage.";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. A junior engineer can tell you if the SOP is clear and well-structured. They cannot tell you if the commands are correct for your specific database failover setup, if the escalation path matches your actual on-call rotation, or if there are critical edge cases that your team learned the hard way. For a production procedure involving database failovers, the reviewer must be someone with direct experience of how your failover works — someone who can run the commands in a staging environment and verify each step actually does what it says.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("review by a senior engineer"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ AI is genuinely useful for drafting SOPs — the position that AI should never be used is too absolute. But a draft that looks good and covers the right sections is not the same as a draft that's accurate for your environment. The issue isn't clarity — the junior engineer covered that. The issue is accuracy: does the failover command work with your actual database version? Does 'escalate to the DBA team' mean an actual person or PagerDuty policy? Only someone with direct production experience can verify these things.";}
+}
+function toggleCheck(el){el.classList.toggle("checked");}
+</script>
+</body>
+</html>
