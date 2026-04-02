@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Generated Text in Technical Documentation: What You Must Review Before It Ships</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Error pattern cards */
+.error-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;margin:20px 0;overflow:hidden;}
+.ec-header{background:var(--orange-pale);border-bottom:1.5px solid #F5D8A0;padding:18px 24px;display:flex;align-items:center;gap:12px;}
+.ec-num{width:34px;height:34px;border-radius:50%;background:var(--orange);color:var(--white);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ec-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:#92400E;}
+.ec-body{padding:20px 24px;}
+.ec-body p{font-size:15px;line-height:1.8;color:var(--gray-text);margin-bottom:12px;}
+.ec-example{background:var(--gray-soft);border-radius:12px;padding:16px;margin:12px 0;}
+.ec-example-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:8px;}
+.ec-bad{background:var(--red-pale);border:1px solid #F5C2C2;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.75;color:var(--gray-text);font-family:monospace;margin-bottom:8px;}
+.ec-bad-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--red);margin-bottom:5px;}
+.ec-risk{background:var(--red-pale);border-radius:8px;padding:10px 14px;font-size:13px;line---color:var(--gray-text);display:flex;gap:8px;align-items:flex-start;margin-top:8px;}
+.ec-risk-icon{font-size:15px;flex-shrink:0;}
+.ec-risk-text{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.ec-fix{background:var(--green-pale);border:1px solid #B5D5C0;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;color:var(--gray-text);}
+.ec-fix-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--green);margin-bottom:5px;}
+
+/* Tool spotlight */
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.tool-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.tool-name{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.tool-good{font-size:12px;line-height:1.6;color:var(--green);margin-bottom:6px;}
+.tool-watch{font-size:12px;line-height:1.6;color:var(--orange);}
+.tool-good::before{content:"✓ Good at: ";font-weight:700;}
+.tool-watch::before{content:"⚠ Watch for: ";font-weight:700;}
+
+/* Accountability chain */
+.chain{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.chain-step{display:flex;gap:0;}
+.chain-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.chain-dot{width:38px;height:38px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-size:16px;flex-shrink:0;}
+.chain-line{flex:1;width:2px;background:var(--purple-mid);margin:4px 0;}
+.chain-step:last-child .chain-line{display:none;}
+.chain-body{flex:1;padding:0 0 22px 14px;padding-top:4px;}
+.chain-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:3px;}
+.chain-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.chain-desc{font-size:14px;line-height:1.65;color:var(--gray-text);}
+
+/* Review checklist */
+.review-list{margin:20px 0;}
+.rl-section{margin-bottom:20px;}
+.rl-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:10px;padding-left:4px;}
+.rl-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px dashed var(--purple-mid);}
+.rl-item:last-child{border-bottom:none;}
+.rl-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--purple-mid);background:var(--white);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.rl-check.checked{background:var(--purple);border-color:var(--purple);}
+.rl-check svg{display:none;}
+.rl-check.checked svg{display:block;}
+.rl-text{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.rl-priority{font-size:10px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-left:6px;}
+.priority-high{background:var(--red-pale);color:var(--red);}
+.priority-med{background:var(--orange-pale);color:var(--orange);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-doc{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:18px;margin-bottom:16px;font-size:14px;line-height:1.8;color:var(--gray-text);font-family:monospace;}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.1 — Clear Technical Communication</div>
+  <h1>AI-Generated Text in Technical Documentation: What You Must Review Before It Ships</h1>
+  <p class="hero-sub">Copilot drafted it. Confluence AI summarized it. Jira AI wrote the ticket. Now you're about to approve it. Here's what you need to check — and what happens when you don't.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>The New Technical Writing Workflow</h2>
+    <p>AI writing tools are now standard in most engineering environments. GitHub Copilot suggests code comments and PR descriptions. Confluence AI summarizes meeting notes into action items. Jira AI drafts tickets from brief descriptions. Custom LLMs generate runbooks from incident data.</p>
+    <p>These tools save time. They also make a specific set of mistakes — and those mistakes have a habit of shipping into production documentation where they cause real problems months later.</p>
+    <p>The issue isn't that AI writes poorly. <mark>AI documentation tools write fluently, confidently, and incorrectly — in ways that are easy to miss when you're reading quickly.</mark> They sound like good documentation. They often aren't.</p>
+    <div class="pull-quote"><p>An AI can write a runbook that looks perfect and will fail spectacularly the first time an engineer tries to follow it under pressure. Your job is to be the person who catches that before it ships.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Six Most Common AI Documentation Errors</h2>
+    <p>These patterns appear consistently across AI-generated technical documentation. Learn to recognize them before you approve anything.</p>
+
+    <div class="error-card">
+      <div class="ec-header">
+        <div class="ec-num">1</div>
+        <div class="ec-title">Environment-Specific Details That Are Wrong or Generic</div>
+      </div>
+      <div class="ec-body">
+        <p>AI tools generate documentation based on patterns across many codebases and organizations. They don't know your specific environment — your cluster names, your internal endpoints, your version numbers, your team's naming conventions.</p>
+        <div class="ec-example">
+          <div class="ec-bad-label">⚠ AI-generated (looks correct — probably isn't)</div>
+          <div class="ec-bad">To restart the inference service, run:
+kubectl rollout restart deployment/inference-service -n production
+
+Verify the pods are healthy:
+kubectl get pods -n production -l app=inference-service</div>
+          <div class="ec-risk"><div class="ec-risk-icon">🔴</div><div class="ec-risk-text">Your namespace might be <code>ml-prod</code> not <code>production</code>. Your deployment name might be <code>inference-api</code> not <code>inference-service</code>. Your team might not use the <code>app=</code> label selector. Each of these will cause the command to silently do nothing — or worse, affect the wrong resource.</div></div>
+        </div>
+        <div class="ec-fix"><div class="ec-fix-label">✓ What to verify</div>Run the command in a staging environment before publishing. Confirm the namespace, deployment name, and label selectors against your actual cluster configuration. Replace any generic values with your specific environment's values.</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header">
+        <div class="ec-num">2</div>
+        <div class="ec-title">Missing Rollback and Recovery Steps</div>
+      </div>
+      <div class="ec-body">
+        <p>AI-generated procedures almost always describe the happy path — what to do when everything works. They consistently underrepresent what to do when a step fails, what rollback looks like, and who to escalate to.</p>
+        <div class="ec-example">
+          <div class="ec-bad-label">⚠ AI-generated (incomplete)</div>
+          <div class="ec-bad">Deployment steps:
+1. Run the deploy script: ./deploy.sh --env prod --version v2.4.1
+2. Monitor the deployment in Datadog
+3. Confirm successful deployment by checking the status dashboard</div>
+          <div class="ec-risk"><div class="ec-risk-icon">🔴</div><div class="ec-risk-text">What happens if the deploy script fails at step 1? What does a "successful" deployment look like in Datadog — what metric, what threshold? What's the rollback command? Who do you call if the dashboard shows degraded? An engineer following this at 2am has nowhere to go if anything goes wrong.</div></div>
+        </div>
+        <div class="ec-fix"><div class="ec-fix-label">✓ What to add</div>For every AI-generated procedure, ask: "What does the engineer do if this step fails?" Add error handling, rollback commands, escalation paths, and specific success criteria for each step.</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header">
+        <div class="ec-num">3</div>
+        <div class="ec-title">Ambiguity Resolved Into False Certainty</div>
+      </div>
+      <div class="ec-body">
+        <p>This is the most dangerous AI documentation error. When the source material contains uncertainty ("we believe this might be caused by..."), AI tools often remove that uncertainty in the summary ("the root cause is..."). This is called ambiguity deletion — and it actively misleads future readers.</p>
+        <div class="ec-example">
+          <div class="ec-bad-label">⚠ AI summary of incident notes</div>
+          <div class="ec-bad">Root cause: memory leak in the caching module. Issue resolved after pod restart. Monitoring shows stable. Incident closed.</div>
+          <div class="ec-risk"><div class="ec-risk-icon">🔴</div><div class="ec-risk-text">The actual engineering notes said: "We believe the memory leak in the caching module was the proximate cause, but we haven't ruled out a race condition in the job scheduler. Should monitor for 48 hours before closing." The AI summary deleted the uncertainty — and the instruction to keep the incident open.</div></div>
+        </div>
+        <div class="ec-fix"><div class="ec-fix-label">✓ What to verify</div>Always compare AI summaries against source notes when the document involves incident conclusions, root cause determinations, or resolution status. Any uncertainty in the original must be preserved in the summary.</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header">
+        <div class="ec-num">4</div>
+        <div class="ec-title">Version-Dependent Steps That Are Outdated</div>
+      </div>
+      <div class="ec-body">
+        <p>AI tools are trained on data with a cutoff date. Kubernetes commands, Terraform syntax, API endpoints, and tool flags change across versions. An AI-generated runbook may reference a flag that was deprecated, a command that changed syntax, or an API that no longer exists in the version your team uses.</p>
+        <div class="ec-example">
+          <div class="ec-bad-label">⚠ Version-specific risk</div>
+          <div class="ec-bad">Scale the deployment:
+kubectl scale --replicas=5 deployment/inference-api
+
+Check resource usage:
+kubectl top nodes --sort-by=memory</div>
+          <div class="ec-risk"><div class="ec-risk-icon">🔴</div><div class="ec-risk-text">The <code>--sort-by</code> flag for <code>kubectl top</code> has changed behavior across versions. Helm commands, Terraform resource names, and cloud provider CLI flags are especially prone to version drift. Commands that look right but reference deprecated syntax will fail silently or produce unexpected results.</div></div>
+        </div>
+        <div class="ec-fix"><div class="ec-fix-label">✓ What to verify</div>Run every command in the runbook against your actual environment and tool versions before publishing. Add version requirements at the top of any document with tool-specific commands ("Requires: kubectl v1.28+, Terraform 1.6+").</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header">
+        <div class="ec-num">5</div>
+        <div class="ec-title">Generic Procedures That Don't Match Your Team's Workflow</div>
+      </div>
+      <div class="ec-body">
+        <p>AI-generated SOPs and runbooks describe what a typical team would do — not what your team actually does. Your team may use a different escalation path, a different approval process, different monitoring tools, or a different deployment pipeline. Generic procedures that look correct will cause engineers to follow the wrong process during incidents.</p>
+        <div class="ec-example">
+          <div class="ec-bad-label">⚠ Generic AI escalation path</div>
+          <div class="ec-bad">If the issue cannot be resolved within 30 minutes, escalate to the senior on-call engineer. If unresolved after 60 minutes, notify the engineering manager and consider engaging vendor support.</div>
+          <div class="ec-risk"><div class="ec-risk-icon">🔴</div><div class="ec-risk-text">Your team may have a specific PagerDuty escalation policy, a specific Slack channel for P1 escalations, a specific person or rotation for senior on-call, and a specific process for engaging AWS/GCP support. "Senior on-call engineer" could mean three different people depending on the day and time.</div></div>
+        </div>
+        <div class="ec-fix"><div class="ec-fix-label">✓ What to verify</div>Replace every generic role, channel, or tool reference with the specific person, PagerDuty policy, Slack channel, or process your team actually uses. If it's not specific enough for an engineer to act on during an incident without looking anything up, it's not specific enough.</div>
+      </div>
+    </div>
+
+    <div class="error-card">
+      <div class="ec-header">
+        <div class="ec-num">6</div>
+        <div class="ec-title">Missing Context About Why the Procedure Exists</div>
+      </div>
+      <div class="ec-body">
+        <p>AI tools describe what to do. They rarely explain why. Documentation that lacks "why" creates engineers who follow procedures correctly in normal situations and improvise incorrectly in edge cases — because they don't understand the intent behind the steps.</p>
+        <div class="ec-example">
+          <div class="ec-bad-label">⚠ "What" without "why"</div>
+          <div class="ec-bad">Step 4: Before restarting the inference service, always drain the request queue by running: ./drain_queue.sh --service inference-api --wait 60</div>
+          <div class="ec-risk"><div class="ec-risk-icon">🔴</div><div class="ec-risk-text">What happens if an engineer skips this step because they're under pressure and the 60-second wait seems unnecessary? Without knowing that skipping queue drain causes in-flight ML scoring requests to be dropped mid-computation — corrupting the output cache — they have no way to judge whether it's safe to skip under time pressure.</div></div>
+        </div>
+        <div class="ec-fix"><div class="ec-fix-label">✓ What to add</div>For any step that an engineer might be tempted to skip or modify under pressure, add a one-sentence "why." "Wait 60 seconds for queue drain — skipping this step drops in-flight requests and corrupts the output cache, requiring a full cache rebuild (adds 20–40 minutes to recovery)."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The AI Tools You're Already Using — and Their Specific Blind Spots</h2>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-name">⚡ GitHub Copilot (PR descriptions, code comments)</div>
+        <div class="tool-good">Accurately describing what code does</div>
+        <div class="tool-watch">Missing "why" context, rollback steps, and version-specific caveats. Often omits breaking change notices.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">📄 Confluence AI / Notion AI (meeting notes, summaries)</div>
+        <div class="tool-good">Extracting action items and summarizing decisions</div>
+        <div class="tool-watch">Resolving ambiguity in discussions into false certainty. Missing "TBD" or "undecided" items. Misattributing who owns which action item.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">🎫 Jira AI (ticket drafts, acceptance criteria)</div>
+        <div class="tool-good">Structuring ticket descriptions from brief prompts</div>
+        <div class="tool-watch">Generic acceptance criteria that don't match your system's actual behavior. Missing reproduction steps. Understating severity.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">🤖 Custom LLM / RAG systems (runbooks, SOPs)</div>
+        <div class="tool-good">Synthesizing information from multiple source documents</div>
+        <div class="tool-watch">Mixing information from different versions of the same procedure. Environment-specific details from different teams. High confidence in outdated source documents.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Accountability Transfer</h2>
+    <p>Here's the career-relevant part. When you approve AI-generated documentation, accountability for its accuracy transfers to you. This is not a matter of policy — it's how incident postmortems, compliance audits, and legal proceedings work in practice.</p>
+    <div class="chain">
+      <div class="chain-step">
+        <div class="chain-left"><div class="chain-dot">🤖</div><div class="chain-line"></div></div>
+        <div class="chain-body"><div class="chain-tag">Step 1</div><div class="chain-title">AI generates the document</div><div class="chain-desc">The AI does not understand your environment. It has no accountability. It cannot be blamed. It will not be in the postmortem.</div></div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-left"><div class="chain-dot">👤</div><div class="chain-line"></div></div>
+        <div class="chain-body"><div class="chain-tag">Step 2</div><div class="chain-title">You review and approve</div><div class="chain-desc">At this moment, ownership transfers. The document is no longer "AI-generated" — it is your documentation. Your name is on the approval. Your judgment is what made it authoritative.</div></div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-left"><div class="chain-dot">📋</div><div class="chain-line"></div></div>
+        <div class="chain-body"><div class="chain-tag">Step 3</div><div class="chain-title">An engineer follows it</div><div class="chain-desc">They trust the document because you approved it. They follow the generic namespace. They skip the step that has no "why." They close the incident because the AI summary said it was resolved.</div></div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-left"><div class="chain-dot">🔴</div></div>
+        <div class="chain-body"><div class="chain-tag">Step 4</div><div class="chain-title">The postmortem happens</div><div class="chain-desc">The question is not "did the AI make a mistake?" The question is "who approved this documentation and was it reviewed adequately?" That's you. "The AI wrote it" is not a defensible answer in a compliance audit or a legal proceeding.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Spot the Error</div>
+      <div class="sim-title">Find the problem in this AI-generated runbook step</div>
+      <div class="sim-sub">Read the runbook step carefully. Identify the most significant problem before it ships.</div>
+      <div class="sim-doc">RUNBOOK: AI Model Degradation Response
+Step 5 — Rollback to Previous Model Version
+
+If the model is confirmed degraded (accuracy below threshold for 15+ minutes), roll back to the previous stable version:
+
+1. Run the model rollback script:
+   python rollback_model.py --model fraud-detection --version previous
+
+2. The script will automatically select the last stable version and deploy it to production.
+
+3. Confirm rollback success by checking model accuracy in the Grafana dashboard under "ML Model Performance."
+
+4. Update the incident ticket with the rollback timestamp and close if accuracy returns to baseline.</div>
+      <div class="sim-q">What is the most significant problem with this AI-generated runbook step?</div>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">The formatting — step numbers should use a lettered list, not numbered, to match standard runbook format</button>
+        <button class="sim-opt" onclick="doSim(this,false)">Step 3 should link to the specific Grafana dashboard URL, not just mention it by name</button>
+        <button class="sim-opt" onclick="doSim(this,true)">The script in Step 2 uses the flag "--version previous" which is ambiguous — "previous" is not a specific version identifier, and if the last stable version was also recently updated, an engineer under pressure may roll back to the wrong version without realizing it. There is also no error handling: what happens if the rollback script fails?</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The accuracy threshold for triggering rollback ("below threshold") is not defined — the runbook should specify the exact threshold value</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Your Pre-Approval Review Checklist</h2>
+    <p>Before approving any AI-generated technical document, run through these checks. The high-priority items are the ones most likely to cause operational failures.</p>
+    <div class="review-list">
+      <div class="rl-section">
+        <div class="rl-section-title">🔴 High Priority — Always Check</div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Every command has been tested in the actual environment — namespace, deployment names, and flags match what's in production</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Every uncertainty in source material is preserved — "we believe," "suspected," and "TBD" must not become definitive conclusions</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Rollback and failure-handling steps are included for every action that can fail</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Escalation paths name specific people, channels, or PagerDuty policies — not generic roles</div></div>
+      </div>
+      <div class="rl-section">
+        <div class="rl-section-title">🟡 Important — Check When Relevant</div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Tool version requirements are specified, and commands match the version currently in use by your team</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Steps that engineers might skip under pressure include a brief explanation of why skipping would cause problems</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Action items and owners are attributed to specific people, not generic team names</div></div>
+        <div class="rl-item"><div class="rl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rl-text">Success criteria are specific and observable — not "confirm the service is healthy" but "confirm HTTP 200 rate >99.5% for 5 consecutive minutes"</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A Confluence AI summary of a postmortem meeting states: "The team decided to implement automatic rollbacks for all future ML model deployments." After reviewing the meeting recording, you find the actual discussion was: "We discussed auto-rollback but decided it was too risky without better monitoring in place. We'll revisit after the monitoring improvements are done." What type of AI documentation error is this, and what's the risk?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">This is a hallucination error — the AI invented a decision that was never discussed</button>
+        <button class="qopt" onclick="cq(this,true)">This is ambiguity deletion — the AI converted a rejected-and-deferred discussion into a confirmed decision. The risk: teams reading the summary will begin implementing auto-rollback, wasting engineering time on work the team explicitly decided not to do yet, and possibly introducing the risk the team rejected.</button>
+        <button class="qopt" onclick="cq(this,false)">This is a minor error — the summary was close enough and an engineer would know to double-check important decisions</button>
+        <button class="qopt" onclick="cq(this,false)">This is an attribution error — the AI should have named who made the decision, not just what was decided</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI documentation tools make six predictable mistakes: wrong environment details, missing failure handling, ambiguity deletion, outdated version-specific commands, generic workflows that don't match your team, and missing "why" context. Learn to recognize these patterns and you'll catch them before they ship.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Approving AI-generated documentation is a professional act with professional consequences. "The AI wrote it" is not a defense in a postmortem or an audit. The moment you approve, the document is yours — and so are its errors.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most dangerous AI documentation error is ambiguity deletion — when the AI turns a team's uncertainty into a confident conclusion. Always compare AI summaries against source notes when they involve incident resolutions, root cause determinations, or team decisions. If the original had a question mark, the summary needs one too.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("--version previous"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. '--version previous' is not a real version specifier — it's a placeholder that an AI generated because it sounds reasonable. In practice, if your rollback script accepts a '--version' flag, it expects an actual version identifier like 'v2.3.1'. An engineer running this command during an incident might get an error, an unexpected behavior, or might roll back to a version they didn't intend to. The absence of error handling makes this worse: if the script fails, the runbook offers no next step. The Grafana dashboard link and the missing threshold are also valid concerns — but an ambiguous command in a production rollback procedure is the highest-risk problem here.";
+  else fb.textContent="❌ The other options identify real improvement opportunities, but they're not the most significant operational risk. A runbook step with '--version previous' as a production rollback command contains an ambiguous, potentially non-functional parameter. If an engineer runs this under incident pressure and it fails or behaves unexpectedly, they have no fallback — the runbook doesn't tell them what to do. The Grafana link and threshold definition are important improvements, but they won't cause a rollback to fail or target the wrong model version.";}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is ambiguity deletion — the most dangerous AI summarization error because it doesn't just omit information, it actively inverts it. The team said 'we're not doing this yet.' The summary says 'we decided to do this.' Engineers who read only the Confluence summary — which is most of them — will begin acting on a decision that was explicitly rejected. The fix is to always verify AI summaries of decision-making meetings against the actual discussion, especially when the summary includes past-tense decisions ('the team decided,' 'we agreed,' 'it was determined').";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("ambiguity deletion"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ This isn't hallucination — auto-rollback was genuinely discussed. It's not minor — teams will act on documented decisions. And attribution is secondary here. The core error is that the AI converted a rejected discussion into a confirmed decision — the exact opposite of what was decided. This is ambiguity deletion: the team's uncertainty and explicit deferral were removed, and what remained sounded like a clear conclusion. This is why AI meeting summaries that include decisions need to be verified against source material before they're published.";}
+}
+
+function toggleCheck(el){el.classList.toggle("checked");}
+</script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing for Technical Audiences: How to Be Clear Without Being Condescending</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Before/After rewrite blocks */
+.rewrite{margin:24px 0;border-radius:20px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.rewrite-header{background:var(--purple-pale);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;}
+.rewrite-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.rewrite-badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:100px;}
+.badge-example{background:var(--orange-pale);color:var(--orange);border:1px solid #F5D8A0;}
+.rw-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.rw-col{padding:20px 24px;}
+.rw-col.before{background:var(--red-pale);border-right:1px solid #F5C2C2;}
+.rw-col.after{background:var(--green-pale);}
+.rw-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.rw-col.before .rw-label{color:var(--red);}
+.rw-col.after .rw-label{color:var(--green);}
+.rw-text{font-size:14px;line-height:1.75;color:var(--gray-text);font-family:monospace;background:rgba(255,255,255,.55);border-radius:8px;padding:12px 14px;}
+.rw-why{background:var(--gray-soft);border-top:1px solid var(--purple-mid);padding:14px 24px;}
+.rw-why-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:5px;}
+.rw-why-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Interactive rewrite sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:14px;font-size:14px;line-height:1.75;color:var(--gray-text);font-family:monospace;}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Cards */
+.cards{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.card-icon{font-size:22px;margin-bottom:6px;}
+.card-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.card-desc{font-size:14px;line-height:1.65;color:var(--gray-text);}
+
+/* Checklist */
+.checklist{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:24px;margin:20px 0;}
+.cl-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:14px;}
+.cl-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px dashed var(--purple-mid);}
+.cl-item:last-child{border-bottom:none;}
+.cl-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--purple-mid);background:var(--white);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.cl-check.checked{background:var(--purple);border-color:var(--purple);}
+.cl-check svg{display:none;}
+.cl-check.checked svg{display:block;}
+.cl-text{font-size:14px;line-height:1.65;color:var(--gray-text);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.1 — Clear Technical Communication</div>
+  <h1>Writing for Technical Audiences: How to Be Clear Without Being Condescending</h1>
+  <p class="hero-sub">Your readers are smart. That's why vague writing is so dangerous — they'll act on whatever you wrote, even when it's unclear. Here's how to be precise without talking down to anyone.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Trap Most Technical Writers Fall Into</h2>
+    <p>When you write for other engineers, you face two opposite problems. Write too vaguely and people misread your instructions. Write too thoroughly and people feel like you're explaining obvious things. Both create friction. Both create risk.</p>
+    <p>The goal of clear technical writing isn't to dumb things down. It's to <mark>remove every possible reason someone could misread what you wrote</mark>. That's a precision problem, not a complexity problem.</p>
+    <p>Here's the core insight: technical readers don't slow down when they're confused. They fill in the gaps with their own assumptions and keep moving. That's how misconfigured deployments happen, how the wrong server gets restarted at 3am, and how an AI-generated alert summary causes someone to close the wrong ticket.</p>
+    <div class="pull-quote"><p>Clarity is not the opposite of technical depth. It's what technical depth looks like when it's written for the reader, not the writer.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Six Rewrites You Can Learn From</h2>
+    <p>Let's look at real examples from IT work. For each one, we'll see the unclear version, the clearer rewrite, and — most importantly — why the original failed.</p>
+
+    <!-- Rewrite 1 -->
+    <div class="rewrite">
+      <div class="rewrite-header">
+        <div class="rewrite-title">Rewrite #1 — Incident Report</div>
+        <div class="rewrite-badge badge-example">SRE / On-Call</div>
+      </div>
+      <div class="rw-cols">
+        <div class="rw-col before">
+          <div class="rw-label">❌ Unclear</div>
+          <div class="rw-text">The system experienced degraded performance due to resource issues. Engineers were notified and the situation was addressed. Monitoring has been restored.</div>
+        </div>
+        <div class="rw-col after">
+          <div class="rw-label">✅ Clear</div>
+          <div class="rw-text">At 02:14 UTC, the inference API returned HTTP 503 errors for 11% of requests due to memory exhaustion on two of three pod replicas. The on-call SRE restarted the affected pods at 02:31 UTC. Error rate returned to baseline (&lt;0.1%) by 02:38 UTC. Root cause: a memory leak in the batch scoring job introduced in v2.3.1. That job has been disabled pending a fix. Monitoring alert thresholds remain active.</div>
+        </div>
+      </div>
+      <div class="rw-why">
+        <div class="rw-why-label">Why the original failed</div>
+        <div class="rw-why-text">The original describes <em>that</em> something happened, not <em>what</em> happened or <em>whether it's really fixed</em>. "Resource issues" could mean CPU, memory, disk, or network. "Addressed" doesn't say how. "Monitoring restored" implies monitoring was gone — but what exactly is being monitored now? The rewrite gives future engineers enough information to act: the specific failure mode, the fix, the timeline, and the open risk (the disabled job).</div>
+      </div>
+    </div>
+
+    <!-- Rewrite 2 -->
+    <div class="rewrite">
+      <div class="rewrite-header">
+        <div class="rewrite-title">Rewrite #2 — Jira Ticket</div>
+        <div class="rewrite-badge badge-example">Engineering / Jira</div>
+      </div>
+      <div class="rw-cols">
+        <div class="rw-col before">
+          <div class="rw-label">❌ Unclear</div>
+          <div class="rw-text">Bug: the model predictions are wrong sometimes. Seen it multiple times this week. Seems like a data thing. Assigning to ML team.</div>
+        </div>
+        <div class="rw-col after">
+          <div class="rw-label">✅ Clear</div>
+          <div class="rw-text">Model returns confidence scores above 0.95 for inputs that contain null values in the `user_region` field. Expected behavior: inputs with null `user_region` should be flagged as low-confidence (&lt;0.4) and routed to the fallback rule engine. Observed 14 times this week (Mon–Thu). Reproduces consistently: send a scoring request with `"user_region": null` to /api/v2/predict. See attached logs from 2025-11-12 11:40 UTC. Suspected cause: null handling change in the feature pipeline (PR #841, merged Nov 9). Assigning to ML team.</div>
+        </div>
+      </div>
+      <div class="rw-why">
+        <div class="rw-why-label">Why the original failed</div>
+        <div class="rw-why-text">"Wrong sometimes" is not actionable. The ML team would need to ask four follow-up questions before they could even start debugging. "Seems like a data thing" is a hypothesis, not evidence. The rewrite includes: the exact input condition, the expected vs. observed behavior, reproduction steps, frequency, timestamps, and a suspected cause with a pointer to relevant code. An engineer can start working on this ticket without a single clarifying question.</div>
+      </div>
+    </div>
+
+    <!-- Rewrite 3 -->
+    <div class="rewrite">
+      <div class="rewrite-header">
+        <div class="rewrite-title">Rewrite #3 — AI-Generated Alert Summary</div>
+        <div class="rewrite-badge badge-example">AI Tool Output</div>
+      </div>
+      <div class="rw-cols">
+        <div class="rw-col before">
+          <div class="rw-label">❌ AI Draft (needs review)</div>
+          <div class="rw-text">Alert triggered at 09:42. Anomaly detected in production workload. Elevated error rates observed. Team should investigate the affected service and restore normal operations as soon as possible.</div>
+        </div>
+        <div class="rw-col after">
+          <div class="rw-label">✅ After SRE Review</div>
+          <div class="rw-text">🔴 P1 Alert — 09:42 UTC | payment-service in us-east-1<br><br>Error rate: 23% (threshold: 1%) | Affected endpoint: POST /api/checkout/confirm<br><br>Likely cause: upstream timeout from stripe-gateway (latency p99 = 8.4s, SLA = 2s). This is NOT a code regression — no recent deployments. Probable external dependency issue.<br><br>Immediate action: Check Stripe status page. If Stripe confirms degradation, activate fallback: enable async payment queue (runbook §4.2). If Stripe shows healthy, escalate to payments-eng channel.</div>
+        </div>
+      </div>
+      <div class="rw-why">
+        <div class="rw-why-label">Why the AI draft failed — and what the SRE added</div>
+        <div class="rw-why-text">The AI-generated alert tells you <em>something is wrong</em>. The SRE rewrite tells you <em>what, where, why, and what to do</em>. The SRE added: the specific service and region, the actual error rate vs. threshold, the suspected external cause (not a code bug), and a concrete decision tree. Under pressure at 3am, the difference between these two versions is the difference between a 10-minute recovery and a 2-hour investigation.</div>
+      </div>
+    </div>
+
+    <!-- Rewrite 4 -->
+    <div class="rewrite">
+      <div class="rewrite-header">
+        <div class="rewrite-title">Rewrite #4 — PR Description</div>
+        <div class="rewrite-badge badge-example">Code Review</div>
+      </div>
+      <div class="rw-cols">
+        <div class="rw-col before">
+          <div class="rw-label">❌ Unclear</div>
+          <div class="rw-text">Updated the caching layer. Should fix the performance issues we've been seeing. Tested locally.</div>
+        </div>
+        <div class="rw-col after">
+          <div class="rw-label">✅ Clear</div>
+          <div class="rw-text">Replaces Redis TTL-based cache with LRU eviction policy for the model feature store (affects `feature_cache.py` only). Change reduces cache churn by ~40% in our load test (see benchmark in /tests/perf/cache_lru_20251113.txt). Why now: TTL approach was causing cold-start latency spikes during traffic bursts — see issue #302. Risk: LRU size is currently set to 5,000 entries (same as old TTL cache). If feature space grows beyond this, we'll evict useful entries. Recommend monitoring `cache_eviction_rate` metric in Datadog after deploy. Rollback: revert this PR and redeploy — no DB migration needed.</div>
+        </div>
+      </div>
+      <div class="rw-why">
+        <div class="rw-why-label">Why the original failed</div>
+        <div class="rw-why-text">"Updated the caching layer" gives reviewers nothing to evaluate. The clear version tells reviewers what changed, what problem it solves, the trade-off introduced (LRU eviction risk), what to watch after deploy, and how to roll back safely. Good PR descriptions aren't just courtesy — they're documentation that other engineers will reference for months.</div>
+      </div>
+    </div>
+
+    <!-- Rewrite 5 -->
+    <div class="rewrite">
+      <div class="rewrite-header">
+        <div class="rewrite-title">Rewrite #5 — Runbook Step</div>
+        <div class="rewrite-badge badge-example">Operations</div>
+      </div>
+      <div class="rw-cols">
+        <div class="rw-col before">
+          <div class="rw-label">❌ Unclear</div>
+          <div class="rw-text">If the model is not responding, restart the service and check that it comes back up correctly.</div>
+        </div>
+        <div class="rw-col after">
+          <div class="rw-label">✅ Clear</div>
+          <div class="rw-text">If the model service health check returns non-200 for 3 consecutive checks (30-second interval):<br><br>1. Run: <code>kubectl rollout restart deployment/inference-api -n ml-prod</code><br>2. Wait 90 seconds, then run: <code>kubectl get pods -n ml-prod -l app=inference-api</code><br>3. Confirm all pods show STATUS=Running and READY=1/1<br>4. Run health check manually: <code>curl https://inference.internal/health</code><br>— Expected response: <code>{"status":"ok","model":"v4.2","uptime":&lt;seconds&gt;}</code><br>5. If any pod is in CrashLoopBackOff, do NOT retry — escalate to ml-oncall (PagerDuty: ml-infra-p1).</div>
+        </div>
+      </div>
+      <div class="rw-why">
+        <div class="rw-why-label">Why the original failed</div>
+        <div class="rw-why-text">"Check that it comes back up correctly" is not a procedure — it's a hope. The unclear version requires the engineer to know what "not responding" means, what command to run, what a successful restart looks like, and what to do if it doesn't work. The clear version specifies the trigger condition, the exact commands, the expected output, and the escalation path. Under incident conditions, ambiguity in runbooks causes engineers to improvise — which is exactly when mistakes happen.</div>
+      </div>
+    </div>
+
+    <!-- Rewrite 6 -->
+    <div class="rewrite">
+      <div class="rewrite-header">
+        <div class="rewrite-title">Rewrite #6 — Deployment Email to the Team</div>
+        <div class="rewrite-badge badge-example">Team Communication</div>
+      </div>
+      <div class="rw-cols">
+        <div class="rw-col before">
+          <div class="rw-label">❌ Unclear</div>
+          <div class="rw-text">Heads up — we're deploying some changes this afternoon. There may be some brief disruption. Let us know if you see any issues.</div>
+        </div>
+        <div class="rw-col after">
+          <div class="rw-label">✅ Clear</div>
+          <div class="rw-text">Deployment notice — Friday Nov 15, 4:00–4:30 PM UTC<br><br>What's changing: updating the recommendation engine from v3.1 to v3.2 (adds support for multi-language user profiles).<br><br>Expected impact: the /api/recommend endpoint will be unavailable for ~3 minutes during pod rotation (approx. 4:12 PM UTC). All other endpoints remain available.<br><br>What to watch for: if you see recommendation response times above 500ms after 4:30 PM, ping #deployments. No action needed from most teams — this only affects the consumer app's "For You" section.<br><br>Rollback plan is ready if needed. Will confirm when deploy is complete.</div>
+        </div>
+      </div>
+      <div class="rw-why">
+        <div class="rw-why-label">Why the original failed</div>
+        <div class="rw-why-text">"Brief disruption" means different things to different teams. "Some changes" doesn't tell dependent teams whether they're affected. "Let us know if you see issues" doesn't say what an issue looks like. The clear version tells each team exactly whether they're affected, what the window is, what to watch for, and who to contact. Teams that don't need to act can confidently ignore it. Teams that do need to monitor have everything they need.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Underlying Principle: Write for What Happens Next</h2>
+    <p>Every piece of technical writing you produce will be read by someone who needs to <em>do something</em> after reading it. They might restart a service, approve a change, escalate an alert, or route a ticket. If your writing doesn't give them what they need to take the right next action, you've created risk.</p>
+    <p>Ask yourself this before you finish any technical document:</p>
+    <div class="cards">
+      <div class="card"><div class="card-icon">🎯</div><div class="card-title">What action does the reader need to take?</div><div class="card-desc">Every runbook step, ticket, or alert summary exists because someone needs to act. Does your writing tell them exactly what that action is — or does it leave room for interpretation?</div></div>
+      <div class="card"><div class="card-icon">🧩</div><div class="card-title">What information does the reader need to take it correctly?</div><div class="card-desc">Not just that the problem exists, but: which specific system, what exact behavior, which version, what the expected result is, what to do if it doesn't work. Technical writing earns its precision through specifics.</div></div>
+      <div class="card"><div class="card-icon">⚠️</div><div class="card-title">What could go wrong if they misread this?</div><div class="card-desc">This is the most important question. If the worst-case misreading of your document is "someone restarts the wrong pod during a P1 incident," that's a signal to be more specific — not more verbose.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It — Interactive Rewrite</div>
+      <div class="sim-title">Which rewrite best fixes the problem?</div>
+      <div class="sim-sub">Read the original ticket. Identify which rewritten version is actually clear and actionable.</div>
+      <div class="sim-scenario"><strong>Original Jira ticket:</strong><br><br>Title: AI model slow<br>Description: The model has been slow lately. Affecting users. Need to fix ASAP. Assigning to infra.</div>
+      <div class="sim-q">Which of the following rewrites is best?</div>
+      <div class="sim-opts" id="rw-opts">
+        <button class="sim-opt" onclick="doRW(this,false)">Title: Model performance issue<br>Description: The AI model is experiencing performance degradation and affecting end users. This needs to be resolved immediately. The infrastructure team should look into potential resource constraints and optimize accordingly.</button>
+        <button class="sim-opt" onclick="doRW(this,true)">Title: Inference API p99 latency exceeds SLO — scoring-service in us-west-2<br>Description: The /api/v2/score endpoint p99 latency has been above 4s (SLO: 1.5s) since Nov 13 ~18:00 UTC. Affecting ~8% of requests — primarily users with large feature vectors (&gt;200 features). No recent code deploys. GPU utilization on 3 of 6 nodes is at 98% (Datadog dashboard: ml-inference-perf). Suspected cause: increased traffic from the new recommendation feature (launched Nov 12) without corresponding infrastructure scaling. Immediate need: assess whether we need to scale node count or apply request queuing. Assigning to infra with ML team as stakeholder.</button>
+        <button class="sim-opt" onclick="doRW(this,false)">Title: Fix slow AI model performance<br>Description: Several users have reported that the AI model is very slow. This has been happening for a few days. The latency is higher than expected and we need to fix it quickly. Please investigate the infrastructure and let us know what you find. This is urgent.</button>
+      </div>
+      <div class="sim-fb" id="rw-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The "Condescending" Problem — and How to Avoid It</h2>
+    <p>Some engineers write vague documentation because they're worried about being too obvious. "My readers are senior engineers — they'll know what I mean."</p>
+    <p>This is a real concern, but it's pointed at the wrong target. <mark>Condescension in technical writing isn't caused by specificity — it's caused by explaining context the reader already has.</mark></p>
+    <div class="cards">
+      <div class="card"><div class="card-icon">🚫</div><div class="card-title">Condescending: explaining what the reader already knows</div><div class="card-desc">"Note: Kubernetes pods are the smallest deployable units in Kubernetes. Before restarting a pod, ensure you understand what a pod is and what restarting it will do to your application." — An SRE doesn't need this.</div></div>
+      <div class="card"><div class="card-icon">✅</div><div class="card-title">Not condescending: being specific about what the reader doesn't know</div><div class="card-desc">"When restarting this pod, note that the model warm-up period is 45–60 seconds — unlike standard API pods. Requests during warm-up are queued, not dropped." — This is context the SRE needs, even if they've been doing this for years.</div></div>
+    </div>
+    <p>The difference: condescension explains shared knowledge. Specificity provides context that's genuinely new, environment-specific, or easy to assume incorrectly. Don't explain what Kubernetes is. Do explain that this particular service has a 60-second warm-up no one would expect.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Checklist Before You Publish</h2>
+    <p>Run through this before you mark any technical document as done. Click each item to check it off.</p>
+    <div class="checklist">
+      <div class="cl-title">Clear Technical Writing — Pre-Publish Check</div>
+      <div class="cl-item">
+        <div class="cl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="cl-text">Every action step uses a specific command, value, or name — not a vague verb like "check," "fix," or "address"</div>
+      </div>
+      <div class="cl-item">
+        <div class="cl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="cl-text">Any system, service, endpoint, or environment mentioned by name — not "the system" or "the service"</div>
+      </div>
+      <div class="cl-item">
+        <div class="cl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="cl-text">If the reader needs to make a judgment call, I've told them what success and failure look like</div>
+      </div>
+      <div class="cl-item">
+        <div class="cl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="cl-text">If this is an alert, ticket, or incident report: who to escalate to and under what conditions</div>
+      </div>
+      <div class="cl-item">
+        <div class="cl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="cl-text">If AI generated any part of this: I've verified every specific claim, number, and command against the actual system</div>
+      </div>
+      <div class="cl-item">
+        <div class="cl-check" onclick="toggleCheck(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="cl-text">I've explained context that is specific to this environment — not general knowledge the reader already has</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An on-call SRE receives an AI-generated alert summary that says: "Performance anomaly detected. Elevated response times observed in the production environment. Immediate investigation recommended." The SRE spends 18 minutes investigating before finding the actual problem in an unrelated service. What is the primary failure in this alert?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The alert was too alarming — it should have been marked lower severity to avoid unnecessary panic</button>
+        <button class="qopt" onclick="cq(this,false)">The AI tool failed — it should have automatically identified the root cause before alerting</button>
+        <button class="qopt" onclick="cq(this,true)">The alert lacked specificity — it told the SRE that something was slow but not which service, which metric exceeded what threshold, or where to start looking, forcing an 18-minute investigation that good documentation would have reduced to under 3</button>
+        <button class="qopt" onclick="cq(this,false)">The SRE failed — a more experienced engineer would have known where to look immediately</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Clear technical writing is not about simplifying complexity — it's about removing every reason someone could misread what you wrote. Technical readers fill in gaps with assumptions and keep moving. Those assumptions cause incidents.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Condescension comes from explaining what the reader already knows — not from being specific. Name the service, give the exact command, say what success looks like. That's not talking down to engineers; that's respecting their time.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI-generated documentation is often vague in exactly the ways that matter most — specific values, system names, thresholds, and next steps. When you review AI-generated text, your job is to add the specificity the AI left out. Approving a vague AI draft transfers accountability for that vagueness to you.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function doRW(btn,correct){
+  const c=document.getElementById("rw-opts");
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("Inference API p99"))b.classList.add("reveal");});
+  const fb=document.getElementById("rw-fb");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The second rewrite gives the infrastructure team everything they need to begin investigating immediately: the specific endpoint, the exact latency numbers vs. the SLO, the affected percentage of traffic, the suspected cause with a pointer to what changed when, and the specific question that needs to be answered. A good Jira ticket is not a complaint — it's a transfer of everything you know to the person who needs to act on it.";
+  else fb.textContent="❌ The other options improve the tone or word count, but they don't solve the problem. A ticket that says 'performance degradation' or 'latency is higher than expected' still requires the infrastructure team to start from scratch: find the affected service, pull the metrics, understand the baseline, and figure out what changed. That's work the ticket author already did — or should have done. Good tickets transfer knowledge; vague tickets transfer work.";}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The alert failed to answer the only question that mattered in the moment: where do I start? Without a service name, a specific metric, or a threshold, 'elevated response times in the production environment' is almost useless under incident conditions. The SRE spent 18 minutes doing the work that the alert should have done. That time matters — in a real incident, 18 minutes of unnecessary investigation can mean the difference between a 20-minute recovery and a 2-hour outage. Specificity in alerts isn't nice to have. It's the whole point.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("which service"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The severity, the AI tool's capability, and the SRE's experience level are all secondary here. The root problem is documentation quality: the alert contained no specific information. A world-class SRE with 10 years of experience still needs to know which service is slow before they can investigate. The alert failed to provide that. That's a writing problem — and it's the most common way AI-generated alerts waste engineer time during incidents.";}
+}
+
+function toggleCheck(el){el.classList.toggle("checked");}
+</script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Write for Multiple Audiences: The Same Incident, Three Different Ways</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(32px,5vw,54px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* The incident fact box */
+.incident-box{background:var(--red-pale);border:2px solid #F5C2C2;border-radius:20px;padding:28px;margin:24px 0;}
+.incident-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--red);margin-bottom:12px;}
+.incident-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:#7F1D1D;margin-bottom:16px;}
+.fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fact{background:rgba(255,255,255,.65);border-radius:10px;padding:12px 14px;}
+.fact-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin-bottom:4px;}
+.fact-value{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* Audience version tabs */
+.versions{margin:24px 0;}
+.ver-tabs{display:flex;gap:0;margin-bottom:0;border-bottom:2px solid var(--purple-mid);}
+.ver-tab{padding:12px 22px;font-size:13px;font-weight:600;color:var(--gray-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;border-radius:8px 8px 0 0;}
+.ver-tab:hover{color:var(--purple);}
+.ver-tab.active{color:var(--purple);border-bottom-color:var(--purple);background:var(--purple-pale);}
+.ver-panels{}
+.ver-panel{display:none;border:1.5px solid var(--purple-mid);border-top:none;border-radius:0 0 16px 16px;overflow:hidden;}
+.ver-panel.active{display:block;}
+.vp-header{padding:18px 24px;display:flex;align-items:center;gap:14px;}
+.vp-audience{flex:1;}
+.vp-audience-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:3px;}
+.vp-audience-name{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.vp-audience-desc{font-size:13px;color:var(--gray-muted);}
+.vp-doc{background:var(--white);margin:0;padding:20px 24px;border-top:1px solid var(--purple-mid);font-size:14px;line-height:1.8;color:var(--gray-text);font-family:monospace;white-space:pre-wrap;}
+.vp-analysis{background:var(--gray-soft);border-top:1px solid var(--purple-mid);padding:20px 24px;}
+.vp-analysis-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.analysis-item{border-radius:10px;padding:12px;}
+.analysis-item.included{background:var(--green-pale);border:1px solid #B5D5C0;}
+.analysis-item.excluded{background:var(--red-pale);border:1px solid #F5C2C2;}
+.ai-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.analysis-item.included .ai-label{color:var(--green);}
+.analysis-item.excluded .ai-label{color:var(--red);}
+.ai-items{display:flex;flex-direction:column;gap:4px;}
+.ai-item{font-size:12px;line-height:1.5;color:var(--gray-text);}
+
+/* Comparison table */
+.compare-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.compare-table th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.compare-table td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:nth-child(even) td{background:var(--gray-soft);}
+.tag-eng{display:inline-block;background:var(--blue-pale);color:var(--blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin:2px;}
+.tag-exec{display:inline-block;background:var(--orange-pale);color:var(--orange);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin:2px;}
+.tag-cust{display:inline-block;background:var(--green-pale);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin:2px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;animation:fadeIn .3s ease;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.1 — Clear Technical Communication</div>
+  <h1>How to Write for Multiple Audiences: The Same Incident, Three Different Ways</h1>
+  <p class="hero-sub">One P1 outage. Three documents. Three completely different readers — each needing something different from you. Here's exactly what changes, and why.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>Why the Same Facts Need Different Documents</h2>
+    <p>When a major incident happens, multiple people need to know about it — but they don't all need to know the same things. An SRE needs to know <em>what broke and how to fix it</em>. An executive needs to know <em>what was affected and what decision is needed</em>. A customer needs to know <em>is my thing working, and when will it definitely work</em>.</p>
+    <p>Writing one document that tries to serve all three audiences fails all three. <mark>The engineering details that help an SRE debug a problem are noise to an executive. The business impact that helps an exec make a decision is irrelevant to a customer who just wants to know if the app is down.</mark></p>
+    <p>This is not about "simplifying" for non-technical readers. It's about understanding that every reader has a job to do, and your document should give them exactly what they need to do their job — nothing more, nothing less.</p>
+    <div class="pull-quote"><p>You don't write three documents because some readers are smarter than others. You write three documents because each reader has a different job to do after reading it.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Incident</h2>
+    <p>Let's use a real-world scenario. Here are the facts of the incident — everything that happened, as known by the engineering team.</p>
+    <div class="incident-box">
+      <div class="incident-label">🔴 P1 Incident — Raw Engineering Facts</div>
+      <div class="incident-title">Payment Processing Failure — November 15</div>
+      <div class="fact-grid">
+        <div class="fact"><div class="fact-label">Duration</div><div class="fact-value">6 hours, 14 minutes (02:06–08:20 UTC)</div></div>
+        <div class="fact"><div class="fact-label">Impact</div><div class="fact-value">~34% of checkout attempts failed. Estimated 12,400 affected transactions.</div></div>
+        <div class="fact"><div class="fact-label">Root cause</div><div class="fact-value">Memory leak in payment-service v4.1.2 introduced in the Nov 14 deployment. Pod crashed under sustained load when memory exceeded 2GB limit.</div></div>
+        <div class="fact"><div class="fact-label">Detection</div><div class="fact-value">Customer support tickets triggered internal alert at 02:06. PagerDuty alert had misfired 47 minutes earlier (02:06 alert suppressed due to a misconfigured alert rule).</div></div>
+        <div class="fact"><div class="fact-label">Fix deployed</div><div class="fact-value">Rolled back to v4.1.1 at 07:44 UTC. Full recovery confirmed at 08:20 UTC.</div></div>
+        <div class="fact"><div class="fact-label">Revenue impact</div><div class="fact-value">~$187,000 in failed transactions. Some will be recovered via customer retry; estimated net loss ~$52,000.</div></div>
+        <div class="fact"><div class="fact-label">Open items</div><div class="fact-value">Alert rule misconfiguration not yet fixed. Memory leak root cause under investigation. Post-incident review scheduled.</div></div>
+        <div class="fact"><div class="fact-label">Who was involved</div><div class="fact-value">3 SREs, payments team lead, infrastructure team. Customer support escalated 214 tickets.</div></div>
+      </div>
+    </div>
+    <p>Now let's see how this same set of facts gets written differently for three different audiences.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Three Versions, Side by Side</h2>
+    <p>Click each tab to see how the incident is communicated to each audience — and what's included, excluded, and why.</p>
+    <div class="versions">
+      <div class="ver-tabs">
+        <div class="ver-tab active" onclick="showTab(0)">⚙️ Engineering Team</div>
+        <div class="ver-tab" onclick="showTab(1)">📊 Executive Team</div>
+        <div class="ver-tab" onclick="showTab(2)">👤 Customers</div>
+      </div>
+
+      <!-- Engineering Panel -->
+      <div class="ver-panel active" id="panel-0">
+        <div class="vp-header" style="background:#EFF6FF;">
+          <div class="vp-audience">
+            <div class="vp-audience-label" style="color:#1D4ED8;">Audience</div>
+            <div class="vp-audience-name" style="color:#1E3A8A;">Engineering Team / Postmortem</div>
+            <div class="vp-audience-desc">SREs, engineers, and team leads who need to understand what happened technically and prevent recurrence</div>
+          </div>
+        </div>
+        <div class="vp-doc">INCIDENT POSTMORTEM — P1-2024-1115-PAYMENT
+Status: Under review | Severity: P1 | Duration: 6h 14m
+
+TIMELINE (all times UTC)
+01:19  payment-service v4.1.2 deployed to production (Nov 14 deployment, delayed rollout)
+02:06  Customer support receives first failed payment tickets; internal alert triggers
+02:52  On-call SRE paged via fallback escalation (primary PagerDuty alert suppressed — see contributing factor #2)
+03:14  SRE identifies pod memory exhaustion; begins investigation
+04:30  Memory leak hypothesis confirmed; rollback to v4.1.1 begins
+07:44  Rollback complete across all regions
+08:20  Error rate returns to baseline; incident closed
+
+ROOT CAUSE
+Memory leak in payment-service v4.1.2, introduced in PR #2341 (merged Nov 13). The leak occurs in the Stripe webhook retry handler — failed webhook callbacks accumulate in memory without being garbage collected when the retry queue exceeds 500 items. Under normal traffic, this is not triggered. Under the elevated traffic on Nov 15 morning (Black Friday pre-sale), retry volume exceeded threshold, memory grew to 2GB pod limit, pod crashed, and did not recover cleanly on restart due to a separate uncleaned state issue.
+
+CONTRIBUTING FACTORS
+1. PR #2341 passed unit and integration tests but lacked a load test simulating the retry queue under high volume
+2. PagerDuty alert for payment-service memory > 1.5GB was suppressed due to misconfigured alert rule (rule set to "suppress if pod restarts < 2 in 30 min" — pod restart counter was not incrementing correctly after the Nov 8 monitoring update)
+
+OPEN ACTION ITEMS
+[ ] Fix alert suppression logic in PagerDuty — owner: infra team, due: Nov 18
+[ ] Add load test for webhook retry handler — owner: payments team, due: Nov 22
+[ ] Investigate pod state cleanup on crash restart — owner: payments team, due: Nov 22
+[ ] Post-incident review: Nov 17, 14:00 UTC, #payments-postmortem channel</div>
+        <div class="vp-analysis">
+          <div class="vp-analysis-title">What's in this version — and what's not</div>
+          <div class="analysis-grid">
+            <div class="analysis-item included"><div class="ai-label">✓ Included</div><div class="ai-items"><div class="ai-item">Exact timeline with UTC timestamps</div><div class="ai-item">Technical root cause (which PR, which handler, what the memory behavior was)</div><div class="ai-item">Contributing factors with specifics</div><div class="ai-item">Concrete open action items with owners and due dates</div></div></div>
+            <div class="analysis-item excluded"><div class="ai-label">✗ Excluded</div><div class="ai-items"><div class="ai-item">Revenue figures (not relevant to fixing the problem)</div><div class="ai-item">Customer-facing language or apologies</div><div class="ai-item">Business impact framing</div><div class="ai-item">Anything that sounds like PR messaging</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Executive Panel -->
+      <div class="ver-panel" id="panel-1">
+        <div class="vp-header" style="background:var(--orange-pale);">
+          <div class="vp-audience">
+            <div class="vp-audience-label" style="color:var(--orange);">Audience</div>
+            <div class="vp-audience-name" style="color:#92400E;">Executive / Leadership Team</div>
+            <div class="vp-audience-desc">VP Engineering, CEO, CFO — decision-makers who need to understand business impact and what decisions are needed</div>
+          </div>
+        </div>
+        <div class="vp-doc">EXECUTIVE SUMMARY — Payment Outage, November 15
+
+WHAT HAPPENED
+Our payment processing service was unavailable for approximately 34% of checkout attempts from 2:06 AM to 8:20 AM UTC (6 hours, 14 minutes). The issue was caused by a software defect introduced in a deployment the prior evening. We identified the problem and restored service by rolling back to the previous version.
+
+CUSTOMER AND BUSINESS IMPACT
+• Approximately 12,400 transactions were affected
+• Estimated net revenue impact: ~$52,000 (some transactions will be recovered as customers retry)
+• 214 customer support tickets were received and are being resolved
+• The issue is now resolved — current payment success rate is normal
+
+WHAT DECISIONS ARE NEEDED FROM LEADERSHIP
+1. Customer communication: Do we proactively notify affected customers, or respond only to those who reach out? Legal and comms teams should weigh in on our SLA obligations. Recommendation: proactive outreach to customers with confirmed failed transactions.
+2. Deployment process: Engineering recommends temporarily pausing deployments to payment services during high-traffic periods. This will affect our November release schedule. Request approval to implement this change.
+
+WHAT WE'RE DOING TO PREVENT RECURRENCE
+The engineering team has identified the root cause and is implementing fixes, including improving our automated testing and our monitoring alert configuration. A full technical postmortem is scheduled for November 17.
+
+STATUS: Resolved. No further action required today unless decisions above are needed.</div>
+        <div class="vp-analysis">
+          <div class="vp-analysis-title">What's in this version — and what's not</div>
+          <div class="analysis-grid">
+            <div class="analysis-item included"><div class="ai-label">✓ Included</div><div class="ai-items"><div class="ai-item">Plain-language explanation of what happened</div><div class="ai-item">Business impact numbers (revenue, customers affected)</div><div class="ai-item">Specific decisions that need executive input</div><div class="ai-item">Current status (resolved) clearly stated upfront</div></div></div>
+            <div class="analysis-item excluded"><div class="ai-label">✗ Excluded</div><div class="ai-items"><div class="ai-item">Technical details (PR numbers, memory limits, pod specifics)</div><div class="ai-item">Engineering action items (those belong to the engineering postmortem)</div><div class="ai-item">Anything that reads like blame or assigns fault</div><div class="ai-item">Uncertainty or open questions that don't require exec input</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Panel -->
+      <div class="ver-panel" id="panel-2">
+        <div class="vp-header" style="background:var(--green-pale);">
+          <div class="vp-audience">
+            <div class="vp-audience-label" style="color:var(--green);">Audience</div>
+            <div class="vp-audience-name" style="color:#14532D;">Customer Status Update</div>
+            <div class="vp-audience-desc">Customers who experienced a failed payment and need to know if they were affected, what you're doing, and what they should do</div>
+          </div>
+        </div>
+        <div class="vp-doc">Resolved: Payment Processing Issue — November 15
+
+We experienced a technical issue affecting payment processing between 2:06 AM and 8:20 AM UTC today. During this time, some customers were unable to complete purchases.
+
+The issue has been resolved. If you attempted a payment during this window and it did not go through, your card was not charged. You can safely retry your purchase now.
+
+If you have questions about a specific transaction, please contact our support team at support@example.com or via live chat. We're prioritizing responses to customers affected by today's issue.
+
+We're sorry for the inconvenience and are working to make sure this doesn't happen again.
+
+— The Team</div>
+        <div class="vp-analysis">
+          <div class="vp-analysis-title">What's in this version — and what's not</div>
+          <div class="analysis-grid">
+            <div class="analysis-item included"><div class="ai-label">✓ Included</div><div class="ai-items"><div class="ai-item">When the issue occurred and that it's resolved</div><div class="ai-item">Whether their card was charged (the #1 customer question)</div><div class="ai-item">What they should do next (retry, contact support)</div><div class="ai-item">An honest, brief apology</div></div></div>
+            <div class="analysis-item excluded"><div class="ai-label">✗ Excluded</div><div class="ai-items"><div class="ai-item">Technical root cause (customers don't need this)</div><div class="ai-item">Revenue impact figures</div><div class="ai-item">Internal process details (postmortems, rollbacks)</div><div class="ai-item">Anything that sounds like we're defending ourselves</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Changes — and What Doesn't</h2>
+    <p>Looking across all three versions, some things stay constant. The facts are accurate in all three. The timeline is consistent. Nothing is hidden or contradicted. What changes is which facts each audience receives, and how they're framed.</p>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Element</th>
+          <th>Engineering</th>
+          <th>Executive</th>
+          <th>Customer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>What happened</strong></td>
+          <td>Memory leak in payment-service v4.1.2, specific PR and handler</td>
+          <td>Software defect introduced in a recent deployment</td>
+          <td>A technical issue affecting payment processing</td>
+        </tr>
+        <tr>
+          <td><strong>Timeline</strong></td>
+          <td>Minute-by-minute with UTC timestamps</td>
+          <td>Duration and resolution, plain language</td>
+          <td>Window (2:06 AM–8:20 AM) and resolution confirmed</td>
+        </tr>
+        <tr>
+          <td><strong>Impact</strong></td>
+          <td>Pod crash, error rate, which services affected</td>
+          <td>Revenue, transaction count, customer support volume</td>
+          <td>Some customers couldn't complete purchases</td>
+        </tr>
+        <tr>
+          <td><strong>What's needed</strong></td>
+          <td>Specific action items with owners and due dates</td>
+          <td>Two decisions requiring executive input</td>
+          <td>Clear guidance: retry is safe, card not charged</td>
+        </tr>
+        <tr>
+          <td><strong>What's excluded</strong></td>
+          <td>Revenue figures, customer apologies</td>
+          <td>PR numbers, technical details</td>
+          <td>Everything except resolution and next steps</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It</div>
+      <div class="sim-title">Which detail belongs in which document?</div>
+      <div class="sim-sub">An SRE is writing communications after a data pipeline failure. Where does this detail belong?</div>
+      <div class="sim-q">"The ETL job failed at step 3 of 7 (data normalization) due to an unhandled null value in the `customer_id` field. The null value originated from a new data source added in the Nov 10 integration. The fix involves adding a null check in the normalize() function and reprocessing the affected batch."</div>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">Customer status update — customers should know what went wrong with their data</button>
+        <button class="sim-opt" onclick="doSim(this,true)">Engineering postmortem — this is technical root cause information that engineers need to fix and prevent the problem</button>
+        <button class="sim-opt" onclick="doSim(this,false)">Executive summary — leadership needs to understand the technical specifics to make good decisions</button>
+        <button class="sim-opt" onclick="doSim(this,false)">All three documents — transparency means sharing the same information with everyone</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Most Common Mistakes</h2>
+    <p>Two failure patterns show up constantly when engineers write multi-audience incident communications.</p>
+    <p><strong>Mistake 1: Writing one document for everyone.</strong> The result is a wall of technical text that executives won't read and customers can't understand. Or a vague, PR-friendly summary that engineers can't act on. One document serving three audiences serves none of them.</p>
+    <p><strong>Mistake 2: Changing the facts for different audiences.</strong> This is different from adapting the level of detail — this is a real problem. If the engineering team knows the outage was caused by an alert misconfiguration that delayed detection by 47 minutes, and the executive summary omits this, that's not audience adaptation. That's information management. Executives may need to know about monitoring gaps to make staffing or process decisions. The test: <mark>does adapting the document for this audience omit anything that would change the decisions they need to make?</mark> If yes, you've gone too far.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An engineer writes an executive summary of a security incident. The summary says "the vulnerability was identified and patched within 4 hours" — which is true. It omits that the vulnerability had existed for 11 months before it was discovered, meaning customer data may have been accessible for nearly a year. Is this appropriate audience adaptation?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Yes — the patch timeline is what matters for the executive summary; historical exposure is a technical detail</button>
+        <button class="qopt" onclick="cq(this,false)">Yes — executives don't need to understand the technical history of a vulnerability to make decisions</button>
+        <button class="qopt" onclick="cq(this,true)">No — the 11-month exposure window changes the business decisions executives need to make: customer notification obligations, legal exposure, regulatory reporting, and PR response. Omitting it isn't audience adaptation — it's withholding material information from decision-makers</button>
+        <button class="qopt" onclick="cq(this,false)">It depends on whether the customers whose data was accessible need to be notified — legal should decide first</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Different audiences have different jobs. An SRE needs to fix and prevent. An executive needs to decide and communicate. A customer needs to know if they're affected and what to do. Write for the job, not the person's title or assumed technical level.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Adapting level of detail is appropriate. Omitting facts that would change someone's decisions is not. The test: does leaving this out mean the reader might make a decision they'd make differently if they knew? If yes, include it — just frame it at the right level of detail for that audience.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI tools will often generate a single version of incident communication. Your job is to ask: who else needs to know about this, what do they specifically need, and does the AI draft serve that audience — or just the audience it was prompted to write for?</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function showTab(i){
+  document.querySelectorAll(".ver-tab").forEach((t,idx)=>t.classList.toggle("active",idx===i));
+  document.querySelectorAll(".ver-panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
+}
+
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");
+  if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("Engineering postmortem"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");
+  fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. This detail — which step failed, why, what caused it, and how to fix it — is exactly the kind of technical root cause information that belongs in an engineering postmortem. Customers don't need to know about null checks in normalize(). Executives don't need the specific step number or function name to decide whether to notify customers. Engineers absolutely do need this to fix the bug and prevent it from happening again.";
+  else fb.textContent="❌ This level of technical detail doesn't serve customers or executives. Customers need to know whether they're affected and what to do — not which ETL step failed. Executives need to understand business impact and what decisions are needed — not which function had a missing null check. And 'full transparency' doesn't mean sharing the same technical depth with every audience — it means making sure each audience has the facts they need to do their job accurately.";}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The 11-month exposure window is not a technical detail — it's a material fact that changes the scope of executive decision-making. Executives who don't know about the exposure window might decide that a quiet patch and internal postmortem is sufficient. Executives who do know might decide that legal review, customer notification, and regulatory reporting are required. The omission doesn't simplify the document — it prevents the right decisions from being made. Audience adaptation is about choosing the right level of technical detail. It is not about deciding which facts executives get to know about.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("changes the business decisions"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The question of whether this is appropriate audience adaptation doesn't turn on legal team timing or executive technical sophistication. The 11-month exposure window is material information for a business decision — one that executives are responsible for making. Keeping that information out of the executive summary because 'it's a technical detail' prevents the right people from making informed decisions. That's the line between appropriate audience adaptation and problematic information management.";}
+}
+</script>
+</body>
+</html>
