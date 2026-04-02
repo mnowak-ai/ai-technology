@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jargon vs. Precision: When Technical Terminology Helps and When It Hurts</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* The test cards */
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.test-card{border-radius:14px;padding:20px;}
+.test-card.precision{background:var(--green-pale);border:1.5px solid #B5D5C0;}
+.test-card.jargon{background:var(--red-pale);border:1.5px solid #F5C2C2;}
+.tc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.test-card.precision .tc-label{color:var(--green);}
+.test-card.jargon .tc-label{color:var(--red);}
+.tc-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.tc-desc{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.tc-example{background:rgba(255,255,255,.6);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:12px;line-height:1.7;color:var(--gray-text);font-family:monospace;}
+
+/* Audience boundary examples */
+.boundary{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:20px;margin:20px 0;overflow:hidden;}
+.boundary-header{background:var(--purple-pale);padding:14px 22px;display:flex;justify-content:space-between;align-items:center;}
+.bh-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.bh-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:100px;background:var(--orange-pale);color:var(--orange);border:1px solid #F5D8A0;}
+.b-cols{display:grid;grid-template-columns:1fr 1fr;}
+.b-col{padding:18px 20px;}
+.b-col.crosses{background:var(--red-pale);border-right:1px solid #F5C2C2;}
+.b-col.stays{background:var(--green-pale);}
+.b-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.b-col.crosses .b-label{color:var(--red);}
+.b-col.stays .b-label{color:var(--green);}
+.b-text{font-size:13px;line-height:1.8;color:var(--gray-text);}
+.b-why{background:var(--gray-soft);border-top:1px solid var(--purple-mid);padding:14px 22px;}
+.b-why-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:5px;}
+.b-why-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* The term table */
+.term-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.term-table th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.term-table td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.term-table tr:last-child td{border-bottom:none;}
+.term-table tr:nth-child(even) td{background:var(--gray-soft);}
+.tag-keep{display:inline-block;background:var(--green-pale);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+.tag-define{display:inline-block;background:var(--orange-pale);color:var(--orange);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+.tag-replace{display:inline-block;background:var(--red-pale);color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.1 — Clear Technical Communication</div>
+  <h1>Jargon vs. Precision: When Technical Terminology Helps and When It Hurts</h1>
+  <p class="hero-sub">"The p99 latency exceeded the SLO threshold" is more precise than "the system was slow." But the same sentence sent to the wrong audience creates confusion and risk. Here's how to know the difference.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>The Same Word Can Be Precision or Jargon</h2>
+    <p>Technical terminology isn't inherently good or bad. The same term that gives an SRE a precise, unambiguous handle on a problem becomes exclusionary noise when it crosses an audience boundary — reaching someone who doesn't share the specialized vocabulary.</p>
+    <p>"p99 latency" is precision when you're writing for an SRE team. It's jargon when you're writing a customer status update. <mark>The difference isn't the word — it's whether the reader shares the vocabulary required to decode it without looking anything up.</mark></p>
+    <div class="pull-quote"><p>Jargon is not wrong terminology. It's the right terminology used with the wrong audience — or used to signal expertise rather than to communicate it.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>When Technical Terminology Is Precision (Use It)</h2>
+    <p>Technical terms earn their place when they do one or more of the following things that plain language cannot do as well.</p>
+    <div class="test-grid">
+      <div class="test-card precision">
+        <div class="tc-label">✅ Use it when</div>
+        <div class="tc-title">It's more specific than plain language</div>
+        <div class="tc-desc">The term captures a precise meaning that a plain-language description would either lengthen considerably or make ambiguous.</div>
+        <div class="tc-example">"p99 latency exceeded 4s" vs. "the slowest 1% of requests took more than 4 seconds" — both work, but the first is 5 words and unambiguous to the audience.</div>
+      </div>
+      <div class="test-card precision">
+        <div class="tc-label">✅ Use it when</div>
+        <div class="tc-title">The audience shares the vocabulary</div>
+        <div class="tc-desc">All readers of this document will recognize this term without looking it up. Using it saves time and signals shared context.</div>
+        <div class="tc-example">Writing "the pod went into CrashLoopBackOff" in a Kubernetes runbook for SREs who work with Kubernetes daily — this is their native vocabulary.</div>
+      </div>
+      <div class="test-card precision">
+        <div class="tc-label">✅ Use it when</div>
+        <div class="tc-title">Precision is operationally required</div>
+        <div class="tc-desc">The distinction between similar-sounding terms matters for the action the reader needs to take. Using a vaguer term would lose that operational distinction.</div>
+        <div class="tc-example">"TCP timeout" vs. "connection timeout" vs. "read timeout" — these require different fixes. Collapsing them into "connection problem" loses the information needed to debug.</div>
+      </div>
+      <div class="test-card precision">
+        <div class="tc-label">✅ Use it when</div>
+        <div class="tc-title">The document will be searched by experts</div>
+        <div class="tc-desc">Technical terms in documentation and runbooks are search anchors. Engineers search for "OOMKilled" not "the pod ran out of memory." Using the precise term makes the document findable.</div>
+        <div class="tc-example">Postmortems and runbooks should use the exact error message, flag name, or technical term so that engineers searching under incident pressure can find the right document.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>When Technical Terminology Is Jargon (Translate It)</h2>
+    <div class="test-grid">
+      <div class="test-card jargon">
+        <div class="tc-label">❌ Translate it when</div>
+        <div class="tc-title">It crosses an audience boundary</div>
+        <div class="tc-desc">The document will be read by someone who doesn't share the specialist vocabulary — executives, other departments, customers, or junior engineers new to the domain.</div>
+        <div class="tc-example">An executive summary that says "the SLO breach triggered a P1 and the SRE team initiated a rollback after identifying the root cause in the DORA metrics dashboard" has lost its audience by the third word.</div>
+      </div>
+      <div class="test-card jargon">
+        <div class="tc-label">❌ Translate it when</div>
+        <div class="tc-title">It signals expertise instead of communicating</div>
+        <div class="tc-desc">The term isn't chosen for precision — it's chosen to sound technical. A plainer term would communicate just as precisely but wouldn't advertise knowledge.</div>
+        <div class="tc-example">"We need to leverage our MLOps infrastructure to operationalize the model artifact via our CD pipeline" — most of these words are adding noise, not precision.</div>
+      </div>
+      <div class="test-card jargon">
+        <div class="tc-label">❌ Translate it when</div>
+        <div class="tc-title">The acronym is undefined in context</div>
+        <div class="tc-desc">Abbreviations and acronyms that aren't defined on first use force readers to stop and look things up — or to keep reading while misunderstanding the document.</div>
+        <div class="tc-example">A postmortem that refers to "the ETL job failure" in the first line, without ever defining ETL, loses any reader who isn't already familiar with the pipeline.</div>
+      </div>
+      <div class="test-card jargon">
+        <div class="tc-label">❌ Translate it when</div>
+        <div class="tc-title">The term has different meanings across teams</div>
+        <div class="tc-desc">Some words mean different things to different engineering disciplines. Using them without definition assumes a specific meaning that may not be shared.</div>
+        <div class="tc-example">"Pipeline" means an ML training pipeline to an ML engineer, a CI/CD pipeline to a platform engineer, and a data pipeline to a data engineer. In a cross-team doc, define which one.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Audience Boundary Problem</h2>
+    <p>The riskiest moment for technical jargon is when a document crosses from one professional community to another. This happens constantly in IT: engineering teams communicate with product, legal, security, executive, and customer-facing teams. Each crossing requires vocabulary recalibration.</p>
+
+    <div class="boundary">
+      <div class="boundary-header">
+        <div class="bh-title">Example: Communicating an ML Model Issue</div>
+        <div class="bh-badge">Cross-team boundary</div>
+      </div>
+      <div class="b-cols">
+        <div class="b-col crosses">
+          <div class="b-label">❌ Jargon crossing the boundary</div>
+          <div class="b-text">The fraud detection model's precision on OOD inputs has degraded significantly since the last retrain. The drift in the feature distribution is causing the classifier to produce high-confidence false positives on transactions from new merchant categories. We need to schedule an emergency retrain with updated SMOTE-balanced data.</div>
+        </div>
+        <div class="b-col stays">
+          <div class="b-label">✅ Translated for the product team</div>
+          <div class="b-text">Our fraud detection model is incorrectly flagging legitimate transactions as fraudulent — specifically purchases from merchants in categories we added recently (grocery delivery, EV charging stations). This is happening because the model wasn't trained on these new merchant types. We're seeing about 3x more false fraud flags than normal in these categories. We need to retrain the model with current transaction data — this will take 4–5 days. In the meantime, we recommend manual review for flagged transactions in those two categories.</div>
+        </div>
+      </div>
+      <div class="b-why">
+        <div class="b-why-label">What changed — and what didn't</div>
+        <div class="b-why-text">The technical facts are identical. What changed: "OOD inputs" → "new merchant categories"; "feature distribution drift" → "the model wasn't trained on these new types"; "SMOTE-balanced retrain" → "retrain the model with current data." The plain version also added what the product team actually needs to act on: the scale of the problem (3x more flags), the timeline (4–5 days), and an interim mitigation. Technical precision for a technical audience — operational clarity for everyone else.</div>
+      </div>
+    </div>
+
+    <div class="boundary">
+      <div class="boundary-header">
+        <div class="bh-title">Example: Security Advisory to Non-Technical Staff</div>
+        <div class="bh-badge">Cross-team boundary</div>
+      </div>
+      <div class="b-cols">
+        <div class="b-col crosses">
+          <div class="b-label">❌ Jargon crossing the boundary</div>
+          <div class="b-text">A zero-day RCE vulnerability has been identified in the version of OpenSSL we're running. CVSS score 9.8. Patch is available but requires downtime. Unpatched systems are vulnerable to arbitrary code execution by unauthenticated remote attackers. IT will be deploying the patch during the maintenance window.</div>
+        </div>
+        <div class="b-col stays">
+          <div class="b-label">✅ Translated for non-technical staff</div>
+          <div class="b-text">We've discovered a serious security flaw in software running on our servers. If not fixed, an outside attacker could potentially access or damage our systems without needing a password. We're applying a fix this weekend during scheduled maintenance. During the maintenance window (Saturday 2–4am), some internal tools will be briefly unavailable. No action is required from you — IT is handling the fix. We'll send a confirmation once the patch is applied.</div>
+        </div>
+      </div>
+      <div class="b-why">
+        <div class="b-why-label">What the non-technical staff actually needs</div>
+        <div class="b-why-text">"RCE vulnerability," "CVSS 9.8," and "unauthenticated remote attackers" are precise and meaningful to a security engineer. They are noise to a marketing manager. What the marketing manager needs: is this serious? (yes), do I need to do anything? (no), will anything I use be affected? (briefly, here's when). The translated version answers all three questions without requiring any security literacy.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Practical Reference: Keep, Define, or Replace</h2>
+    <p>Here's a guide for common IT terms and how to handle them depending on audience.</p>
+    <table class="term-table">
+      <thead><tr><th>Term</th><th>Engineering audience</th><th>Cross-team / executive</th><th>Customer-facing</th></tr></thead>
+      <tbody>
+        <tr><td><strong>p99 latency</strong></td><td><span class="tag-keep">Keep</span></td><td><span class="tag-define">Define: "slowest 1% of requests"</span></td><td><span class="tag-replace">Replace: "occasional slowness"</span></td></tr>
+        <tr><td><strong>SLO / SLA</strong></td><td><span class="tag-keep">Keep</span></td><td><span class="tag-define">Define on first use</span></td><td><span class="tag-replace">Replace: "our performance target"</span></td></tr>
+        <tr><td><strong>Rollback</strong></td><td><span class="tag-keep">Keep</span></td><td><span class="tag-define">Define: "reverting to the previous version"</span></td><td><span class="tag-replace">Replace: "we reversed the recent change"</span></td></tr>
+        <tr><td><strong>Postmortem</strong></td><td><span class="tag-keep">Keep</span></td><td><span class="tag-define">Define: "our incident review process"</span></td><td><span class="tag-replace">Replace: "our investigation" or omit</span></td></tr>
+        <tr><td><strong>Pod / container</strong></td><td><span class="tag-keep">Keep</span></td><td><span class="tag-replace">Replace: "server process" or "service component"</span></td><td><span class="tag-replace">Replace: "part of our infrastructure"</span></td></tr>
+        <tr><td><strong>False positive</strong></td><td><span class="tag-keep">Keep</span></td><td><span class="tag-define">Define: "a case flagged incorrectly"</span></td><td><span class="tag-replace">Replace: "an incorrect flag"</span></td></tr>
+        <tr><td><strong>Throughput</strong></td><td><span class="tag-keep">Keep</span></td><td><span class="tag-define">Define: "how many requests we can handle per second"</span></td><td><span class="tag-replace">Replace: "how fast the service responds"</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It</div>
+      <div class="sim-title">Which version is right for this audience?</div>
+      <div class="sim-sub">An ML engineer is writing a message to the customer support team explaining why some AI chat responses have been unhelpful this week. Which version is appropriate?</div>
+      <div class="sim-q">Pick the right version for customer support staff:</div>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">The LLM has been exhibiting increased hallucination rates following last week's fine-tuning run. The RLHF alignment appears to have degraded on domain-specific queries outside the training distribution. We're evaluating whether to rollback the fine-tune or apply a targeted LoRA patch.</button>
+        <button class="sim-opt" onclick="doSim(this,false)">Our AI model is experiencing inference degradation due to distribution shift post fine-tuning. Affected query types are out-of-distribution relative to the updated training corpus. ETA for resolution is 48–72 hours pending evaluation.</button>
+        <button class="sim-opt" onclick="doSim(this,true)">Our AI assistant has been giving less accurate responses since we updated it last week — especially for questions about topics outside its usual areas. We're fixing it now. ETA is 2–3 days. In the meantime, if customers report unhelpful responses, please flag them using the usual feedback process so we can track the affected cases. We'll let you know when the fix is live.</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A security engineer writes in an incident ticket: "The SQLi attack exploited an unsanitized input vector in the user auth endpoint, exfiltrating PII from the users table via a UNION-based extraction. Mitigation: parameterized queries deployed." This ticket is then forwarded to the legal team to assess notification obligations. What's the problem?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The ticket is too brief — legal needs more technical detail to assess the situation fully</button>
+        <button class="qopt" onclick="cq(this,true)">The ticket uses technical terminology that the legal team cannot act on without translation — "SQLi," "unsanitized input vector," "UNION-based extraction," and "parameterized queries" require specialist knowledge. Legal needs to know: what data was accessed, whose data, how much, and whether the breach triggers notification obligations — none of which is directly answered by the technical description.</button>
+        <button class="qopt" onclick="cq(this,false)">The ticket should not be forwarded to legal — security incidents should be resolved before legal is involved</button>
+        <button class="qopt" onclick="cq(this,false)">The ticket is fine — legal teams working in tech should be expected to understand basic security terminology</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Technical terminology is precision when the audience shares the vocabulary. It becomes jargon — and a risk — the moment it crosses an audience boundary. The same term can be required for one reader and exclusionary for another. Know which side of the boundary your document is on.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The riskiest jargon-boundary crossings in IT happen when engineering teams communicate with legal, executive, customer-facing, or cross-functional teams. These are moments when operational decisions depend on non-engineers understanding technical facts accurately — and jargon creates a gap between what was written and what was understood.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When in doubt, use technical terms in technical documents and define them on first use in cross-audience documents. The practical test: could someone in this audience act on this document correctly without looking anything up? If not, either define the terms or replace them.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("giving less accurate"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. The customer support team doesn't need to know about hallucination rates, RLHF alignment, or LoRA patches. They need to know: what's happening (less accurate responses), why (we updated it), which types of questions are affected, when it will be fixed, and what to do in the meantime. The third option answers all five questions in plain language, gives the support team a concrete action (use the feedback process), and commits to a follow-up. That's what cross-boundary communication looks like.";
+  else fb.textContent="❌ Both the first and second options use specialist ML terminology (hallucination, RLHF, fine-tuning, distribution shift, LoRA) that requires deep ML knowledge to understand. Customer support staff don't need to know what caused the problem at a technical level — they need to know what it means for their interactions with customers and what to do about it. Keeping technical terminology within technical documents and translating for cross-functional audiences is one of the most high-value communication habits in a tech organization.";}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The security ticket is technically precise and appropriate within an engineering context. It becomes a jargon problem the moment it's forwarded to legal. Legal needs to know: was personal data accessed? (yes — 'exfiltrating PII' says so, but 'PII' may need definition and the scope is unclear). Whose data? How many records? Is this a notifiable breach under GDPR, CCPA, or HIPAA? None of these questions are answered by the technical description. A legal-facing summary would say: 'An attacker accessed user data including [specific fields] for [X] accounts between [date range]. We've blocked the attack and secured the vulnerability. We need legal review to assess notification obligations under [relevant regulations].' Same facts — different frame.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("cannot act on"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The length and timing are secondary. The primary problem is that legal cannot extract what they need from this document to do their job — assess notification obligations. 'PII exfiltrated from the users table' tells a security engineer a lot. It tells a lawyer almost nothing: which fields? email addresses? SSNs? credit card numbers? How many users? Over what time period? The legal obligation thresholds depend on exactly these details. Technical precision for a technical audience is appropriate; the same document crossing into legal review needs translation — not just forwarding.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tone in Technical Writing: When to Be Formal, When to Be Direct, and When It Really Matters</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Tone spectrum */
+.tone-spectrum{margin:24px 0;border-radius:20px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.ts-header{background:var(--purple-pale);padding:16px 24px;}
+.ts-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ts-sub{font-size:13px;color:var(--gray-muted);}
+.ts-rows{padding:0;}
+.ts-row{display:grid;grid-template-columns:160px 1fr 1fr;border-bottom:1px solid var(--purple-mid);}
+.ts-row:last-child{border-bottom:none;}
+.ts-row.header-row{background:var(--gray-soft);}
+.ts-cell{padding:14px 18px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+.ts-cell.label{font-weight:700;color:var(--purple-dark);font-size:13px;border-right:1px solid var(--purple-mid);}
+.ts-cell.col-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);border-right:1px solid var(--purple-mid);}
+.ts-cell:last-child{border-right:none;}
+
+/* Before/after tone */
+.tone-pair{margin:20px 0;border-radius:18px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.tp-header{background:var(--purple-pale);padding:14px 22px;display:flex;justify-content:space-between;align-items:center;}
+.tp-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.tp-context{font-size:12px;color:var(--gray-muted);}
+.tp-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.tp-col{padding:18px 20px;}
+.tp-col.wrong-tone{background:var(--red-pale);border-right:1px solid #F5C2C2;}
+.tp-col.right-tone{background:var(--green-pale);}
+.tp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.tp-col.wrong-tone .tp-label{color:var(--red);}
+.tp-col.right-tone .tp-label{color:var(--green);}
+.tp-text{font-size:13px;line-height:1.8;color:var(--gray-text);}
+.tp-why{background:var(--gray-soft);border-top:1px solid var(--purple-mid);padding:14px 22px;}
+.tp-why-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:5px;}
+.tp-why-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Decision cards */
+.decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.dcard{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.dcard-q{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.dcard-answers{display:flex;flex-direction:column;gap:6px;}
+.dcard-answer{font-size:12px;line-height:1.6;color:var(--gray-text);display:flex;gap:8px;align-items:flex-start;}
+.dcard-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:5px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:14px;font-size:14px;line-height:1.75;color:var(--gray-text);}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.1 — Clear Technical Communication</div>
+  <h1>Tone in Technical Writing: When to Be Formal, When to Be Direct, and When It Really Matters</h1>
+  <p class="hero-sub">Tone is not a soft skill. How you write a postmortem changes whether teams feel blamed or empowered. How you document an AI system's limitations changes whether it gets used safely.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <h2>Tone Is a Technical Decision</h2>
+    <p>Engineers often treat tone as an afterthought — something to worry about after you've gotten the facts right. But in technical communication, tone is not decorative. It carries operational meaning. It determines whether readers trust a document, whether teams feel safe surfacing problems, and whether an AI system's limitations get honestly stated or quietly buried.</p>
+    <p>Three types of IT documents are where tone has the highest stakes. <mark>Post-incident reports can blame or empower. Customer-facing status updates can build or destroy trust. AI system documentation can enable safe use or quietly encourage overconfidence.</mark> Each requires a different but deliberate tonal choice.</p>
+    <div class="pull-quote"><p>Tone is not about being polite. It's about choosing the words that produce the right outcome in the reader — and in a technical context, the outcome is always operational.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Tone Spectrum for IT Documents</h2>
+    <p>Different document types call for different tonal registers. Here's a practical map.</p>
+    <div class="tone-spectrum">
+      <div class="ts-header">
+        <div class="ts-title">Tone by Document Type</div>
+        <div class="ts-sub">The right tone depends on the document's purpose and audience — not on personal preference</div>
+      </div>
+      <div class="ts-rows">
+        <div class="ts-row header-row">
+          <div class="ts-cell col-header">Document type</div>
+          <div class="ts-cell col-header">Right tone</div>
+          <div class="ts-cell col-header">Why it matters</div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-cell label">Post-incident report / Postmortem</div>
+          <div class="ts-cell">Factual, blameless, systems-focused</div>
+          <div class="ts-cell">Blame language suppresses future reporting. Engineers who fear being named in postmortems stop surfacing problems early.</div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-cell label">Customer status update</div>
+          <div class="ts-cell">Direct, calm, accountable</div>
+          <div class="ts-cell">Defensive or evasive tone erodes trust permanently. Customers can accept outages; they can't accept being misled about them.</div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-cell label">AI system documentation</div>
+          <div class="ts-cell">Honest, specific about limitations</div>
+          <div class="ts-cell">Overly positive documentation leads engineers to over-trust AI outputs. Documented limitations get used; undocumented limitations cause incidents.</div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-cell label">Runbook / SOP</div>
+          <div class="ts-cell">Imperative, precise, neutral</div>
+          <div class="ts-cell">Hedging language ("you might want to consider") creates hesitation during incidents. Runbooks should tell, not suggest.</div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-cell label">Internal security advisory</div>
+          <div class="ts-cell">Urgent but not alarmist</div>
+          <div class="ts-cell">Over-alarming creates panic and poor decisions. Under-alarming creates inaction. The tone has to match the actual risk level accurately.</div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-cell label">Engineering design doc / RFC</div>
+          <div class="ts-cell">Confident but open to challenge</div>
+          <div class="ts-cell">Defensive tone discourages feedback. Uncertain tone undermines credibility. The right balance invites rigorous review.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Post-Incident Reports: Blameless vs. Blame</h2>
+    <p>The blameless postmortem is one of the most important ideas in modern site reliability engineering — and it's entirely a tonal choice. The same set of facts can be written in a way that assigns personal fault or in a way that identifies system failures. These produce completely different outcomes.</p>
+    <p>Blame language in postmortems doesn't just feel bad. It changes behavior: engineers stop escalating early because they fear being named. Teams cover problems rather than surface them. The next incident happens with less warning because the culture made early escalation feel dangerous.</p>
+
+    <div class="tone-pair">
+      <div class="tp-header">
+        <div class="tp-title">Postmortem: Blame vs. Blameless</div>
+        <div class="tp-context">Same facts, very different outcomes</div>
+      </div>
+      <div class="tp-cols">
+        <div class="tp-col wrong-tone">
+          <div class="tp-label">❌ Blame tone</div>
+          <div class="tp-text">The on-call engineer failed to respond to the initial alert within the required 5-minute window, which allowed the incident to escalate. Additionally, the engineer made the decision to restart the service without first checking the monitoring dashboard, which extended the outage by approximately 40 minutes. Better adherence to established procedures would have prevented the extended impact.</div>
+        </div>
+        <div class="tp-col right-tone">
+          <div class="tp-label">✅ Blameless tone</div>
+          <div class="tp-text">The initial alert fired at 02:06 UTC. The on-call engineer was paged at 02:09 UTC and acknowledged at 02:19 UTC — a 10-minute gap that exceeded the 5-minute SLA. Contributing factor: the PagerDuty escalation policy had not been updated after the on-call rotation change two weeks prior, meaning the alert went to an engineer who was no longer primary. The service restart at 03:14 UTC occurred before the monitoring dashboard reflected the full scope of the issue — at that point in the incident, the dashboard lag was 8–12 minutes. Action item: reduce monitoring latency to under 2 minutes for P1 alerts.</div>
+        </div>
+      </div>
+      <div class="tp-why">
+        <div class="tp-why-label">Why blameless tone produces better outcomes</div>
+        <div class="tp-why-text">The blameless version identifies the same problems — slow acknowledgment, premature restart — but attributes them to system failures (outdated escalation policy, monitoring lag) rather than individual failure. This produces actionable fixes. "Better adherence" is not an action item — it's a reprimand. "Reduce monitoring latency" is. Blameless postmortems are also honest: the engineer acted reasonably given the information they had at the time. Blaming them for monitoring lag they couldn't see is inaccurate, not just unkind.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Customer-Facing Status Updates: Trust Through Honesty</h2>
+    <p>Customers have low tolerance for evasion and high tolerance for honesty. A status update that is vague, defensive, or PR-polished destroys more trust than the outage itself. The tonal goal is to be direct, calm, and accountable — not apologetic to the point of seeming dishonest, and not clinical to the point of seeming uncaring.</p>
+
+    <div class="tone-pair">
+      <div class="tp-header">
+        <div class="tp-title">Customer Status Update: Evasive vs. Direct</div>
+        <div class="tp-context">Payment processing outage, 4 hours in</div>
+      </div>
+      <div class="tp-cols">
+        <div class="tp-col wrong-tone">
+          <div class="tp-label">❌ Evasive / PR tone</div>
+          <div class="tp-text">We are aware that some customers may be experiencing difficulties with certain payment-related functionality. Our team is actively working to investigate and resolve the situation. We apologize for any inconvenience this may have caused and appreciate your patience as we work diligently to restore full service. We will provide updates as they become available.</div>
+        </div>
+        <div class="tp-col right-tone">
+          <div class="tp-label">✅ Direct / accountable tone</div>
+          <div class="tp-text">Payment processing has been down since 10:14 AM UTC. We know what's causing it — a software defect in our payment service — and we're actively deploying a fix. We expect service to be restored by 2:30 PM UTC. If you attempted a payment after 10:14 AM, your card was not charged. You can retry once we confirm service is restored. We'll post an update by 2:00 PM UTC regardless of status.</div>
+        </div>
+      </div>
+      <div class="tp-why">
+        <div class="tp-why-label">Why direct tone builds more trust</div>
+        <div class="tp-why-text">The evasive version says almost nothing. "Some customers may be experiencing difficulties with certain payment-related functionality" translates plainly to "payments are broken" — customers know this, and the hedged language signals that you're trying to minimize rather than communicate. The direct version tells them what's broken, why, when it will be fixed, and — critically — what happened to their money. That last detail is the #1 question during a payment outage. Answering it directly, before they have to ask, is what trust looks like.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>AI System Documentation: Honest About Limitations</h2>
+    <p>This is the most underappreciated tonal challenge in modern IT writing. When you document an AI system — a model, a recommendation engine, an automated alert classifier — the tone of that documentation directly determines how safely it gets used.</p>
+    <p>Overly positive documentation ("the model accurately classifies anomalies in real time") leads engineers to trust outputs they should be verifying. Honest documentation ("the model has a 12% false positive rate on low-traffic periods — always verify alerts during weekends and holidays") gives engineers the context to use the system safely.</p>
+
+    <div class="tone-pair">
+      <div class="tp-header">
+        <div class="tp-title">AI System Docs: Promotional vs. Honest</div>
+        <div class="tp-context">Internal documentation for a fraud detection model</div>
+      </div>
+      <div class="tp-cols">
+        <div class="tp-col wrong-tone">
+          <div class="tp-label">❌ Overly promotional tone</div>
+          <div class="tp-text">The fraud detection model uses advanced machine learning to identify suspicious transactions in real time with high accuracy. It continuously learns from new data and adapts to emerging fraud patterns. The model provides confidence scores to help teams prioritize review queues efficiently.</div>
+        </div>
+        <div class="tp-col right-tone">
+          <div class="tp-label">✅ Honest, specific tone</div>
+          <div class="tp-text">The fraud detection model flags transactions for human review with 91% precision on the training distribution (US credit card transactions, Jan–Sep 2024). Known limitations: precision drops to ~74% on international transactions and new card types not well-represented in training data. The model does not adapt in real time — it is retrained monthly. Confidence scores above 0.85 have historically required human review in fewer than 8% of cases; scores below 0.60 should always be reviewed. Do not use confidence scores as a substitute for human judgment on high-value transactions (&gt;$10,000).</div>
+        </div>
+      </div>
+      <div class="tp-why">
+        <div class="tp-why-label">Why honest documentation produces safer outcomes</div>
+        <div class="tp-why-text">The promotional version is not false — the model does use machine learning and does provide confidence scores. But it creates a false impression of reliability that engineers will act on. When the model performs poorly on international transactions, an engineer with only the promotional documentation has no reason to be skeptical. The honest version gives engineers exactly what they need to use the system safely: the specific conditions under which precision degrades, the retraining cadence, and a hard rule about high-value transactions. Documented limitations get worked around. Undocumented limitations cause incidents.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Questions to Find the Right Tone</h2>
+    <div class="decision-grid">
+      <div class="dcard">
+        <div class="dcard-q">Who will read this under pressure?</div>
+        <div class="dcard-answers">
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>On-call engineers need imperative, precise tone — no hedging</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Customers in an outage need direct, calm accountability</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Executives in a crisis need confident, minimal, decision-focused tone</div></div>
+        </div>
+      </div>
+      <div class="dcard">
+        <div class="dcard-q">Could this tone suppress important information later?</div>
+        <div class="dcard-answers">
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Blame tone in postmortems → engineers hide problems next time</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Overly formal tone in team channels → people stop asking questions</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Defensive tone in incident comms → customers escalate instead of waiting</div></div>
+        </div>
+      </div>
+      <div class="dcard">
+        <div class="dcard-q">Does the tone match the actual severity?</div>
+        <div class="dcard-answers">
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Alarming tone for a minor issue → panic and poor decisions</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Casual tone for a P1 incident → people don't respond urgently</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Tone calibration is an accuracy problem, not a preference problem</div></div>
+        </div>
+      </div>
+      <div class="dcard">
+        <div class="dcard-q">Am I writing to protect myself or to serve the reader?</div>
+        <div class="dcard-answers">
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Evasive language in status updates → protects writer, frustrates reader</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Overpromising in AI docs → avoids hard conversations, creates safety risk</div></div>
+          <div class="dcard-answer"><div class="dcard-dot"></div><div>Good tone always prioritizes the reader's ability to act correctly</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It</div>
+      <div class="sim-title">Identify the tonal problem</div>
+      <div class="sim-sub">Read the postmortem excerpt. Identify what's wrong with its tone.</div>
+      <div class="sim-scenario">From a postmortem for a 3-hour database outage:<br><br>"The database administrator responsible for the migration chose to run the schema change during peak hours, contrary to established change management policy. This decision, combined with inadequate testing, resulted in the table lock that caused the outage. Going forward, all engineers must follow established procedures and obtain proper approvals before making production changes."</div>
+      <div class="sim-q">What is the primary tonal problem, and what does it risk?</div>
+      <div class="sim-opts" id="sim-opts">
+        <button class="sim-opt" onclick="doSim(this,false)">The tone is too technical — it should be written for a non-engineering audience</button>
+        <button class="sim-opt" onclick="doSim(this,true)">The tone assigns individual blame ("the administrator chose," "inadequate testing") rather than identifying system failures. This discourages future engineers from escalating problems early and from being honest in postmortems.</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The tone is too informal — postmortems should use more professional language</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The tone is too long — postmortems should be concise summaries without detailed analysis</button>
+      </div>
+      <div class="sim-fb" id="sim-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An engineer is writing internal documentation for a new AI-powered log anomaly detector. Their manager suggests writing it positively to encourage adoption: "Let's focus on what it does well — we can add caveats later once people start using it." What's wrong with this approach?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Nothing — getting adoption first and adding caveats later is a reasonable rollout strategy</button>
+        <button class="qopt" onclick="cq(this,false)">It's slightly risky but acceptable — engineers will discover the limitations through use anyway</button>
+        <button class="qopt" onclick="cq(this,true)">The documentation that ships first becomes the mental model engineers use. If limitations are omitted at launch, engineers will over-trust the system during the exact period when they're least familiar with it — when incidents caused by over-trust are most likely. "Adding caveats later" assumes engineers will update their mental model when documentation is updated, which rarely happens.</button>
+        <button class="qopt" onclick="cq(this,false)">It's a documentation problem but not a safety problem — engineers should always verify AI outputs regardless of what the docs say</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Tone is a technical decision with operational consequences. Blame tone in postmortems suppresses future problem reporting. Evasive tone in customer updates destroys trust. Promotional tone in AI documentation creates safety risks. Each is a tonal choice that produces a measurable outcome.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Blameless postmortems are not about being kind to engineers who make mistakes — they're about accurately attributing failures to systems and processes, which is where the fixable problems actually live. "The engineer didn't follow procedure" is rarely the root cause. "The procedure wasn't visible during the incident" usually is.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI system documentation that omits limitations is not just incomplete — it's a safety risk. The documentation that ships first becomes the operating assumption. If limitations aren't stated at launch, engineers will form over-confident mental models during the period when they have the least experience to catch AI errors.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("sim-opts");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("assigns individual blame"))b.classList.add("reveal");});
+  const fb=document.getElementById("sim-fb");fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. 'The administrator chose' and 'inadequate testing' are personal blame, not system analysis. The blameless version would ask: why was a schema change on peak hours allowed? Was the change management policy clear and enforced? Why didn't the testing environment catch the table lock? What would have prevented this without relying on individual perfect judgment? Those questions lead to fixable system improvements. 'Engineers must follow procedures' is a reprimand, not an action item — and it signals to every engineer reading the postmortem that honesty is dangerous.";
+  else fb.textContent="❌ The audience, formality level, and length are not the primary problems here. The core tonal failure is blame: the postmortem names an individual, characterizes their decision as inadequate, and closes with a warning to all engineers. This is exactly the pattern that makes psychological safety collapse in engineering teams. Future incidents will be escalated later, disclosed less honestly, and investigated with less candor — because this postmortem demonstrated that honesty leads to public blame.";}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The problem isn't just that limitations are missing — it's when they're missing. Engineers form their mental models of a system during their first weeks of use. If the documentation at that point says 'advanced anomaly detection with high accuracy,' that's the operating assumption that gets baked in. When the caveats arrive later, engineers often don't revisit their mental model — they've already developed habits and workarounds that assume the initial characterization was accurate. Honest documentation has to ship with the system, not after adoption proves it necessary.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("mental model"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ 'Engineers should always verify AI outputs' is a principle, not a safeguard. Documentation shapes what engineers believe they need to verify. If documentation presents an AI system as highly accurate without qualification, engineers will rationally allocate their limited verification attention elsewhere — toward systems the docs characterize as less reliable. The assumption that engineers will verify regardless of documentation is contradicted by every study of how automation trust develops. Honest documentation is the mechanism that keeps verification behavior calibrated.";}
+}
+</script>
+</body>
+</html>

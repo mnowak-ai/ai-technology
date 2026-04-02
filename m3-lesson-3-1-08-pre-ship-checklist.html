@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Tech Professional's Checklist for Reviewing Any Document Before It Ships</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+
+/* The main interactive checklist */
+.master-checklist{border:2px solid var(--purple-mid);border-radius:24px;overflow:hidden;margin:24px 0;}
+.mc-header{background:var(--purple);padding:22px 28px;display:flex;justify-content:space-between;align-items:center;}
+.mc-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--white);}
+.mc-score{background:rgba(255,255,255,.2);border-radius:100px;padding:6px 16px;font-size:13px;font-weight:700;color:var(--white);}
+.mc-section{border-bottom:1.5px solid var(--purple-mid);}
+.mc-section:last-child{border-bottom:none;}
+.mc-section-header{background:var(--purple-pale);padding:12px 22px;display:flex;align-items:center;gap:10px;}
+.mc-section-icon{font-size:18px;}
+.mc-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-dark);}
+.mc-section-count{margin-left:auto;font-size:11px;font-weight:700;color:var(--gray-muted);}
+.mc-items{padding:0 22px;}
+.mc-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px dashed var(--purple-mid);}
+.mc-item:last-child{border-bottom:none;}
+.mc-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--purple-mid);background:var(--white);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.mc-check:hover{border-color:var(--purple);}
+.mc-check.checked{background:var(--purple);border-color:var(--purple);}
+.mc-check svg{display:none;}
+.mc-check.checked svg{display:block;}
+.mc-text{flex:1;}
+.mc-item-title{font-size:14px;font-weight:600;color:var(--gray-text);margin-bottom:3px;line-height:1.4;}
+.mc-item-desc{font-size:12px;line-height:1.6;color:var(--gray-muted);}
+.mc-priority{font-size:10px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-left:8px;vertical-align:middle;}
+.priority-high{background:var(--red-pale);color:var(--red);}
+.priority-med{background:var(--orange-pale);color:var(--orange);}
+.priority-low{background:var(--green-pale);color:var(--green);}
+.mc-footer{background:var(--gray-soft);padding:16px 22px;display:flex;justify-content:space-between;align-items:center;}
+.mc-progress-bar{flex:1;height:8px;background:var(--purple-mid);border-radius:4px;margin:0 16px;overflow:hidden;}
+.mc-progress-fill{height:100%;background:var(--purple);border-radius:4px;width:0%;transition:width .3s ease;}
+.mc-progress-label{font-size:13px;font-weight:700;color:var(--purple-dark);}
+.reset-btn{font-size:12px;color:var(--gray-muted);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;}
+.reset-btn:hover{color:var(--purple);}
+
+/* Document type quick-ref */
+.doc-types{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.dt-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.dt-title{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.dt-items{display:flex;flex-direction:column;gap:4px;}
+.dt-item{font-size:12px;line-height:1.55;color:var(--gray-text);display:flex;gap:6px;}
+.dt-item::before{content:"→";color:var(--purple);font-weight:700;flex-shrink:0;}
+
+/* Completion state */
+.complete-banner{display:none;background:var(--green-pale);border:2px solid #B5D5C0;border-radius:16px;padding:20px 24px;margin:16px 0;text-align:center;}
+.complete-banner.show{display:block;animation:fadeIn .4s ease;}
+.cb-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:6px;}
+.cb-text{font-size:14px;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.1 — Clear Technical Communication</div>
+  <h1>A Tech Professional's Checklist for Reviewing Any Document Before It Ships</h1>
+  <p class="hero-sub">One checklist. Every document type. Built from everything in this lesson — clarity, audience, tone, jargon, plain language, and AI review. Pin this somewhere useful.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+  <div class="section fade-in">
+    <p>Everything in Lesson 3.1 — how to be clear, how to write for multiple audiences, how to review AI-generated text, plain language principles, tone, jargon — comes down to a handful of questions you need to ask before any technical document leaves your hands.</p>
+    <p>This is that checklist. It's interactive. Work through it for your next document. The high-priority items are the ones most likely to cause real problems if missed.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="master-checklist">
+      <div class="mc-header">
+        <div class="mc-title">Pre-Ship Document Review</div>
+        <div class="mc-score" id="score-display">0 / 20 checked</div>
+      </div>
+
+      <!-- Section 1: Clarity -->
+      <div class="mc-section">
+        <div class="mc-section-header">
+          <div class="mc-section-icon">🎯</div>
+          <div class="mc-section-title">Clarity</div>
+          <div class="mc-section-count">5 items</div>
+        </div>
+        <div class="mc-items">
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Every action step uses a specific command, name, or value<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">No vague verbs like "check," "fix," or "address" without specifying what to check, what to fix, or what to address.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Systems, services, and endpoints are named specifically<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Not "the service" or "the system" — the actual service name, namespace, endpoint, or environment.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Success and failure are defined, not assumed<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">If the reader needs to judge whether something worked, tell them what "worked" looks like — specifically.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">The most important information comes first<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">Critical warnings, resolution status, and required actions appear at the top — not buried after context paragraphs.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Sentences are under 25 words where possible<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">Especially in runbooks and incident comms — long compound sentences cause misreads under pressure.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Audience -->
+      <div class="mc-section">
+        <div class="mc-section-header">
+          <div class="mc-section-icon">👥</div>
+          <div class="mc-section-title">Audience</div>
+          <div class="mc-section-count">4 items</div>
+        </div>
+        <div class="mc-items">
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">I know exactly who will read this — and what they need to do<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Every reader has a job. This document gives them what they need to do that job — no more, no less.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Technical terminology is appropriate for this audience<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Terms that engineers need are present. Terms that would confuse a non-technical reader are translated or defined.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">If this crosses a team boundary, jargon is translated<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">Executive summaries, legal notifications, customer updates, and cross-team communications use audience-appropriate language.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Acronyms are defined on first use<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">Even "obvious" abbreviations like SLO, SRE, ETL, or RLHF — define them once if there's any chance of a mixed audience.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Accuracy -->
+      <div class="mc-section">
+        <div class="mc-section-header">
+          <div class="mc-section-icon">✅</div>
+          <div class="mc-section-title">Accuracy</div>
+          <div class="mc-section-count">4 items</div>
+        </div>
+        <div class="mc-items">
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Every command or procedure has been tested in the actual environment<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Especially for runbooks — namespace names, deployment names, flags, and expected outputs match reality, not documentation templates.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Uncertainty is preserved — not resolved into false confidence<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">If the source material says "we believe" or "suspected," the document must say so too. AI summaries frequently delete this qualifier.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Version-specific details match the tools currently in use<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">CLI flags, API endpoints, and configuration syntax for the actual version your team runs — not the version in the template.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Facts and figures are sourced — not estimated or approximated as if exact<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">If a number is an estimate, label it as one. "~$52,000" is honest. "$52,000" in an exec summary implies a precision you may not have.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Completeness -->
+      <div class="mc-section">
+        <div class="mc-section-header">
+          <div class="mc-section-icon">📋</div>
+          <div class="mc-section-title">Completeness</div>
+          <div class="mc-section-count">4 items</div>
+        </div>
+        <div class="mc-items">
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Escalation paths name specific people, channels, or policies<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Not "escalate to the team" — the specific PagerDuty policy, Slack channel, or person on call.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Failure handling is included for every step that can go wrong<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Runbooks and SOPs especially — what does the reader do if step 3 fails? AI-generated docs almost always omit this.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Steps that could be skipped under pressure include a "why" note<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">If skipping a step causes downstream problems, say so briefly. One sentence prevents a lot of 3am improvisations.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Action items have named owners and due dates<span class="mc-priority priority-med">Med</span></div><div class="mc-item-desc">In postmortems and decision docs — "the team will investigate" is not an action item. A name and a date are.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: AI-Generated Content -->
+      <div class="mc-section">
+        <div class="mc-section-header">
+          <div class="mc-section-icon">🤖</div>
+          <div class="mc-section-title">AI-Generated Content (skip if no AI was used)</div>
+          <div class="mc-section-count">3 items</div>
+        </div>
+        <div class="mc-items">
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">Every environment-specific detail has been verified against the actual system<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Namespaces, service names, command flags, API endpoints — AI tools generate plausible-sounding generic values. Verify every one.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">AI summaries have been compared to source material for ambiguity deletion<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">Check that any uncertainty in the source ("we believe," "suspected," "not yet confirmed") is preserved in the AI summary.</div></div>
+          </div>
+          <div class="mc-item">
+            <div class="mc-check" onclick="toggle(this)"><svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="mc-text"><div class="mc-item-title">I accept full accountability for this document's accuracy<span class="mc-priority priority-high">High</span></div><div class="mc-item-desc">"The AI wrote it" is not a defense. By approving this document, you own its contents — including any errors the AI introduced.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-footer">
+        <div class="mc-progress-label" id="progress-label">0% complete</div>
+        <div class="mc-progress-bar"><div class="mc-progress-fill" id="progress-fill"></div></div>
+        <button class="reset-btn" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+
+    <div class="complete-banner" id="complete-banner">
+      <div class="cb-title">✅ Document ready to ship</div>
+      <div class="cb-text">You've reviewed all 20 checkpoints. If you caught any gaps along the way, fix them before publishing. Every item you checked is a potential misread, incident, or audit finding you just prevented.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Quick-Reference: Which Items Matter Most for Each Document Type</h2>
+    <p>Not every document needs every item. Here's which sections to focus on for the most common IT documents.</p>
+    <div class="doc-types">
+      <div class="dt-card">
+        <div class="dt-title">🔴 Runbooks & SOPs</div>
+        <div class="dt-items">
+          <div class="dt-item">All Clarity items — especially specific commands and success criteria</div>
+          <div class="dt-item">All Completeness items — failure handling and escalation are critical</div>
+          <div class="dt-item">Accuracy: every command tested in the actual environment</div>
+        </div>
+      </div>
+      <div class="dt-card">
+        <div class="dt-title">📊 Postmortems & Incident Reports</div>
+        <div class="dt-items">
+          <div class="dt-item">Accuracy: uncertainty preserved, facts sourced</div>
+          <div class="dt-item">Completeness: action items with owners and due dates</div>
+          <div class="dt-item">AI check: ambiguity deletion is the #1 risk in AI-summarized postmortems</div>
+        </div>
+      </div>
+      <div class="dt-card">
+        <div class="dt-title">📧 Customer & Executive Comms</div>
+        <div class="dt-items">
+          <div class="dt-item">All Audience items — jargon boundary is especially critical</div>
+          <div class="dt-item">Clarity: most important information first</div>
+          <div class="dt-item">Accuracy: no false confidence, estimates labeled as such</div>
+        </div>
+      </div>
+      <div class="dt-card">
+        <div class="dt-title">🎫 Jira Tickets & PRs</div>
+        <div class="dt-items">
+          <div class="dt-item">Clarity: specific systems, specific acceptance criteria</div>
+          <div class="dt-item">Completeness: why this work matters, not just what it is</div>
+          <div class="dt-item">AI check if Jira AI or Copilot wrote the description</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">You've just finished writing a postmortem using Confluence AI to summarize the incident timeline. You've reviewed the commands, checked the action items, and confirmed the root cause. What's the one additional check you must do before the postmortem ships?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Have a senior engineer approve the technical root cause analysis</button>
+        <button class="qopt" onclick="cq(this,false)">Check that the document matches the standard postmortem template format</button>
+        <button class="qopt" onclick="cq(this,true)">Compare the AI-generated summary against the original incident notes and engineer comments to verify that any uncertainty in the source material has been preserved — not resolved into false certainty by the AI summarization</button>
+        <button class="qopt" onclick="cq(this,false)">Add an executive summary section so leadership can read it without the technical details</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The 20-item pre-ship checklist covers the five dimensions that determine whether a technical document is safe to publish: clarity, audience fit, accuracy, completeness, and AI-specific review. Not every item applies to every document — focus on the high-priority items for your document type.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The highest-risk gaps — the ones most likely to cause incidents, compliance failures, or missed incidents — are: vague action steps, missing failure handling, ambiguity deletion in AI summaries, and jargon crossing audience boundaries. These five appear repeatedly in postmortems and audit findings.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>A checklist is only as useful as the habit of using it. The goal is not to run through 20 items for every Slack message — it's to internalize these questions so they become automatic for any document that matters: runbooks, postmortems, incident comms, and anything going to a new audience.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const TOTAL=20;
+function countChecked(){return document.querySelectorAll(".mc-check.checked").length;}
+function updateScore(){
+  const n=countChecked();
+  document.getElementById("score-display").textContent=n+" / "+TOTAL+" checked";
+  document.getElementById("progress-label").textContent=Math.round(n/TOTAL*100)+"% complete";
+  document.getElementById("progress-fill").style.width=(n/TOTAL*100)+"%";
+  if(n===TOTAL){document.getElementById("complete-banner").classList.add("show");}
+  else{document.getElementById("complete-banner").classList.remove("show");}
+}
+function toggle(el){el.classList.toggle("checked");updateScore();}
+function resetAll(){document.querySelectorAll(".mc-check").forEach(c=>c.classList.remove("checked"));updateScore();}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Of the checks you've already completed, the one specifically required for AI-generated summaries is the ambiguity deletion check — comparing the AI output against the source material to verify that uncertainty has been preserved. A postmortem where the AI converted 'we believe the root cause was X but haven't ruled out Y' into 'root cause: X, resolved' closes an investigation that should remain open. That's the check that's easy to skip and the most consequential to miss.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("uncertainty in the source"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Senior approval, template format, and executive summary are all potentially useful — but they don't address the specific risk introduced by using AI summarization. The AI-specific risk in a postmortem summary is ambiguity deletion: the AI taking the engineering team's explicit uncertainty and converting it into a definitive conclusion. That check requires going back to the source notes — meeting notes, Slack threads, engineer comments during the incident — and verifying that anything qualified in the original is qualified in the summary.";}
+}
+</script>
+</body>
+</html>
