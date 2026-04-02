@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Happens When Technical Documentation Goes Wrong: Three Case Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(30px,4.5vw,52px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.case-study{background:var(--white);border:2px solid var(--purple-mid);border-radius:24px;margin:28px 0;overflow:hidden;}
+.cs-header{background:var(--purple-pale);padding:22px 28px;border-bottom:1.5px solid var(--purple-mid);}
+.cs-num{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:5px;}
+.cs-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);line-height:1.2;margin-bottom:5px;}
+.cs-sub{font-size:14px;color:var(--gray-muted);}
+.cs-body{padding:24px 28px;}
+.cs-body p{font-size:16px;line-height:1.8;margin-bottom:14px;}
+.timeline{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px 24px;margin:16px 0;}
+.tl-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.tl-steps{display:flex;flex-direction:column;gap:0;}
+.tl-step{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed var(--purple-mid);}
+.tl-step:last-child{border-bottom:none;}
+.tl-time{font-size:12px;font-weight:700;color:var(--gray-muted);width:72px;flex-shrink:0;padding-top:2px;}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--purple-mid);margin-top:4px;flex-shrink:0;}
+.tl-step.critical .tl-dot{background:var(--red);}
+.tl-event{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.tl-event.bad{color:var(--red);}
+.fault-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.fault-box{border-radius:12px;padding:16px;}
+.fault-box.problem{background:var(--red-pale);border:1.5px solid #F5C2C2;}
+.fault-box.fix{background:var(--green-pale);border:1.5px solid #B5D5C0;}
+.fault-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
+.fault-box.problem .fault-label{color:var(--red);}
+.fault-box.fix .fault-label{color:var(--green);}
+.fault-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.ai-box{background:var(--orange-pale);border:1.5px solid #F5D8A0;border-radius:14px;padding:18px 20px;margin:14px 0;}
+.ai-box-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:7px;}
+.ai-box-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.prevented{background:var(--green-pale);border:1.5px solid #B5D5C0;border-radius:14px;padding:18px 20px;margin:14px 0;}
+.prev-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:8px;}
+.prev-items{display:flex;flex-direction:column;gap:6px;}
+.prev-item{font-size:13px;line-height:1.6;color:var(--gray-text);display:flex;gap:8px;}
+.prev-item::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;}
+.cs-outcome{background:var(--gray-soft);border-top:1.5px solid var(--purple-mid);padding:16px 28px;display:flex;gap:12px;align-items:flex-start;}
+.cs-outcome-icon{font-size:18px;flex-shrink:0;}
+.cs-outcome-text{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.cs-outcome-text strong{color:var(--purple-dark);}
+.pattern-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.pcard{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.pcard-icon{font-size:24px;margin-bottom:8px;}
+.pcard-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.pcard-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:15px;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.qfb{font-size:15px;line-height:1.65;padding:16px 20px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;animation:fadeIn .3s ease;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border-radius:24px;padding:40px;margin:32px 0 48px;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px;}
+.summary h2{font-family:"Fraunces",serif;font-size:24px;color:var(--purple-dark);margin-bottom:18px;}
+.spoints{display:flex;flex-direction:column;gap:14px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:13px;height:13px;}
+.spoint p{font-size:15px;line-height:1.65;margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s;}
+.fade-in.visible{opacity:1;transform:none;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.hero{padding:48px 24px 0}.content{padding:0 24px 48px}.fault-grid{grid-template-columns:1fr}.pattern-cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero">
+  <div class="lesson-tag">Module 3 · Positioning Article</div>
+  <h1>What Happens When Technical Documentation Goes Wrong: Three Case Studies</h1>
+  <p class="hero-sub">Documentation failures in tech are not edge cases. They are common, consequential, and follow predictable patterns. These three cases make the stakes of Module 3 concrete before the lessons begin.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <p>Documentation failures rarely announce themselves. A runbook that's six months out of date looks identical to one that was updated yesterday. An incident summary that dropped a critical caveat reads just as confidently as an accurate one. A deployment SOP that no longer reflects the actual process will be followed faithfully — right up to the point where it causes an outage.</p>
+    <p>The three cases in this article are composites drawn from real incident patterns documented in public postmortems, engineering retrospectives, and compliance audit findings. Each represents a different documentation failure mode — and each was preventable with skills this module teaches.</p>
+    <div class="pull-quote"><p>You won't always know which document you write today will be the one that matters at 3am six months from now. Write them all as if the answer is: this one.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="case-study">
+      <div class="cs-header">
+        <div class="cs-num">Case Study 01</div>
+        <div class="cs-title">The Runbook That Caused the Outage It Was Written to Prevent</div>
+        <div class="cs-sub">Documentation failure type: Stale runbook used under pressure during a production incident</div>
+      </div>
+      <div class="cs-body">
+        <p>A mid-size SaaS company maintained a runbook for responding to database connection pool exhaustion — an incident type that had occurred twice in the past year. The runbook had been written after the first incident and was stored in the team's Confluence space. It was accurate when it was written.</p>
+        <p>Eight months later, the team migrated their database connection pooling from PgBouncer to RDS Proxy as part of a larger infrastructure modernization. The migration went smoothly. Nobody updated the runbook. Nobody flagged it as outdated. It didn't come up in the migration retrospective.</p>
+        <p>Three months after the migration, connection pool exhaustion hit again — this time at 2:17am. The on-call SRE pulled up the runbook and followed it step by step. Step 4 instructed him to restart the PgBouncer service. PgBouncer no longer existed in the stack. The command failed with an error he'd never seen before. Confused, he spent 34 minutes trying to understand why a documented procedure wasn't working before escalating to a senior engineer who recognized immediately that the runbook was referencing a deprecated component.</p>
+        <div class="timeline">
+          <div class="tl-title">📋 Timeline of the Documentation Failure</div>
+          <div class="tl-steps">
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">Month 0</div><div class="tl-event">Runbook written after first connection pool incident. Accurate and complete.</div></div>
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">Month 8</div><div class="tl-event">Infrastructure migrated from PgBouncer to RDS Proxy. Runbook not updated. No ticket created for runbook review.</div></div>
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">Month 11</div><div class="tl-event">Second connection pool incident, 02:17. On-call SRE follows the runbook.</div></div>
+            <div class="tl-step critical"><div class="tl-dot"></div><div class="tl-time">02:21</div><div class="tl-event bad">Step 4: "sudo systemctl restart pgbouncer" fails. PgBouncer not found. SRE spends 34 minutes troubleshooting why a documented procedure doesn't work.</div></div>
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">02:55</div><div class="tl-event">Senior engineer paged. Immediately recognizes the runbook is referencing deprecated infrastructure. Incident resolved in 11 minutes once correct procedure is applied.</div></div>
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">After</div><div class="tl-event">Total incident duration: 49 minutes. Estimated to be 15 minutes without the runbook failure. 34 minutes of MTTR directly attributable to outdated documentation.</div></div>
+          </div>
+        </div>
+        <div class="fault-grid">
+          <div class="fault-box problem"><div class="fault-label">⚠ What the documentation failed to do</div><div class="fault-text">The runbook had no mechanism to signal that it might be outdated. It contained no reference to which infrastructure components it depended on, no "last validated" date, and no "infrastructure dependencies" section that would have flagged it for review when those components changed.</div></div>
+          <div class="fault-box fix"><div class="fault-label">✓ What should have been in place</div><div class="fault-text">The infrastructure migration ticket should have had a checklist item: "Update or flag all runbooks referencing PgBouncer." The runbook itself should have listed its infrastructure dependencies — any change to those components should trigger a runbook review.</div></div>
+        </div>
+        <div class="ai-box">
+          <div class="ai-box-label">🤖 The AI-Era Version of This Failure</div>
+          <div class="ai-box-text">AI tools like Confluence AI and GitHub Copilot are increasingly being used to generate runbooks from incident history. These tools can produce runbooks quickly — but they generate a snapshot of the stack as it exists at generation time. If the stack changes and the runbook isn't updated, AI-generated runbooks go stale exactly like human-written ones. The difference: AI-generated runbooks may look more authoritative and well-formatted, which can reduce the instinct to question them. The review discipline matters even more.</div>
+        </div>
+        <div class="prevented">
+          <div class="prev-label">What Would Have Prevented This</div>
+          <div class="prev-items">
+            <div class="prev-item">Infrastructure migration tickets that include a required "documentation impact" checklist — which runbooks, SOPs, and guides reference the components being changed</div>
+            <div class="prev-item">Runbooks that explicitly list their infrastructure dependencies, making staleness visible</div>
+            <div class="prev-item">A "last validated" date on every runbook, with a policy that runbooks older than 90 days require re-validation before use in incidents</div>
+          </div>
+        </div>
+      </div>
+      <div class="cs-outcome"><div class="cs-outcome-icon">📌</div><div class="cs-outcome-text"><strong>Outcome:</strong> The incident was resolved. The postmortem identified the runbook gap. The team implemented infrastructure dependency tagging in their Confluence space. The next infrastructure migration included a documentation review step. 34 minutes of future MTTR saved per incident involving that runbook.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="case-study">
+      <div class="cs-header">
+        <div class="cs-num">Case Study 02</div>
+        <div class="cs-title">The AI Model That Made Consequential Decisions With No Paper Trail</div>
+        <div class="cs-sub">Documentation failure type: Undocumented ML model decision logic causes compliance failure</div>
+      </div>
+      <div class="cs-body">
+        <p>A fintech company deployed an ML model to assist with loan application scoring. The model had been through extensive internal validation and testing before deployment. The data science team had good internal records of training data, validation metrics, and model performance. What they did not document: the decision logic — specifically, which features the model weighted most heavily, under what conditions it would flag an application for manual review, and what the threshold values were for each decision category.</p>
+        <p>This was not an oversight born of negligence. The team assumed the model's internal workings were proprietary and didn't need to be documented externally. The model worked well. Nobody asked about the documentation for 14 months.</p>
+        <p>Then a regulatory examination under the Equal Credit Opportunity Act asked a straightforward question: "For each loan application your AI system evaluated, can you provide documentation of the factors that influenced the decision?" The company could not. The model had made thousands of consequential decisions. None of them had a documented decision trail that could be shown to regulators.</p>
+        <div class="fault-grid">
+          <div class="fault-box problem"><div class="fault-label">⚠ The compliance gap</div><div class="fault-text">ECOA and its implementing regulation Reg B require that adverse action notices explain the specific reasons for credit denial. The company's AI model couldn't produce per-decision documentation of contributing factors — it produced a score, not an explanation. Regulators do not accept "the model said no" as a compliant adverse action explanation.</div></div>
+          <div class="fault-box problem"><div class="fault-label">⚠ The technical gap</div><div class="fault-text">The model itself could have produced feature importance scores for each decision — but nobody had built that logging pipeline. The documentation gap wasn't just in the word-processing sense; it was an architectural gap. Decision explanations were never captured because nobody designed the system to capture them.</div></div>
+        </div>
+        <div class="ai-box">
+          <div class="ai-box-label">🤖 Why This Is Increasingly Common With AI Systems</div>
+          <div class="ai-box-text">AI models make decisions at a scale and speed that human decision-makers never could. This creates a documentation problem that didn't exist with manual processes: when a human makes a decision, there's usually a person who can explain it. When a model makes 10,000 decisions a day, every single one needs a documented decision trail — and that trail must be built into the system architecture, not added after the fact. The documentation requirement for AI decision systems is not the same as documentation for traditional software. It must include: what features influenced each decision, what the decision thresholds were, what the model version was at time of decision, and who was responsible for validating the model's behavior.</div>
+        </div>
+        <div class="prevented">
+          <div class="prev-label">What Would Have Prevented This</div>
+          <div class="prev-items">
+            <div class="prev-item">Pre-deployment documentation requirement: for any AI model making consequential decisions, decision explainability logging must be designed into the system architecture before launch — not added later</div>
+            <div class="prev-item">A model card or decision documentation template completed before deployment, covering: decision factors, threshold values, edge case handling, and the compliance framework the model operates under</div>
+            <div class="prev-item">Legal/compliance review as a required step in the ML deployment pipeline for any model operating in a regulated domain</div>
+          </div>
+        </div>
+      </div>
+      <div class="cs-outcome"><div class="cs-outcome-icon">📌</div><div class="cs-outcome-text"><strong>Outcome:</strong> The company entered a remediation agreement with the regulator, requiring retroactive documentation reconstruction where possible and prospective decision logging for all future model deployments. The engineering cost of building the decision logging infrastructure after the fact was estimated at 3–4x what it would have cost to include it in the original deployment. The regulatory fine was separate.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="case-study">
+      <div class="cs-header">
+        <div class="cs-num">Case Study 03</div>
+        <div class="cs-title">The SOP Change That Nobody Told the Team About</div>
+        <div class="cs-sub">Documentation failure type: Undocumented process change causes team to follow an outdated incident response procedure</div>
+      </div>
+      <div class="cs-body">
+        <p>An e-commerce platform's security team updated their incident response SOP for data breach events after a tabletop exercise revealed gaps in their containment procedure. The update was significant: the new SOP required isolating affected services within 15 minutes of detection, whereas the old SOP had given the team 60 minutes before isolation was required. The change was based on a real improvement in their detection capability — they could now detect breaches faster, so the response window could be tightened.</p>
+        <p>The security team lead updated the SOP document in the company's internal wiki, added a version note, and sent a Slack message to the security channel announcing the change. The Slack message was read by most of the security team. It was not seen by the three on-call engineers who rotated through incident response duty on a different Slack channel.</p>
+        <p>Four months later, a credential stuffing attack was detected. The on-call engineer pulled up the incident response SOP — the old version, which she had bookmarked six months earlier. She followed the 60-minute isolation window. By the time isolation happened, the attack had progressed further than the new SOP was designed to allow.</p>
+        <div class="timeline">
+          <div class="tl-title">📋 How the Documentation Failure Propagated</div>
+          <div class="tl-steps">
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">Month 0</div><div class="tl-event">Original SOP: 60-minute isolation window. All on-call engineers trained on this version.</div></div>
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">Month 4</div><div class="tl-event">SOP updated to 15-minute isolation. Document updated in wiki. Slack announcement sent to security channel only.</div></div>
+            <div class="tl-step"><div class="tl-dot"></div><div class="tl-time">Month 8</div><div class="tl-event critical">Credential stuffing attack detected. On-call engineer uses bookmarked link to old SOP version — or old version cached in browser. Follows 60-minute window.</div></div>
+            <div class="tl-step critical"><div class="tl-dot"></div><div class="tl-time">+47 min</div><div class="tl-event bad">Isolation finally executed. Attack has progressed beyond what 15-minute response would have allowed. Scope of impact significantly larger.</div></div>
+          </div>
+        </div>
+        <div class="fault-grid">
+          <div class="fault-box problem"><div class="fault-label">⚠ The documentation gap</div><div class="fault-text">The SOP change was documented in the wiki but communicated only through a Slack message in one channel. There was no process to ensure that all people who needed to know about the change actually received and acknowledged it. The engineer who used the old version was not careless — she simply never knew the SOP had changed.</div></div>
+          <div class="fault-box fix"><div class="fault-label">✓ What good change management looks like</div><div class="fault-text">SOP changes that affect incident response procedures require: versioning with a clear "current version" indicator, a notification process that reaches all affected personnel (not just those in one Slack channel), and an acknowledgment mechanism — the people who will follow this SOP in an emergency need to confirm they've read the new version before the old version is considered retired.</div></div>
+        </div>
+        <div class="ai-box">
+          <div class="ai-box-label">🤖 The AI-Era Version of This Failure</div>
+          <div class="ai-box-text">AI assistants integrated with knowledge bases (Confluence AI, Notion AI, custom RAG pipelines) retrieve documents based on relevance and recency signals. If an old version of an SOP is still indexed and not properly deprecated, an AI assistant may surface the old version in response to a query — especially if the old version has more internal links, more views, or more apparent "authority" in the knowledge base. AI-assisted knowledge retrieval doesn't automatically solve the version control problem; it can amplify it if old documents aren't properly deprecated.</div>
+        </div>
+        <div class="prevented">
+          <div class="prev-label">What Would Have Prevented This</div>
+          <div class="prev-items">
+            <div class="prev-item">A clear "current version" indicator on every SOP, with old versions marked as deprecated and redirecting to the current version</div>
+            <div class="prev-item">An SOP change management process requiring acknowledgment from all personnel with incident response duties — not just an announcement in a Slack channel</div>
+            <div class="prev-item">Bookmark or link management: when a document is superseded, any bookmarks or Jira/ticket links to the old version should redirect to the new one</div>
+          </div>
+        </div>
+      </div>
+      <div class="cs-outcome"><div class="cs-outcome-icon">📌</div><div class="cs-outcome-text"><strong>Outcome:</strong> The incident was contained. The postmortem identified the SOP version control failure. The team implemented a required-acknowledgment process for any SOP change affecting incident response. All on-call personnel must confirm they've read updated SOPs before they're eligible for the rotation. Old SOP versions are now marked deprecated with a visible redirect.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What These Three Cases Have in Common</h2>
+    <div class="pattern-cards">
+      <div class="pcard"><div class="pcard-icon">⏰</div><div class="pcard-title">The failure happened at the worst possible moment</div><div class="pcard-desc">All three failures surfaced during high-pressure situations — a 3am outage, a regulatory examination, a live security incident. Documentation quality that seems "good enough" in normal operations is tested during emergencies. That's when it counts most.</div></div>
+      <div class="pcard"><div class="pcard-icon">🔄</div><div class="pcard-title">The documentation was accurate once</div><div class="pcard-desc">None of these failures involved documentation that was never correct. All three involved documentation that was correct at creation and became wrong through neglect, missed updates, or failed communication. Maintenance is the hardest part of documentation.</div></div>
+      <div class="pcard"><div class="pcard-icon">👤</div><div class="pcard-title">A human trusted the document and acted on it</div><div class="pcard-desc">In every case, a competent engineer or team followed the documented process in good faith. The failure was not human error — it was a system that allowed outdated or incomplete documentation to appear authoritative. Trust in documentation is a good thing; it only becomes dangerous when that trust is unearned.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Looking across all three case studies, which pattern best describes the root cause of these documentation failures?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Technology failures — the tools used to manage documentation were inadequate</button>
+        <button class="qopt" onclick="cq(this,false)">Individual negligence — each failure involved someone who should have done their job better</button>
+        <button class="qopt" onclick="cq(this,true)">System and process failures — in each case, the organization lacked a process to keep documentation current, communicate changes, or flag when documentation had become unreliable. Individual engineers acted correctly within the systems they were given.</button>
+        <button class="qopt" onclick="cq(this,false)">Resource failures — teams were too small and too busy to maintain documentation properly</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Documentation failures follow predictable patterns: runbooks that reference deprecated infrastructure, AI models with no decision trail, SOPs that changed without reaching everyone who needed to know. Recognizing these patterns is the first step toward preventing them.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Documentation is accurate at creation and goes wrong through neglect. The hardest part of documentation isn't writing it — it's maintaining it when systems change, ensuring updates reach everyone who needs them, and building processes that flag when documents have become unreliable.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>These failures are preventable — not by slowing everything down, but by building documentation maintenance into the processes that change systems. Every infrastructure migration, every model deployment, every SOP update needs a documentation impact step. That's the skill this module builds.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. In all three cases, the individual engineers acted reasonably within the systems and information they had. The on-call SRE followed the runbook they were given. The on-call engineer used the SOP version she'd been trained on. The data science team didn't document decision logic because nobody told them they had to. Root causes: no process to flag runbooks for review when dependencies change; no architectural requirement for AI decision logging; no acknowledgment-based SOP change management. Blaming individuals changes nothing. Fixing the process prevents the next incident.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("System and process"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Technology tools, individual performance, and resource constraints all played roles — but none was the root cause. The tools were adequate. The individuals were competent. The teams weren't unusually understaffed. What was missing in each case was a process: a process for updating runbooks when infrastructure changes, a process for documenting AI model decisions before deployment, a process for ensuring SOP changes reach all affected personnel. Process gaps produce systemic failures; fixing the process produces systemic improvement.";}
+}
+</script>
+</body>
+</html>
