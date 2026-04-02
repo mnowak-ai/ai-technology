@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summarizing AI System Outputs: What to Include, What to Cut, and What You Must Never Omit</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.rule-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:18px;margin:16px 0;overflow:hidden;}
+.rc-header{padding:14px 22px;display:flex;align-items:center;gap:10px;}
+.rc-header.include{background:var(--green-pale);border-bottom:1px solid #B5D5C0;}
+.rc-header.cut{background:var(--red-pale);border-bottom:1px solid #F5C2C2;}
+.rc-header.never{background:#FFF7ED;border-bottom:1px solid #FED7AA;}
+.rc-icon{font-size:20px;}
+.rc-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;}
+.rc-header.include .rc-title{color:var(--green);}
+.rc-header.cut .rc-title{color:var(--red);}
+.rc-header.never .rc-title{color:#C2410C;}
+.rc-body{padding:18px 22px;}
+.rc-items{display:flex;flex-direction:column;gap:10px;}
+.rc-item{display:flex;gap:10px;align-items:flex-start;}
+.rc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.include .rc-dot{background:var(--green);}
+.cut .rc-dot{background:var(--red);}
+.never-dot{background:#C2410C;}
+.rc-item-text{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.rc-item-text strong{color:var(--purple-dark);}
+.never-warn{background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:12px;padding:14px 18px;margin-top:12px;font-size:13px;line-height:1.7;color:var(--gray-text);}
+.never-warn strong{color:#C2410C;}
+.example-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 20px;margin:14px 0;}
+.ex-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.ex-bad{background:var(--red-pale);border-radius:8px;padding:12px;font-size:13px;line-height:1.75;color:var(--gray-text);font-family:monospace;margin-bottom:8px;}
+.ex-good{background:var(--green-pale);border-radius:8px;padding:12px;font-size:13px;line-height:1.75;color:var(--gray-text);font-family:monospace;}
+.ex-bad-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--red);margin-bottom:5px;}
+.ex-good-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--green);margin-bottom:5px;}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sim-sub{font-size:15px;color:var(--gray-muted);margin-bottom:18px;}
+.sim-doc{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;margin-bottom:14px;font-size:13px;line-height:1.8;color:var(--gray-text);font-family:monospace;white-space:pre-wrap;}
+.sim-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;text-align:left;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.2 — Summarizing Technical Information</div>
+  <h1>Summarizing AI System Outputs: What to Include, What to Cut, and What You Must Never Omit</h1>
+  <p class="hero-sub">When an AI system generates a finding, a flag, or a recommendation — summarizing it for your team requires knowing what the model actually did, where it might be wrong, and what a human still needs to verify.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>AI Outputs Are Not Facts — They're Inputs to Human Judgment</h2>
+    <p>AI systems — fraud detectors, anomaly classifiers, log analyzers, recommendation engines — produce outputs that look like conclusions: "anomaly detected," "transaction flagged as fraudulent," "root cause: memory leak." But these are probability-weighted outputs from a model trained on historical data. They are not facts.</p>
+    <p>When you summarize an AI system's output for your team, you're not summarizing facts — <mark>you're summarizing a model's best guess, under specific conditions, with specific known limitations.</mark> The difference matters enormously for how your team acts on the information.</p>
+    <div class="pull-quote"><p>An AI output summarized as a fact produces overconfident action. The same output summarized with its confidence level and limitations produces calibrated judgment. Your summary is what determines which one your team gets.</p></div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What to Include</h2>
+    <div class="rule-card">
+      <div class="rc-header include"><div class="rc-icon">✅</div><div class="rc-title">Always include these elements</div></div>
+      <div class="rc-body include">
+        <div class="rc-items">
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>What the model output was — exactly.</strong> Not your interpretation, the actual output. "The fraud classifier returned a confidence score of 0.94" — not "the model flagged this as fraud."</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>The model's known accuracy in this context.</strong> If you're summarizing a fraud detection flag, include what precision looks like for this transaction type. "This model has 91% precision on domestic card transactions, but ~74% on international transactions — this transaction is international."</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>What the model was and wasn't trained on.</strong> If the input is outside the training distribution — a new merchant category, a new data source, an edge case — say so. The model's confidence score doesn't account for distributional shift.</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>What human verification is still needed.</strong> Every summary of an AI output should tell the reader what they still need to verify before acting. "Model confidence is high, but the transaction amount ($14,200) exceeds our manual review threshold — human sign-off required."</div></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>What to Cut</h2>
+    <div class="rule-card">
+      <div class="rc-header cut"><div class="rc-icon">✂️</div><div class="rc-title">Cut these — they add length without adding accuracy</div></div>
+      <div class="rc-body cut">
+        <div class="rc-items">
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>Descriptions of how the model works technically</strong> (unless the audience needs this to evaluate the output). "Using a gradient-boosted ensemble with 47 features..." is not useful in an operational summary.</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>Intermediate outputs and reasoning steps</strong> that led to the final output. Include the finding. Cut the model's internal calculation path.</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>Performance metrics that don't affect this specific output.</strong> Global accuracy figures that don't apply to this use case or input type are noise — and may give false confidence.</div></div>
+          <div class="rc-item"><div class="rc-dot"></div><div class="rc-item-text"><strong>Verbose model output logs</strong> that repeat the same finding multiple ways. Summarize the finding once, clearly.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>What You Must Never Omit</h2>
+    <div class="rule-card">
+      <div class="rc-header never"><div class="rc-icon">🚫</div><div class="rc-title">Never omit these — their absence creates safety and reliability risks</div></div>
+      <div class="rc-body">
+        <div class="rc-items">
+          <div class="rc-item"><div class="rc-dot never-dot"></div><div class="rc-item-text"><strong>Known failure modes and limitation conditions.</strong> If the model is known to perform poorly on certain input types, edge cases, or time periods — and the current input matches those conditions — this must be in the summary. Omitting it leads to overconfident action.</div></div>
+          <div class="rc-item"><div class="rc-dot never-dot"></div><div class="rc-item-text"><strong>The model's last retrain date.</strong> A model trained on data from six months ago may not reflect current patterns. If the model hasn't been retrained since a significant distribution shift (new product launch, fraud pattern change, infrastructure migration), this context must be present.</div></div>
+          <div class="rc-item"><div class="rc-dot never-dot"></div><div class="rc-item-text"><strong>Uncertainty flags from the model itself.</strong> If the model output includes uncertainty indicators (low confidence, out-of-distribution warning, ensemble disagreement), these must appear in the summary — not be summarized away as a confident finding.</div></div>
+          <div class="rc-item"><div class="rc-dot never-dot"></div><div class="rc-item-text"><strong>Who is responsible for the final decision.</strong> Every summary of an AI output must make clear that a human is accountable for the final call. "The model recommends X" without "the on-call engineer makes the final decision" creates accountability gaps.</div></div>
+        </div>
+        <div class="never-warn"><strong>Why this matters:</strong> An AI output summary that omits known limitations isn't just incomplete — it actively misrepresents the reliability of the finding. Engineers who act on an overconfident summary and make a wrong call will ask why the limitations weren't disclosed. If they were in your summary and got cut, that's your accountability gap.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Concrete Example: Anomaly Detection Alert</h2>
+    <div class="example-box">
+      <div class="ex-label">AI system output — log anomaly detector</div>
+      <div class="ex-bad-label">❌ How most teams summarize it</div>
+      <div class="ex-bad">ALERT: Anomaly detected in authentication service logs (Nov 15, 03:42 UTC). Model confidence: 0.91. Recommend immediate investigation.</div>
+      <div class="ex-good-label">✅ How it should be summarized</div>
+      <div class="ex-good">ALERT: Log anomaly detector flagged unusual authentication patterns in auth-service (Nov 15, 03:42 UTC).
+
+Model output: confidence 0.91 — elevated login failure rate (847/min vs. 12/min baseline) from 14 distinct IP ranges.
+
+Context: This model has a documented 22% false positive rate during scheduled certificate rotation events. Check whether a cert rotation is scheduled before escalating — if yes, false positive probability is high. If no cert rotation is scheduled, treat as potential credential stuffing attack.
+
+Model last retrained: Oct 1 (6 weeks ago). Pattern database does not include the new auth flow launched Nov 8.
+
+Human decision required: On-call engineer to determine if this is cert rotation noise or a real attack before escalating to the security team.</div>
+    </div>
+    <p>Both summaries describe the same AI output. The first will cause an on-call engineer to immediately escalate, possibly waking up the security team for a scheduled cert rotation. The second gives the engineer everything they need to verify the context before escalating.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Try It</div>
+      <div class="sim-title">What's critically missing from this AI summary?</div>
+      <div class="sim-sub">Read the summary of an AI model's recommendation. Identify the most dangerous omission.</div>
+      <div class="sim-doc">FRAUD DETECTION SUMMARY — Transaction #TXN-84921
+
+The fraud detection model has flagged transaction #TXN-84921 ($8,400, merchant: GlobalTech Solutions, country: Nigeria) with a confidence score of 0.89. Based on this score, the transaction has been automatically placed on hold pending review.
+
+Recommended action: Review transaction and authorize or decline.</div>
+      <div class="sim-q">What is the most dangerous thing missing from this summary?</div>
+      <div class="sim-opts" id="s1opts">
+        <button class="sim-opt" onclick="doSim(this,false)">The customer's account history — the reviewer needs to know if this merchant has been used before</button>
+        <button class="sim-opt" onclick="doSim(this,true)">The model's known accuracy for this specific transaction type (international, Nigeria) — if the model has significantly lower precision on international transactions from certain regions, a 0.89 confidence score may be far less reliable than it appears, and the reviewer needs that context before deciding</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The transaction amount threshold — the summary should specify at what dollar amount human review is required</button>
+        <button class="sim-opt" onclick="doSim(this,false)">The model version — reviewers should know which version of the fraud model produced this output</button>
+      </div>
+      <div class="sim-fb" id="s1fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A data scientist summarizes an AI model's performance report for the product team. The model performs well overall (94% accuracy) but has known issues with a specific user segment that represents 8% of users. The data scientist decides not to include this in the summary "to keep it concise." What's wrong with this decision?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Nothing — 8% is a small enough segment that it's reasonable to omit in an executive summary</button>
+        <button class="qopt" onclick="cq(this,true)">The product team may make feature decisions that disproportionately affect the 8% segment — decisions they would make differently if they knew the model performs poorly for those users. Omitting known limitations to "keep it concise" is not good summarization — it's filtering information that changes decisions.</button>
+        <button class="qopt" onclick="cq(this,false)">The data scientist should have asked the product team whether they wanted to know about the segment issue first</button>
+        <button class="qopt" onclick="cq(this,false)">The full performance report should be attached so the product team can read the details themselves</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI outputs are inputs to human judgment — not facts. Summarizing them as facts produces overconfident action. Every summary of an AI output must include the model's actual output (not your interpretation), its accuracy in this specific context, and what human verification is still required.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Three things you must never omit from an AI output summary: known failure modes and limitation conditions that apply to this specific input, uncertainty flags the model itself produced, and who is responsible for the final human decision. Omitting any of these creates accountability gaps and safety risks.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Cutting limitations "to keep the summary concise" is not good summarization — it's filtering information that changes decisions. If a known limitation would change how the reader acts, it stays in the summary. Full stop.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSim(btn,correct){
+  const c=document.getElementById("s1opts");if(c.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  if(!correct)c.querySelectorAll(".sim-opt").forEach(b=>{if(b.textContent.includes("specific transaction type"))b.classList.add("reveal");});
+  const fb=document.getElementById("s1fb");fb.className="sim-fb show "+(correct?"good":"bad");
+  if(correct)fb.textContent="✅ Correct. A confidence score of 0.89 means very different things for different transaction types. If this model has 91% precision on domestic transactions but 62% precision on international transactions from certain regions, then 0.89 confidence on an international transaction may actually represent a coin flip between real fraud and a legitimate business payment. A reviewer acting on '0.89 confidence — review and decide' without knowing the model's performance profile for this specific transaction type may be systematically declining legitimate international business payments.";
+  else fb.textContent="❌ The account history and transaction threshold are useful context — but they're not in the model's summary, they're in the case management system. The most dangerous omission is what the model's confidence score actually means for this specific type of transaction. A score of 0.89 sounds high. Whether it should trigger a decline depends on what 0.89 means in this context — and that requires knowing the model's precision for international transactions.";}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The 8% segment issue is exactly the kind of information that changes product decisions — which is why it must stay in the summary. If the product team decides to expand a feature to all users without knowing the model performs poorly for 8% of them, those users will receive a degraded experience that the team didn't intend and can't explain. 'Keeping it concise' is a legitimate goal — but not at the cost of omitting limitations that would change a decision. The right approach: include the limitation, state it concisely, and give the product team the context to factor it in.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("decisions"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The 8% threshold isn't the issue — it's whether the limitation would change a decision. If a product decision treats all users equally and the model performs poorly for 8% of them, that 8% will have a worse experience that the team didn't know about and couldn't account for. Asking permission to disclose a limitation, or attaching the full report, both pass the problem to the reader rather than making the right judgment call as the person writing the summary.";}
+}
+</script>
+</body>
+</html>

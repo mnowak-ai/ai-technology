@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Summarize an Incident Log for Three Different Audiences</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+/* Raw log */
+.raw-log{background:#1E1B2E;border-radius:16px;padding:24px;margin:20px 0;overflow-x:auto;}
+.log-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#A78BFA;margin-bottom:12px;}
+.log-lines{display:flex;flex-direction:column;gap:2px;}
+.log-line{font-family:monospace;font-size:12px;line-height:1.7;color:#E2E8F0;display:flex;gap:12px;}
+.log-time{color:#7C3AED;flex-shrink:0;width:52px;}
+.log-actor{color:#10B981;flex-shrink:0;width:100px;}
+.log-msg{color:#E2E8F0;}
+.log-line.alert .log-msg{color:#F87171;}
+.log-line.action .log-msg{color:#FCD34D;}
+.log-line.resolve .log-msg{color:#6EE7B7;}
+/* Step walkthrough */
+.step-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:18px;margin:16px 0;overflow:hidden;}
+.sc-header{background:var(--purple-pale);padding:14px 22px;display:flex;align-items:center;gap:12px;}
+.sc-num{width:32px;height:32px;border-radius:50%;background:var(--purple);color:var(--white);font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sc-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.sc-body{padding:18px 22px;}
+.sc-body p{font-size:15px;line-height:1.8;color:var(--gray-text);margin-bottom:12px;}
+.sc-extract{background:var(--gray-soft);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.75;color:var(--gray-text);margin-top:8px;}
+.sc-extract-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:5px;}
+/* Tab outputs */
+.output-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);}
+.output-tab{padding:12px 20px;font-size:13px;font-weight:600;color:var(--gray-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:8px 8px 0 0;}
+.output-tab.active{color:var(--purple-dark);border-bottom-color:var(--purple);background:var(--purple-pale);}
+.output-panel{display:none;border:1.5px solid var(--purple-mid);border-top:none;border-radius:0 0 18px 18px;overflow:hidden;}
+.output-panel.active{display:block;}
+.op-header{padding:14px 22px;border-bottom:1px solid var(--purple-mid);}
+.op-audience{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:3px;}
+.op-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.op-purpose{font-size:13px;color:var(--gray-muted);}
+.op-doc{padding:18px 22px;background:var(--white);font-size:14px;line-height:1.85;color:var(--gray-text);font-family:monospace;white-space:pre-wrap;}
+/* Sim / Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.2 — Summarizing Technical Information</div>
+  <h1>How to Summarize an Incident Log for Three Different Audiences</h1>
+  <p class="hero-sub">A 6-hour AI inference outage. A raw incident log. Three audiences who each need something completely different from it. Here's the full walkthrough — step by step.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Start With the Raw Material</h2>
+    <p>Before you can summarize an incident log, you need to read it fully — not skim it. Below is a realistic incident log for a 6-hour AI inference service degradation. Read it once before moving to the summarization steps.</p>
+    <div class="raw-log">
+      <div class="log-label">📋 Raw Incident Log — AI Inference Service Degradation (Nov 12)</div>
+      <div class="log-lines">
+        <div class="log-line alert"><div class="log-time">01:14</div><div class="log-actor">PagerDuty</div><div class="log-msg">ALERT: inference-api error rate &gt;5% — P2 triggered</div></div>
+        <div class="log-line"><div class="log-time">01:22</div><div class="log-actor">M. Torres</div><div class="log-msg">Acknowledged. Pulling metrics. Error rate now 18%. GPU utilization spiking on nodes 3, 4, 7.</div></div>
+        <div class="log-line"><div class="log-time">01:31</div><div class="log-actor">M. Torres</div><div class="log-msg">Confirmed: model v3.2 scoring requests timing out after 8s (SLA: 2s). Batch scoring queue depth: 4,200 (normal: &lt;200). Upgrading to P1.</div></div>
+        <div class="log-line alert"><div class="log-time">01:31</div><div class="log-actor">PagerDuty</div><div class="log-msg">ESCALATED: inference-api — P1. Paging ML-oncall rotation.</div></div>
+        <div class="log-line"><div class="log-time">01:45</div><div class="log-actor">R. Osei</div><div class="log-msg">ML-oncall here. Looking at GPU metrics. The new feature embedding layer we shipped yesterday (v3.2) is 3x larger than v3.1. Not sure why this wasn't caught in load tests — investigating.</div></div>
+        <div class="log-line"><div class="log-time">02:10</div><div class="log-actor">R. Osei</div><div class="log-msg">Hypothesis: embedding layer size causing GPU memory pressure at current batch sizes. Trying smaller batch size (64 → 32). Will report back in 10 min.</div></div>
+        <div class="log-line action"><div class="log-time">02:21</div><div class="log-actor">R. Osei</div><div class="log-msg">Smaller batch size helped — error rate dropped from 34% to 12%. Not solved. Queue still growing. Trying batch size 16.</div></div>
+        <div class="log-line"><div class="log-time">02:44</div><div class="log-actor">R. Osei</div><div class="log-msg">Batch size 16 reduces errors to 3% but throughput is now 40% of normal. We're processing the queue but very slowly. This is a mitigation, not a fix.</div></div>
+        <div class="log-line"><div class="log-time">03:00</div><div class="log-actor">M. Torres</div><div class="log-msg">Decision point: do we roll back to v3.1 or stay with mitigation? v3.1 rollback would require ~45 min and would drop the new recommendation feature. R. Osei recommends rollback.</div></div>
+        <div class="log-line action"><div class="log-time">03:12</div><div class="log-actor">C. Park</div><div class="log-msg">Engineering manager here. Approved rollback to v3.1. Start rollback. Notify product team about recommendation feature drop.</div></div>
+        <div class="log-line"><div class="log-time">03:15</div><div class="log-actor">M. Torres</div><div class="log-msg">Rollback started. ETA 45 min.</div></div>
+        <div class="log-line"><div class="log-time">04:02</div><div class="log-actor">M. Torres</div><div class="log-msg">Rollback complete. Inference API v3.1 live. Error rate &lt;0.5%. Batch queue clearing. Throughput back to normal.</div></div>
+        <div class="log-line resolve"><div class="log-time">04:15</div><div class="log-actor">M. Torres</div><div class="log-msg">Incident resolved. Duration: 3h 1m (01:14–04:15 UTC). Open items: (1) Why didn't load tests catch the embedding size issue? (2) v3.2 fix needed before re-deploy. (3) Product team notified re: feature drop.</div></div>
+        <div class="log-line"><div class="log-time">04:20</div><div class="log-actor">R. Osei</div><div class="log-msg">Side note: our load test environment uses batch size 128. Production was running 64. That gap might be why the GPU pressure wasn't caught. Need to align test and prod batch configs. This is a gap in our test coverage, not a random failure.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Step-by-Step: How to Summarize This Log</h2>
+
+    <div class="step-card">
+      <div class="sc-header"><div class="sc-num">1</div><div class="sc-title">Extract the five required facts first</div></div>
+      <div class="sc-body">
+        <p>Before you write a single word of any summary, pull the five required elements from the raw log. Do this once — you'll use different parts for each audience's summary.</p>
+        <div class="sc-extract">
+          <div class="sc-extract-label">Your five extracted facts</div>
+          <strong>What happened:</strong> Inference API degradation — error rate reached 34%, batch queue backed up to 4,200 items. Caused by oversized embedding layer in v3.2.<br><br>
+          <strong>Who was affected:</strong> All users of features powered by the inference API. Recommendation feature specifically affected by rollback.<br><br>
+          <strong>Current status:</strong> RESOLVED — v3.1 live as of 04:15 UTC. Recommendation feature temporarily unavailable.<br><br>
+          <strong>Root cause:</strong> v3.2 embedding layer 3x larger than v3.1, causing GPU memory pressure at production batch sizes. Load test didn't catch it because test environment used different batch size config (128) than production (64).<br><br>
+          <strong>What's next:</strong> (1) Fix embedding layer size in v3.2 before re-deploy. (2) Align test and production batch size configs. (3) Investigate why load test environment gap existed.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="sc-header"><div class="sc-num">2</div><div class="sc-title">Identify what each audience needs from those facts</div></div>
+      <div class="sc-body">
+        <p>Now map your extracted facts to each audience's job. What does each reader need to do after reading their summary — and which facts enable that action?</p>
+        <div class="sc-extract">
+          <div class="sc-extract-label">Audience mapping</div>
+          <strong>SRE postmortem team:</strong> needs full root cause, exact timeline, and specific action items to fix the problem and prevent recurrence. Needs the batch config gap detail — that's the key finding.<br><br>
+          <strong>Engineering leadership / manager:</strong> needs to know the service is restored, what decision was made (rollback), which feature was dropped and for how long, and what the team is doing to fix v3.2 before re-deploy.<br><br>
+          <strong>Product team:</strong> needs to know the recommendation feature is down, why, when it will be back, and what they should tell users or adjust in roadmap planning.
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="sc-header"><div class="sc-num">3</div><div class="sc-title">Write each summary — in order of urgency</div></div>
+      <div class="sc-body">
+        <p>Write the most time-sensitive summary first — usually the operational or stakeholder one, since those audiences may need to act or communicate immediately. The postmortem can wait until the team reconvenes.</p>
+        <p>See the three finished summaries in the tabs below.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Finished Summaries</h2>
+    <div class="output-tabs">
+      <div class="output-tab active" onclick="showOutput(0)">📋 SRE Postmortem</div>
+      <div class="output-tab" onclick="showOutput(1)">📊 Engineering Leadership</div>
+      <div class="output-tab" onclick="showOutput(2)">🚀 Product Team</div>
+    </div>
+    <div class="output-panel active" id="out-0">
+      <div class="op-header">
+        <div class="op-audience">Audience — SRE team / postmortem</div>
+        <div class="op-title">Technical Postmortem Summary</div>
+        <div class="op-purpose">Enables root cause analysis, fix prioritization, and test coverage improvement</div>
+      </div>
+      <div class="op-doc">POSTMORTEM — inference-api degradation, Nov 12
+Duration: 3h 1m (01:14–04:15 UTC) | Severity: P1 | Status: Resolved
+
+ROOT CAUSE
+v3.2 introduced an embedding layer 3x larger than v3.1. Under production batch size (64), this caused GPU memory pressure on nodes 3, 4, and 7, leading to request timeouts (observed: 8s+, SLA: 2s). Batch scoring queue depth reached 4,200 (normal ceiling: 200).
+
+CONTRIBUTING FACTOR — TEST COVERAGE GAP
+Load test environment was running batch size 128. Production was running batch size 64. The GPU memory pressure only manifests at ≤64. This gap means the load test passed for the wrong reason — it tested a configuration that doesn't match production. This is a systemic test config gap, not a one-off miss.
+
+TIMELINE (UTC)
+01:14 — P2 alert fires (error rate >5%)
+01:31 — Upgraded to P1; ML-oncall paged. Batch queue at 4,200.
+01:45 — R. Osei identifies embedding layer as suspect
+02:10–02:44 — Batch size mitigation attempted (64→32→16). Errors reduced to 3% but throughput dropped to 40%.
+03:00 — Decision: rollback vs. mitigation
+03:12 — Rollback approved by C. Park (engineering manager)
+03:15 — Rollback to v3.1 started
+04:02 — Rollback complete. Error rate &lt;0.5%. Queue clearing.
+04:15 — Incident closed.
+
+OPEN ACTION ITEMS
+[ ] Fix embedding layer size in v3.2 — owner: R. Osei, ML team — due Nov 15
+[ ] Align load test batch size config with production (64, not 128) — owner: M. Torres, infra — due Nov 14
+[ ] Audit other model config differences between test and prod environments — owner: ML team — due Nov 19
+[ ] Postmortem review: Nov 14, 10:00 UTC, #ml-postmortem</div>
+    </div>
+    <div class="output-panel" id="out-1">
+      <div class="op-header">
+        <div class="op-audience">Audience — Engineering manager / VP Engineering</div>
+        <div class="op-title">Engineering Leadership Summary</div>
+        <div class="op-purpose">Enables decisions about v3.2 re-deploy timeline, resource allocation, and cross-team communication</div>
+      </div>
+      <div class="op-doc">INCIDENT SUMMARY — Inference API, Nov 12
+Status: RESOLVED as of 04:15 UTC
+
+WHAT HAPPENED
+The AI inference service degraded for 3 hours due to a configuration issue in the v3.2 model update shipped yesterday. The service was restored by rolling back to v3.1.
+
+FEATURE IMPACT
+The recommendation feature (part of v3.2) is currently unavailable. It will remain down until v3.2 is fixed and re-deployed. The ML team is targeting a fix within 3 days — re-deploy would follow testing, estimated 5–7 days total before the feature is back.
+
+KEY FINDING
+Our load test environment was running a different configuration than production. This is why the issue wasn't caught before release. The team is fixing the configuration gap as an immediate priority — this is more important than the v3.2 fix itself, because without it, future releases have the same risk.
+
+DECISIONS NEEDED
+1. Product team needs to know the recommendation feature timeline (5–7 days). Do you want to communicate this or should engineering?
+2. Should we hold v3.2's re-deploy until the full test config audit is complete (adds ~5 days), or proceed once the embedding fix is verified?
+
+No further engineering manager action needed today — team is executing on all items.</div>
+    </div>
+    <div class="output-panel" id="out-2">
+      <div class="op-header">
+        <div class="op-audience">Audience — Product team / PM</div>
+        <div class="op-title">Product Team Summary</div>
+        <div class="op-purpose">Enables product team to adjust roadmap, user communications, and stakeholder expectations</div>
+      </div>
+      <div class="op-doc">UPDATE FOR PRODUCT TEAM — Inference API incident, Nov 12
+
+The inference service had a 3-hour outage last night (resolved). Here's what it means for your team:
+
+RECOMMENDATION FEATURE — TEMPORARILY DOWN
+The recommendation feature (launched with yesterday's v3.2 update) has been rolled back as part of the fix. It will be unavailable for approximately 5–7 days while the engineering team fixes the underlying issue and re-deploys.
+
+WHAT'S AFFECTED
+Any user-facing surface that shows personalized recommendations is currently showing fallback (non-personalized) content. All other features are working normally.
+
+WHAT'S NOT AFFECTED
+Search, checkout, account management, and all other features are fully operational. The outage did not cause data loss or affect user accounts.
+
+NEXT STEPS FOR YOUR TEAM
+1. If you have upcoming communications or launches tied to the recommendation feature, plan for a 5–7 day delay. Engineering will confirm the re-deploy date by Nov 14.
+2. If you need to communicate to users about reduced recommendation quality, let us know — we can provide specific language.
+3. No action needed otherwise — engineering is managing the fix.
+
+We'll update you when the re-deploy date is confirmed.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Looking at the three summaries above, the load test configuration gap (batch size 128 in test vs. 64 in production) appears prominently in the SRE postmortem and the engineering leadership summary — but is not mentioned at all in the product team summary. Is this appropriate?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">No — the product team should know about the test coverage gap so they can factor engineering quality into their roadmap decisions</button>
+        <button class="qopt" onclick="cq(this,true)">Yes — the product team's job is to plan around feature availability and communicate with stakeholders. The test config gap is an engineering process issue that doesn't change any product decision. Including it would add noise without enabling any product action.</button>
+        <button class="qopt" onclick="cq(this,false)">It depends — if the product team has previously raised concerns about engineering quality, they should be informed</button>
+        <button class="qopt" onclick="cq(this,false)">No — transparency requires sharing the root cause details with all stakeholders</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The incident log summarization process has three steps: extract the five required facts first (what, who, status, cause, next steps), map those facts to each audience's job, then write each summary in order of urgency. Doing the extraction step once saves you from re-reading the log three times.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><p>The same fact can be appropriate in one summary and noise in another. The test config gap belongs in engineering summaries because engineers need to fix it. It doesn't belong in the product team summary because the product team can't act on it and it doesn't change any product decision. Deciding what's noise for each audience is the core skill.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Write the most time-sensitive summary first. In incident situations, the operational and stakeholder summaries are often needed within minutes of resolution — they can't wait for the postmortem. The detailed technical postmortem is important but not urgent in the same way.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showOutput(i){document.querySelectorAll(".output-tab").forEach((t,idx)=>t.classList.toggle("active",idx===i));document.querySelectorAll(".output-panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The test config gap is an engineering process detail that doesn't change any product decision. The product team needs to know: feature is down, timeline is 5–7 days, other features are fine. None of those facts change based on whether the gap was a batch size config issue or a missing test scenario. Including the technical root cause in the product summary would require explanation, add length, and produce no additional action from the product team. Good summarization means being willing to leave technically interesting details out of summaries where they serve no purpose.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("noise"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Transparency and comprehensiveness are not the same thing. A product summary that includes the test config gap would require the product team to either understand it (which requires ML/infra context they may not have) or ignore it (which makes the inclusion pointless). It doesn't change the feature timeline, doesn't affect user communication, and doesn't change any product roadmap decision. Appropriate audience-targeted summarization means including what enables action — not including everything that happened.";}
+}
+</script>
+</body>
+</html>

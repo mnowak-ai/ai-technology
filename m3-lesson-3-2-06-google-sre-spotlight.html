@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real-World Spotlight: How Google SREs Write Postmortem Summaries</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.spotlight-banner{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px 28px;margin:24px 0;display:flex;gap:18px;align-items:flex-start;}
+.sb-icon{font-size:36px;flex-shrink:0;}
+.sb-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:6px;}
+.sb-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.sb-desc{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.principle-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:18px;margin:16px 0;overflow:hidden;}
+.pc2-header{background:var(--purple-pale);padding:14px 22px;display:flex;align-items:center;gap:12px;}
+.pc2-num{width:32px;height:32px;border-radius:50%;background:var(--purple);color:var(--white);font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pc2-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.pc2-body{padding:18px 22px;}
+.pc2-body p{font-size:15px;line-height:1.8;color:var(--gray-text);margin-bottom:12px;}
+.pc2-example{background:var(--gray-soft);border-radius:10px;padding:12px 16px;margin:10px 0;}
+.pc2-ex-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:6px;}
+.pc2-ex-text{font-size:13px;line-height:1.75;color:var(--gray-text);font-family:monospace;}
+.takeaway{background:var(--gray-soft);border-top:1px solid var(--purple-mid);padding:12px 22px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+.takeaway strong{color:var(--purple-dark);}
+.apply-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.apply-card{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.apply-icon{font-size:22px;margin-bottom:8px;}
+.apply-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.apply-desc{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 3.2 — Summarizing Technical Information</div>
+  <h1>Real-World Spotlight: How Google SREs Write Postmortem Summaries</h1>
+  <p class="hero-sub">Google's SRE team developed the postmortem culture that most of the industry now follows. Here's what makes their approach to summaries distinctive — and what you can take from it.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <div class="spotlight-banner">
+      <div class="sb-icon">🔦</div>
+      <div class="sb-content">
+        <div class="sb-label">Real-World Spotlight</div>
+        <div class="sb-title">About Google SRE</div>
+        <div class="sb-desc">Google's Site Reliability Engineering practice — documented in their publicly available "Site Reliability Engineering" book — established the postmortem culture that most modern engineering organizations now use. Their approach to summarization, blamelessness, and root cause analysis has been adopted across the industry. This spotlight draws on Google's publicly released SRE book, postmortem templates, and engineering blog posts.</div>
+      </div>
+    </div>
+    <p>When most engineering teams do postmortems, they're following practices that trace back to Google's SRE organization. The blameless postmortem, the five-why root cause analysis, the structured timeline — these ideas were formalized and published by Google and have since spread across the industry.</p>
+    <p>But the part most teams copy poorly is the <em>summary</em>. The format, yes. The philosophy, often not. Here's what Google's SRE approach to postmortem summaries actually emphasizes — and why it produces better outcomes than the typical "fill out the template" approach.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Six Principles from Google's SRE Postmortem Approach</h2>
+
+    <div class="principle-card">
+      <div class="pc2-header"><div class="pc2-num">1</div><div class="pc2-title">The summary must make the "so what" explicit</div></div>
+      <div class="pc2-body">
+        <p>Google SRE's postmortem format includes an explicit "Impact" section that translates technical events into user and business terms. This isn't optional — it's required, because the summary needs to communicate consequences, not just events.</p>
+        <p>Most postmortems describe what happened. Google's approach insists that the summary also states what that means — how many users were affected, what user-facing behavior changed, and whether SLOs were violated.</p>
+        <div class="pc2-example">
+          <div class="pc2-ex-label">The "so what" in practice</div>
+          <div class="pc2-ex-text">Instead of: "The service returned 5xx errors for 43 minutes."
+
+Google SRE approach: "The service returned 5xx errors for 43 minutes, affecting approximately 2.3M requests. Users experienced failed searches with no error message. The 43-minute window violated our 99.9% monthly SLO — this incident alone consumed 62% of our monthly error budget."</div>
+        </div>
+      </div>
+      <div class="takeaway"><strong>Apply this:</strong> Every postmortem summary should include the user-facing consequence and the SLO impact — not just the technical event. If you don't know the SLO impact, finding out before you write the summary is part of the job.</div>
+    </div>
+
+    <div class="principle-card">
+      <div class="pc2-header"><div class="pc2-num">2</div><div class="pc2-title">Root cause summaries use the five-why method — not the first-why</div></div>
+      <div class="pc2-body">
+        <p>A common postmortem failure is stopping at the proximate cause — the thing that directly triggered the incident — without asking why that condition existed. Google SRE's approach explicitly pushes for the underlying systemic cause.</p>
+        <p>The five-why method is simple: after identifying the cause, ask "why did that happen?" and repeat until you reach a systemic or process failure — something that can be fixed to prevent the next incident, not just the current one.</p>
+        <div class="pc2-example">
+          <div class="pc2-ex-label">Five-why in postmortem summary</div>
+          <div class="pc2-ex-text">Surface cause: The deployment script failed.
+Why? → The script referenced a config file that had been renamed.
+Why? → The rename happened in a separate PR that wasn't linked to the deployment PR.
+Why? → Our PR review process doesn't require cross-referencing config changes.
+Why? → We've never had a config rename cause a deploy failure before, so no one thought to add this check.
+
+Root cause for the summary: "No process exists to flag config file renames as deployment dependencies. This is the systemic gap — fixing the specific script would have prevented this incident; fixing the process prevents the class of incidents."</div>
+        </div>
+      </div>
+      <div class="takeaway"><strong>Apply this:</strong> When writing your root cause summary, ask: could this same root cause produce a different incident next month? If yes, you haven't reached the systemic cause yet. Keep asking "why."</div>
+    </div>
+
+    <div class="principle-card">
+      <div class="pc2-header"><div class="pc2-num">3</div><div class="pc2-title">Action items are required to be "SMART" — not vague</div></div>
+      <div class="pc2-body">
+        <p>Google SRE's postmortem culture has a strong norm against vague action items. "Improve monitoring" is not an action item. "Add PagerDuty alert for memory utilization > 80% on inference-api pods (owner: infra team, due Nov 20)" is.</p>
+        <p>The reasoning is practical: vague action items don't get done. They don't have owners who feel accountable. They can't be tracked. They can't be verified as complete. The postmortem becomes a ritual with no operational output. Google SRE treats action items as commitments — and the summary must make those commitments specific enough to be verified.</p>
+        <div class="pc2-example">
+          <div class="pc2-ex-label">Vague vs. SMART action items</div>
+          <div class="pc2-ex-text">❌ Vague: "Improve test coverage for the payment service."
+
+✅ SMART: "Add integration test for payment-service webhook retry handler behavior at queue depths &gt;500 — owner: A. Chen, payments team — due Nov 22. Test must reproduce the OOMKill condition from this incident and verify the fix prevents it."</div>
+        </div>
+      </div>
+      <div class="takeaway"><strong>Apply this:</strong> Before any action item makes it into your postmortem summary, ask: does it have a specific owner (a person, not a team), a due date, and a clear definition of "done"? If not, it's not ready to be an action item.</div>
+    </div>
+
+    <div class="principle-card">
+      <div class="pc2-header"><div class="pc2-num">4</div><div class="pc2-title">Detection time is always summarized — not just resolution time</div></div>
+      <div class="pc2-body">
+        <p>Most postmortem summaries focus on time-to-resolution (TTR). Google SRE's approach treats time-to-detect (TTD) as equally important — and often more so. A 3-hour outage that was detected in 2 minutes is a different story than one detected in 90 minutes. The detection gap is where monitoring, alerting, and on-call processes either succeed or fail.</p>
+        <p>Summarizing detection time forces the postmortem to address whether the monitoring caught the problem appropriately — or whether the incident was discovered by a customer complaint, a dashboarding engineer, or an escalation from another team.</p>
+        <div class="pc2-example">
+          <div class="pc2-ex-label">Detection summary in practice</div>
+          <div class="pc2-ex-text">Time-to-detect: 47 minutes
+Detection method: Customer support ticket volume (NOT automated monitoring)
+Why monitoring didn't fire: PagerDuty alert rule had been misconfigured after Nov 8 monitoring update
+
+This is a significant finding — 47 minutes of customer impact before internal detection is a monitoring failure, not just a slow response. Action required: fix the alert rule AND audit all recently modified alert rules for similar suppression issues.</div>
+        </div>
+      </div>
+      <div class="takeaway"><strong>Apply this:</strong> Add "detection time" and "detection method" to every postmortem summary. If the method was anything other than automated monitoring, that's a finding — and it needs its own action item.</div>
+    </div>
+
+    <div class="principle-card">
+      <div class="pc2-header"><div class="pc2-num">5</div><div class="pc2-title">Postmortems are shared broadly — and that's the point</div></div>
+      <div class="pc2-body">
+        <p>Google SRE's postmortem culture includes a strong norm of broad sharing. Postmortems aren't confidential internal documents — they're learning artifacts. The philosophy is that every team that could learn from an incident should have access to its postmortem, because organizational learning is the ultimate goal of the entire process.</p>
+        <p>This means the postmortem summary needs to be written for readers who weren't in the incident. Context that's obvious to the response team isn't obvious to an engineer in a different part of the organization who encounters the postmortem six months later. Good summaries are self-contained enough to be useful to someone who wasn't there.</p>
+      </div>
+      <div class="takeaway"><strong>Apply this:</strong> Before publishing your postmortem, read it as if you're an engineer who wasn't involved in this incident. Is every acronym defined on first use? Is the system architecture clear enough without background knowledge? Would someone unfamiliar with this service understand what happened?</div>
+    </div>
+
+    <div class="principle-card">
+      <div class="pc2-header"><div class="pc2-num">6</div><div class="pc2-title">The summary section is written last — and written separately</div></div>
+      <div class="pc2-body">
+        <p>Google SRE's postmortem format treats the summary section as a distinct document within the postmortem — written after all other sections are complete, and written to stand alone. Someone who only reads the summary should have everything they need to understand the incident and its key findings.</p>
+        <p>This is counter to how most engineers write postmortems — they fill in sections in order, and the "summary" is written first as a placeholder. The result is a summary that doesn't reflect the full analysis. Writing the summary last ensures it synthesizes the completed work, not just the initial framing.</p>
+      </div>
+      <div class="takeaway"><strong>Apply this:</strong> In your next postmortem, write the summary section last. Fill in every other section first. Then write a summary that synthesizes all sections — including any findings that emerged during the analysis that weren't visible at the start.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What You Can Apply Immediately</h2>
+    <div class="apply-grid">
+      <div class="apply-card"><div class="apply-icon">📊</div><div class="apply-title">Add SLO impact to every summary</div><div class="apply-desc">How much error budget did this incident consume? If you don't know, find out before publishing the postmortem.</div></div>
+      <div class="apply-card"><div class="apply-icon">🔍</div><div class="apply-title">Record detection time and method</div><div class="apply-desc">How long between incident start and internal detection? How was it detected? If it wasn't automated monitoring, that's a finding.</div></div>
+      <div class="apply-card"><div class="apply-icon">✅</div><div class="apply-title">Make every action item SMART</div><div class="apply-desc">Named person, specific deliverable, due date, definition of done. No team-level owners, no "improve X" action items.</div></div>
+      <div class="apply-card"><div class="apply-icon">✍️</div><div class="apply-title">Write the summary section last</div><div class="apply-desc">Complete the full analysis first. Then write a summary that synthesizes everything — including findings you didn't expect when you started.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A postmortem summary states: "The incident lasted 2 hours and 14 minutes. Root cause was a misconfigured load balancer rule. Action item: fix the load balancer configuration." Based on Google SRE's approach, what are the two most significant gaps in this summary?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The summary is too short and lacks a detailed timeline</button>
+        <button class="qopt" onclick="cq(this,false)">The root cause doesn't use five-why methodology, and the summary lacks user impact framing</button>
+        <button class="qopt" onclick="cq(this,true)">The action item has no owner, no due date, and no definition of done — it's a vague intention, not a commitment. And the summary doesn't mention detection time or method, which means any monitoring failure that delayed detection goes unexamined and unfixed.</button>
+        <button class="qopt" onclick="cq(this,false)">The summary doesn't mention who was on call or who approved the fix</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Google SRE's postmortem approach adds three elements most teams skip: the "so what" (user impact and SLO budget consumed), detection time and detection method (not just resolution time), and SMART action items (named owner, due date, definition of done). All three close gaps that produce recurring incidents.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The five-why method distinguishes proximate causes (what triggered the incident) from systemic causes (what made the trigger possible). Postmortem summaries that stop at the proximate cause produce one-time fixes. Summaries that reach the systemic cause produce process improvements that prevent a class of incidents.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Write the summary last. The summary section of a postmortem synthesizes the full analysis — it can't be written accurately until all other sections are complete. A summary written first is a guess. A summary written last is a synthesis.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. 'Fix the load balancer configuration' without an owner, date, or definition of done is not a commitment — it's a hope. No one is accountable for completing it, there's no way to track it, and there's no way to verify it's done. And the absence of detection time means the postmortem doesn't examine how long the incident was running before anyone knew — which is often where the most important monitoring improvements come from. Both gaps are systematic misses in the summary, not just formatting issues.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("no owner"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Length and timeline detail are useful but not the primary gaps. The five-why critique and impact framing are valid secondary gaps. But the two most operationally significant missing elements are the action item quality (no owner, no date, no done definition — this action item will not get done) and the detection time gap (if it took 90 minutes to detect a 2-hour incident, fixing only the root cause leaves a monitoring failure completely unexamined). These are the gaps that produce the next incident.";}
+}
+</script>
+</body>
+</html>
