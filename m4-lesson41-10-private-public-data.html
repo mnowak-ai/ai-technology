@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Data vs. Public Data in Tech: Why the Distinction Changes How You Can Use It</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Spectrum */
+.spectrum-full{border:2px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:20px 0;}
+.sf-header{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;}
+.sf-col{padding:14px 16px;text-align:center;}
+.sf-col.pub{background:var(--green-pale);}
+.sf-col.int{background:var(--blue-pale);}
+.sf-col.conf{background:var(--orange-pale);}
+.sf-col.restr{background:var(--red-pale);}
+.sf-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.sf-col.pub .sf-col-label{color:var(--green);}
+.sf-col.int .sf-col-label{color:var(--blue);}
+.sf-col.conf .sf-col-label{color:var(--orange);}
+.sf-col.restr .sf-col-label{color:var(--red);}
+.sf-col-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--gray-text);margin-bottom:4px;}
+.sf-col-def{font-size:11px;line-height:1.5;color:var(--gray-muted);}
+.sf-examples{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;border-top:1px solid var(--purple-mid);}
+.sf-ex{padding:12px 14px;border-right:1px solid var(--purple-mid);font-size:11px;line-height:1.55;color:var(--gray-text);background:var(--white);}
+.sf-ex:last-child{border-right:none;}
+.sf-ex strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;color:var(--gray-muted);}
+.sf-ai-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;border-top:1px solid var(--purple-mid);}
+.sf-ai{padding:12px 14px;border-right:1px solid var(--purple-mid);font-size:11px;line-height:1.55;background:var(--gray-soft);}
+.sf-ai:last-child{border-right:none;}
+.sf-ai strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;color:var(--purple);}
+
+/* Classify game */
+.classify-game{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.cg-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.cg-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.cg-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.cg-items{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.cg-item{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 14px;cursor:pointer;font-size:13px;line-height:1.5;transition:all .2s;font-family:"DM Sans",sans-serif;}
+.cg-item:hover{border-color:var(--purple);background:var(--purple-pale);}
+.cg-item.selected-pub{border-color:var(--green);background:var(--green-pale);}
+.cg-item.selected-priv{border-color:var(--red);background:var(--red-pale);}
+.cg-item.correct-pub{border-color:var(--green);background:var(--green-pale);}
+.cg-item.correct-priv{border-color:var(--red);background:var(--red-pale);}
+.cg-item.wrong{border-color:var(--orange);background:var(--orange-pale);}
+.cg-btns{display:flex;gap:10px;margin-bottom:12px;}
+.cg-btn{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid;font-family:"DM Sans",sans-serif;flex:1;transition:all .2s;}
+.cg-btn.pub{background:var(--green-pale);color:var(--green);border-color:var(--green);}
+.cg-btn.pub:hover{background:var(--green);color:var(--white);}
+.cg-btn.priv{background:var(--red-pale);color:var(--red);border-color:var(--red);}
+.cg-btn.priv:hover{background:var(--red);color:var(--white);}
+.cg-btn.check{background:var(--purple);color:var(--white);border-color:var(--purple);}
+.cg-btn.check:hover{background:var(--purple-dark);}
+.cg-result{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;display:none;}
+.cg-result.show{display:block;background:var(--purple-pale);color:var(--purple-dark);}
+
+/* Misconceptions */
+.mc-stack{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.mc-card{border-radius:16px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.mc-myth{background:var(--red-pale);padding:14px 20px;display:flex;align-items:flex-start;gap:12px;}
+.mc-myth-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.mc-myth-text{font-size:14px;font-weight:600;color:var(--red);line-height:1.5;}
+.mc-truth{background:var(--white);padding:14px 20px;display:flex;align-items:flex-start;gap:12px;}
+.mc-truth-icon{font-size:18px;flex-shrink:0;}
+.mc-truth-text{font-size:14px;line-height:1.6;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Data Literacy for Tech Roles</div>
+  <h1>Private Data vs. Public Data in Tech: Why the Distinction Changes How You Can Use It</h1>
+  <p class="hero-sub">The video's data classification workflow includes "Private" and "Public" as categories — but doesn't explain what makes data one or the other, or why it matters. This article fills that gap with concrete examples and a classification exercise.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>It's Not Binary — It's a Spectrum</h2>
+    <p>Most people think of data as either "private" or "public" — two buckets. In practice, organizations use a more nuanced spectrum with at least four levels. Each level determines who can access the data, how it can be used, and what happens if it's improperly shared.</p>
+    <p><mark>The classification you assign to data determines everything that comes after it: who can see it, which tools it can be connected to, whether it can leave the organization, and what audit trail is required when it's accessed.</mark> For AI workflows specifically, misclassifying data as more public than it is produces the privacy violations discussed in the previous article.</p>
+
+    <div class="spectrum-full">
+      <div class="sf-header">
+        <div class="sf-col pub"><div class="sf-col-label">🟢 Level 1</div><div class="sf-col-title">Public</div><div class="sf-col-def">Deliberately made available to anyone — no restrictions on access or use</div></div>
+        <div class="sf-col int"><div class="sf-col-label">🔵 Level 2</div><div class="sf-col-title">Internal</div><div class="sf-col-def">Available to all employees but not intended for outside the organization</div></div>
+        <div class="sf-col conf"><div class="sf-col-label">🟠 Level 3</div><div class="sf-col-title">Confidential</div><div class="sf-col-def">Restricted to employees with a legitimate need — limited distribution even internally</div></div>
+        <div class="sf-col restr"><div class="sf-col-label">🔴 Level 4</div><div class="sf-col-title">Restricted</div><div class="sf-col-def">Highest protection — tightly controlled access, legal or regulatory requirements apply</div></div>
+      </div>
+      <div class="sf-examples">
+        <div class="sf-ex"><strong>Tech examples</strong>Public API documentation, product release notes, company blog posts, open-source code repositories, general system uptime status page</div>
+        <div class="sf-ex"><strong>Tech examples</strong>Internal wiki content, team meeting notes, general IT announcements, aggregate performance metrics published to all staff, company org chart</div>
+        <div class="sf-ex"><strong>Tech examples</strong>Customer ticket data (anonymized), employee ticket history, internal system architecture diagrams, vendor contracts, unreleased product roadmaps, salary band ranges</div>
+        <div class="sf-ex"><strong>Tech examples</strong>Individual customer PII, employee PII, health records (PHI), financial account data, authentication credentials, security vulnerability details, individual performance records</div>
+      </div>
+      <div class="sf-ai-row">
+        <div class="sf-ai"><strong>AI tool use</strong>Can be freely connected to any AI tool, used in training data, shared publicly</div>
+        <div class="sf-ai"><strong>AI tool use</strong>Can use internal AI tools; verify whether external AI tools are permitted under policy</div>
+        <div class="sf-ai"><strong>AI tool use</strong>Requires approval before connecting to any AI tool; anonymization often required first</div>
+        <div class="sf-ai"><strong>AI tool use</strong>Cannot be connected to external AI tools without legal review and explicit authorization</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The "Public Doesn't Mean Free to Use" Rule</h2>
+    <p>A common misconception: if data is publicly accessible, you can use it for anything. That's wrong in at least three ways.</p>
+    <div class="mc-stack">
+      <div class="mc-card">
+        <div class="mc-myth"><div class="mc-myth-icon">❌</div><div class="mc-myth-text">Misconception: Publicly available data is always free to scrape and use in AI training.</div></div>
+        <div class="mc-truth"><div class="mc-truth-icon">✅</div><div class="mc-truth-text">Reality: Many publicly accessible websites have terms of service that prohibit scraping. Using scraped data for AI training may violate copyright, terms of service, or in some jurisdictions privacy law — even if the data was publicly visible. Major AI companies have faced lawsuits over training data from publicly accessible sources.</div></div>
+      </div>
+      <div class="mc-card">
+        <div class="mc-myth"><div class="mc-myth-icon">❌</div><div class="mc-myth-text">Misconception: If a customer shared information publicly on social media, I can use it for business analysis without restriction.</div></div>
+        <div class="mc-truth"><div class="mc-truth-icon">✅</div><div class="mc-truth-text">Reality: GDPR and some other regulations apply even to publicly available personal data when it's collected and processed for business purposes. The fact that someone posted something publicly doesn't grant organizations unlimited rights to harvest and analyze it. The legal landscape here is evolving — when uncertain, consult your legal team.</div></div>
+      </div>
+      <div class="mc-card">
+        <div class="mc-myth"><div class="mc-myth-icon">❌</div><div class="mc-myth-text">Misconception: Internal company data is private, so as long as I don't share it externally, I can use it any way I want.</div></div>
+        <div class="mc-truth"><div class="mc-truth-icon">✅</div><div class="mc-truth-text">Reality: Internal data that contains personal information (employee records, customer data) has privacy requirements that govern internal use too — not just external sharing. Analyzing employee performance data without proper authorization or connecting customer records to an unapproved AI tool violates privacy requirements even if nothing leaves the organization.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Classify It — Practice Exercise</h2>
+    <div class="classify-game">
+      <div class="cg-label">🎯 Classification Practice</div>
+      <div class="cg-title">Public or Private?</div>
+      <div class="cg-sub">Select an item, then click Public or Private to classify it. Then check your answers.</div>
+      <div class="cg-items" id="cgItems2">
+        <div class="cg-item" data-correct="pub" data-explain="Public — this is deliberately published for external audiences.">📰 Company press release announcing a new product</div>
+        <div class="cg-item" data-correct="priv" data-explain="Private — employee salary data is Restricted/Confidential. Access is limited to HR, finance, and the individual.">💰 Individual employee salary records</div>
+        <div class="cg-item" data-correct="pub" data-explain="Public — open source code is intentionally made publicly available by the organization.">💻 Open source code published in a public GitHub repository</div>
+        <div class="cg-item" data-correct="priv" data-explain="Private (Confidential) — customer tickets contain potentially identifying information and are internal operational data.">🎫 Customer support ticket history (names + descriptions)</div>
+        <div class="cg-item" data-correct="pub" data-explain="Public — a system status page is deliberately public-facing so customers can check availability.">📊 System uptime status page (public-facing)</div>
+        <div class="cg-item" data-correct="priv" data-explain="Private (Restricted) — security vulnerability details must be tightly controlled. Public disclosure before a patch is applied is a serious security risk.">🔐 Internal security audit findings</div>
+        <div class="cg-item" data-correct="pub" data-explain="Public — product documentation is published for customers and users. It's designed to be widely accessible.">📖 Product user documentation (help center articles)</div>
+        <div class="cg-item" data-correct="priv" data-explain="Private (Internal at minimum, Confidential depending on content) — unreleased roadmap details are competitively sensitive internal information.">🗺️ Unreleased product roadmap for next 12 months</div>
+      </div>
+      <div class="cg-btns">
+        <button class="cg-btn pub" onclick="setClass('pub')">🟢 Mark as Public</button>
+        <button class="cg-btn priv" onclick="setClass('priv')">🔴 Mark as Private</button>
+        <button class="cg-btn check" onclick="checkGame()">Check Answers</button>
+      </div>
+      <div class="cg-result" id="cgResult2"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why Classification Is the First Decision in Every AI Workflow</h2>
+    <p>In a tech role, you'll regularly encounter situations where someone asks you to connect data to an AI tool, export a dataset for analysis, or include a data source in a report. Before you do any of those things, classification is the first question you need to answer.</p>
+    <p>The practical decision tree is simple:</p>
+    <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:16px;">Decision Tree — Before Connecting Data to Any AI Tool</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:var(--white);border-radius:12px;padding:14px 16px;border-left:3px solid var(--green);font-size:14px;line-height:1.65;"><strong style="color:var(--green);">Public data?</strong> → Connect freely. No restrictions.</div>
+        <div style="background:var(--white);border-radius:12px;padding:14px 16px;border-left:3px solid var(--blue);font-size:14px;line-height:1.65;"><strong style="color:var(--blue);">Internal data (no PII)?</strong> → Can use approved internal AI tools. Verify whether external tools are permitted by policy before connecting.</div>
+        <div style="background:var(--white);border-radius:12px;padding:14px 16px;border-left:3px solid var(--orange);font-size:14px;line-height:1.65;"><strong style="color:var(--orange);">Confidential data (may contain PII)?</strong> → Check tool approval status. Consider anonymizing before connecting. Get explicit approval if sharing externally.</div>
+        <div style="background:var(--white);border-radius:12px;padding:14px 16px;border-left:3px solid var(--red);font-size:14px;line-height:1.65;"><strong style="color:var(--red);">Restricted data (PII, PHI, credentials)?</strong> → Do not connect to external tools without explicit legal/compliance authorization. Internally, access only through approved, audited systems.</div>
+      </div>
+    </div>
+    <p>This decision tree isn't just a compliance exercise. It's also how you protect yourself. <mark>A tech worker who knows to ask "what classification is this data?" before connecting it to a new tool will never be the person who accidentally caused a data breach — and that matters for your career.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An IT operations team is building a dashboard in Tableau to monitor system performance across all company servers. The data source includes: server hostnames, CPU and memory usage metrics, error rates, uptime statistics, and the user account names of any user logged into each server at the time of each metric capture. How should this dataset be classified, and what does that mean for connecting it to Tableau?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Public — system performance data is technical and doesn't contain personal information</button>
+        <button class="qopt" onclick="cq(this,false)">Internal — performance metrics are for internal use but don't need special protection</button>
+        <button class="qopt" onclick="cq(this,true)">Confidential or Restricted, because the dataset includes user account names — which are PII (they identify specific individuals and their system access activity). The performance metrics themselves (CPU, memory, uptime) are internal but not highly sensitive. But the combination of metrics + user account names = a record of specific people's system activity that should be treated as confidential. Before connecting to Tableau, the team should either: remove the user account field (if user-level attribution isn't needed for the dashboard), or verify that Tableau is approved for handling this data classification and that only authorized personnel have access to the dashboard.</button>
+        <button class="qopt" onclick="cq(this,false)">The entire dataset must be Restricted because it contains server information that is a security risk</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Data classification is not binary. Most organizations use a four-level spectrum: Public (freely available, no restrictions), Internal (all-employee access, stay within the org), Confidential (limited access, needs approval to share), and Restricted (tightest controls, legal requirements). Each level has specific rules for who can access it and how it can be used in AI workflows.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Publicly accessible does not mean freely usable. Scraping public websites, using public social media data for business analysis, and using publicly available personal information in AI training all have legal constraints that vary by jurisdiction and context. When uncertain, check before proceeding.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Classification determines the first decision in every AI workflow. Before connecting any dataset to an AI tool, the classification of that data determines whether you can proceed, whether you need approval, and whether the data needs to be anonymized first. Building this habit — asking "what is this classified as?" before acting — is one of the most important professional habits for any tech worker who works with data.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+let selected2=null;const classifications={};
+function setClass(cls){
+  if(!selected2)return;
+  const text=selected2.textContent.trim();
+  classifications[text]=cls;
+  selected2.className="cg-item selected-"+(cls==="pub"?"pub":"priv");
+}
+document.querySelectorAll("#cgItems2 .cg-item").forEach(item=>{
+  item.addEventListener("click",function(){
+    document.querySelectorAll("#cgItems2 .cg-item").forEach(i=>i.style.outline="none");
+    this.style.outline="2px solid var(--purple)";
+    selected2=this;
+  });
+});
+function checkGame(){
+  let correct=0;
+  const items=document.querySelectorAll("#cgItems2 .cg-item");
+  items.forEach(item=>{
+    const text=item.textContent.trim();
+    const ans=classifications[text];
+    const correctAns=item.dataset.correct;
+    if(!ans){return;}
+    item.style.outline="none";
+    if(ans===correctAns){item.className="cg-item correct-"+(ans==="pub"?"pub":"priv");correct++;}
+    else{item.className="cg-item wrong";}
+  });
+  const r=document.getElementById("cgResult2");
+  r.className="cg-result show";
+  r.textContent=`${correct} of 8 correct. Items showing in orange were misclassified. Key principle: anything containing individual names, employee IDs, financial details, or internal strategic information is Private (Confidential or Restricted). Deliberately published content and open-source materials are Public.`;
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a good example of the PII contamination problem: a dataset that would otherwise be Internal or just Confidential (performance metrics) becomes more sensitive because it includes a personal identifier (user account names). The correct approach is either to remove the personal identifier if user-level attribution isn't needed, or to treat the entire dataset at the classification level of its most sensitive field — which is Confidential/Restricted because user account names are PII.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("user account names"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Server hostnames, CPU metrics, and uptime statistics on their own would be Internal. But the inclusion of user account names changes the classification — those names identify specific people and their system activity. Server data that contains any personal identifiers must be classified at the level of the most sensitive field it contains. The security sensitivity of server architecture is separate from the privacy sensitivity of user data — they're both valid concerns, but the privacy concern is specifically driven by the PII field.";}
+}
+</script>
+</body>
+</html>

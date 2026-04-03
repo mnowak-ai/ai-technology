@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real-World Spotlight: How Tableau AI Helps Tech Teams Classify and Visualize Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Spotlight header */
+.spotlight-header{background:linear-gradient(135deg,var(--purple-pale) 0%,var(--blue-pale) 100%);border:1.5px solid var(--purple-mid);border-radius:20px;padding:28px;margin:20px 0;display:flex;align-items:center;gap:20px;}
+.sh-logo{width:64px;height:64px;border-radius:14px;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;box-shadow:0 2px 12px rgba(123,47,190,.15);}
+.sh-info{}
+.sh-name{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.sh-tagline{font-size:14px;color:var(--gray-muted);line-height:1.5;}
+.sh-url{font-size:12px;color:var(--purple);margin-top:4px;}
+
+/* Workflow walkthrough */
+.workflow{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.wf-step{background:var(--white);border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;display:flex;}
+.wf-num{background:var(--purple);color:var(--white);font-family:"Fraunces",serif;font-size:20px;font-weight:700;width:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.wf-body{padding:16px 18px;flex:1;}
+.wf-step-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:5px;}
+.wf-step-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.wf-step-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.wf-ai-note{background:var(--purple-pale);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;line-height:1.6;color:var(--purple-dark);}
+
+/* Feature cards */
+.feature-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.fc{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.fc-icon{font-size:24px;margin-bottom:8px;}
+.fc-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.fc-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.fc-human{background:var(--green-pale);border-radius:8px;padding:7px 10px;margin-top:8px;font-size:12px;line-height:1.5;color:var(--green);}
+
+/* Workday timeline */
+.day-timeline{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.dt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:16px;}
+.dt-entries{display:flex;flex-direction:column;gap:10px;}
+.dt-entry{background:var(--white);border-radius:12px;padding:14px 18px;border-left:4px solid var(--purple-mid);}
+.dt-entry.ai{border-left-color:var(--purple);}
+.dt-entry.human{border-left-color:var(--green);}
+.dt-entry.collab{border-left-color:var(--orange);}
+.dt-time{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:4px;}
+.dt-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.dt-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-top:5px;}
+.dt-tag.ai{background:var(--purple-pale);color:var(--purple);}
+.dt-tag.human{background:var(--green-pale);color:var(--green);}
+.dt-tag.collab{background:var(--orange-pale);color:var(--orange);}
+
+/* Limitations */
+.limits{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.limit-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px 18px;display:flex;gap:12px;}
+.limit-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.limit-body{flex:1;}
+.limit-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.limit-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Real-World Spotlight</div>
+  <h1>How Tableau AI Helps Tech Teams Classify and Visualize Data</h1>
+  <p class="hero-sub">The video's case study moved fast. This article gives you the full picture: what Tableau actually is, how its AI features work, what a data analyst's real experience looks like using it, and — critically — where the human's judgment still does the work the AI can't.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <div class="spotlight-header">
+      <div class="sh-logo">📊</div>
+      <div class="sh-info">
+        <div class="sh-name">Tableau (from Salesforce)</div>
+        <div class="sh-tagline">Data visualization and business intelligence platform. Used by over 42,000 companies to connect data sources, build dashboards, and surface patterns using AI-assisted analysis.</div>
+        <div class="sh-url">tableau.com/solutions/ai</div>
+      </div>
+    </div>
+    <p>Tableau's core job is to help non-technical users make sense of large datasets — turning database tables and spreadsheet exports into visual dashboards that tell a story. Its AI layer, called Tableau AI, extends this by finding patterns and anomalies that humans would miss scanning a table manually, and by letting users ask questions about their data in plain English rather than SQL.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Tableau AI Actually Does — Step by Step</h2>
+    <div class="workflow">
+      <div class="wf-step">
+        <div class="wf-num">1</div>
+        <div class="wf-body">
+          <div class="wf-step-label">Data connection</div>
+          <div class="wf-step-title">Connect to any data source</div>
+          <div class="wf-step-body">Tableau connects directly to databases, spreadsheets, cloud services, and data warehouses. A tech team might connect it to their ticketing database, their server metrics database, and their user behavior analytics — all at once. Once connected, data flows into Tableau automatically as it updates.</div>
+          <div class="wf-ai-note">🤖 AI role: Minimal. Connection setup is configuration work. AI helps suggest field types and data classifications when a new source is connected.</div>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">2</div>
+        <div class="wf-body">
+          <div class="wf-step-label">AI-assisted classification</div>
+          <div class="wf-step-title">Automatic data type detection and categorization</div>
+          <div class="wf-step-body">When data is loaded, Tableau AI scans each field and suggests how to classify it: is this a dimension (a categorical field for grouping, like "category" or "region") or a measure (a numeric field for aggregation, like "resolution_time" or "ticket_count")? It also detects geographic data, date fields, and hierarchical relationships between fields automatically.</div>
+          <div class="wf-ai-note">🤖 AI role: Significant. This is exactly the "classify" step from the video — AI helps categorize fields so the right visualizations are suggested automatically. Human override is always available and sometimes necessary when AI misclassifies a field.</div>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">3</div>
+        <div class="wf-body">
+          <div class="wf-step-label">Visualization and dashboard building</div>
+          <div class="wf-step-title">Drag fields onto a canvas; AI suggests chart types</div>
+          <div class="wf-step-body">The analyst drags fields onto the visualization canvas. Tableau AI suggests which chart type best represents the combination of fields chosen — a bar chart for category comparison, a line chart for trends over time, a map for geographic data. It also suggests related fields that might add context to the current view.</div>
+          <div class="wf-ai-note">🤖 AI role: Assistive. AI suggestions save time but the analyst decides whether the suggested visualization actually serves the business question. A suggested chart type may be technically appropriate but visually misleading for the specific audience.</div>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">4</div>
+        <div class="wf-body">
+          <div class="wf-step-label">AI-detected insights</div>
+          <div class="wf-step-title">Automatic pattern and anomaly detection</div>
+          <div class="wf-step-body">Tableau AI continuously analyzes the connected data and surfaces "insights" — statistical patterns, anomalies, and correlations that it detects. It might flag: "Resolution time for Integration Issues tickets spiked 240% in the last 7 days compared to the prior 30-day average." Or: "Ticket volume from the Engineering department has grown 3× faster than from any other department over the past quarter."</div>
+          <div class="wf-ai-note">🤖 AI role: Core. This is where AI earns its value — finding patterns across millions of data points that no analyst could spot manually. But surfaced patterns require human interpretation: is the Engineering volume increase because of a new team, a product problem, or a process change?</div>
+        </div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">5</div>
+        <div class="wf-body">
+          <div class="wf-step-label">Ask Data (natural language queries)</div>
+          <div class="wf-step-title">Type a question, get a visualization</div>
+          <div class="wf-step-body">Tableau's "Ask Data" feature lets users type plain English questions — "Which team has the highest average resolution time this month?" or "Show me ticket volume by category over the last 90 days" — and Tableau AI translates the question into a query, runs it against the database, and returns a visualization automatically. No SQL required.</div>
+          <div class="wf-ai-note">🤖 AI role: Translation. The AI converts natural language to database query. Ambiguous questions produce wrong queries — if you ask "show me slow tickets" without defining what "slow" means, the AI will make an assumption that may not match your intent. Reviewing the query it generated before trusting the result is good practice.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Real Analyst's Day With Tableau AI</h2>
+    <div class="day-timeline">
+      <div class="dt-label">IT Data Analyst — Morning with Tableau AI</div>
+      <div class="dt-entries">
+        <div class="dt-entry ai"><div class="dt-time">8:15 AM</div><div class="dt-body">Open the help desk dashboard. Tableau AI has surfaced an overnight insight: "Ticket volume between 6–9 PM spiked 180% on Tuesday vs. the 4-week average for that window." Something unusual happened Tuesday evening.</div><div class="dt-tag ai">🤖 AI detected</div></div>
+        <div class="dt-entry human"><div class="dt-time">8:22 AM</div><div class="dt-body">Investigate the spike. Click into the time window to see affected ticket categories. 73% of the evening spike is "Software Access" tickets. Check the company calendar — Tuesday was the onboarding day for 40 new hires. The spike is explained. Not a system problem.</div><div class="dt-tag human">👤 Human interpreted</div></div>
+        <div class="dt-entry collab"><div class="dt-time">9:05 AM</div><div class="dt-body">Use Ask Data: "Show me resolution time by category for tickets created in the last 30 days." Tableau AI generates a bar chart. The chart shows Integration Issues averaging 18.7 hours vs. all other categories under 4 hours. This is a new insight — not in any standing report.</div><div class="dt-tag collab">🤝 AI + Human</div></div>
+        <div class="dt-entry human"><div class="dt-time">9:18 AM</div><div class="dt-body">Dig deeper. Tableau AI suggests a correlation: Integration Issues resolution time correlates with the day of week — Mondays and Fridays are significantly slower. Cross-reference with staffing data. The three technicians who handle integration issues don't work weekends, and Monday/Friday have partial coverage. The AI found the pattern; you found the cause.</div><div class="dt-tag human">👤 Human contextualized</div></div>
+        <div class="dt-entry ai"><div class="dt-time">10:30 AM</div><div class="dt-body">Tableau AI flags a data quality issue: "43 records in the tickets table have resolution_time values greater than 720 hours (30 days). These may be data entry errors." You investigate and confirm — tickets that were auto-closed after 90 days of inactivity are being treated as resolved, inflating resolution times.</div><div class="dt-tag ai">🤖 AI flagged</div></div>
+        <div class="dt-entry human"><div class="dt-time">10:45 AM</div><div class="dt-body">This is the same data quality problem from the dirty data article. You update the report filters to exclude auto-closed tickets from resolution time calculations, document the issue, and raise a ticket with the team to fix the underlying data quality problem at the source.</div><div class="dt-tag human">👤 Human corrected</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Tableau AI Cannot Do — The Honest Version</h2>
+    <div class="limits">
+      <div class="limit-item"><div class="limit-icon">🧠</div><div class="limit-body"><div class="limit-title">It cannot explain why a pattern exists</div><div class="limit-desc">Tableau AI surfaces that a pattern exists. It cannot tell you that Tuesday evening's ticket spike was caused by new hire onboarding, or that Monday/Friday integration slowness is a staffing coverage issue. Causal reasoning — understanding why data looks the way it does — requires human context.</div></div></div>
+      <div class="limit-item"><div class="limit-icon">📋</div><div class="limit-body"><div class="limit-title">It cannot determine whether an insight is business-relevant</div><div class="limit-desc">AI will surface statistically significant patterns regardless of whether they matter. A 15% increase in password reset tickets might be statistically notable — but if you know there was a company-wide password policy change last week, it's completely expected. AI doesn't know about the password policy.</div></div></div>
+      <div class="limit-item"><div class="limit-icon">🎯</div><div class="limit-body"><div class="limit-title">It cannot ask the right question for you</div><div class="limit-desc">Natural language queries are only as good as the question you ask. "Show me slow tickets" is ambiguous. "Show me tickets where resolution time exceeded the SLA threshold, broken down by category, for the past 60 days" is precise. The analyst's job is knowing which questions to ask.</div></div></div>
+      <div class="limit-item"><div class="limit-icon">🔍</div><div class="limit-body"><div class="limit-title">It cannot validate that the underlying data is correct</div><div class="limit-desc">Tableau displays what's in the data. It can flag statistical anomalies (like 30-day resolution times) that might indicate data errors — but it cannot verify whether the data reflects reality. Validation remains a human responsibility.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A data analyst uses Tableau AI's "Ask Data" feature and types: "Show me which technician performs best." Tableau returns a bar chart ranked by number of tickets closed. The analyst sends this chart to the help desk manager as a performance ranking. What's the problem with this approach?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The "Ask Data" feature is unreliable and shouldn't be used for performance data</button>
+        <button class="qopt" onclick="cq(this,true)">The query was too ambiguous — "performs best" was interpreted by the AI as "closes the most tickets," but performance could equally mean fastest resolution time, highest first-contact resolution rate, best customer satisfaction score, or most complex tickets handled. The AI made a reasonable but arbitrary interpretation of an imprecise question, and the analyst accepted the output without verifying whether "tickets closed" was actually the right measure of performance.</button>
+        <button class="qopt" onclick="cq(this,false)">Performance data should only be analyzed by HR, not by data analysts</button>
+        <button class="qopt" onclick="cq(this,false)">The bar chart format is inappropriate for performance ranking data</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Tableau AI's core value is finding statistical patterns in large datasets that humans would miss manually, and translating natural language questions into database queries that return visualizations. Both capabilities are genuinely powerful — and both require human judgment to interpret correctly and use responsibly.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI-surfaced insights tell you that a pattern exists. They do not tell you why, whether the pattern is business-relevant, or whether the underlying data is correct. A data analyst's job in a Tableau AI environment is less about finding patterns manually and more about interpreting AI-surfaced patterns with business context and validating data quality when AI flags anomalies.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Natural language queries are only as good as the questions you ask. Ambiguous questions produce ambiguous results — and Tableau AI will return a chart based on a reasonable but arbitrary interpretation of your question without flagging the ambiguity. Reviewing the query it generated and verifying that the metric it chose matches your intent is essential before distributing any AI-generated chart to decision-makers.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent='✅ Correct. Natural language queries require precise questions. "Performs best" is a compound concept — it could mean volume, speed, quality, complexity handled, or some combination. Tableau AI interpreted it as volume (tickets closed) because that\'s the most directly countable signal. The analyst\'s job was to either ask a more precise question ("show me average resolution time per technician for the last 30 days") or to verify that the AI\'s interpretation matched the intended performance definition before sharing the result.';}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("too ambiguous"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The issue isn't the feature's reliability, who should do the analysis, or the chart format. The issue is that the analyst asked an ambiguous question and accepted the AI's interpretation without verifying it. Ask Data produces the most literal interpretation of your question — when 'performs best' has no defined metric, it defaults to the most countable one. The responsibility is on the analyst to ask precise questions and validate that the metric returned matches the intended business definition of performance.";}
+}
+</script>
+</body>
+</html>

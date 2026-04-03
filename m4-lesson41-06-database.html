@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is a Database? A Plain-Language Guide to Where Tech Teams Store and Access Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* DB vs spreadsheet */
+.compare-block{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.cb-col{padding:20px 22px;}
+.cb-col.sheet{background:var(--orange-pale);border-right:1px solid var(--purple-mid);}
+.cb-col.db{background:var(--blue-pale);}
+.cb-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.cb-col.sheet .cb-label{color:var(--orange);}
+.cb-col.db .cb-label{color:var(--blue);}
+.cb-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;margin-bottom:10px;color:var(--gray-text);}
+.cb-items{display:flex;flex-direction:column;gap:7px;}
+.cb-item{font-size:13px;line-height:1.55;color:var(--gray-text);}
+
+/* Table anatomy */
+.table-anatomy{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.ta-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:14px;}
+.ta-table-wrap{overflow-x:auto;}
+.ta-table{width:100%;border-collapse:collapse;font-size:13px;}
+.ta-table th{background:var(--purple);color:var(--white);padding:10px 14px;text-align:left;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;position:relative;}
+.ta-table th:hover{background:var(--purple-dark);}
+.ta-table th.highlighted{background:var(--orange);color:var(--white);}
+.ta-table td{padding:9px 14px;border-bottom:1px solid var(--purple-mid);background:var(--white);vertical-align:middle;}
+.ta-table tr:last-child td{border-bottom:none;}
+.ta-table tr.highlighted td{background:var(--purple-pale);}
+.ta-table .pri-high{background:#FFF1F1;color:var(--red);font-weight:700;border-radius:6px;padding:2px 8px;display:inline-block;}
+.ta-table .pri-med{background:var(--orange-pale);color:var(--orange);font-weight:700;border-radius:6px;padding:2px 8px;display:inline-block;}
+.ta-table .pri-low{background:var(--green-pale);color:var(--green);font-weight:700;border-radius:6px;padding:2px 8px;display:inline-block;}
+.ta-explainer{font-size:13px;line-height:1.6;color:var(--gray-text);margin-top:12px;padding:12px 14px;background:var(--white);border-radius:10px;border-left:3px solid var(--purple);}
+
+/* Query builder sim */
+.qb-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.qb-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.qb-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.qb-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.qb-builder{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;margin-bottom:16px;}
+.qb-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.qb-row:last-child{margin-bottom:0;}
+.qb-word{font-size:13px;font-weight:700;color:var(--purple);padding:6px 10px;background:var(--purple-pale);border-radius:8px;}
+.qb-select{border:2px solid var(--purple-mid);border-radius:8px;padding:6px 10px;font-size:13px;font-family:"DM Sans",sans-serif;color:var(--gray-text);background:var(--white);cursor:pointer;}
+.qb-select:focus{outline:none;border-color:var(--purple);}
+.qb-result{background:var(--purple-dark);border-radius:14px;padding:18px 20px;font-family:"Courier New",monospace;font-size:12px;color:#C4B5FD;line-height:1.7;margin-bottom:12px;}
+.qb-result .hi{color:#F9C74F;}
+.qb-result .str{color:#86EFAC;}
+.qb-output{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px 18px;}
+.qb-out-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:8px;}
+.qb-out-rows{display:flex;flex-direction:column;gap:6px;}
+.qb-out-row{font-size:13px;line-height:1.55;color:var(--gray-text);padding:6px 10px;background:var(--gray-soft);border-radius:8px;}
+
+/* DB types grid */
+.db-types{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.dbt-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.dbt-icon{font-size:24px;margin-bottom:8px;}
+.dbt-name{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.dbt-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.dbt-examples{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;}
+.dbt-ex{background:var(--purple-pale);color:var(--purple);font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Data Literacy for Tech Roles</div>
+  <h1>What Is a Database? A Plain-Language Guide to Where Tech Teams Store and Access Data</h1>
+  <p class="hero-sub">Every AI tool, ticketing system, and monitoring dashboard in this module reads from a database. If you don't know what that means, the connections won't fully make sense. This article fills that gap — no prior tech background needed.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Start With What You Already Know</h2>
+    <p>You've almost certainly used a spreadsheet. A spreadsheet stores data in rows and columns — each row is a record, each column is a field. You can sort it, filter it, search it. For small amounts of data managed by one person, it works fine.</p>
+    <p>A database does something similar — but solves the problems that spreadsheets can't handle. <mark>A database is a system designed to store, organize, and retrieve large amounts of data reliably, allowing many users and applications to access it simultaneously.</mark> Where a spreadsheet is a personal file, a database is shared infrastructure.</p>
+    <div class="compare-block">
+      <div class="cb-col sheet">
+        <div class="cb-label">📊 Spreadsheet</div>
+        <div class="cb-title">Good for personal data management</div>
+        <div class="cb-items">
+          <div class="cb-item">• One person or a small team uses it at a time</div>
+          <div class="cb-item">• Stored as a file on your computer or Google Drive</div>
+          <div class="cb-item">• Manually opened, edited, and saved</div>
+          <div class="cb-item">• Works well for hundreds or thousands of records</div>
+          <div class="cb-item">• No access controls — anyone with the file can see everything</div>
+          <div class="cb-item">• Software can't automatically read or write to it without special setup</div>
+          <div class="cb-item">• Two people editing simultaneously causes conflicts</div>
+        </div>
+      </div>
+      <div class="cb-col db">
+        <div class="cb-label">🗄️ Database</div>
+        <div class="cb-title">Built for shared, scalable data</div>
+        <div class="cb-items">
+          <div class="cb-item">• Hundreds of users and applications access it simultaneously</div>
+          <div class="cb-item">• Runs on a server, accessible over a network</div>
+          <div class="cb-item">• Software reads and writes automatically, 24/7</div>
+          <div class="cb-item">• Handles millions or billions of records efficiently</div>
+          <div class="cb-item">• Fine-grained access controls — users see only what they're permitted to</div>
+          <div class="cb-item">• Designed to be read by applications, not just humans</div>
+          <div class="cb-item">• Handles concurrent writes without data corruption</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Database Table — Anatomy Lesson</h2>
+    <p>The most common database structure is a table — exactly like a spreadsheet table, but with strict rules that make it machine-queryable. Click any column header to learn what it represents, or click any row to highlight a complete record.</p>
+    <div class="table-anatomy">
+      <div class="ta-label">🗃️ The "tickets" table — click column headers or rows to explore</div>
+      <div class="ta-table-wrap">
+        <table class="ta-table" id="taTable">
+          <thead>
+            <tr>
+              <th onclick="highlightCol(0,this,'ticket_id: The unique identifier for each ticket. Every record must have one and it must be unique — this is called the primary key. No two tickets can share an ID.')">ticket_id</th>
+              <th onclick="highlightCol(1,this,'category: A defined, limited set of values — the database enforces that only allowed categories can be entered. This is called a constraint. It prevents the format inconsistency problems we saw in the dirty data article.')">category</th>
+              <th onclick="highlightCol(2,this,'priority: Another constrained field — only HIGH, MEDIUM, or LOW are allowed. The database rejects any other value at the moment of entry, not after the fact.')">priority</th>
+              <th onclick="highlightCol(3,this,'submitter_id: Instead of storing the full user record here, the database stores a reference to another table (users). This is called a foreign key — it links two tables together without duplicating data.')">submitter_id</th>
+              <th onclick="highlightCol(4,this,'created_at: The database automatically records the exact timestamp when each record is created. No human enters this — it happens automatically. This is called a default value.')">created_at</th>
+              <th onclick="highlightCol(5,this,'status: The ticket\'s current state. When a tech worker updates the ticket from OPEN to RESOLVED, the database records that change — and can store the full history of status changes in a related table.')">status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="highlightRow(this,'Record 1: A high-priority VPN ticket submitted by user 4471, created on Nov 14, currently open. This entire row = one record. All 6 fields together = one complete picture of one ticket.')">
+              <td>TKT-8819</td><td>VPN Access</td><td><span class="pri-high">HIGH</span></td><td>usr_4471</td><td>2024-11-14 08:11</td><td>OPEN</td>
+            </tr>
+            <tr onclick="highlightRow(this,'Record 2: A resolved hardware ticket. Notice the status is RESOLVED — a different worker closed this ticket and the database updated this field. The created_at and resolution timestamps together give you resolution time.')">
+              <td>TKT-8820</td><td>Hardware</td><td><span class="pri-med">MEDIUM</span></td><td>usr_8802</td><td>2024-11-14 09:03</td><td>RESOLVED</td>
+            </tr>
+            <tr onclick="highlightRow(this,'Record 3: A low-priority software ticket. The submitter_id (usr_3301) references the users table — you can join these tables to get the submitter\'s name, department, and contact info without duplicating that data in every ticket.')">
+              <td>TKT-8821</td><td>Software</td><td><span class="pri-low">LOW</span></td><td>usr_3301</td><td>2024-11-14 10:47</td><td>OPEN</td>
+            </tr>
+            <tr onclick="highlightRow(this,'Record 4: Another high-priority ticket — this one in progress. IN_PROGRESS means a technician has claimed it and is working on it. The database tracks who claimed it and when in a related assignments table.')">
+              <td>TKT-8822</td><td>Network</td><td><span class="pri-high">HIGH</span></td><td>usr_6614</td><td>2024-11-14 11:22</td><td>IN_PROGRESS</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ta-explainer" id="taExplainer">Click any column header to learn what it does, or click any row to see what a complete record looks like.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Queries: How Software (and AI) Asks the Database Questions</h2>
+    <p>A query is a request sent to a database to retrieve or modify specific data. Tech workers rarely write queries manually — the applications and AI tools they use write and send queries automatically. But understanding what a query is helps you understand how AI tools access data and what they can ask for.</p>
+    <div class="qb-sim">
+      <div class="qb-label">🔍 Query Builder — See It In Action</div>
+      <div class="qb-title">Build a question, see what the database returns</div>
+      <div class="qb-sub">Use the dropdowns to build a query against the tickets table. Watch how the SQL changes and what records are returned.</div>
+      <div class="qb-builder">
+        <div class="qb-row">
+          <div class="qb-word">FIND tickets WHERE</div>
+          <select class="qb-select" id="qField" onchange="buildQuery()">
+            <option value="priority">priority</option>
+            <option value="status">status</option>
+            <option value="category">category</option>
+          </select>
+          <div class="qb-word">=</div>
+          <select class="qb-select" id="qValue" onchange="buildQuery()">
+            <option value="HIGH">HIGH</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="OPEN">OPEN</option>
+            <option value="RESOLVED">RESOLVED</option>
+            <option value="VPN Access">VPN Access</option>
+            <option value="Hardware">Hardware</option>
+          </select>
+        </div>
+      </div>
+      <div class="qb-result" id="qbSQL">SELECT * FROM tickets WHERE <span class="hi">priority</span> = <span class="str">'HIGH'</span>;</div>
+      <div class="qb-output">
+        <div class="qb-out-label">Matching records returned</div>
+        <div class="qb-out-rows" id="qbResults"></div>
+      </div>
+    </div>
+    <p>The language databases understand is called SQL (Structured Query Language). You won't need to write SQL in most tech roles — but when an AI tool queries a database to find relevant training data, generate a report, or look up a record, it's sending SQL (or a translated version of SQL) behind the scenes.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Types of Databases You'll Encounter in Tech</h2>
+    <div class="db-types">
+      <div class="dbt-card">
+        <div class="dbt-icon">📋</div>
+        <div class="dbt-name">Relational Database</div>
+        <div class="dbt-body">The most common type. Stores data in tables with defined relationships between them (a ticket has one submitter; a submitter can have many tickets). Queried with SQL. Enforces data consistency through constraints and relationships.</div>
+        <div class="dbt-examples"><div class="dbt-ex">PostgreSQL</div><div class="dbt-ex">MySQL</div><div class="dbt-ex">SQL Server</div><div class="dbt-ex">SQLite</div></div>
+      </div>
+      <div class="dbt-card">
+        <div class="dbt-icon">📄</div>
+        <div class="dbt-name">Document Database</div>
+        <div class="dbt-body">Stores records as documents (usually JSON). More flexible than relational databases — each record can have different fields. Good for data where structure varies. Often used in web applications and content management.</div>
+        <div class="dbt-examples"><div class="dbt-ex">MongoDB</div><div class="dbt-ex">Firestore</div><div class="dbt-ex">CouchDB</div></div>
+      </div>
+      <div class="dbt-card">
+        <div class="dbt-icon">⏱️</div>
+        <div class="dbt-name">Time-Series Database</div>
+        <div class="dbt-body">Optimized for storing metrics and events that are indexed by time. Designed to handle the extremely high write volumes of continuous monitoring data — server metrics every second, user events in real time. This is what monitoring tools like Datadog use.</div>
+        <div class="dbt-examples"><div class="dbt-ex">InfluxDB</div><div class="dbt-ex">TimescaleDB</div><div class="dbt-ex">Prometheus</div></div>
+      </div>
+      <div class="dbt-card">
+        <div class="dbt-icon">🔗</div>
+        <div class="dbt-name">Graph Database</div>
+        <div class="dbt-body">Stores data as nodes and relationships rather than tables. Excellent for representing complex networks — who is connected to whom, which services depend on which other services, how an access permission flows through a hierarchy.</div>
+        <div class="dbt-examples"><div class="dbt-ex">Neo4j</div><div class="dbt-ex">Amazon Neptune</div><div class="dbt-ex">ArangoDB</div></div>
+      </div>
+    </div>
+    <p>In most entry-level tech roles, you'll interact primarily with relational databases — through the applications that sit on top of them (ticketing systems, monitoring dashboards, HR tools). You don't need to manage the database directly. But knowing what type of database underlies a tool helps you understand why it behaves the way it does and what it can and can't do.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An IT manager wants to generate a list of all open high-priority tickets that were created more than 4 hours ago and haven't been assigned to anyone yet — to find tickets at risk of breaching SLA. She uses the ticketing system's built-in report builder to generate this list. Behind the scenes, what is actually happening?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The ticketing system scans through all spreadsheet files looking for matching rows</button>
+        <button class="qopt" onclick="cq(this,true)">The report builder translates the manager's criteria into a database query — something like "find all records in the tickets table where status = OPEN and priority = HIGH and created_at is more than 4 hours ago and assigned_to is null." The database executes this query against potentially thousands of ticket records in milliseconds and returns only the matching rows. This is why database-backed systems can run these queries instantly regardless of how many total records exist.</button>
+        <button class="qopt" onclick="cq(this,false)">The system asks an AI to find the relevant tickets based on the criteria described</button>
+        <button class="qopt" onclick="cq(this,false)">The system checks each ticket individually and applies the filter rules one at a time</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>A database is shared infrastructure for storing and retrieving data reliably at scale — designed for simultaneous access by many users and applications, with access controls, constraints, and automatic handling of concurrent changes. It's the difference between a personal file and shared infrastructure.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Queries are how software and AI tools ask databases specific questions — "give me all records where X = Y." The ticketing system, monitoring dashboard, and AI routing tool you use in a tech role are all sending queries to databases automatically every time you interact with them.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Database constraints — enforced rules about what values are allowed in which fields — are one of the primary mechanisms for preventing dirty data. When a database requires that priority must be HIGH, MEDIUM, or LOW and rejects any other value at entry time, it eliminates format inconsistency problems before they start. Understanding this helps you recognize that data quality problems often point to missing constraints, not just careless data entry.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function highlightCol(idx,btn,msg){
+  document.querySelectorAll(".ta-table th").forEach(th=>th.classList.remove("highlighted"));
+  document.querySelectorAll(".ta-table tr.highlighted").forEach(tr=>tr.classList.remove("highlighted"));
+  btn.classList.add("highlighted");
+  document.getElementById("taExplainer").textContent=msg;
+}
+function highlightRow(tr,msg){
+  document.querySelectorAll(".ta-table th").forEach(th=>th.classList.remove("highlighted"));
+  document.querySelectorAll(".ta-table tr.highlighted").forEach(r=>r.classList.remove("highlighted"));
+  tr.classList.add("highlighted");
+  document.getElementById("taExplainer").textContent=msg;
+}
+const ticketData=[
+  {id:"TKT-8819",category:"VPN Access",priority:"HIGH",submitter:"usr_4471",created:"2024-11-14 08:11",status:"OPEN"},
+  {id:"TKT-8820",category:"Hardware",priority:"MEDIUM",submitter:"usr_8802",created:"2024-11-14 09:03",status:"RESOLVED"},
+  {id:"TKT-8821",category:"Software",priority:"LOW",submitter:"usr_3301",created:"2024-11-14 10:47",status:"OPEN"},
+  {id:"TKT-8822",category:"Network",priority:"HIGH",submitter:"usr_6614",created:"2024-11-14 11:22",status:"IN_PROGRESS"},
+];
+function buildQuery(){
+  const field=document.getElementById("qField").value;
+  const val=document.getElementById("qValue").value;
+  const sql=document.getElementById("qbSQL");
+  sql.innerHTML=`SELECT * FROM tickets WHERE <span class="hi">${field}</span> = <span class="str">'${val}'</span>;`;
+  const results=ticketData.filter(t=>t[field===("priority")?field:field===("status")?field:field]=== val || (field==="priority"&&t.priority===val)||(field==="status"&&t.status===val)||(field==="category"&&t.category===val));
+  const filtered=ticketData.filter(t=>{
+    if(field==="priority")return t.priority===val;
+    if(field==="status")return t.status===val;
+    if(field==="category")return t.category===val;
+    return false;
+  });
+  const container=document.getElementById("qbResults");
+  if(filtered.length===0){container.innerHTML='<div class="qb-out-row" style="color:var(--gray-muted);font-style:italic;">No matching records found.</div>';return;}
+  container.innerHTML=filtered.map(t=>`<div class="qb-out-row">🎫 ${t.id} — ${t.category} — Priority: ${t.priority} — Status: ${t.status}</div>`).join("");
+}
+buildQuery();
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Every report generated by a ticketing system, monitoring tool, or analytics platform is ultimately a database query. The report builder provides a user-friendly interface for defining the query criteria — but behind the scenes, it's translating those criteria into SQL and sending them to the database. This is also why database-backed reports run so much faster than manually filtering a spreadsheet: the database is optimized to execute these queries efficiently even against millions of records.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("translates the manager"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Ticketing systems don't read spreadsheet files — they write to and read from databases. AI can be involved in some ticket analysis, but a standard filter report doesn't require AI — it requires a query. And databases don't check records sequentially one at a time (that would be extremely slow at scale) — they use index structures that allow them to find matching records efficiently regardless of total dataset size. The correct answer is that the report builder translates the criteria into a database query.";}
+}
+</script>
+</body>
+</html>

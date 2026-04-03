@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How AI Uses Your Data: Training, Inference, and Why the Data You Start With Determines What You Get</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Phase walkthrough */
+.phase-wrap{display:flex;flex-direction:column;gap:16px;margin:20px 0;}
+.phase-card{border:2px solid var(--purple-mid);border-radius:18px;overflow:hidden;}
+.phase-header{display:flex;align-items:center;gap:16px;padding:18px 22px;cursor:pointer;background:var(--white);transition:background .2s;}
+.phase-header:hover{background:var(--purple-pale);}
+.phase-header.open{background:var(--purple-pale);}
+.phase-num{width:44px;height:44px;border-radius:50%;background:var(--purple);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:18px;font-weight:700;flex-shrink:0;}
+.phase-meta{flex:1;}
+.phase-name{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:2px;}
+.phase-teaser{font-size:13px;color:var(--gray-muted);}
+.phase-chevron{font-size:18px;color:var(--purple);transition:transform .3s;}
+.phase-header.open .phase-chevron{transform:rotate(180deg);}
+.phase-body{display:none;padding:0 22px 22px;background:var(--purple-pale);}
+.phase-body.open{display:block;}
+.phase-body p{font-size:15px;margin-bottom:12px;line-height:1.75;}
+.phase-body p:last-child{margin-bottom:0;}
+.phase-example{background:var(--white);border-radius:12px;padding:16px 18px;margin-top:12px;}
+.phase-ex-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.phase-ex-body{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.phase-ai-note{background:var(--purple-dark);border-radius:12px;padding:14px 18px;margin-top:12px;}
+.phase-ai-note p{font-size:13px;line-height:1.65;color:#E8D5FF;margin:0;}
+.phase-ai-note strong{color:var(--white);}
+
+/* Training data quality sim */
+.tq-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.tq-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.tq-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.tq-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.tq-controls{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.tq-slider-row{display:flex;align-items:center;gap:14px;}
+.tq-slider-label{font-size:13px;font-weight:600;color:var(--gray-text);width:180px;flex-shrink:0;}
+.tq-slider{flex:1;accent-color:var(--purple);}
+.tq-val{font-size:13px;font-weight:700;color:var(--purple-dark);width:48px;text-align:right;}
+.tq-output{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px 24px;}
+.tq-out-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:12px;}
+.tq-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.tq-metric{text-align:center;padding:12px;}
+.tq-metric-val{font-family:"Fraunces",serif;font-size:28px;font-weight:900;margin-bottom:4px;}
+.tq-metric-label{font-size:11px;color:var(--gray-muted);line-height:1.4;}
+.tq-note{font-size:13px;line-height:1.6;color:var(--gray-text);margin-top:14px;padding-top:14px;border-top:1px solid var(--purple-mid);}
+
+/* Diversity cards */
+.div-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.div-card{border-radius:14px;padding:18px;}
+.div-card.good{background:var(--green-pale);border:1.5px solid #B5D5C0;}
+.div-card.bad{background:var(--red-pale);border:1.5px solid #F5C2C2;}
+.div-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.div-card.good .div-card-label{color:var(--green);}
+.div-card.bad .div-card-label{color:var(--red);}
+.div-card-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;margin-bottom:8px;color:var(--gray-text);}
+.div-card-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Feedback loop visual */
+.loop-steps{display:flex;align-items:center;gap:0;margin:20px 0;overflow-x:auto;padding-bottom:4px;}
+.loop-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:100px;}
+.loop-icon{width:56px;height:56px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px;}
+.loop-name{font-size:12px;font-weight:700;color:var(--purple-dark);text-align:center;line-height:1.3;}
+.loop-arrow{font-size:20px;color:var(--purple-mid);flex-shrink:0;padding:0 4px;margin-top:-28px;}
+
+/* Compare table */
+.compare-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.compare-table th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.compare-table td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:nth-child(even) td{background:var(--gray-soft);}
+.compare-table td:first-child{font-weight:700;color:var(--purple-dark);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Data Literacy for Tech Roles</div>
+  <h1>How AI Uses Your Data: Training, Inference, and Why the Data You Start With Determines What You Get</h1>
+  <p class="hero-sub">The video's "How Data Supports AI" slide moved fast. This article unpacks the full mechanism — what it means for AI to learn, what happens when it applies that learning, and why data quality at every stage determines everything downstream.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Machine Doesn't Think. It Recognizes.</h2>
+    <p>When people say an AI "learns," it can sound almost biological — like the system is developing intuition, understanding, or judgment over time. That mental model leads to two common mistakes: overestimating what AI can do, and underestimating how data quality affects it.</p>
+    <p>A more accurate picture: <mark>AI finds statistical patterns in historical data and applies those patterns to new inputs.</mark> It doesn't understand a ticket. It identifies that this combination of words and metadata historically correlated with a specific category 94% of the time, and applies that correlation to the new ticket. The "intelligence" is pattern recognition at scale — extraordinarily powerful, but brittle in predictable ways.</p>
+    <p>Understanding this mechanism is what makes you a more effective tech worker in an AI-assisted environment. It tells you where to trust AI outputs, where to question them, and exactly how the data you work with every day shapes what the AI can and cannot do.</p>
+    <div class="pull-quote">
+      <p>An AI system is not smarter than its training data. It is a very precise mirror of it — reflecting back the patterns, the gaps, and the biases that were present when it learned.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Phases: How AI Goes From Data to Decisions</h2>
+    <p>Click each phase to understand what's happening, why it matters, and what it looks like in a real tech workflow.</p>
+    <div class="phase-wrap">
+      <div class="phase-card">
+        <div class="phase-header open" onclick="togglePhase(this)">
+          <div class="phase-num">1</div>
+          <div class="phase-meta"><div class="phase-name">Training</div><div class="phase-teaser">The AI studies historical data and builds its pattern library</div></div>
+          <div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body open">
+          <p>Training is the process by which an AI system analyzes a large dataset and builds a model — essentially a compressed representation of the patterns it found. For a ticket classification system, training might involve feeding the system 200,000 historical support tickets, each labeled with its correct category.</p>
+          <p>During training, the system iteratively adjusts its internal parameters to get better at predicting the label given the input. After enough iterations, it reaches a point where it can reliably predict the category of tickets it has never seen before — because it has learned the underlying patterns, not memorized the specific examples.</p>
+          <p><strong>What determines training quality:</strong> The size of the dataset (more examples = more patterns to learn from), the accuracy of the labels (mislabeled examples teach wrong patterns), the diversity of the examples (a system trained only on billing tickets won't learn to recognize network issues), and the relevance of the data (training on 3-year-old tickets before a major product redesign produces a model that doesn't recognize how users describe current problems).</p>
+          <div class="phase-example">
+            <div class="phase-ex-label">In a help desk context</div>
+            <div class="phase-ex-body">A ticket routing model trains on 12 months of historical tickets. Each ticket has: the original text (description, subject), structured fields (category, priority, resolution time), and the routing decision that was made. The AI learns: when a ticket contains these patterns → it typically goes to this team. After training, it can route new tickets without human involvement — as long as those new tickets resemble the patterns it learned.</div>
+          </div>
+          <div class="phase-ai-note"><p><strong>The data dependency:</strong> The model cannot learn patterns that aren't in the training data. If your training set has no examples of a "cloud storage" ticket category because that product launched after the training data was collected — the model will misclassify every cloud storage ticket. This is not a model failure. It's a data gap.</p></div>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div class="phase-num">2</div>
+          <div class="phase-meta"><div class="phase-name">Inference</div><div class="phase-teaser">The trained model applies learned patterns to new data in real time</div></div>
+          <div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <p>Inference is what happens when the trained model is deployed and actually used. A new ticket arrives. The model analyzes it — comparing its patterns against what it learned during training — and produces an output: a category, a confidence score, a routing recommendation.</p>
+          <p>This happens extremely fast (typically milliseconds) and at scale — the same model can process thousands of tickets per minute. This is the operational phase most tech workers interact with directly. You see the AI's outputs: the routing decisions, the classifications, the alerts. You validate them. You catch the errors.</p>
+          <p><strong>What determines inference quality:</strong> How well the new data matches the training data distribution. If the new ticket looks like the tickets the model trained on — similar vocabulary, similar issue types, similar structure — inference works well. If the new ticket is significantly different — a new product category, unusual vocabulary, an edge case the model hasn't encountered — inference quality degrades.</p>
+          <div class="phase-example">
+            <div class="phase-ex-label">In a help desk context</div>
+            <div class="phase-ex-body">A new ticket arrives: "My Slack workspace isn't syncing and I can't see messages from the past 3 days." The model processes this in 47ms. It checks learned patterns: "sync issues" + "messages" + "past N days" historically map to "software_sync" category with 88% confidence. It assigns category: software_sync, routes to the software support team, marks priority: medium. A tech worker reviewing the queue sees the routing and validates it — or catches it if the description actually indicates a network issue, not a Slack-specific one.</div>
+          </div>
+          <div class="phase-ai-note"><p><strong>The distribution gap risk:</strong> When real-world data drifts from training data — new products, new vocabulary, seasonal patterns the model hasn't seen — inference accuracy degrades silently. The model keeps producing outputs with the same confidence, but they're increasingly wrong. This is why monitoring AI output quality over time is as important as validating individual outputs.</p></div>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div class="phase-num">3</div>
+          <div class="phase-meta"><div class="phase-name">Feedback</div><div class="phase-teaser">Human corrections become new training data, improving the model over time</div></div>
+          <div class="phase-chevron">▾</div>
+        </div>
+        <div class="phase-body">
+          <p>The feedback phase is what transforms a static model into one that improves over time. When a tech worker corrects a wrong AI routing decision, that correction — the original ticket plus the right category — becomes a new training example. Over time, accumulated corrections retrain the model to handle the types of inputs it was previously getting wrong.</p>
+          <p>This is why human review isn't just a safety check — it's an active contribution to AI quality. Every time you catch a wrong routing decision and correct it, you're creating labeled data that makes the system better at handling similar situations in the future. The workers who validate AI outputs are, in a real sense, teachers.</p>
+          <p><strong>What determines feedback quality:</strong> Whether corrections are accurate (a worker who misunderstands the correct category and labels it wrong teaches the AI a wrong pattern), whether corrections are timely (correcting errors before they accumulate prevents compounding), and whether the feedback loop is actually connected to retraining (some systems collect corrections but don't use them — worth knowing whether yours does).</p>
+          <div class="phase-example">
+            <div class="phase-ex-label">In a help desk context</div>
+            <div class="phase-ex-body">A technician notices TKT-9047 was routed to hardware support but actually involves a software licensing issue. They correct the category in the system. That correction is logged. At the end of the month, the model is retrained on data that now includes this correction — and dozens like it. Next month, the model classifies software licensing issues more accurately because it learned from the pattern of misclassifications that humans identified and fixed.</div>
+          </div>
+          <div class="phase-ai-note"><p><strong>The feedback loop quality problem:</strong> If corrections themselves are inconsistent — different workers categorizing the same type of ticket differently — the model receives conflicting signals and doesn't improve. Consistent human judgment, applied consistently across the team, is what makes the feedback loop work. Inconsistent human corrections produce an inconsistently trained model.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Training Data Quality — The Simulator</h2>
+    <p>Adjust the sliders below to see how training data characteristics directly change what the model can achieve. This is the quantitative version of "garbage in, garbage out."</p>
+    <div class="tq-sim">
+      <div class="tq-label">⚙️ Interactive — Training Data Quality</div>
+      <div class="tq-title">How data quality shapes model performance</div>
+      <div class="tq-sub">Adjust the three data quality dimensions to see how they affect the model's ability to route tickets correctly.</div>
+      <div class="tq-controls">
+        <div class="tq-slider-row">
+          <div class="tq-slider-label">📊 Label accuracy (%)</div>
+          <input class="tq-slider" type="range" min="50" max="100" value="95" oninput="updateTQ()">
+          <div class="tq-val" id="tqV1">95%</div>
+        </div>
+        <div class="tq-slider-row">
+          <div class="tq-slider-label">📦 Data completeness (%)</div>
+          <input class="tq-slider" type="range" min="40" max="100" value="90" oninput="updateTQ()">
+          <div class="tq-val" id="tqV2">90%</div>
+        </div>
+        <div class="tq-slider-row">
+          <div class="tq-slider-label">🌍 Category coverage (%)</div>
+          <input class="tq-slider" type="range" min="30" max="100" value="80" oninput="updateTQ()">
+          <div class="tq-val" id="tqV3">80%</div>
+        </div>
+      </div>
+      <div class="tq-output">
+        <div class="tq-out-label">Estimated model performance</div>
+        <div class="tq-metrics">
+          <div class="tq-metric"><div class="tq-metric-val" id="tqAcc" style="color:var(--green)">87%</div><div class="tq-metric-label">Overall routing accuracy</div></div>
+          <div class="tq-metric"><div class="tq-metric-val" id="tqCov" style="color:var(--orange)">64%</div><div class="tq-metric-label">Category coverage</div></div>
+          <div class="tq-metric"><div class="tq-metric-val" id="tqHuman" style="color:var(--purple)">13%</div><div class="tq-metric-label">Needs human review</div></div>
+        </div>
+        <div class="tq-note" id="tqNote">Good data quality produces reliable routing for most tickets, with a manageable human review queue for edge cases and low-confidence classifications.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why Diversity in Training Data Is Non-Negotiable</h2>
+    <p>Accuracy and completeness aren't enough. Training data also needs to be <mark>representative of the full range of inputs the model will encounter in production</mark>. A dataset can be perfectly labeled and 100% complete — and still produce a badly biased model if it doesn't reflect the real distribution of the problem.</p>
+    <div class="div-grid">
+      <div class="div-card good">
+        <div class="div-card-label">✅ Diverse training data</div>
+        <div class="div-card-title">Ticket routing trained across all product lines, user types, and ticket categories in proportion to their real-world frequency</div>
+        <div class="div-card-body">The model encounters similar distributions during inference to what it trained on. It handles common ticket types with high accuracy and has seen enough edge cases to handle unusual inputs reasonably. Errors are distributed across categories roughly proportionally.</div>
+      </div>
+      <div class="div-card bad">
+        <div class="div-card-label">❌ Skewed training data</div>
+        <div class="div-card-title">Ticket routing trained on 80% billing tickets because the billing department had the most organized historical data</div>
+        <div class="div-card-body">The model routes billing tickets with excellent accuracy. For every other category — hardware, network, software, security — it has seen far fewer examples and performs poorly. Workers in non-billing queues see constant miscategorization. The team reports the AI "doesn't work" when it actually works fine for the training distribution.</div>
+      </div>
+      <div class="div-card good">
+        <div class="div-card-label">✅ Temporally current training data</div>
+        <div class="div-card-title">Retrained quarterly on recent tickets that reflect current products, current vocabulary, current user patterns</div>
+        <div class="div-card-body">The model knows what users mean when they describe problems with products launched in the last 6 months. Vocabulary that has shifted (users now saying "Teams" instead of "Skype") is reflected in training data. Distribution drift is caught before it degrades model performance significantly.</div>
+      </div>
+      <div class="div-card bad">
+        <div class="div-card-label">❌ Stale training data</div>
+        <div class="div-card-title">Model trained two years ago, never retrained, despite three new products and a company rebranding since then</div>
+        <div class="div-card-body">Users write tickets about products and features the model has never seen. The model maps unfamiliar vocabulary to the closest pattern it knows — often incorrectly. Workers spend significant time re-routing tickets that the AI consistently misclassifies for reasons they can't easily identify without understanding training data recency.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Feedback Loop — Your Role in Making AI Better</h2>
+    <div class="loop-steps">
+      <div class="loop-step"><div class="loop-icon">📥</div><div class="loop-name">New data arrives</div></div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step"><div class="loop-icon">🤖</div><div class="loop-name">AI makes prediction</div></div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step"><div class="loop-icon">👤</div><div class="loop-name">Human validates</div></div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step"><div class="loop-icon">✏️</div><div class="loop-name">Corrections logged</div></div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step"><div class="loop-icon">🔄</div><div class="loop-name">Model retrained</div></div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step"><div class="loop-icon">📈</div><div class="loop-name">Accuracy improves</div></div>
+    </div>
+    <p>This loop is the mechanism by which AI systems get better over time — but only if each step in the loop is done well. Data arrives with quality problems, the AI prediction is wrong, the human misunderstands the correct answer, or the corrections aren't fed back into retraining — any of these breaks the loop.</p>
+    <p>In practical terms, this means: <mark>when you correct an AI's wrong output, you are not just fixing one ticket. You are creating a training example that will improve how the system handles hundreds of similar tickets in the future.</mark> That's a more significant contribution than it might seem when you're in the middle of a busy shift.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An AI ticket routing system was trained six months ago and has worked well since deployment. Over the past three weeks, the company launched a new cloud storage product. The tech team notices that cloud storage tickets are being routed to the general IT queue rather than the new Cloud Support team — even though the team was set up two months ago. The AI model itself hasn't changed. What is the most precise explanation?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI model is outdated and needs to be completely replaced with a newer version</button>
+        <button class="qopt" onclick="cq(this,false)">The routing rules for the Cloud Support team weren't configured correctly in the ticketing system</button>
+        <button class="qopt" onclick="cq(this,true)">The model was trained before cloud storage tickets existed, so it has no learned pattern for that category. When users describe cloud storage problems, the model finds the closest pattern it knows and routes accordingly — usually to general IT because that category best matches the vocabulary. The fix is to retrain the model with labeled cloud storage ticket examples, or to add explicit routing rules for cloud storage vocabulary as a bridge until retraining happens.</button>
+        <button class="qopt" onclick="cq(this,false)">The Cloud Support team needs to manually review every ticket before the AI can learn to route correctly</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI works through three phases: training (learning patterns from labeled historical data), inference (applying those patterns to new inputs in real time), and feedback (corrections becoming new training data). Each phase has distinct quality requirements — and failures at any phase propagate through the others.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Training data quality has three dimensions that all matter: label accuracy (mislabeled examples teach wrong patterns), completeness (missing values deprive the model of learning signal), and diversity (unrepresentative data produces unrepresentative outputs). A model cannot be better than its training data — but it can be significantly worse if any dimension is poor.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When you validate and correct AI outputs, you're doing more than fixing a single wrong decision — you're creating labeled training data that improves the system's future performance. The quality of human corrections matters: consistent, accurate corrections close the feedback loop. Inconsistent corrections produce inconsistent future performance.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function togglePhase(el){const body=el.nextElementSibling;el.classList.toggle("open");body.classList.toggle("open");}
+function updateTQ(){
+  const sliders=document.querySelectorAll(".tq-slider");
+  const v1=parseInt(sliders[0].value),v2=parseInt(sliders[1].value),v3=parseInt(sliders[2].value);
+  document.getElementById("tqV1").textContent=v1+"%";
+  document.getElementById("tqV2").textContent=v2+"%";
+  document.getElementById("tqV3").textContent=v3+"%";
+  const acc=Math.round((v1*0.5+v2*0.25+v3*0.25)*0.94);
+  const cov=Math.round(v3*0.8);
+  const human=Math.max(2,Math.round((100-acc)*0.6));
+  const accEl=document.getElementById("tqAcc");
+  accEl.textContent=acc+"%";
+  accEl.style.color=acc>=85?"var(--green)":acc>=70?"var(--orange)":"var(--red)";
+  const covEl=document.getElementById("tqCov");
+  covEl.textContent=cov+"%";
+  covEl.style.color=cov>=75?"var(--green)":cov>=55?"var(--orange)":"var(--red)";
+  const humEl=document.getElementById("tqHuman");
+  humEl.textContent=human+"%";
+  humEl.style.color=human<=15?"var(--purple)":human<=30?"var(--orange)":"var(--red)";
+  const note=document.getElementById("tqNote");
+  if(acc>=85&&cov>=75)note.textContent="Strong data quality produces a model that handles most tickets accurately, with a small human review queue for genuine edge cases.";
+  else if(acc<70)note.textContent="Low label accuracy means the model is learning wrong patterns — high accuracy on training data masks poor real-world performance. Fix the labels before anything else.";
+  else if(v2<65)note.textContent="High incompleteness means the model is learning from fragments. Missing fields — especially the target label — produce models that guess rather than recognize.";
+  else if(cov<50)note.textContent="Low category coverage means the model will confidently misroute tickets from underrepresented categories. Workers in those queues will report the AI 'doesn't work.'";
+  else note.textContent="Mixed data quality produces inconsistent performance — reliable for well-represented categories, unreliable for others. The human review queue grows as confidence thresholds catch more uncertain predictions.";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a textbook training data gap — the model simply has no examples of the new category. It's not broken; it's doing exactly what it learned to do. Cloud storage vocabulary maps to general IT because that's the closest learned pattern. The immediate fix (explicit routing rules) buys time while the real fix (retraining with labeled examples) is implemented. Once the model has seen enough labeled cloud storage tickets, it will route them correctly without explicit rules.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("has no learned pattern"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Replacing the model doesn't solve a training data gap — a new model trained on the same data will have the same blind spot. Routing rule misconfiguration is possible but would produce a different symptom (tickets not routing at all, not routing to the wrong place). Manual review by the Cloud Support team would catch individual tickets but wouldn't fix the systematic misrouting. The root cause is that the model was trained before this category existed, so it has nothing to pattern-match against. Retraining with labeled examples is the correct fix.";}
+}
+</script>
+</body>
+</html>
