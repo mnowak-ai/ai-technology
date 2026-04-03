@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Spreadsheets to AI: How Data Handling in Tech Evolved — And Where It's Headed</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.module-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.module-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Timeline */
+.timeline{position:relative;margin:24px 0;padding-left:0;}
+.tl-era{display:flex;gap:0;margin-bottom:0;cursor:pointer;}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:56px;flex-shrink:0;}
+.tl-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid var(--purple-mid);background:var(--white);transition:all .2s;}
+.tl-era.active .tl-dot{background:var(--purple);border-color:var(--purple);}
+.tl-line{flex:1;width:2px;background:var(--purple-mid);margin:4px 0;}
+.tl-era:last-child .tl-line{display:none;}
+.tl-body{flex:1;padding:0 0 0 14px;padding-top:4px;margin-bottom:20px;}
+.tl-header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.tl-year{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);}
+.tl-name{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.tl-teaser{font-size:14px;color:var(--gray-muted);line-height:1.5;margin-bottom:8px;}
+.tl-detail{display:none;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;margin-top:4px;}
+.tl-era.active .tl-detail{display:block;}
+.tl-detail-body{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:12px;}
+.tl-worker{background:var(--white);border-radius:10px;padding:12px 14px;border-left:3px solid var(--purple);}
+.tl-worker-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:4px;}
+.tl-worker-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* What stayed / what changed */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.sc-col{border-radius:14px;padding:20px;}
+.sc-col.stayed{background:var(--green-pale);border:1.5px solid #B5D5C0;}
+.sc-col.changed{background:var(--purple-pale);border:1.5px solid var(--purple-mid);}
+.sc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.sc-col.stayed .sc-label{color:var(--green);}
+.sc-col.changed .sc-label{color:var(--purple);}
+.sc-items{display:flex;flex-direction:column;gap:6px;}
+.sc-item{font-size:13px;line-height:1.55;color:var(--gray-text);}
+
+/* Comparison table */
+.era-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.era-table th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.era-table td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.era-table tr:last-child td{border-bottom:none;}
+.era-table tr:nth-child(even) td{background:var(--gray-soft);}
+
+/* Inflection point callout */
+.inflection{background:linear-gradient(135deg,var(--purple-pale) 0%,var(--blue-pale) 100%);border:1.5px solid var(--purple-mid);border-radius:20px;padding:28px;margin:24px 0;}
+.inflection-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:10px;}
+.inflection-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;line-height:1.2;}
+.inflection-body{font-size:15px;line-height:1.75;color:var(--gray-text);}
+
+/* Skill carry cards */
+.skill-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.skill-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.skill-card-era{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:6px;}
+.skill-card-skill{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:6px;}
+.skill-card-carries{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.carries-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-top:8px;margin-bottom:3px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="module-tag">Module 4 — Before You Begin</div>
+  <h1>From Spreadsheets to AI: How Data Handling in Tech Evolved — And Where It's Headed</h1>
+  <p class="hero-sub">You're entering tech at a genuine inflection point. Understanding the arc of how data handling has evolved — and why the AI moment is different from every previous shift — helps you see exactly what skills matter most right now, and why they transfer further than you think.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why History Matters Before a New Module</h2>
+    <p>It might seem odd to start a module on data and automation with a history lesson. But there's a specific reason this one matters: every major shift in how tech workers handle data has changed which skills are valuable — and every time, the workers who understood <em>why</em> the shift was happening adapted faster than those who just learned the new tools.</p>
+    <p><mark>The AI shift is the biggest change to data work in tech since the spreadsheet.</mark> And like the spreadsheet, it will be completely normal in ten years — something every tech worker is expected to know how to use. You're learning it now, before it's the default. That's the advantage this module gives you.</p>
+
+    <div class="pull-quote">
+      <p>Each era of data handling in tech didn't replace the previous one — it built on it. The skills that made workers effective in 1995 are still relevant today. They just need to be applied in a different context.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Eras of Data Handling in Tech</h2>
+    <p>Click each era to see what changed, what stayed the same, and what it meant for the tech workers living through it.</p>
+
+    <div class="timeline">
+      <div class="tl-era active" onclick="toggleEra(this)">
+        <div class="tl-left"><div class="tl-dot">📋</div><div class="tl-line"></div></div>
+        <div class="tl-body">
+          <div class="tl-header">
+            <div class="tl-year">1980s – mid-1990s</div>
+          </div>
+          <div class="tl-name">The Paper and Early Spreadsheet Era</div>
+          <div class="tl-teaser">Before databases were standard, most data in tech organizations lived in physical files, paper logs, and eventually early spreadsheet software. Click to expand.</div>
+          <div class="tl-detail">
+            <div class="tl-detail-body">Tech teams of this era tracked system activity in physical logbooks. Support requests came in by phone and were written on paper forms. The first wave of PC-based spreadsheet software (VisiCalc, then Lotus 1-2-3, then Excel) was genuinely revolutionary — suddenly, data could be organized, calculated, and searched digitally. Organizations that adopted spreadsheets could process information in hours that previously took days.<br><br>The critical limitation: data lived in silos. Each person's spreadsheet was their own. There was no central system. Sharing meant emailing a file, which immediately created version control problems. Analysis was manual: someone sat with the spreadsheet and interpreted what they saw.</div>
+            <div class="tl-worker"><div class="tl-worker-label">💼 What a tech worker's data day looked like</div><div class="tl-worker-body">A help desk technician kept a physical logbook of every call received. At the end of the week, they tallied calls by category manually. If a pattern emerged — more calls about one system — it was noticed by the person who happened to review the logbook. There was no alert, no dashboard, no automated routing. Experience and memory were the primary pattern-detection tools.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-era" onclick="toggleEra(this)">
+        <div class="tl-left"><div class="tl-dot">🗄️</div><div class="tl-line"></div></div>
+        <div class="tl-body">
+          <div class="tl-header">
+            <div class="tl-year">Mid-1990s – mid-2000s</div>
+          </div>
+          <div class="tl-name">The Database and Ticketing System Era</div>
+          <div class="tl-teaser">Centralized databases replaced isolated spreadsheets. Ticketing systems standardized how support work was tracked. Data moved from personal files to shared systems. Click to expand.</div>
+          <div class="tl-detail">
+            <div class="tl-detail-body">The arrival of affordable relational databases (Oracle, SQL Server, MySQL) and the early internet fundamentally changed how tech organizations stored and shared data. Instead of every person having their own spreadsheet, data lived in a central system everyone could access and update. Ticketing platforms like Remedy and later Zendesk standardized how support work was captured — creating the first real databases of support history that could be queried and analyzed.<br><br>The critical limitation: data was now centralized, but analysis was still mostly manual. Someone still had to run a report, download it to a spreadsheet, and interpret it. The data existed in a form that could theoretically answer sophisticated questions — but extracting those answers required database query skills (SQL) that most tech workers didn't have. Business analysts emerged as the specialists who bridged data storage and data understanding.</div>
+            <div class="tl-worker"><div class="tl-worker-label">💼 What a tech worker's data day looked like</div><div class="tl-worker-body">A help desk technician logged every support call in the ticketing system with a standard set of fields. At month end, a manager ran a query to pull volume by category. If something looked wrong, they'd investigate the tickets manually. Routing was done by humans reading each ticket. Patterns were noticed through manual report review, which happened on a schedule — not in real time.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-era" onclick="toggleEra(this)">
+        <div class="tl-left"><div class="tl-dot">📊</div><div class="tl-line"></div></div>
+        <div class="tl-body">
+          <div class="tl-header">
+            <div class="tl-year">Mid-2000s – early 2020s</div>
+          </div>
+          <div class="tl-name">The Dashboard and Automation Era</div>
+          <div class="tl-teaser">Real-time dashboards replaced scheduled reports. Rule-based automation handled routine decisions. Data volumes exploded as cloud infrastructure and web services scaled. Click to expand.</div>
+          <div class="tl-detail">
+            <div class="tl-detail-body">Cloud computing, SaaS platforms, and the explosion of web services created data volumes that no human team could keep up with manually. The response was dashboards and rule-based automation. Instead of running a report at month end, dashboards showed current metrics in real time. Instead of humans routing tickets, rule-based systems could automatically assign tickets matching certain criteria to certain teams.<br><br>Tools like Splunk, Datadog, and Tableau emerged to help tech teams visualize and monitor data at scale. Workflow automation tools (Zapier, early versions of Power Automate) let non-engineers create automated processes without writing code.<br><br>The critical limitation: rule-based automation is brittle. Rules only work when reality matches what the rules anticipated. When something unexpected happens — a new type of ticket, an anomaly pattern no rule was written for, data that doesn't fit existing categories — rule-based systems either fail silently or produce wrong outputs. Maintaining hundreds of routing rules became its own burden. And dashboards showed <em>what</em> was happening but not <em>why</em>.</div>
+            <div class="tl-worker"><div class="tl-worker-label">💼 What a tech worker's data day looked like</div><div class="tl-worker-body">A help desk technician started their shift by checking the live dashboard: queue depth, average response time, active incidents. The ticketing system automatically routed tickets matching certain keywords. The technician handled escalations and edge cases the rules didn't cover. If something looked off on the dashboard — a spike in a certain error type — they'd investigate manually. Real-time awareness, but still reactive and rule-dependent.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-era" onclick="toggleEra(this)">
+        <div class="tl-left"><div class="tl-dot">🤖</div><div class="tl-line"></div></div>
+        <div class="tl-body">
+          <div class="tl-header">
+            <div class="tl-year">Early 2020s – present</div>
+          </div>
+          <div class="tl-name">The AI-Assisted Era</div>
+          <div class="tl-teaser">AI tools replace rigid rules with pattern-learned models. Systems can detect anomalies that no rule anticipated. Analysis shifts from "what happened" to "what does it mean and what should we do." Click to expand.</div>
+          <div class="tl-detail">
+            <div class="tl-detail-body">The shift from rule-based automation to AI-assisted automation changes the fundamental model. Instead of "route tickets that match these keywords to this team," the system learns from thousands of historical tickets and can classify new ones based on learned patterns — including ticket types and vocabulary that no explicit rule anticipated. Instead of "alert when error rate exceeds 5%," an AI monitoring system learns what "normal" looks like and alerts when something statistically anomalous occurs — even if it's not a type of anomaly anyone specifically defined a rule for.<br><br>This means AI-assisted systems can handle edge cases that rule-based systems miss. But it also means their behavior is less transparent — you can't always trace exactly why a decision was made the way it was. And it means the quality of training data matters enormously: patterns the model learned from biased or incomplete data will be applied confidently to new situations, producing wrong outputs with high confidence.</div>
+            <div class="tl-worker"><div class="tl-worker-label">💼 What a tech worker's data day looks like now</div><div class="tl-worker-body">A help desk technician starts by reviewing the AI's overnight decisions — hundreds of tickets auto-categorized and routed, with confidence scores. They focus attention on low-confidence items and anything that looks wrong. The AI monitoring system surfaced three anomalies overnight; two are false positives (the technician can tell from context), one is real and needs escalation. The technician's primary data skill is judgment — knowing when to trust the AI output and when to override it. That judgment is informed by understanding how the data works.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Changed Across Every Era — and What Never Did</h2>
+    <div class="sc-grid">
+      <div class="sc-col stayed">
+        <div class="sc-label">✅ What stayed the same across all four eras</div>
+        <div class="sc-items">
+          <div class="sc-item">• Someone has to decide what data to collect and why</div>
+          <div class="sc-item">• Data quality problems produce bad decisions, regardless of the tool</div>
+          <div class="sc-item">• Patterns in data only matter if someone interprets them correctly</div>
+          <div class="sc-item">• Automation fails when reality doesn't match what it was designed for</div>
+          <div class="sc-item">• Human judgment is what determines whether an output is trustworthy</div>
+          <div class="sc-item">• The worker who understands the data has more value than the one who just uses the tool</div>
+        </div>
+      </div>
+      <div class="sc-col changed">
+        <div class="sc-label">🔄 What changed with each new era</div>
+        <div class="sc-items">
+          <div class="sc-item">• Volume of data went from hundreds to billions of records</div>
+          <div class="sc-item">• Speed of analysis went from weekly to real-time</div>
+          <div class="sc-item">• Complexity of patterns that can be detected increased dramatically</div>
+          <div class="sc-item">• Proportion of decisions made by systems vs. humans shifted</div>
+          <div class="sc-item">• Transparency of how decisions are made decreased</div>
+          <div class="sc-item">• The cost of undetected data quality problems got higher</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why the AI Shift Is Different From the Others</h2>
+    <p>Every previous era introduced tools that tech workers needed to learn. The spreadsheet made manual tallying obsolete. The database made paper logs obsolete. The dashboard made scheduled reports feel slow. Tech workers adapted each time.</p>
+    <p>The AI era is different in two ways that matter for your career:</p>
+
+    <div class="inflection">
+      <div class="inflection-label">🔺 What makes this inflection point different</div>
+      <div class="inflection-title">The system makes decisions — not just recommendations</div>
+      <div class="inflection-body">Every previous tool in tech data history was fundamentally passive: it stored data, displayed data, or reported data. A human made every decision. AI tools actively make decisions — routing tickets, generating alerts, producing reports, triggering automated actions. This means the tech worker's relationship to the system changes fundamentally. You're no longer using a tool to help you decide. You're validating decisions the system already made.</div>
+    </div>
+
+    <div class="inflection">
+      <div class="inflection-label">🔺 What makes this inflection point different</div>
+      <div class="inflection-title">The system's reasoning is not fully visible</div>
+      <div class="inflection-body">When a spreadsheet formula produces a wrong number, you can trace exactly why — you can look at the formula. When a rule-based system routes a ticket incorrectly, you can find the rule that triggered. When an AI system makes a wrong decision, the reasoning is learned from millions of data points and expressed as statistical weights that no human can read directly. This "black box" quality means you can't always know <em>why</em> an AI output is wrong — only <em>that</em> it is. That changes what your validation skills look like.</div>
+    </div>
+
+    <p>These two differences are why Module 4 emphasizes human oversight, validation techniques, and responsible automation. Not because AI is bad — but because the nature of the human role has changed, and those changes require specific skills.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Skills That Carry Forward — From Every Era Into This One</h2>
+    <p>Here's the good news: none of the skills that made tech workers effective in previous eras became useless. They become more valuable when applied in an AI-assisted context.</p>
+    <div class="skill-cards">
+      <div class="skill-card">
+        <div class="skill-card-era">Spreadsheet Era Skill</div>
+        <div class="skill-card-skill">Spotting when a number doesn't look right</div>
+        <div class="skill-card-carries carries-label">Carries into AI era as:</div>
+        <div class="skill-card-carries">Recognizing when an AI output is implausible or inconsistent with what you know about the domain. The instinct is the same; the thing you're checking changed.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-era">Database Era Skill</div>
+        <div class="skill-card-skill">Understanding data structure and categories</div>
+        <div class="skill-card-carries carries-label">Carries into AI era as:</div>
+        <div class="skill-card-carries">Knowing why classification matters for AI training — and recognizing when incoming data doesn't fit the categories the system expects. Data literacy is still data literacy.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-era">Dashboard Era Skill</div>
+        <div class="skill-card-skill">Reading a metric and knowing if it's meaningful</div>
+        <div class="skill-card-carries carries-label">Carries into AI era as:</div>
+        <div class="skill-card-carries">Evaluating AI-surfaced patterns and anomalies — deciding whether they're actionable signals or noise. The judgment about what matters is the same skill with a different trigger.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-era">Rule-Based Automation Skill</div>
+        <div class="skill-card-skill">Knowing what the automation was designed to handle</div>
+        <div class="skill-card-carries carries-label">Carries into AI era as:</div>
+        <div class="skill-card-carries">Knowing what kinds of inputs the AI system trained on — and therefore which edge cases it's likely to handle poorly. Understanding the system's design informs where human oversight is most needed.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What the Next Era Might Look Like — And Why Fundamentals Matter</h2>
+    <p>No one knows exactly what the era after AI-assisted tools will look like. But every previous transition offers a clear pattern: the workers who adapted fastest were the ones who understood the fundamentals — what data is, how quality affects decisions, and what role human judgment plays — rather than those who only mastered the current tool.</p>
+    <p>In five years, the specific platforms covered in this module (Datadog, Power Automate, Tableau) may have evolved significantly or been replaced by tools that don't exist yet. <mark>What won't change is the need to understand data quality, recognize when AI outputs should be questioned, and know where human judgment is irreplaceable.</mark></p>
+    <p>That's the real career investment Module 4 is building. Not proficiency with today's tools — transferable understanding of how AI and data work together, and what that means for every tech role going forward.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A tech team switches from a rule-based ticket routing system to an AI-powered one. After the switch, a senior technician says: "I trusted the old system because I knew exactly why it made each decision. I don't trust this one because I can't tell." What does this tension point to — and what's the right response to it?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The team should switch back to the rule-based system, which is more transparent</button>
+        <button class="qopt" onclick="cq(this,false)">The technician's concern is irrational — AI systems are more accurate than rule-based systems and should be trusted more, not less</button>
+        <button class="qopt" onclick="cq(this,true)">The technician is identifying something real and important: AI systems are less transparent than rule-based systems, which means the same level of "trust and assume it's correct" that worked before is now riskier. The right response is not to return to rule-based systems or to blindly trust AI outputs — it's to develop specific validation practices that compensate for reduced transparency. This is exactly what responsible automation looks like: designing workflows that preserve human review at high-stakes decision points, monitoring outputs for error patterns, and flagging anomalies for investigation. The technician's instinct is right. The practice needs to evolve.</button>
+        <button class="qopt" onclick="cq(this,false)">The technician just needs more time to get comfortable with the new system</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>The Arc That Leads Here</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Data handling in tech has evolved through four eras: paper and spreadsheets, centralized databases, dashboards and rule-based automation, and now AI-assisted systems. Each era increased data volume, analysis speed, and automation sophistication — while keeping the same core requirement: human judgment about what the data means and whether the system's outputs are trustworthy.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The AI era is different from previous shifts in two critical ways: AI systems make decisions rather than just displaying information, and their reasoning is not fully transparent. Both of these differences mean the human validation role is more important than ever — not less. You can't trace an AI decision the way you can trace a spreadsheet formula. You need different skills to evaluate its outputs.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>You're entering tech at an inflection point — early enough that AI literacy is a genuine differentiator, but late enough that the tools are real and widely deployed. The workers who thrive through this transition will be those who understand the fundamentals: what makes data trustworthy, how AI outputs can be wrong, and where human oversight is non-negotiable. That's exactly what Module 4 builds.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function toggleEra(el){
+  const isActive=el.classList.contains("active");
+  document.querySelectorAll(".tl-era").forEach(e=>e.classList.remove("active"));
+  if(!isActive)el.classList.add("active");
+}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The technician is not being irrational — they're responding appropriately to a real change in system transparency. Rule-based systems are interpretable by design: every decision traces back to a written rule that a human can read. AI systems learn from data and express their logic in statistical weights no one reads directly. This doesn't make AI less accurate (in fact, it's often more accurate on average) — but it makes the failure modes harder to anticipate and diagnose. The right response is exactly what responsible automation covers: designing validation practices that compensate for reduced transparency. Monitor output patterns, flag edge cases for human review, and build feedback loops that catch systematic errors over time.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("real and important"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The technician's concern is neither irrational nor something that time alone will fix — and reverting to rule-based systems isn't the answer either. The concern is real: AI systems are less transparent than rule-based systems, and 'I can't tell why it decided that' is a genuine problem, not just discomfort with change. But the solution isn't to reject AI tools or assume they're untrustworthy. It's to develop validation practices that acknowledge the transparency limitation and compensate for it — monitoring outputs, reviewing edge cases, and building human checkpoints into high-stakes decisions. That's the skill Module 4's responsible automation lesson is designed to build.";}
+}
+</script>
+</body>
+</html>

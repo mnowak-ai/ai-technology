@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Data Is the Fuel That Makes AI Work — And Why That Changes Your Job</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.module-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.module-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Fuel analogy interactive */
+.fuel-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.fuel-sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.fuel-sim-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:6px;font-weight:700;line-height:1.3;}
+.fuel-sim-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.fuel-engine{display:flex;align-items:stretch;gap:0;border-radius:16px;overflow:hidden;border:2px solid var(--purple-mid);margin-bottom:16px;}
+.fuel-input{flex:1;background:var(--white);padding:20px;border-right:2px solid var(--purple-mid);}
+.fuel-input-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:10px;}
+.fuel-btn-row{display:flex;flex-direction:column;gap:8px;}
+.fuel-btn{border:2px solid var(--purple-mid);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;background:var(--white);text-align:left;transition:all .2s;line-height:1.4;font-family:"DM Sans",sans-serif;}
+.fuel-btn:hover{border-color:var(--purple);background:var(--purple-pale);}
+.fuel-btn.selected{border-color:var(--purple);background:var(--purple-pale);font-weight:600;}
+.fuel-arrow{display:flex;align-items:center;justify-content:center;width:48px;flex-shrink:0;background:var(--purple-pale);font-size:20px;}
+.fuel-output{flex:1.2;background:var(--white);padding:20px;}
+.fuel-output-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:10px;}
+.fuel-result{min-height:80px;font-size:14px;line-height:1.7;color:var(--gray-text);}
+.fuel-result.bad{color:var(--red);}
+.fuel-result.good{color:var(--green);}
+.fuel-result.great{color:var(--purple-dark);}
+.fuel-note{font-size:13px;color:var(--gray-muted);line-height:1.6;font-style:italic;}
+
+/* Three-column cards */
+.tri-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.tri-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.tc-icon{font-size:28px;margin-bottom:8px;}
+.tc-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.tc-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Before/after comparison */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.ba-col{border-radius:14px;padding:20px;}
+.ba-col.before{background:var(--orange-pale);border:1.5px solid #F5D5A2;}
+.ba-col.after{background:var(--purple-pale);border:1.5px solid var(--purple-mid);}
+.ba-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.ba-col.before .ba-label{color:var(--orange);}
+.ba-col.after .ba-label{color:var(--purple);}
+.ba-role{font-family:"Fraunces",serif;font-size:15px;font-weight:700;margin-bottom:10px;color:var(--gray-text);}
+.ba-items{display:flex;flex-direction:column;gap:6px;}
+.ba-item{font-size:13px;line-height:1.55;color:var(--gray-text);}
+
+/* Misconception cards */
+.mc-stack{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.mc-card{border-radius:16px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.mc-myth{background:var(--red-pale);padding:14px 20px;display:flex;align-items:flex-start;gap:12px;}
+.mc-myth-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.mc-myth-text{font-size:14px;font-weight:600;color:var(--red);line-height:1.5;}
+.mc-truth{background:var(--white);padding:14px 20px;display:flex;align-items:flex-start;gap:12px;}
+.mc-truth-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.mc-truth-text{font-size:14px;line-height:1.6;color:var(--gray-text);}
+
+/* Step list */
+.step-list{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.step-item{display:flex;gap:0;}
+.sl-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.sl-dot{width:38px;height:38px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex-shrink:0;font-weight:700;}
+.sl-line{flex:1;width:2px;background:var(--purple-mid);margin:4px 0;}
+.step-item:last-child .sl-line{display:none;}
+.sl-body{flex:1;padding:0 0 22px 14px;padding-top:4px;}
+.sl-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.sl-desc{font-size:14px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="module-tag">Module 4 — Before You Begin</div>
+  <h1>Why Data Is the Fuel That Makes AI Work — And Why That Changes Your Job</h1>
+  <p class="hero-sub">Every AI tool you'll use in a tech career runs on data. Not code. Not algorithms. Data. Understanding that one fact changes how you read every lesson in this module — and every AI output you'll ever see on the job.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Start With the Simplest Possible Explanation</h2>
+    <p>When most people hear "artificial intelligence," they picture something almost magical — a system that thinks, reasons, and figures things out on its own. That picture is wrong in one critical way: <mark>AI doesn't think. It finds patterns in data it has already seen.</mark></p>
+    <p>Here's the simplest version of how it works. You give an AI system a massive amount of data — millions of customer support tickets, thousands of server logs, years of user behavior records. The system analyzes all of it and learns: when X appears in the data, Y tends to follow. When these three things happen together, this outcome is likely. When this pattern breaks, something is wrong.</p>
+    <p>That's it. That's the core of it. AI is extraordinarily good at finding patterns across enormous amounts of data — far more data than any human could process manually. But it can only find patterns in data it has. And it can only find meaningful patterns if that data is accurate, complete, and representative of the real world.</p>
+
+    <div class="pull-quote">
+      <p>The quality of every AI output is limited by the quality of the data that trained it. Garbage in, garbage out — at superhuman speed.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Engine and the Fuel — An Analogy That Actually Works</h2>
+    <p>Think of an AI system as a very sophisticated engine. The engineers who build it design the mechanisms — how it processes input, how it generates output, how it handles uncertainty. That's the engineering work. But an engine without fuel doesn't go anywhere.</p>
+    <p><mark>Data is the fuel.</mark> The engine can be beautifully designed — but if you put low-quality fuel in, the performance degrades. If you put the wrong type of fuel in, it breaks. If you run out of fuel, it stops entirely.</p>
+    <p>This analogy matters for your job because it tells you where human judgment is irreplaceable. You can't change the engine — that's the AI vendor's job. But in most tech roles, <strong>you are involved with the fuel</strong>: collecting it, classifying it, cleaning it, validating it, and deciding what gets fed into the system and what doesn't.</p>
+
+    <!-- INTERACTIVE SIM -->
+    <div class="fuel-sim">
+      <div class="fuel-sim-label">⚙️ Interactive — See It in Action</div>
+      <div class="fuel-sim-title">What happens when the data quality changes?</div>
+      <div class="fuel-sim-sub">Select a data quality scenario on the left to see what the AI system produces on the right. The engine (AI model) is exactly the same in each case — only the data changes.</div>
+      <div class="fuel-engine">
+        <div class="fuel-input">
+          <div class="fuel-input-label">📥 Data Going In</div>
+          <div class="fuel-btn-row">
+            <button class="fuel-btn" onclick="setFuel(0,this)">🟢 Clean, complete, recent data — 12 months of properly labeled customer support tickets with accurate category tags and resolution times</button>
+            <button class="fuel-btn" onclick="setFuel(1,this)">🟡 Incomplete data — same tickets, but 40% have missing category tags and resolution times are inconsistently formatted</button>
+            <button class="fuel-btn" onclick="setFuel(2,this)">🔴 Biased data — 12 months of tickets, but 80% are from one product line. The other three product lines have almost no representation</button>
+            <button class="fuel-btn" onclick="setFuel(3,this)">⚫ Outdated data — tickets from 3 years ago, before a major product redesign changed how customers describe their problems</button>
+          </div>
+        </div>
+        <div class="fuel-arrow">⚡</div>
+        <div class="fuel-output">
+          <div class="fuel-output-label">📤 AI Output: Ticket Routing Recommendations</div>
+          <div class="fuel-result" id="fuelResult">← Select a data scenario to see the output</div>
+        </div>
+      </div>
+      <div class="fuel-note" id="fuelNote"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Three Things Data Does for AI</h2>
+    <p>Data doesn't just "feed" AI in a vague sense. It does three specific jobs that determine what the AI system can and can't do.</p>
+    <div class="tri-cards">
+      <div class="tri-card">
+        <div class="tc-icon">🎓</div>
+        <div class="tc-title">Training</div>
+        <div class="tc-body">Before an AI system can do anything useful, it learns from a large dataset. This training phase is where the pattern-finding happens. The patterns the system learns — and the patterns it misses — are entirely determined by what was in the training data.</div>
+      </div>
+      <div class="tri-card">
+        <div class="tc-icon">⚡</div>
+        <div class="tc-title">Inference</div>
+        <div class="tc-body">When you use an AI system in a real workflow — submitting a ticket, generating a report, triggering an alert — the system is applying patterns it learned to new data in real time. This is called inference. The accuracy of inference depends on whether the new data resembles what the system trained on.</div>
+      </div>
+      <div class="tri-card">
+        <div class="tc-icon">🔄</div>
+        <div class="tc-title">Feedback</div>
+        <div class="tc-body">The best AI systems improve over time by learning from feedback — when a human corrects a wrong prediction, flags a misclassified ticket, or marks an alert as a false positive, that correction becomes new data. This is why human review isn't just a safety check — it's how the system gets better.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why This Changes What Your Job Actually Looks Like</h2>
+    <p>Here's the shift that Module 4 is preparing you for. In a tech role without AI tools, your job involves doing tasks manually — routing tickets, reading logs, writing reports. In a tech role with AI tools, <mark>your job increasingly involves working with data: deciding what data the system sees, validating what it produces, and catching what it gets wrong.</mark></p>
+    <p>This isn't a downgrade. It's a fundamentally different and more skilled kind of work. The manual task is repetitive. The data work requires judgment.</p>
+    <div class="ba-grid">
+      <div class="ba-col before">
+        <div class="ba-label">⏮ Tech Role Without AI</div>
+        <div class="ba-role">Help Desk Technician</div>
+        <div class="ba-items">
+          <div class="ba-item">• Reads each ticket individually</div>
+          <div class="ba-item">• Manually decides category and priority</div>
+          <div class="ba-item">• Routes to correct team by hand</div>
+          <div class="ba-item">• Writes weekly report from memory and spreadsheet</div>
+          <div class="ba-item">• Reviews 30–50 tickets per day</div>
+        </div>
+      </div>
+      <div class="ba-col after">
+        <div class="ba-label">⚡ Tech Role With AI</div>
+        <div class="ba-role">Help Desk Technician</div>
+        <div class="ba-items">
+          <div class="ba-item">• AI auto-categorizes and routes incoming tickets</div>
+          <div class="ba-item">• Reviews AI decisions for accuracy and edge cases</div>
+          <div class="ba-item">• Identifies patterns in what AI gets wrong</div>
+          <div class="ba-item">• Flags data quality issues that affect AI routing</div>
+          <div class="ba-item">• Handles 200+ tickets per day with oversight focus</div>
+        </div>
+      </div>
+    </div>
+    <p>Notice what stayed the same: judgment about what's correct. Notice what changed: how much of the volume you can handle, and where your attention goes. The technician in the "with AI" column isn't doing less important work — they're doing work that requires more critical thinking, not less.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Three Misconceptions Worth Clearing Up Now</h2>
+    <p>Before you start Lesson 4.1, it's worth naming three things that Module 4 students often believe going in — and why each one gets in the way.</p>
+    <div class="mc-stack">
+      <div class="mc-card">
+        <div class="mc-myth"><div class="mc-myth-icon">❌</div><div class="mc-myth-text">Misconception: AI tools are only for data scientists and engineers. I'm going into a tech support or IT role — this doesn't really apply to me.</div></div>
+        <div class="mc-truth"><div class="mc-truth-icon">✅</div><div class="mc-truth-text">Reality: AI tools are being built into the platforms every tech worker uses — ticketing systems, log monitoring tools, report generators, workflow automation. You don't need to build these tools to work with them. But you do need to understand how data quality affects what they produce, because you'll be the person deciding whether to trust the output or flag it.</div></div>
+      </div>
+      <div class="mc-card">
+        <div class="mc-myth"><div class="mc-myth-icon">❌</div><div class="mc-myth-text">Misconception: If an AI tool says something, it's probably right. These systems are built by experts.</div></div>
+        <div class="mc-truth"><div class="mc-truth-icon">✅</div><div class="mc-truth-text">Reality: AI tools are built by experts who trained them on specific data in specific conditions. When the data going in is incomplete, biased, or outdated — or when real-world conditions differ from training conditions — AI outputs can be confidently wrong. The tool doesn't know the limits of its own knowledge. You need to.</div></div>
+      </div>
+      <div class="mc-card">
+        <div class="mc-myth"><div class="mc-myth-icon">❌</div><div class="mc-myth-text">Misconception: Understanding data is a bonus skill. The important thing is learning how to use the specific tools.</div></div>
+        <div class="mc-truth"><div class="mc-truth-icon">✅</div><div class="mc-truth-text">Reality: Tools change. The specific platform your employer uses today may be replaced in two years. The understanding of why AI produces what it produces — and how data determines output quality — transfers to every tool you'll ever use. It's the skill underneath the skills.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Module 4 Builds, Lesson by Lesson</h2>
+    <p>Now that you understand the core principle — AI output quality depends on data quality, and you'll be involved with that data — here's how the four lessons build on each other.</p>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="sl-left"><div class="sl-dot">4.1</div><div class="sl-line"></div></div>
+        <div class="sl-body">
+          <div class="sl-title">Data Literacy for Tech Roles</div>
+          <div class="sl-desc">You learn what kinds of data exist in tech environments (logs, metrics, user behavior, reports), how to classify data as structured, unstructured, or semi-structured, and how to recognize the most common data quality problems before they affect AI outputs. This is the foundation everything else builds on.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="sl-left"><div class="sl-dot">4.2</div><div class="sl-line"></div></div>
+        <div class="sl-body">
+          <div class="sl-title">Pattern Recognition & Insights</div>
+          <div class="sl-desc">You learn how AI systems find patterns in data, how to distinguish a meaningful signal from noise, and how to interpret AI-generated insights critically — knowing when to act on them and when to question them. This is where data literacy turns into judgment.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="sl-left"><div class="sl-dot">4.3</div><div class="sl-line"></div></div>
+        <div class="sl-body">
+          <div class="sl-title">No-Code & Low-Code Automation</div>
+          <div class="sl-desc">You learn how to use AI-assisted automation tools to streamline repetitive data-handling tasks — routing, entry, analysis, reporting — without writing code. You also learn how to design automation workflows that keep humans in the loop at the right moments.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="sl-left"><div class="sl-dot">4.4</div><div class="sl-line"></div></div>
+        <div class="sl-body">
+          <div class="sl-title">Responsible Automation</div>
+          <div class="sl-desc">You learn what happens when automation fails, how to validate AI-driven workflows before trusting their outputs, and where human oversight is non-negotiable. This is the lesson that makes everything you learn in 4.1 through 4.3 safe to actually use.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A company deploys an AI system to automatically route customer support tickets to the correct team. After three months, the team handling billing issues reports that they're receiving a flood of tickets that actually belong to the technical support team. The AI model itself hasn't changed. What's the most likely explanation?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI model needs to be replaced with a newer version</button>
+        <button class="qopt" onclick="cq(this,false)">The billing team needs better training on how to handle technical tickets</button>
+        <button class="qopt" onclick="cq(this,true)">Something about the data going into the system has changed — either the way tickets are being written (new product features creating new vocabulary the model hasn't seen), the quality of ticket tagging, or the distribution of ticket types has shifted from what the model trained on. The model is applying patterns that were accurate for past data but no longer match the current reality.</button>
+        <button class="qopt" onclick="cq(this,false)">The technical support team is incorrectly submitting tickets through the billing portal</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember Before Lesson 4.1</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI doesn't think — it finds patterns in data it has already seen. Every AI output is the result of pattern-matching against training data. The quality, completeness, and representativeness of that data determines what patterns the system learned — and what patterns it missed entirely.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>In a tech role with AI tools, your job increasingly involves the data, not the task itself. You're the person who validates whether the AI routing decision was correct, flags when data quality is degrading, and catches the cases the system handles wrong. That's not a less skilled job — it's a more skilled one.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Data literacy is the transferable skill. Specific tools will change throughout your career. Understanding why AI produces what it produces — and how data quality determines output quality — is the knowledge that transfers to every platform, every workflow, and every tech role you'll hold.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const fuelData=[
+  {cls:"good",result:"AI correctly routes 92% of tickets on the first attempt. Billing tickets go to billing. Technical issues route to the engineering support queue. Account questions reach the account management team. Resolution times drop 34% compared to manual routing.",note:"With clean, complete, well-labeled data, the AI system learns accurate patterns and applies them reliably. This is the baseline the system was designed to achieve."},
+  {cls:"bad",result:"AI routes about 61% of tickets correctly. The 40% with missing category tags get routed based on keyword guessing — some work, many don't. The billing team receives technical tickets. The engineering queue fills with account questions. Workers spend significant time re-routing.",note:"Missing data doesn't cause the AI to fail gracefully — it causes it to guess. The system fills in the gaps using whatever partial signals it can find, which produces unpredictable errors rather than consistent ones."},
+  {cls:"bad",result:"AI routes the dominant product line's tickets with high accuracy (89%). For the other three product lines, accuracy drops to 43%. Workers in those queues report that the AI 'doesn't understand' their tickets — and they're right. The system simply hasn't seen enough examples of those ticket types to learn reliable patterns.",note:"Biased training data produces biased outputs. The AI isn't malfunctioning — it's doing exactly what it was trained to do. It just wasn't trained on a representative sample of the full problem space."},
+  {cls:"bad",result:"AI routes tickets using vocabulary and patterns from 3 years ago. New features — which customers now reference constantly — are unrecognized. The AI treats them as noise or misclassifies them as older, similar-sounding issues. Routing accuracy sits at 54%, and workers report that the system seems 'confused' by common ticket types.",note:"The real world changed; the training data didn't. The AI is confidently applying outdated patterns to current situations. This is one of the most common AI failure modes in production — and it's invisible unless humans are actively monitoring output quality."}
+];
+let activeFuelBtn=null;
+function setFuel(i,btn){
+  if(activeFuelBtn){activeFuelBtn.classList.remove("selected");}
+  btn.classList.add("selected");
+  activeFuelBtn=btn;
+  const r=document.getElementById("fuelResult");
+  const n=document.getElementById("fuelNote");
+  r.className="fuel-result "+fuelData[i].cls;
+  r.textContent=fuelData[i].result;
+  n.textContent="💡 "+fuelData[i].note;
+}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The AI model is applying the same patterns it always has — but the real-world data has drifted away from what the model trained on. This is called data drift, and it's one of the most common reasons AI systems that worked well at launch start producing errors over time. The fix isn't a new model — it's retraining on current data, or adjusting the data pipeline to catch the new vocabulary. The person who catches this problem is usually not the AI engineer who built the model. It's the tech worker who notices that routing is getting worse and investigates why.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("data going into"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ When an AI system degrades without the model changing, the cause is almost always in the data — not the model, not the users, not the receiving team. The model is doing exactly what it was designed to do. What changed is the data it's seeing. New product features introduced vocabulary the model hasn't encountered. Ticket writing patterns shifted. The distribution of ticket types changed. Any of these data changes can cause the model to misapply the patterns it learned, producing routing errors that look random but actually have a data explanation.";}
+}
+</script>
+</body>
+</html>

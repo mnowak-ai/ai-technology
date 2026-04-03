@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Beginner's Map of How Tech Teams Actually Work With Data Every Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.module-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.module-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Pipeline explorer */
+.pipeline{margin:24px 0;}
+.pipeline-steps{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:4px;}
+.pipe-step{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;position:relative;}
+.pipe-step:not(:last-child)::after{content:"";position:absolute;right:-1px;top:30px;width:0;height:0;border-top:14px solid transparent;border-bottom:14px solid transparent;border-left:14px solid var(--purple);z-index:2;}
+.pipe-btn{width:100%;border:2px solid var(--purple-mid);border-radius:12px;padding:14px 10px;cursor:pointer;background:var(--white);text-align:center;transition:all .2s;margin-right:20px;font-family:"DM Sans",sans-serif;}
+.pipe-btn:hover{border-color:var(--purple);background:var(--purple-pale);}
+.pipe-btn.active{border-color:var(--purple);background:var(--purple-pale);}
+.pipe-icon{font-size:22px;margin-bottom:6px;}
+.pipe-name{font-size:12px;font-weight:700;color:var(--purple-dark);line-height:1.3;}
+.pipe-detail{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:24px;margin-top:12px;display:none;}
+.pipe-detail.active{display:block;}
+.pd-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.pd-body{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:12px;}
+.pd-roles{display:flex;flex-wrap:wrap;gap:6px;}
+.pd-role{background:var(--purple-pale);color:var(--purple);font-size:11px;font-weight:600;padding:4px 10px;border-radius:100px;border:1px solid var(--purple-mid);}
+.pd-ai{background:var(--green-pale);border:1.5px solid #B5D5C0;border-radius:10px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.6;color:var(--green);}
+.pd-ai-label{font-weight:700;margin-bottom:4px;}
+
+/* Role explorer tabs */
+.role-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:0;}
+.role-tab{padding:10px 18px;font-size:13px;font-weight:600;color:var(--gray-muted);cursor:pointer;border:2px solid var(--purple-mid);border-radius:100px;background:var(--white);transition:all .2s;font-family:"DM Sans",sans-serif;}
+.role-tab:hover{color:var(--purple-dark);border-color:var(--purple);}
+.role-tab.active{background:var(--purple);color:var(--white);border-color:var(--purple);}
+.role-panel{display:none;background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:0 16px 16px 16px;padding:24px;margin-top:8px;}
+.role-panel.active{display:block;}
+.rp-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
+.rp-icon{font-size:36px;flex-shrink:0;}
+.rp-info{}
+.rp-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.rp-desc{font-size:14px;color:var(--gray-muted);line-height:1.5;}
+.rp-tasks{display:flex;flex-direction:column;gap:8px;}
+.rp-task{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:10px;padding:12px 16px;}
+.rp-task-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:4px;}
+.rp-task-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.rp-ai-note{background:var(--purple-pale);border-radius:10px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:1.6;color:var(--purple-dark);}
+
+/* Vocab cards */
+.vocab-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.vocab-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.vc-term{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.vc-def{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.vc-example{margin-top:8px;padding-top:8px;border-top:1px solid var(--purple-mid);font-size:12px;color:var(--gray-muted);font-style:italic;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="module-tag">Module 4 — Before You Begin</div>
+  <h1>A Beginner's Map of How Tech Teams Actually Work With Data Every Day</h1>
+  <p class="hero-sub">If you've never worked in tech before, the word "data" can feel abstract. This article makes it concrete — walking you through how data actually flows through a tech environment, who touches it, and where AI enters the picture.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why You Need This Map Before Lesson 4.1</h2>
+    <p>Module 4 assumes you're working in a tech environment — using tools like ticketing systems, monitoring dashboards, and automation platforms. If you've worked in tech before, that picture is already in your head. If you haven't, the lessons will reference workflows that don't fully make sense yet.</p>
+    <p>This article fills that gap. By the end of it, you'll know what a data pipeline is, what roles interact with data in different ways, and what "AI-assisted" actually looks like when a tech team uses it in a real workday.</p>
+
+    <div class="pull-quote">
+      <p>You don't have to understand everything about how tech teams work. You just need enough of a map that when the lessons reference "logs," "tickets," or "automated reports," you can picture where those things come from and who is responsible for them.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Key Vocabulary — Before Anything Else</h2>
+    <p>These six terms appear constantly in Module 4. Read each definition and example now — then when you encounter these words in the lessons, they'll land as familiar rather than foreign.</p>
+    <div class="vocab-grid">
+      <div class="vocab-card">
+        <div class="vc-term">Data Pipeline</div>
+        <div class="vc-def">The path data travels from where it's created to where it's used. Every tech environment has pipelines — they're what move data from one system to another automatically.</div>
+        <div class="vc-example">Example: A customer clicks a button → that action is recorded in a log → the log is processed overnight → the result appears in the analytics dashboard the next morning. That's a pipeline.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vc-term">Log</div>
+        <div class="vc-def">An automatic record that a system creates every time something happens — a user logs in, an error occurs, a request is processed. Logs are generated continuously and are one of the most common data types in tech.</div>
+        <div class="vc-example">Example: Every time your phone app crashes, the app creates a log entry recording exactly when it happened, what the user was doing, and what error code appeared.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vc-term">Ticket</div>
+        <div class="vc-def">A record of a request, problem, or task that needs to be handled. Ticketing systems are used in IT support, software development, and customer service to track work from submission to resolution.</div>
+        <div class="vc-example">Example: When an employee's laptop won't connect to the company VPN, they submit a ticket to IT. The ticket gets categorized, assigned, worked on, and closed — all tracked in the system.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vc-term">Dashboard</div>
+        <div class="vc-def">A visual display that shows the current state of key metrics — pulled automatically from data systems and updated in real time or on a schedule. Dashboards let tech workers see what's happening without manually querying data.</div>
+        <div class="vc-example">Example: A help desk manager's dashboard might show: tickets opened today, average resolution time, tickets by category, and which team members have the most open items.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vc-term">Metric / KPI</div>
+        <div class="vc-def">A number that measures something the team cares about. KPI stands for Key Performance Indicator. Metrics are pulled from data systems and tracked over time to show whether performance is improving or declining.</div>
+        <div class="vc-example">Example: "Average time to resolve a P1 ticket" is a metric. If it's usually 4 hours but this week it's 11 hours, something has changed — and the team needs to investigate why.</div>
+      </div>
+      <div class="vocab-card">
+        <div class="vc-term">Workflow Automation</div>
+        <div class="vc-def">A system that performs a sequence of tasks automatically, triggered by specific conditions, without requiring a human to manually initiate each step.</div>
+        <div class="vc-example">Example: When a ticket is submitted with the word "password" in the subject, it's automatically routed to the security team, tagged as high priority, and a confirmation email is sent to the submitter — all without anyone touching it manually.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How Data Flows Through a Tech Environment</h2>
+    <p>Data in a tech environment doesn't sit still. It gets created, moved, processed, analyzed, and acted on — often automatically. This is called a <mark>data pipeline</mark>, and every tech worker is somewhere along one.</p>
+    <p>Click each stage below to see what happens there, who's involved, and where AI enters the picture.</p>
+
+    <div class="pipeline">
+      <div class="pipeline-steps">
+        <div class="pipe-step">
+          <button class="pipe-btn active" onclick="showPipe(0,this)">
+            <div class="pipe-icon">📥</div>
+            <div class="pipe-name">Data is Created</div>
+          </button>
+        </div>
+        <div class="pipe-step">
+          <button class="pipe-btn" onclick="showPipe(1,this)">
+            <div class="pipe-icon">🔀</div>
+            <div class="pipe-name">Data is Collected</div>
+          </button>
+        </div>
+        <div class="pipe-step">
+          <button class="pipe-btn" onclick="showPipe(2,this)">
+            <div class="pipe-icon">🧹</div>
+            <div class="pipe-name">Data is Cleaned</div>
+          </button>
+        </div>
+        <div class="pipe-step">
+          <button class="pipe-btn" onclick="showPipe(3,this)">
+            <div class="pipe-icon">🔍</div>
+            <div class="pipe-name">Data is Analyzed</div>
+          </button>
+        </div>
+        <div class="pipe-step">
+          <button class="pipe-btn" onclick="showPipe(4,this)">
+            <div class="pipe-icon">⚡</div>
+            <div class="pipe-name">Action is Taken</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="pipe-detail active" id="pipe0">
+        <div class="pd-title">Stage 1: Data Is Created</div>
+        <div class="pd-body">Data is created constantly in a tech environment — most of it automatically. Every user action on a software platform generates a log entry. Every ticket submitted creates a record. Every transaction processed writes to a database. Every system health check produces metrics. Humans create some data intentionally (filling out forms, writing reports) but most of it is generated as a byproduct of systems doing their jobs.</div>
+        <div class="pd-roles">
+          <div class="pd-role">Users (internal & external)</div>
+          <div class="pd-role">Software systems</div>
+          <div class="pd-role">Infrastructure & servers</div>
+          <div class="pd-role">Connected devices & sensors</div>
+        </div>
+        <div class="pd-ai"><div class="pd-ai-label">🤖 AI's role at this stage:</div>Very limited. Data creation is mostly automated by the systems themselves. Some AI tools can auto-generate structured records from unstructured inputs (converting a spoken customer complaint into a written ticket, for example), but the creation stage is primarily a human and system function.</div>
+      </div>
+      <div class="pipe-detail" id="pipe1">
+        <div class="pd-title">Stage 2: Data Is Collected</div>
+        <div class="pd-body">Collection means pulling data from wherever it was created and bringing it somewhere it can be used. This might mean aggregating logs from dozens of servers into a central monitoring platform, pulling ticket data from multiple sources into a single dashboard, or syncing customer records from different systems into one database. Data collection often happens on a schedule (nightly batch collection) or continuously (real-time streaming). In either case, someone is responsible for making sure the pipeline runs reliably and the data arriving is complete.</div>
+        <div class="pd-roles">
+          <div class="pd-role">IT / Systems Administrators</div>
+          <div class="pd-role">Data Engineers</div>
+          <div class="pd-role">DevOps / Platform Engineers</div>
+        </div>
+        <div class="pd-ai"><div class="pd-ai-label">🤖 AI's role at this stage:</div>AI tools can monitor data pipelines and alert when collection fails — when a server stops sending logs, when a data source drops out, or when incoming data volume drops unexpectedly. This is pattern recognition applied to the pipeline itself.</div>
+      </div>
+      <div class="pipe-detail" id="pipe2">
+        <div class="pd-title">Stage 3: Data Is Cleaned</div>
+        <div class="pd-body">Raw data is almost never perfectly usable. Logs arrive with inconsistent formatting. Tickets have missing fields. Records from different systems use different date formats. Duplicate entries appear when the same event gets recorded twice. Before data can be reliably analyzed or fed to an AI system, it needs to be cleaned — standardized, de-duplicated, validated for completeness, and flagged for unusual values. This is some of the most important and underappreciated work in any tech data environment. Bad cleaning produces bad analysis — and bad AI outputs.</div>
+        <div class="pd-roles">
+          <div class="pd-role">IT Support Technicians</div>
+          <div class="pd-role">Data Analysts</div>
+          <div class="pd-role">Database Administrators</div>
+          <div class="pd-role">Help Desk Workers</div>
+        </div>
+        <div class="pd-ai"><div class="pd-ai-label">🤖 AI's role at this stage:</div>AI tools can help identify data quality problems — flagging likely duplicates, detecting fields with unusually high missing rates, and catching format inconsistencies. But AI cannot determine whether a data quality problem matters for a given use case. That judgment requires a human who understands the business context.</div>
+      </div>
+      <div class="pipe-detail" id="pipe3">
+        <div class="pd-title">Stage 4: Data Is Analyzed</div>
+        <div class="pd-body">Analysis turns data into something useful — a pattern, a trend, an anomaly, an insight. It might mean summarizing ticket volumes by category to see where support load is growing. It might mean monitoring server error rates to detect a developing problem before it becomes an outage. It might mean running a report that shows which automation workflows have the highest failure rates. Analysis can be manual (a person reviewing a dashboard and drawing conclusions) or automated (an AI system continuously scanning logs for anomaly patterns and generating alerts).</div>
+        <div class="pd-roles">
+          <div class="pd-role">Data Analysts</div>
+          <div class="pd-role">IT Operations Teams</div>
+          <div class="pd-role">Help Desk Managers</div>
+          <div class="pd-role">SRE / DevOps Engineers</div>
+        </div>
+        <div class="pd-ai"><div class="pd-ai-label">🤖 AI's role at this stage:</div>This is where AI has the biggest impact in tech. AI systems excel at scanning enormous amounts of data to find patterns and anomalies that humans would miss or find too slowly. Tools like Datadog use AI to continuously analyze infrastructure metrics and alert when something is anomalous. Humans interpret those alerts — deciding whether they're real, what they mean, and what action to take.</div>
+      </div>
+      <div class="pipe-detail" id="pipe4">
+        <div class="pd-title">Stage 5: Action Is Taken</div>
+        <div class="pd-body">Analysis only matters if it leads somewhere. Action might mean routing a flagged ticket to the right team, sending an alert to an on-call engineer, updating a system configuration, generating a report for leadership, or triggering an automated workflow that handles a routine task without human involvement. The action stage is where automation has the most visible impact — and where the quality of data decisions earlier in the pipeline determines whether the automated action is helpful or harmful.</div>
+        <div class="pd-roles">
+          <div class="pd-role">All tech roles</div>
+          <div class="pd-role">Automated systems</div>
+          <div class="pd-role">IT Operations</div>
+          <div class="pd-role">Management</div>
+        </div>
+        <div class="pd-ai"><div class="pd-ai-label">🤖 AI's role at this stage:</div>AI tools increasingly take action autonomously — routing tickets, triggering alerts, generating reports — without human initiation. This is powerful when data quality is high and the action type is well-understood. It's risky when data quality is poor or when the action has significant consequences. The lesson on responsible automation covers exactly when human approval is required before an AI-driven action proceeds.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Who Touches Data in a Tech Team — And How</h2>
+    <p>Not everyone in a tech environment works with data in the same way. Some roles create it. Some clean it. Some analyze it. Some act on it. Understanding which role you're most likely to hold — and where you'll sit in the data pipeline — helps you see why Module 4 is directly relevant to your career.</p>
+    <p>Select your closest role below:</p>
+
+    <div style="margin-top:16px;">
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="showRole(0,this)">🎧 Help Desk / IT Support</button>
+        <button class="role-tab" onclick="showRole(1,this)">🖥️ IT Operations / SysAdmin</button>
+        <button class="role-tab" onclick="showRole(2,this)">📊 Data / Business Analyst</button>
+        <button class="role-tab" onclick="showRole(3,this)">⚙️ DevOps / Platform Engineer</button>
+      </div>
+
+      <div class="role-panel active" id="role0">
+        <div class="rp-header">
+          <div class="rp-icon">🎧</div>
+          <div class="rp-info">
+            <div class="rp-title">Help Desk / IT Support Technician</div>
+            <div class="rp-desc">One of the largest and most accessible entry points into tech. Responsible for handling incoming support requests, diagnosing issues, and routing or resolving them.</div>
+          </div>
+        </div>
+        <div class="rp-tasks">
+          <div class="rp-task"><div class="rp-task-label">Data you create</div><div class="rp-task-body">Ticket notes, resolution records, time logs, customer interaction records. Every ticket you touch becomes a data record in the ticketing system.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you read</div><div class="rp-task-body">Incoming ticket details, ticket history for users, knowledge base articles, escalation logs, system status dashboards.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you validate</div><div class="rp-task-body">Whether AI auto-categorization was correct, whether routing suggestions make sense, whether AI-generated resolution suggestions match the actual problem.</div></div>
+        </div>
+        <div class="rp-ai-note">🤖 In an AI-assisted help desk environment, your primary data interaction shifts from manually routing tickets to validating AI routing decisions and catching what the AI misclassifies. Your judgment about whether an AI output is correct is the most important data quality check in the system.</div>
+      </div>
+
+      <div class="role-panel" id="role1">
+        <div class="rp-header">
+          <div class="rp-icon">🖥️</div>
+          <div class="rp-info">
+            <div class="rp-title">IT Operations / Systems Administrator</div>
+            <div class="rp-desc">Responsible for keeping systems, servers, and infrastructure running. Monitors system health, responds to alerts, and manages configuration changes.</div>
+          </div>
+        </div>
+        <div class="rp-tasks">
+          <div class="rp-task"><div class="rp-task-label">Data you create</div><div class="rp-task-body">Change logs, incident records, configuration documentation, maintenance notes. You also implicitly create data by running commands that generate system logs.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you read</div><div class="rp-task-body">System logs, performance metrics, uptime reports, capacity dashboards, security alerts. You spend significant time reading data to understand what systems are doing.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you validate</div><div class="rp-task-body">Whether AI-flagged anomalies are real problems or false positives, whether alert thresholds are calibrated correctly, whether monitoring tools are capturing the right metrics.</div></div>
+        </div>
+        <div class="rp-ai-note">🤖 AI monitoring tools (like Datadog) continuously analyze your infrastructure data and surface alerts. Your job shifts from manual log review to investigating AI-flagged anomalies — deciding what's real, what's noise, and what action to take. This is pattern recognition and human judgment working together.</div>
+      </div>
+
+      <div class="role-panel" id="role2">
+        <div class="rp-header">
+          <div class="rp-icon">📊</div>
+          <div class="rp-info">
+            <div class="rp-title">Data / Business Analyst</div>
+            <div class="rp-desc">Responsible for turning data into insights that help teams make better decisions. Works with dashboards, reports, and data quality processes.</div>
+          </div>
+        </div>
+        <div class="rp-tasks">
+          <div class="rp-task"><div class="rp-task-label">Data you create</div><div class="rp-task-body">Reports, dashboards, data models, analysis documentation, recommendations. Your primary output is interpretations and summaries of data — not raw data itself.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you read</div><div class="rp-task-body">Raw data exports, database records, automatically generated reports, AI-surfaced patterns and trends. You work across more data sources than most roles.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you validate</div><div class="rp-task-body">Whether the data is clean enough to analyze, whether AI-generated insights are accurate, whether patterns the AI found are meaningful or spurious correlations.</div></div>
+        </div>
+        <div class="rp-ai-note">🤖 AI tools like Tableau AI help you find patterns faster — but your critical job is interpreting those patterns correctly. AI can surface a correlation; it cannot tell you whether that correlation means anything or what to do about it. Context, business knowledge, and critical judgment are yours to provide.</div>
+      </div>
+
+      <div class="role-panel" id="role3">
+        <div class="rp-header">
+          <div class="rp-icon">⚙️</div>
+          <div class="rp-info">
+            <div class="rp-title">DevOps / Platform Engineer</div>
+            <div class="rp-desc">Responsible for the infrastructure that software runs on — deployment pipelines, cloud environments, monitoring systems, and the reliability of automated workflows.</div>
+          </div>
+        </div>
+        <div class="rp-tasks">
+          <div class="rp-task"><div class="rp-task-label">Data you create</div><div class="rp-task-body">Deployment records, configuration changes, infrastructure-as-code, pipeline definitions. Your work generates both intentional documentation and implicit system logs.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you read</div><div class="rp-task-body">Deployment logs, performance metrics, error rates, infrastructure health dashboards, cost analytics. You monitor systems that generate enormous amounts of data continuously.</div></div>
+          <div class="rp-task"><div class="rp-task-label">Data you validate</div><div class="rp-task-body">Whether automated deployment pipelines are producing expected outputs, whether AI-powered monitoring is calibrated correctly, whether automated responses to incidents are working as designed.</div></div>
+        </div>
+        <div class="rp-ai-note">🤖 AI-assisted automation is deeply embedded in DevOps — from deployment pipeline automation to intelligent alerting. Your role increasingly involves designing and validating these automations rather than executing manual processes. Understanding data quality is essential: an automated pipeline fed bad data causes cascading failures.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What "AI-Assisted" Actually Looks Like in a Workday</h2>
+    <p>The phrase "AI-assisted" gets used a lot in tech job descriptions. Here's what it concretely looks like for a help desk technician — the most common entry-level tech role — working a typical shift.</p>
+
+    <div style="background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:28px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:14px;">A TYPICAL SHIFT — HELP DESK TECHNICIAN WITH AI TOOLS</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--white);border-radius:12px;padding:16px 20px;border-left:4px solid var(--purple);">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-muted);margin-bottom:4px;">8:00 AM — SHIFT START</div>
+          <div style="font-size:14px;line-height:1.65;">You open the ticketing dashboard. Overnight, the AI auto-categorized and routed 47 new tickets. You scan the queue, paying attention to anything marked "low confidence routing" — those are the tickets the AI wasn't sure about. You review 6 of them manually and correct 2 routing decisions.</div>
+        </div>
+        <div style="background:var(--white);border-radius:12px;padding:16px 20px;border-left:4px solid var(--purple);">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-muted);margin-bottom:4px;">9:30 AM — PATTERN ALERT</div>
+          <div style="font-size:14px;line-height:1.65;">The monitoring tool flags an anomaly: 12 tickets about VPN connection errors in the past 90 minutes, compared to an average of 2 for that time window. The AI can't tell you why — it just noticed the pattern. You investigate, discover a VPN certificate expired overnight, and escalate to the network team.</div>
+        </div>
+        <div style="background:var(--white);border-radius:12px;padding:16px 20px;border-left:4px solid var(--orange);">
+          <div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:4px;">11:00 AM — AI GETS IT WRONG</div>
+          <div style="font-size:14px;line-height:1.65;">A ticket about a "broken printer connection" was routed to hardware support. You open it and read the full description — the user actually needs help connecting their laptop to the corporate Wi-Fi network. The AI matched on "printer" but missed the context. You re-route it and make a note to flag this to the team lead as a potential training data improvement.</div>
+        </div>
+        <div style="background:var(--white);border-radius:12px;padding:16px 20px;border-left:4px solid var(--purple);">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-muted);margin-bottom:4px;">2:00 PM — AUTOMATED REPORT</div>
+          <div style="font-size:14px;line-height:1.65;">The system automatically generates your weekly metrics summary: tickets resolved, average resolution time, category breakdown. You review it before it goes to the manager, catch one metric that looks off (resolution time for password resets seems high — turns out two tickets were miscategorized and inflated the average), and correct the underlying data before approving the report.</div>
+        </div>
+      </div>
+    </div>
+    <p>Notice what happened across that shift: the technician <mark>never wrote code</mark>, never built an AI system, and never managed a database. They validated AI outputs, caught AI errors, investigated an AI-surfaced pattern, and corrected data before it propagated into a report. That's what AI-assisted tech work actually looks like.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A ticketing system is set up to automatically route all tickets containing the word "billing" to the billing support team. A new employee submits a ticket titled "Can't log into billing portal — keeps saying wrong password." The AI routes it to the billing team. The billing team says this is actually an IT issue and needs to go to the help desk. What does this scenario illustrate?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI system is broken and needs to be replaced</button>
+        <button class="qopt" onclick="cq(this,true)">AI routing based on keyword matching lacks context. The word "billing" triggered the routing rule — but the actual problem (password / login failure) belongs to a different team. This is why human review of AI routing decisions is essential, especially for tickets where the subject and the actual problem might not match. The AI saw one signal and acted on it without understanding the full context of the request.</button>
+        <button class="qopt" onclick="cq(this,false)">The new employee should have submitted the ticket with a better title</button>
+        <button class="qopt" onclick="cq(this,false)">The billing team should handle all tickets that mention billing, regardless of the actual issue</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>Your Map for Module 4</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Data in tech environments flows through a pipeline: it gets created, collected, cleaned, analyzed, and acted on. Every stage has people responsible for it, and every stage has places where data quality can degrade. AI tools are embedded throughout this pipeline — mostly at the analysis and action stages — and they depend on the quality of what came before them.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every tech role touches data differently. Help desk workers validate AI routing. IT operations workers investigate AI-flagged anomalies. Analysts interpret AI-surfaced patterns. DevOps engineers validate automated pipeline outputs. In all cases, the human's job is not to compete with AI — it's to provide the judgment and context that AI can't supply on its own.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI-assisted work in tech means catching what AI gets wrong, investigating what AI flags, and validating what AI produces before it affects downstream decisions. This requires understanding what data the system is working with, what its limitations are, and when its outputs can be trusted. Module 4 builds exactly those skills.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const pipeDetails=document.querySelectorAll(".pipe-detail");
+const pipeBtns=document.querySelectorAll(".pipe-btn");
+function showPipe(i,btn){
+  pipeDetails.forEach(d=>d.classList.remove("active"));
+  pipeBtns.forEach(b=>b.classList.remove("active"));
+  document.getElementById("pipe"+i).classList.add("active");
+  btn.classList.add("active");
+}
+
+const rolePanels=document.querySelectorAll(".role-panel");
+const roleTabs=document.querySelectorAll(".role-tab");
+function showRole(i,btn){
+  rolePanels.forEach(p=>p.classList.remove("active"));
+  roleTabs.forEach(t=>t.classList.remove("active"));
+  document.getElementById("role"+i).classList.add("active");
+  btn.classList.add("active");
+}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a classic AI routing limitation: the system matched on a keyword without understanding the context of the request. The word 'billing' appeared, so the routing rule fired — but the actual problem was a login/password issue that belongs to IT. This isn't a failure of AI technology in general; it's a specific type of error that happens when routing logic relies on keywords rather than understanding. The fix might involve improving the routing rules, adding more training examples of this ticket type, or flagging this category for human review. The tech worker who catches this error and reports it is doing one of the most valuable data-quality jobs in the system.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("context"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The issue isn't the AI system being broken, the employee's ticket quality, or the team's scope. The issue is that keyword-based routing lacks context. The AI saw 'billing' and acted on it — which is exactly what it was designed to do. But the actual problem had nothing to do with billing as a business function. This type of context-blindness is one of the most common limitations of AI routing systems, and it's why humans reviewing AI routing decisions catches real errors that matter.";}
+}
+</script>
+</body>
+</html>
