@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edge Cases: What They Are, Why AI Misses Them, and Why They're Often the Most Important Cases</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Bell curve visual */
+.bell-viz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.bell-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+
+/* Edge case types */
+.ec-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;}
+.ect{flex:1;min-width:110px;padding:11px 10px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.ect:hover{color:var(--purple-dark);}
+.ect.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.ec-panel{display:none;padding-top:20px;}
+.ec-panel.active{display:block;}
+.ec-header{margin-bottom:12px;}
+.ec-icon{font-size:32px;margin-bottom:8px;}
+.ec-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ec-def{font-size:15px;line-height:1.7;color:var(--gray-muted);}
+.ec-examples{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.ec-example{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 16px;}
+.ec-ex-ctx{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:6px;}
+.ec-ex-case{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:4px;}
+.ec-ex-ai{font-size:13px;color:var(--gray-text);line-height:1.6;margin-bottom:6px;}
+.ec-ex-why{background:var(--orange-pale);border-radius:7px;padding:7px 10px;font-size:12px;line-height:1.55;color:var(--orange);}
+.ec-ex-fix{background:var(--green-pale);border-radius:7px;padding:7px 10px;font-size:12px;line-height:1.55;color:var(--green);margin-top:5px;}
+
+/* Edge case catalog */
+.catalog-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.cat-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.cat-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.cat-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.cat-items{display:flex;flex-direction:column;gap:10px;}
+.cat-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;}
+.cat-scenario{font-size:13px;color:var(--gray-text);line-height:1.65;margin-bottom:10px;font-style:italic;}
+.cat-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:8px;}
+.cat-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.cat-opt{border:2px solid var(--purple-mid);border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.cat-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.cat-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.cat-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.cat-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.cat-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.cat-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Prevention strategies */
+.prev-steps{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.ps{display:flex;gap:0;}
+.ps-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.ps-dot{width:38px;height:38px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-family:"Fraunces",serif;font-size:16px;font-weight:700;flex-shrink:0;}
+.ps-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.ps:last-child .ps-line{display:none;}
+.ps-body{flex:1;padding:0 0 20px 14px;padding-top:4px;}
+.ps-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ps-desc{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.ps-example{background:var(--gray-soft);border-radius:8px;padding:8px 12px;margin-top:7px;font-size:12px;line-height:1.6;color:var(--gray-muted);font-style:italic;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.4 — Responsible Automation</div>
+  <h1>Edge Cases: What They Are, Why AI Misses Them, and Why They're Often the Most Important Cases</h1>
+  <p class="hero-sub">The video mentions "missed edge cases" as a failure mode without explaining what edge cases actually are. This article fixes that — making the concept concrete with real examples, explaining why AI systems struggle with them systematically, and showing how to find them before they find you.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What an Edge Case Actually Is</h2>
+    <p>An edge case is a situation that falls at the boundary of what a system was designed to handle — inputs or conditions that are unusual enough that the system's normal rules don't quite apply, or apply in unexpected ways. In automation, edge cases are the situations your workflow wasn't explicitly designed for but will eventually encounter in the real world.</p>
+    <p>The term comes from mathematics: the "edges" of a distribution, the cases that sit far from the typical center. <mark>Most automated systems are designed and tested on the common cases — the 95% of inputs that look like what the designer expected. Edge cases are the 5% that don't — and they're often the situations where the consequences of getting it wrong are highest.</mark></p>
+    <div class="pull-quote">
+      <p>Edge cases are not rare inconveniences. They are the places where the gap between what you assumed about the world and what the world actually is becomes visible. In high-stakes systems, those gaps become incidents.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Types of Edge Cases — With Real IT Examples</h2>
+    <div class="ec-tabs">
+      <button class="ect active" onclick="showEC(0,this)">📥 Input extremes</button>
+      <button class="ect" onclick="showEC(1,this)">🔀 Combination cases</button>
+      <button class="ect" onclick="showEC(2,this)">🌍 Context variation</button>
+      <button class="ect" onclick="showEC(3,this)">⏱️ Timing & sequence</button>
+    </div>
+
+    <div class="ec-panel active" id="ec0">
+      <div class="ec-header"><div class="ec-icon">📥</div><div class="ec-title">Input extremes</div><div class="ec-def">Values or formats at the outer boundaries of what the system expects — very long, very short, empty, unusually formatted, or in an unexpected language or encoding.</div></div>
+      <div class="ec-examples">
+        <div class="ec-example"><div class="ec-ex-ctx">Ticket triage</div><div class="ec-ex-case">A ticket submitted entirely in Spanish by an employee in the Mexico City office</div><div class="ec-ex-ai">AI classifies as "Hardware — Low priority" because the Spanish text doesn't match any trained English keyword patterns, and the model maps the unfamiliar text to its nearest category.</div><div class="ec-ex-why">⚠️ Why AI misses it: Training data was entirely in English. Spanish text is an extreme input the model never encountered — it produces a best-guess mapping to familiar patterns rather than flagging the language mismatch.</div><div class="ec-ex-fix">✅ Fix: Add a language detection step before classification. Route non-English tickets to human review regardless of AI confidence score.</div></div>
+        <div class="ec-example"><div class="ec-ex-ctx">Data entry automation</div><div class="ec-ex-case">A company name that is a single character: "X" (Elon Musk's company rebranding)</div><div class="ec-ex-ai">Validation rule: "Company name must be at least 3 characters." The record fails validation, the automation throws an error, and the form can't be submitted — even though "X" is a legitimate company name.</div><div class="ec-ex-why">⚠️ Why AI misses it: Minimum length validations are designed for common cases. Legitimate extreme-short values weren't anticipated. The validation is technically correct but practically wrong.</div><div class="ec-ex-fix">✅ Fix: Design validation rules with explicit acknowledgment of edge cases. For company name length, the minimum rule should have a human override when the submitted value fails but appears intentional.</div></div>
+      </div>
+    </div>
+
+    <div class="ec-panel" id="ec1">
+      <div class="ec-header"><div class="ec-icon">🔀</div><div class="ec-title">Combination cases</div><div class="ec-def">Situations that arise when two or more normal conditions occur simultaneously in a way that creates an unexpected interaction — each condition individually is handled, but the combination is not.</div></div>
+      <div class="ec-examples">
+        <div class="ec-example"><div class="ec-ex-ctx">Employee onboarding automation</div><div class="ec-ex-case">An employee starts work at the same time as a transfer is processed for the same employee ID from a previous company branch</div><div class="ec-ex-ai">The automation receives two trigger events for the same employee: "New employee created" and "Employee transferred." It creates duplicate accounts in some systems and skips account creation in others, depending on which trigger processed first.</div><div class="ec-ex-why">⚠️ Why AI misses it: The workflow was designed assuming one trigger per employee per process. Simultaneous triggers for the same entity weren't tested because they're rare in practice — but they do happen during mergers, transfers, and re-hires.</div><div class="ec-ex-fix">✅ Fix: Add idempotency checks — before creating an account, check if one already exists. Design the workflow to handle "same entity, multiple triggers" explicitly rather than assuming sequential order.</div></div>
+        <div class="ec-example"><div class="ec-ex-ctx">Automated report generation</div><div class="ec-ex-case">The weekly report generation runs at the same time as a data migration that has temporarily put the database in an inconsistent state</div><div class="ec-ex-ai">The report pulls data mid-migration, captures some old records and some new records in a mixed state, and generates numbers that reflect neither the old nor the new data accurately. The report is emailed to leadership before anyone notices the migration was in progress.</div><div class="ec-ex-why">⚠️ Why AI misses it: The report schedule and migration schedule were managed by different teams who didn't coordinate. No lock mechanism prevented the report from running during a migration window.</div><div class="ec-ex-fix">✅ Fix: Define maintenance windows and implement workflow blockers that prevent scheduled reports from running when critical data operations are in progress. Use database transaction locks.</div></div>
+      </div>
+    </div>
+
+    <div class="ec-panel" id="ec2">
+      <div class="ec-header"><div class="ec-icon">🌍</div><div class="ec-title">Context variation</div><div class="ec-def">The same input means something different depending on context the automation doesn't have access to — user role, business situation, regulatory environment, or timing.</div></div>
+      <div class="ec-examples">
+        <div class="ec-example"><div class="ec-ex-ctx">Access provisioning automation</div><div class="ec-ex-case">A contractor's access request goes through the standard employee access workflow</div><div class="ec-ex-ai">The automation provisions the contractor with the same system access as a full-time employee in the same role — because the request form doesn't distinguish employment type, and the automation has no awareness of the difference.</div><div class="ec-ex-why">⚠️ Why AI misses it: The automation was designed for employees and the context "this person is a contractor" wasn't captured in the input data. Same role + different employment type = different appropriate access — context the automation was never given.</div><div class="ec-ex-fix">✅ Fix: Add employment type as a required field in the access request form and build conditional logic: contractor requests route to human review before provisioning; employee requests can auto-provision with manager approval.</div></div>
+        <div class="ec-example"><div class="ec-ex-ctx">Ticket priority classification</div><div class="ec-ex-case">An end-of-quarter payroll processing failure arrives at 4:45pm on a Friday before a holiday weekend</div><div class="ec-ex-ai">The AI classifies it as "Medium priority — Payroll/HR Systems" and routes to the HR IT queue with standard 8-hour SLA. The queue isn't staffed over the holiday. The payroll run fails — 400 employees miss payment on schedule.</div><div class="ec-ex-why">⚠️ Why AI misses it: The classification is technically correct. But "payroll failure before a holiday weekend with a staff gap" creates a context where medium priority is catastrophically wrong. The AI has no awareness of business calendars, staff coverage gaps, or the downstream human impact of payroll failures.</div><div class="ec-ex-fix">✅ Fix: Override rules for payroll-related tickets within 48 hours of scheduled payroll runs — automatically elevate to P1 regardless of AI confidence. This is exactly the kind of contextual rule that should be human-defined in the workflow design.</div></div>
+      </div>
+    </div>
+
+    <div class="ec-panel" id="ec3">
+      <div class="ec-header"><div class="ec-icon">⏱️</div><div class="ec-title">Timing & sequence</div><div class="ec-def">Situations where the order of events matters and the automation assumes a specific sequence — but the real world delivers events in the wrong order, at unexpected times, or with unexpected gaps.</div></div>
+      <div class="ec-examples">
+        <div class="ec-example"><div class="ec-ex-ctx">Automated offboarding</div><div class="ec-ex-case">An employee's termination is processed in the HR system on Thursday, but their final working day is next Friday — 8 days away</div><div class="ec-ex-ai">The automation triggers on HR record change and immediately revokes access — 8 days before the employee was supposed to stop working. The employee can no longer access any systems they need to wrap up their work and transition responsibilities.</div><div class="ec-ex-why">⚠️ Why AI misses it: The workflow was designed assuming "termination processed" = "last working day." The timing edge case — processing termination paperwork in advance of the actual final day — wasn't anticipated.</div><div class="ec-ex-fix">✅ Fix: Use the "last working day" field from the HR record as the trigger date rather than the "termination processed" date. If no last working day is specified, default to a 7-day delay with human confirmation required.</div></div>
+        <div class="ec-example"><div class="ec-ex-ctx">Retry logic in data pipeline</div><div class="ec-ex-case">A failed API call is automatically retried 3 times — but the first call actually succeeded (the failure was the response, not the action)</div><div class="ec-ex-ai">The automation retries a payment processing API call that failed to return a success response — but actually executed successfully on the first attempt. The retry triggers a second, then third charge on the customer's payment method before the duplicate detection system catches it.</div><div class="ec-ex-why">⚠️ Why AI misses it: Retry logic assumes idempotency (retrying has no additional effect). Many APIs are not idempotent — retrying a payment creates a duplicate payment. The automation's retry logic was designed for idempotent operations without considering non-idempotent cases.</div><div class="ec-ex-fix">✅ Fix: Always check for idempotency before implementing retry logic on financial or irreversible operations. Use idempotency keys (unique identifiers sent with each request that the receiving API uses to deduplicate) when available.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practice: Identify the Edge Case</h2>
+    <div class="catalog-sim">
+      <div class="cat-label">🎯 Practice — What Type of Edge Case Is This?</div>
+      <div class="cat-title">Classify each failure scenario</div>
+      <div class="cat-sub">Apply the four edge case types to each real situation below.</div>
+      <div class="cat-items">
+        <div class="cat-item">
+          <div class="cat-scenario">An invoice processing automation fails when a vendor submits an invoice with a $0.00 line item for a service waiver. The automation rejects the invoice because its validation rule requires all line items to be greater than $0.</div>
+          <div class="cat-q">What type of edge case is this?</div>
+          <div class="cat-opts" id="c1o">
+            <button class="cat-opt" onclick="doCat('c1','input',this,'✅ Correct. A $0.00 line item is an input extreme — a value at the boundary of what the validation rule anticipated. $0 is a legitimate business value (waivers, credits, promotional discounts) but falls outside the "greater than zero" assumption the rule encoded. The automation\'s design assumed all invoice amounts are positive.')">📥 Input extreme</button>
+            <button class="cat-opt" onclick="doCat('c1','combo',this,'❌ This isn\'t a combination case — there\'s no interaction between two conditions. It\'s a single value ($0.00) that falls outside the expected range.')">🔀 Combination case</button>
+            <button class="cat-opt" onclick="doCat('c1','context',this,'❌ Context variation would involve the same $0.00 meaning different things in different contexts. Here, the $0.00 is straightforwardly a legitimate value the validation rule rejected because it assumed all amounts are positive.')">🌍 Context variation</button>
+            <button class="cat-opt" onclick="doCat('c1','timing',this,'❌ Timing and sequence edge cases involve the order of events. This is a value boundary issue, not a timing issue.')">⏱️ Timing/sequence</button>
+          </div>
+          <div class="cat-fb" id="c1f"></div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-scenario">An automated SLA breach alert fires for a ticket — but the ticket was submitted by the IT manager herself to test the system. The alert pages the on-call engineer for a test ticket, creating a false escalation during a busy incident period.</div>
+          <div class="cat-q">What type of edge case is this?</div>
+          <div class="cat-opts" id="c2o">
+            <button class="cat-opt" onclick="doCat('c2','input',this,'❌ The ticket itself isn\'t an unusual input — it\'s a normal-looking ticket. The issue is that the same ticket format means different things depending on who submitted it and why.')">📥 Input extreme</button>
+            <button class="cat-opt" onclick="doCat('c2','combo',this,'❌ There\'s no combination of two simultaneous conditions here. The edge case is about context — who submitted the ticket and the purpose of the submission.')">🔀 Combination case</button>
+            <button class="cat-opt" onclick="doCat('c2','context',true,'✅ Correct. Context variation: the ticket looks identical to a real SLA-breaching ticket, but the context ("this is a test submission by the system administrator") fundamentally changes the appropriate response. The automation has no way to know it\'s handling a test. Fix: Create a dedicated test environment for system testing, or add a "test mode" flag that prevents alerts from firing on designated test tickets.')">🌍 Context variation</button>
+            <button class="cat-opt" onclick="doCat('c2','timing',false,'❌ The timing of when the test was run (during a busy incident period) compounds the impact, but the edge case itself is contextual — the automation can\'t distinguish a real ticket from a test ticket.')">⏱️ Timing/sequence</button>
+          </div>
+          <div class="cat-fb" id="c2f"></div>
+        </div>
+        <div class="cat-item">
+          <div class="cat-scenario">A ticket routing automation routes tickets sequentially as they arrive. Two tickets from the same user arrive within 3 seconds of each other — ticket A is a hardware request, ticket B is a follow-up to ticket A with additional details. Ticket B arrives first in the system due to network timing. The automation routes B as a standalone ticket, then routes A as a new request. The resolution team receives them in reverse order.</div>
+          <div class="cat-q">What type of edge case is this?</div>
+          <div class="cat-opts" id="c3o">
+            <button class="cat-opt" onclick="doCat('c3','input',false,'❌ Both tickets contain normal content. The issue isn\'t the content but the order in which they arrived.')">📥 Input extreme</button>
+            <button class="cat-opt" onclick="doCat('c3','combo',false,'❌ This is a sequencing problem, not a combination of two different conditions creating a new interaction.')">🔀 Combination case</button>
+            <button class="cat-opt" onclick="doCat('c3','context',false,'❌ The context is the same for both tickets — same user, same environment. The issue is the order of arrival.')">🌍 Context variation</button>
+            <button class="cat-opt" onclick="doCat('c3','timing',true,'✅ Correct. Timing and sequence: the automation assumed tickets arrive in the order they were submitted. Network latency caused out-of-order delivery. The automation had no mechanism to detect or handle tickets that reference each other arriving out of sequence. Fix: Add a short ingestion buffer (30–60 seconds) and group tickets from the same user that arrive within a short window for human review before routing.')">⏱️ Timing/sequence</button>
+          </div>
+          <div class="cat-fb" id="c3f"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How to Find Edge Cases Before They Find You</h2>
+    <div class="prev-steps">
+      <div class="ps"><div class="ps-left"><div class="ps-dot">1</div><div class="ps-line"></div></div><div class="ps-body"><div class="ps-title">Enumerate your assumptions</div><div class="ps-desc">Before building, list every assumption embedded in the workflow design. "All inputs will be in English." "The same employee won't have simultaneous triggers." "All invoice amounts will be positive." Each assumption is a potential edge case. Writing them down explicitly reveals the cases you haven't designed for.</div><div class="ps-example">Try this: write your automation as a series of "if/then" statements. For each condition ("if the ticket contains a hardware keyword"), ask "what happens if this is false in an unexpected way?"</div></div></div>
+      <div class="ps"><div class="ps-left"><div class="ps-dot">2</div><div class="ps-line"></div></div><div class="ps-body"><div class="ps-title">Test with adversarial inputs, not just happy-path inputs</div><div class="ps-desc">Most automation testing uses clean, representative examples — the happy path. Edge case testing deliberately tries to break the system: submit empty fields, very long strings, $0 amounts, inputs in unexpected languages, duplicate submissions, out-of-order events. If the system can handle these without failing or producing wrong outputs, it's more robust.</div><div class="ps-example">Build an "edge case test suite" before deployment: at minimum 10 adversarial inputs specifically designed to test boundary conditions and unexpected combinations.</div></div></div>
+      <div class="ps"><div class="ps-left"><div class="ps-dot">3</div><div class="ps-line"></div></div><div class="ps-body"><div class="ps-title">Review manually-corrected outputs for patterns</div><div class="ps-desc">When humans correct the automation's outputs — rerouting a misclassified ticket, fixing a validation error, manually processing a failed record — those corrections are a map of edge cases the automation encountered in production. Review them monthly: what are the most common correction types? Are there patterns that suggest a systematic edge case the automation should be designed to handle?</div><div class="ps-example">Monthly: review all human overrides of automated outputs. Group them by type. Any correction type appearing more than 3 times per month is a candidate for a new rule or exception handler.</div></div></div>
+      <div class="ps"><div class="ps-left"><div class="ps-dot">4</div><div class="ps-line"></div></div><div class="ps-body"><div class="ps-title">Design explicit edge case handling — not just happy-path success</div><div class="ps-desc">For every edge case you identify, decide explicitly: should the automation handle it with a specific rule, route it to human review, or reject it with a clear error message? "I didn't design for this" should never be the answer in production. An unhandled edge case produces an unpredictable output — which is worse than a clear failure that routes to a human.</div><div class="ps-example">For each known edge case, add a branch: "if [edge case condition], then [specific action]." Even if that action is just "route to human review queue with an explanation of why," that's infinitely better than the automation silently mishandling it.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team builds an automated expense report approval workflow. The workflow was tested with 50 representative expense reports and worked correctly on all of them. On day 3 after deployment, an employee submits an expense report for a conference attended during maternity leave — the expense was legitimate but the employee's HR status shows "on leave," which the automation interprets as "inactive" and auto-rejects the claim. What type of edge case is this, and what does it reveal about the testing process?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">An input extreme — the expense amount was outside the normal range</button>
+        <button class="qopt" onclick="cq(this,true)">A context variation edge case — the same expense report submission means something different when the employee is on a specific type of leave (where expenses are still valid) vs. being inactive (where they wouldn't be). The automation interpreted "on leave" as equivalent to "inactive" without distinguishing between leave types. The testing process reveals a fundamental gap: 50 representative happy-path tests don't cover context variations. A thorough test would have included: employees on different leave types, employees in their first week before all systems sync, employees mid-transfer, and employees who recently changed roles. Testing only typical cases leaves a wide gap of context variations unexamined.</button>
+        <button class="qopt" onclick="cq(this,false)">A timing edge case — the expense report was submitted late</button>
+        <button class="qopt" onclick="cq(this,false)">A combination case — leave status and expense submission happening simultaneously</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Edge cases are situations at the boundary of what an automation was designed for — inputs that are unusual but legitimate, combinations that weren't anticipated, contexts that change the meaning of normal inputs, or timing sequences that differ from expected order. They're not rare exceptions: they're the 5% of real-world inputs that fall outside the designer's assumptions.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI misses edge cases because it was trained on typical examples. Unusual inputs get mapped to the nearest learned pattern — confidently but incorrectly. Testing on representative happy-path examples doesn't reveal edge cases; adversarial testing (deliberately trying to break the system with unusual inputs) does.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The professional approach to edge cases: enumerate your assumptions before building, test adversarially before deploying, review manual corrections monthly for patterns, and design explicit handling for every known edge case — even if that handling is just routing to human review. An unhandled edge case produces an unpredictable result. A handled edge case produces a predictable escalation.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showEC(i,btn){document.querySelectorAll(".ect").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".ec-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById("ec"+i).classList.add("active");}
+function doCat(id,type,el,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;const correct=(id==="c1"&&type==="input")||(id==="c2"&&type==="context")||(id==="c3"&&type==="timing");el.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="cat-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Context variation: 'on leave' and 'inactive' may both result in HR status flags, but they have very different business meanings for expense eligibility. The automation collapsed a nuanced distinction into a binary. The testing gap: 50 representative reports almost certainly didn't include employees on various leave types, employees mid-transfer, new employees, or employees with unusual HR statuses. Edge case testing requires specifically targeting context variations — not just testing typical cases more thoroughly.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("context variation"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The expense amount wasn't the issue (input extreme), the timing of submission wasn't the issue (timing case), and no two simultaneous conditions created a new interaction (combination case). The core problem is that 'on leave' and 'inactive' look the same to the automation but mean different things for expense eligibility — a classic context variation where the same surface feature has different business implications in different situations.";}
+}
+</script>
+</body>
+</html>

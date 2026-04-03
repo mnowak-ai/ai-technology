@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overconfident AI: Why Automated Systems Express Certainty Even When They're Wrong</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Confidence vs accuracy sim */
+.conf-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.cs-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.cs-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.cs-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.ticket-cards{display:flex;flex-direction:column;gap:12px;}
+.tc2{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .2s;}
+.tc2:hover{border-color:var(--purple);}
+.tc2.revealed{}
+.tc2-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.tc2-ticket{font-family:"Courier New",monospace;font-size:12px;background:var(--gray-soft);border-radius:8px;padding:8px 12px;line-height:1.65;color:var(--gray-text);margin-bottom:10px;}
+.tc2-ai-out{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.tc2-cat{font-size:13px;font-weight:700;color:var(--purple-dark);}
+.tc2-conf{font-size:12px;padding:3px 8px;border-radius:5px;font-weight:700;}
+.tc2-conf.high{background:var(--green-pale);color:var(--green);}
+.tc2-conf.medium{background:var(--orange-pale);color:var(--orange);}
+.tc2-conf.low{background:var(--red-pale);color:var(--red);}
+.tc2-reveal{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;cursor:pointer;border:none;background:none;font-family:"DM Sans",sans-serif;}
+.tc2-result{display:none;border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.65;margin-top:8px;}
+.tc2-result.show{display:block;}
+.tc2-result.correct{background:var(--green-pale);color:var(--green);}
+.tc2-result.wrong-high{background:var(--red-pale);color:var(--red);}
+.tc2-result.wrong-low{background:var(--orange-pale);color:var(--orange);}
+
+/* Distribution drift visualization */
+.drift-viz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.dv-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:14px;}
+.dv-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.dv-col{background:var(--white);border-radius:12px;padding:14px;}
+.dv-col-title{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.dv-bars{display:flex;flex-direction:column;gap:6px;}
+.dv-bar-row{display:flex;align-items:center;gap:8px;}
+.dv-bar-label{font-size:11px;color:var(--gray-muted);width:80px;flex-shrink:0;text-align:right;}
+.dv-bar-wrap{flex:1;height:14px;background:var(--gray-soft);border-radius:7px;overflow:hidden;}
+.dv-bar-fill{height:100%;border-radius:7px;transition:width .5s ease;}
+.dv-bar-pct{font-size:11px;font-weight:700;color:var(--gray-text);width:32px;flex-shrink:0;}
+
+/* Why it happens */
+.why-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.wc2{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.wc2-icon{font-size:24px;margin-bottom:8px;}
+.wc2-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.wc2-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Design response */
+.design-responses{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.dr{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;}
+.dr-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.dr-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.dr-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.dr-example{background:var(--purple-pale);border-radius:7px;padding:6px 10px;margin-top:6px;font-size:12px;line-height:1.55;color:var(--purple-dark);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.4 — Responsible Automation</div>
+  <h1>Overconfident AI: Why Automated Systems Express Certainty Even When They're Wrong</h1>
+  <p class="hero-sub">AI systems don't know what they don't know. A classification model trained on last year's tickets will confidently mis-route a ticket type it's never encountered — with the same certainty it routes the familiar ones. Understanding this mechanism is essential for anyone who validates or acts on AI outputs.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Fundamental Problem: Confidence Isn't Accuracy</h2>
+    <p>When a human expert says "I'm 95% sure this is a hardware issue," that confidence reflects genuine self-awareness — they've considered the evidence, weighed alternatives, and formed a calibrated judgment. When an AI model outputs "Hardware — 95% confidence," the number means something different and more limited: the model's output is far from the nearest boundary between categories in the mathematical space it learned from.</p>
+    <p>This is a critical distinction. <mark>An AI's confidence score reflects how similar the current input is to its training data — not how likely the classification is to be correct.</mark> An input that looks like nothing in the training data will produce a confident-seeming output because the model has no mechanism to recognize that it's operating in unfamiliar territory. It simply picks the closest match it has and outputs a score.</p>
+    <p>This is called the distribution shift problem: when real-world inputs start differing from the training data distribution, AI performance degrades — but the confidence scores don't necessarily reflect that degradation. The model keeps expressing certainty while making increasingly wrong decisions.</p>
+    <div class="pull-quote">
+      <p>An AI model that has never seen a security incident ticket will confidently classify the next one as hardware. Not because it knows — because it doesn't know that it doesn't know.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>See It in Practice — The Same Confidence, Very Different Accuracy</h2>
+    <p>Below are four tickets from a real help desk automation scenario. The AI was trained on 8 months of historical data. For each ticket, the AI outputs a category and confidence score. Click "Reveal Result" to see whether the AI was actually correct — and what the consequence was.</p>
+    <div class="conf-sim">
+      <div class="cs-label">🎯 Interactive — Confidence vs. Accuracy</div>
+      <div class="cs-title">Four tickets — same confidence scale, very different outcomes</div>
+      <div class="cs-sub">Read each ticket and the AI's classification. Before revealing the result, consider: does the confidence score match how certain you'd be?</div>
+      <div class="ticket-cards">
+
+        <div class="tc2">
+          <div class="tc2-header"><span style="font-size:16px">🎫</span><strong style="font-size:13px;color:var(--purple-dark)">Ticket 1 of 4</strong></div>
+          <div class="tc2-ticket">"My VPN keeps disconnecting every 20 minutes. I've restarted my laptop twice and it still does it. This has been happening for 3 days."</div>
+          <div class="tc2-ai-out"><div class="tc2-cat">AI: Network / VPN Issues</div><div class="tc2-conf high">92% confidence</div></div>
+          <button class="tc2-reveal" onclick="revealTC(0)">→ Reveal result</button>
+          <div class="tc2-result" id="tc0r"></div>
+        </div>
+
+        <div class="tc2">
+          <div class="tc2-header"><span style="font-size:16px">🎫</span><strong style="font-size:13px;color:var(--purple-dark)">Ticket 2 of 4</strong></div>
+          <div class="tc2-ticket">"I think I accidentally clicked a link in an email that looked weird. My computer is now running slower and I keep seeing pop-up windows I didn't open. Should I be worried?"</div>
+          <div class="tc2-ai-out"><div class="tc2-cat">AI: Software / Performance Issues</div><div class="tc2-conf high">88% confidence</div></div>
+          <button class="tc2-reveal" onclick="revealTC(1)">→ Reveal result</button>
+          <div class="tc2-result" id="tc1r"></div>
+        </div>
+
+        <div class="tc2">
+          <div class="tc2-header"><span style="font-size:16px">🎫</span><strong style="font-size:13px;color:var(--purple-dark)">Ticket 3 of 4</strong></div>
+          <div class="tc2-ticket">"Our team started using a new cloud tool called Notion last week. I can't get the desktop app to sync — it keeps showing an error saying it can't connect to the Notion servers."</div>
+          <div class="tc2-ai-out"><div class="tc2-cat">AI: Software / Installation</div><div class="tc2-conf medium">74% confidence</div></div>
+          <button class="tc2-reveal" onclick="revealTC(2)">→ Reveal result</button>
+          <div class="tc2-result" id="tc2r"></div>
+        </div>
+
+        <div class="tc2">
+          <div class="tc2-header"><span style="font-size:16px">🎫</span><strong style="font-size:13px;color:var(--purple-dark)">Ticket 4 of 4</strong></div>
+          <div class="tc2-ticket">"We're seeing intermittent failures on our API integration with our new ERP system. The error logs show 'OAuth token refresh failed' but only for transactions above $10,000. Smaller transactions complete fine."</div>
+          <div class="tc2-ai-out"><div class="tc2-cat">AI: Software / Authentication</div><div class="tc2-conf high">91% confidence</div></div>
+          <button class="tc2-reveal" onclick="revealTC(3)">→ Reveal result</button>
+          <div class="tc2-result" id="tc3r"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why This Happens: Four Mechanisms</h2>
+    <div class="why-cards">
+      <div class="wc2"><div class="wc2-icon">🗺️</div><div class="wc2-title">Training distribution boundary</div><div class="wc2-body">The model learned a map of the training data's input space. For inputs far from the training distribution, the model extrapolates from the nearest learned boundary — confidently, because it doesn't know it's extrapolating. It has no "I don't recognize this" response built in.</div></div>
+      <div class="wc2"><div class="wc2-icon">📈</div><div class="wc2-title">Calibration vs. discrimination</div><div class="wc2-body">Many models are trained to maximize accuracy on training data, not to produce calibrated confidence scores. A model can achieve 94% accuracy while its confidence scores are systematically over- or under-stated. "91% confidence" may not mean 91% accuracy — it may mean the model strongly preferred this class over others on this input, with no connection to real-world correctness probability.</div></div>
+      <div class="wc2"><div class="wc2-icon">🔄</div><div class="wc2-title">Distribution shift over time</div><div class="wc2-body">Training data represents the world as it was. As products change, users change their vocabulary, and new ticket types emerge, the training distribution drifts further from current inputs. The model's accuracy degrades, but its confidence scores don't automatically adjust — they still reflect how well the input matches learned patterns, not how well those patterns reflect current reality.</div></div>
+      <div class="wc2"><div class="wc2-icon">🎯</div><div class="wc2-title">Closest-match overconfidence</div><div class="wc2-body">When a completely novel input arrives, the model assigns it to the training category it most resembles — even if the resemblance is superficial. A security incident described using software vocabulary gets classified as Software with high confidence because that's the closest boundary. The model cannot flag "this doesn't match anything I know well."</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How Training Distribution Drift Looks Over Time</h2>
+    <p>The visualization below shows what happened to a real ticket triage system's training data vs. actual ticket distribution after 12 months. The model was trained on Month 1 data. By Month 12, the real distribution had shifted significantly.</p>
+    <div class="drift-viz">
+      <div class="dv-label">📊 Training data vs. actual distribution — Month 1 vs. Month 12</div>
+      <div class="dv-compare">
+        <div class="dv-col">
+          <div class="dv-col-title" style="color:var(--purple)">Training data (Month 1)</div>
+          <div class="dv-bars">
+            <div class="dv-bar-row"><div class="dv-bar-label">Hardware</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:30%;background:var(--purple)"></div></div><div class="dv-bar-pct">30%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Software</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:28%;background:var(--purple)"></div></div><div class="dv-bar-pct">28%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Network</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:22%;background:var(--purple)"></div></div><div class="dv-bar-pct">22%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Access/Auth</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:12%;background:var(--purple)"></div></div><div class="dv-bar-pct">12%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Security</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:5%;background:var(--purple)"></div></div><div class="dv-bar-pct">5%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Cloud/SaaS</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:3%;background:var(--purple)"></div></div><div class="dv-bar-pct">3%</div></div>
+          </div>
+        </div>
+        <div class="dv-col">
+          <div class="dv-col-title" style="color:var(--red)">Actual tickets (Month 12)</div>
+          <div class="dv-bars">
+            <div class="dv-bar-row"><div class="dv-bar-label">Hardware</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:18%;background:var(--red)"></div></div><div class="dv-bar-pct">18%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Software</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:24%;background:var(--red)"></div></div><div class="dv-bar-pct">24%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Network</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:19%;background:var(--red)"></div></div><div class="dv-bar-pct">19%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Access/Auth</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:16%;background:var(--red)"></div></div><div class="dv-bar-pct">16%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Security</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:9%;background:var(--red)"></div></div><div class="dv-bar-pct">9%</div></div>
+            <div class="dv-bar-row"><div class="dv-bar-label">Cloud/SaaS</div><div class="dv-bar-wrap"><div class="dv-bar-fill" style="width:14%;background:var(--red)"></div></div><div class="dv-bar-pct">14%</div></div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:13px;line-height:1.65;color:var(--gray-muted);margin-top:12px;">Cloud/SaaS tickets grew from 3% to 14% of volume as the company adopted new tools. Security incidents nearly doubled. The model trained on Month 1 data has very few examples of Cloud/SaaS and Security tickets — meaning those categories will be classified with low accuracy but potentially high confidence as they get mapped to the nearest familiar category.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What to Do About It: Design Responses That Work</h2>
+    <div class="design-responses">
+      <div class="dr"><div class="dr-icon">🚦</div><div><div class="dr-title">Confidence-threshold gating with human review</div><div class="dr-body">Set a confidence threshold below which the automation routes to human review rather than auto-classifying. The threshold should be calibrated to the consequence of misclassification — lower threshold (more human review) for high-stakes categories like Security, higher threshold for lower-stakes categories.</div><div class="dr-example">Example: If confidence &lt; 80%, route to human review queue. If confidence ≥ 80% AND category is "Security," still route to human review regardless of confidence score — security misclassification risk is too high to accept automation alone.</div></div></div>
+      <div class="dr"><div class="dr-icon">📊</div><div><div class="dr-title">Monitor accuracy, not just confidence</div><div class="dr-body">Confidence scores are not accuracy measurements. Track actual classification accuracy by sampling outputs and verifying them against ground truth — a human reviewing 50 random classifications per week and marking correct/incorrect. When sampled accuracy drops below a threshold, retrain the model.</div><div class="dr-example">Example: Monthly accuracy audit — randomly select 50 auto-classified tickets, verify correct routing, calculate accuracy rate. If accuracy drops below 90% in any category, flag for retraining review.</div></div></div>
+      <div class="dr"><div class="dr-icon">🔄</div><div><div class="dr-title">Regular retraining schedules</div><div class="dr-body">Schedule model retraining every 3–6 months using recent data, not just historical data. This refreshes the model's learned distribution to match current input patterns. Before retraining, review whether the category set itself needs updating — new ticket types should become new categories, not be absorbed into the wrong existing category.</div><div class="dr-example">Example: Quarterly retraining using the past 90 days of labeled tickets. Before each retraining cycle, have the team review whether new categories should be added based on tickets that were manually rerouted in the previous quarter.</div></div></div>
+      <div class="dr"><div class="dr-icon">⚠️</div><div><div class="dr-title">Novel input detection</div><div class="dr-body">Some systems can be configured to detect when an input is statistically far from the training distribution and flag it automatically — even if the confidence score is high. This "out-of-distribution detection" is not available in all tools, but when it is, it directly addresses the overconfidence problem.</div><div class="dr-example">Example: Datadog's ML anomaly detection can identify when incoming data has unusual patterns. Applied to ticket classification, it can flag inputs that don't resemble any training cluster — even before the model makes a wrong confident prediction.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A ticket triage AI was trained 14 months ago and has been running ever since. A review of its performance shows overall accuracy has remained stable at 91% — the monthly accuracy checks all look fine. But the IT team notices that tickets in the "Cloud/SaaS" category are being misrouted at a much higher rate than other categories. What is the most likely explanation, and what should be done?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI model has developed a bug that specifically affects the Cloud/SaaS category</button>
+        <button class="qopt" onclick="cq(this,true)">Distribution shift: Cloud/SaaS tickets have likely grown significantly as a share of total ticket volume since training, but the model was trained on old data where Cloud/SaaS tickets were rare. The overall 91% accuracy masks the category-level problem because Cloud/SaaS is still a small enough portion of total volume that its misroutes don't significantly move the aggregate number. The fix: retrain the model with recent data that includes a substantial number of Cloud/SaaS examples, and add Cloud/SaaS-specific keywords to the high-priority review queue until retraining is complete. Future accuracy audits should include per-category breakdowns, not just overall accuracy.</button>
+        <button class="qopt" onclick="cq(this,false)">The users submitting Cloud/SaaS tickets are describing their issues incorrectly</button>
+        <button class="qopt" onclick="cq(this,false)">91% overall accuracy is good enough — the Cloud/SaaS misroutes are acceptable</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI confidence scores reflect similarity to training data — not probability of being correct. A model can output 91% confidence while being wrong, because it has no mechanism to recognize that the input is outside its training distribution. Confidence and accuracy are related on training data but can diverge significantly in production.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Distribution shift is inevitable: as the real world changes — new tools, new user vocabulary, new ticket types — the training distribution becomes an increasingly poor match for current inputs. The model keeps expressing confidence while its accuracy degrades on novel inputs. Regular retraining, category-level accuracy monitoring, and per-category human review thresholds are the practical responses.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Never trust aggregate accuracy metrics as the sole measure of model health. A model can be 91% accurate overall while performing terribly on a specific category — which matters enormously if that category includes security incidents or other high-stakes ticket types. Category-level accuracy audits, stratified by ticket type, reveal the distribution shift that aggregate numbers hide.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+const tcResults=[
+  {type:"correct",text:"✅ Correctly classified. A straightforward VPN connectivity complaint with clear keywords the model learned well. 92% confidence reflects genuine pattern match on familiar training data. This is the AI working as intended — and the confidence score is meaningfully informative."},
+  {type:"wrong-high",text:"❌ Misclassified with high confidence. This is a potential malware/phishing incident — clicking a suspicious link, slowness, unexpected pop-ups are textbook indicators of compromise. But the AI has almost no security incident examples in its training data, so it mapped 'slower computer + pop-up windows' to the nearest familiar category: Software Performance. The 88% confidence reflects a strong pattern match to performance complaints — not a correct classification. This ticket should have gone to Security immediately."},
+  {type:"wrong-low",text:"⚠️ Misclassified with appropriate low confidence. 'Notion' isn't in the training data (new tool, adopted after training). The model classified it as Software/Installation as the closest match, but correctly expressed lower confidence — 74% — because the vocabulary didn't match well. This lower confidence score is the system working: it flagged uncertainty. In a well-designed flow, this ticket would route to human review, where the technician would recognize it as a Cloud/SaaS sync issue and route appropriately."},
+  {type:"wrong-high",text:"❌ Technically correct label, critically wrong queue. This is an enterprise systems integration issue — it needs a senior engineer familiar with ERP integrations and OAuth flows, not a standard authentication support queue. The AI correctly identified 'OAuth token refresh failed' as an authentication issue, but the business context (API integration, ERP system, transaction-amount-specific failure) signals this is a complex integration problem, not a password reset. The 91% confidence is accurate for the narrow classification but misleading about where this ticket actually belongs."}
+];
+function revealTC(i){const r=document.getElementById("tc"+i+"r");if(r.classList.contains("show"))return;r.className="tc2-result show "+tcResults[i].type;r.textContent=tcResults[i].text;const btn=document.querySelectorAll(".tc2-reveal")[i];if(btn)btn.style.display="none";}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Distribution shift explains both observations: Cloud/SaaS has grown from rare to common, the model has few training examples for this category so it maps them to similar-but-wrong categories with variable confidence, and the overall accuracy stays high because Cloud/SaaS is still a small enough volume not to dominate the aggregate. Category-level accuracy monitoring is essential — aggregate accuracy metrics are a lagging and misleading indicator of category-level distribution shift. Retraining with recent data plus category-specific review queues is the correct intervention.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Distribution shift"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Bugs produce different patterns (intermittent errors, specific error messages). User behavior differences are possible but not the primary explanation for category-level degradation in a 14-month-old model. And 91% overall accuracy masking a specific category problem is exactly the scenario where 'good enough overall' misses the real issue — the Cloud/SaaS category could be misrouting 40% of its tickets while the aggregate stays at 91% because that category is still a small share of volume.";}
+}
+</script>
+</body>
+</html>

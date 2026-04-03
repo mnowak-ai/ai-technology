@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Automation Audit: How to Review an Existing Workflow and Find Its Weaknesses</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Audit domains */
+.audit-domains{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.ad{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;}
+.ad-header{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:var(--white);transition:background .2s;}
+.ad-header:hover{background:var(--purple-pale);}
+.ad-header.open{background:var(--purple-pale);}
+.ad-num{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple);flex-shrink:0;width:28px;}
+.ad-icon{font-size:22px;flex-shrink:0;}
+.ad-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);flex:1;}
+.ad-chevron{font-size:16px;color:var(--purple);transition:transform .3s;}
+.ad-header.open .ad-chevron{transform:rotate(180deg);}
+.ad-body{display:none;padding:16px 20px;background:var(--white);border-top:1px solid var(--purple-mid);}
+.ad-header.open+.ad-body{display:block;}
+.ad-questions{display:flex;flex-direction:column;gap:8px;margin:10px 0;}
+.ad-q{background:var(--gray-soft);border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+.ad-q-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.ad-q.flag{border-left:3px solid var(--red);}
+.ad-q.flag .ad-q-label{color:var(--red);}
+.ad-q.check{border-left:3px solid var(--purple);}
+.ad-q.check .ad-q-label{color:var(--purple);}
+.ad-finding{background:var(--orange-pale);border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.6;color:var(--orange);margin-top:8px;}
+.ad-pass{background:var(--green-pale);border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.6;color:var(--green);margin-top:6px;}
+
+/* Interactive audit sim */
+.audit-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.as2-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.as2-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.as2-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.audit-flow{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.af-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.af-desc{font-size:13px;line-height:1.65;color:var(--gray-text);margin-bottom:10px;}
+.af-checklist{display:flex;flex-direction:column;gap:6px;}
+.af-check-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--gray-soft);border-radius:8px;cursor:pointer;transition:all .2s;}
+.af-check-item:hover{background:var(--purple-pale);}
+.af-check-item.checked-ok{background:var(--green-pale);}
+.af-check-item.checked-flag{background:var(--red-pale);}
+.af-check-icon{font-size:16px;flex-shrink:0;}
+.af-check-text{font-size:13px;line-height:1.5;color:var(--gray-text);flex:1;}
+.af-check-btns{display:flex;gap:4px;flex-shrink:0;}
+.af-cbtn{border:1.5px solid var(--purple-mid);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.af-cbtn:hover{background:var(--purple-pale);border-color:var(--purple);}
+.af-cbtn.ok{border-color:var(--green);background:var(--green);color:var(--white);}
+.af-cbtn.flag{border-color:var(--red);background:var(--red);color:var(--white);}
+.audit-score{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px;font-size:14px;line-height:1.7;display:none;}
+.audit-score.show{display:block;}
+
+/* Risk rating */
+.risk-matrix{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:20px 0;}
+.rm-card{border-radius:12px;padding:14px;text-align:center;}
+.rm-card.low{background:var(--green-pale);border:2px solid #B5D5C0;}
+.rm-card.medium{background:var(--orange-pale);border:2px solid #F5D5A2;}
+.rm-card.high{background:var(--red-pale);border:2px solid #F5C2C2;}
+.rm-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.rm-card.low .rm-label{color:var(--green);}
+.rm-card.medium .rm-label{color:var(--orange);}
+.rm-card.high .rm-label{color:var(--red);}
+.rm-title{font-size:13px;font-weight:700;color:var(--gray-text);margin-bottom:6px;}
+.rm-desc{font-size:11px;line-height:1.55;color:var(--gray-muted);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.4 — Responsible Automation</div>
+  <h1>The Automation Audit: How to Review an Existing Workflow and Find Its Weaknesses</h1>
+  <p class="hero-sub">You will inherit automated workflows you didn't build. This is guaranteed in any tech role that involves automation. This article gives you a structured process for auditing those workflows — knowing where to look, what questions to ask, and what warning signs to flag before they become incidents.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Inherited Automations Are Riskier Than Ones You Build</h2>
+    <p>When you build an automation yourself, you understand its design assumptions, its known limitations, and the edge cases you couldn't handle. When you inherit one, you get the workflow without any of that context. The automation looks like a black box: it runs, it produces outputs, and you have no way to know whether it handles unusual inputs correctly, whether the data it's reading is still reliable, or whether the person who built it tested it properly.</p>
+    <p><mark>An inherited automation that's been running for 18 months without incident might be genuinely well-built — or it might have a silent failure mode that just hasn't been triggered yet.</mark> An audit tells you which it is.</p>
+    <div class="pull-quote">
+      <p>The most dangerous automation is the one that's been running for a long time with no problems — because nobody has looked at it since deployment, nobody knows what assumptions it makes, and nobody will notice when those assumptions stop being true.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Six Audit Domains — Where to Look</h2>
+    <p>A thorough automation audit covers six areas. Click each to see the specific questions to ask and what you're looking for.</p>
+    <div class="audit-domains">
+
+      <div class="ad">
+        <div class="ad-header" onclick="toggleAD(this)"><div class="ad-num">1</div><div class="ad-icon">🗺️</div><div class="ad-title">Design Understanding — Do you know what this automation actually does?</div><div class="ad-chevron">▾</div></div>
+        <div class="ad-body">
+          <p>Before you can evaluate an automation's risks, you need to understand its design: what triggers it, what actions it takes, what conditions it evaluates, and what data it reads and writes. If you can't answer these questions, that's already a finding — undocumented automations are a risk in themselves.</p>
+          <div class="ad-questions">
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Can you describe in plain English exactly what this automation does, step by step? If not, start by building that description — trace the flow from trigger to final action.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>What systems does it read from and write to? Which users, records, or processes are affected by its outputs?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>Nobody on the current team can explain what the automation does. Original builder has left. No documentation exists. This is an immediate priority — you're running an unknown process in production.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Was the automation built for a business process that has since changed? Are the rules it implements still correct for current operations?</div>
+          </div>
+          <div class="ad-finding">⚠️ Common finding: The automation was built for a process that was later modified. The automation rules were never updated and now reflect old business logic — but nobody noticed because outputs "look right" in aggregate.</div>
+        </div>
+      </div>
+
+      <div class="ad">
+        <div class="ad-header" onclick="toggleAD(this)"><div class="ad-num">2</div><div class="ad-icon">📊</div><div class="ad-title">Performance Data — What do the run logs actually show?</div><div class="ad-chevron">▾</div></div>
+        <div class="ad-body">
+          <p>Every automation platform maintains a run history. This is the most objective record of what the automation has actually been doing — not what you think it's been doing. Pull 90 days of run history and examine it systematically.</p>
+          <div class="ad-questions">
+            <div class="ad-q check"><div class="ad-q-label">Check</div>What is the success rate over the past 90 days? Has it been stable, improving, or declining?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>Success rate below 90%, or a visible downward trend even from a high starting point. Any automation above 5% failure rate deserves investigation.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>What do the failed runs have in common? Examine 10+ failed runs and look for patterns — same day of week, same input type, same step, same error message.</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>Failed runs cluster around the same step or same error type, indicating a systematic issue rather than random failures.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Has run duration changed over time? Is it taking significantly longer than it used to? (Often signals upstream API slowness or growing data volumes.)</div>
+          </div>
+          <div class="ad-finding">⚠️ Common finding: Run success rate looks fine at 94% — but examination of failed runs reveals they all involve records with a specific characteristic (amounts over $10K, records from a specific department, tickets submitted via mobile) that the automation handles incorrectly.</div>
+        </div>
+      </div>
+
+      <div class="ad">
+        <div class="ad-header" onclick="toggleAD(this)"><div class="ad-num">3</div><div class="ad-icon">✅</div><div class="ad-title">Output Quality — Are the outputs actually correct?</div><div class="ad-chevron">▾</div></div>
+        <div class="ad-body">
+          <p>A run marked "Success" means every step executed without throwing an error. It does not mean the output is correct. Verification requires checking actual outputs against ground truth — comparing what the automation produced to what should have been produced.</p>
+          <div class="ad-questions">
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Sample 20–30 records that the automation processed. Manually verify that each one was handled correctly — correct category, correct data, correct routing. What is the actual accuracy rate?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>Accuracy noticeably lower than expected, or accuracy varies significantly by input type or category.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Are there patterns in the outputs? Does the automation systematically over-route or under-route certain categories? Does it produce blank fields in some records?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>Outputs look "mostly fine" in aggregate but have consistent quirks — always blank for a specific field, always routes a specific user's tickets to the wrong queue.</div>
+          </div>
+          <div class="ad-pass">✅ What to look for in a healthy audit: Sampled outputs consistently match what manual processing would have produced. Blank fields or routing quirks either don't exist or have a known, acceptable explanation.</div>
+        </div>
+      </div>
+
+      <div class="ad">
+        <div class="ad-header" onclick="toggleAD(this)"><div class="ad-num">4</div><div class="ad-icon">🛡️</div><div class="ad-title">Human Oversight — Is there meaningful review, or is it theater?</div><div class="ad-chevron">▾</div></div>
+        <div class="ad-body">
+          <p>Many automations have nominal human review steps — but whether those steps involve genuine evaluation or just rubber-stamping is a critical distinction. An 8-second average review time on a task that requires comparing AI output to source documents is theater, not oversight.</p>
+          <div class="ad-questions">
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Does a human review step exist? For what types of outputs or decisions?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>No human review step exists for outputs that are high-stakes, irreversible, or drive significant decisions.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>If a review step exists — what is the average time reviewers spend on each item? What is the correction rate (% of items where reviewers change the AI's output)?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>Very low average review time (under 15 seconds for complex tasks) or near-zero correction rate — both indicate rubber-stamping rather than genuine review.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Is there an escalation path — a way for reviewers to flag an item for additional review or manager attention if something seems wrong?</div>
+          </div>
+          <div class="ad-finding">⚠️ Common finding: A review step exists and the audit shows a 100% approval rate over 6 months. This is actually more concerning than a 98% approval rate — it suggests reviewers are approving everything without catching any errors, which means the review step isn't functioning as a quality check.</div>
+        </div>
+      </div>
+
+      <div class="ad">
+        <div class="ad-header" onclick="toggleAD(this)"><div class="ad-num">5</div><div class="ad-icon">🔔</div><div class="ad-title">Monitoring & Alerting — Will you know when it breaks?</div><div class="ad-chevron">▾</div></div>
+        <div class="ad-body">
+          <p>The most critical question in an automation audit: if this automation starts failing silently, how long before someone notices? If the answer is "when a user reports a problem," the monitoring is inadequate.</p>
+          <div class="ad-questions">
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Are failure notification alerts configured? Who receives them? How quickly?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>No failure notifications. The only way failures are detected is manual log review or user complaints.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Are there output sanity checks — automated checks that flag when outputs are outside expected ranges (e.g., "alert if weekly report shows &gt;15% change in any metric week-over-week")?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>No output sanity checks. The automation can produce systematically wrong results with no alert firing.</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>When were the authentication connections last verified? Are any approaching expiration?</div>
+          </div>
+          <div class="ad-pass">✅ Minimum monitoring standard: Failure notifications configured → named person or team → response time expectation defined. Plus at minimum one output sanity check that would catch systematic wrong results.</div>
+        </div>
+      </div>
+
+      <div class="ad">
+        <div class="ad-header" onclick="toggleAD(this)"><div class="ad-num">6</div><div class="ad-icon">⚠️</div><div class="ad-title">Risk Assessment — What's the worst case if this fails silently?</div><div class="ad-chevron">▾</div></div>
+        <div class="ad-body">
+          <p>The final domain is a consequence assessment: given what you now know about this automation's design, performance, oversight, and monitoring — what is the worst plausible failure scenario, and how quickly would it be detected?</p>
+          <div class="ad-questions">
+            <div class="ad-q check"><div class="ad-q-label">Check</div>If the automation produced incorrect outputs for 2 weeks without detection, what would the impact be? (Quantify if possible: how many records affected, what downstream decisions made on bad data, what business or customer impact.)</div>
+            <div class="ad-q check"><div class="ad-q-label">Check</div>Given the current monitoring, how long would a silent failure realistically run before detection?</div>
+            <div class="ad-q flag"><div class="ad-q-label">🚩 Red flag</div>High-impact consequences (financial decisions, security monitoring, customer-facing outputs) + long detection time (no monitoring = "until a user reports it") = highest-priority audit finding.</div>
+          </div>
+          <div class="ad-finding">⚠️ The risk matrix: High impact + long detection time = urgent remediation. Low impact + fast detection = acceptable risk. Use this to prioritize which audit findings to address first.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practice: Audit a Real Workflow</h2>
+    <div class="audit-sim">
+      <div class="as2-label">🔍 Interactive Audit</div>
+      <div class="as2-title">Audit this inherited ticket triage automation</div>
+      <div class="as2-sub">You've just inherited an automation that's been running for 14 months. Work through the audit checklist — mark each finding as ✅ OK or 🚩 Flag based on what you discover. Complete all items to see your audit summary.</div>
+      <div class="audit-flow">
+        <div class="af-title">What you know about the automation:</div>
+        <div class="af-desc">Built 14 months ago by a team member who left 6 months ago. Classifies and routes ~90 tickets/day. Run logs show 93% success rate. One-sentence documentation: "Sorts tickets by type." No failure notifications configured. Last 6 months show 100% approval rate in the human review step. Average review time: 9 seconds per ticket. The original builder's training data is unavailable — it was on their personal laptop.</div>
+        <div class="af-checklist" id="auditChecklist">
+          <div class="af-check-item" data-flag="true"><div class="af-check-icon">📋</div><div class="af-check-text">Documentation: Only one sentence exists. Can you describe what the automation actually does in detail?</div><div class="af-check-btns"><button class="af-cbtn" onclick="auditCheck(0,false,this)">✅ OK</button><button class="af-cbtn" onclick="auditCheck(0,true,this)">🚩 Flag</button></div></div>
+          <div class="af-check-item" data-flag="true"><div class="af-check-icon">📊</div><div class="af-check-text">Performance: 93% success rate — what do the 7% of failed runs look like? Any patterns?</div><div class="af-check-btns"><button class="af-cbtn" onclick="auditCheck(1,false,this)">✅ OK</button><button class="af-cbtn" onclick="auditCheck(1,true,this)">🚩 Flag</button></div></div>
+          <div class="af-check-item" data-flag="false"><div class="af-check-icon">✅</div><div class="af-check-text">Output volume: 90 tickets/day processed, 14 months running. Significant production use.</div><div class="af-check-btns"><button class="af-cbtn" onclick="auditCheck(2,false,this)">✅ OK</button><button class="af-cbtn" onclick="auditCheck(2,true,this)">🚩 Flag</button></div></div>
+          <div class="af-check-item" data-flag="true"><div class="af-check-icon">👤</div><div class="af-check-text">Human review: 100% approval rate, 9-second average review time per ticket over 6 months.</div><div class="af-check-btns"><button class="af-cbtn" onclick="auditCheck(3,false,this)">✅ OK</button><button class="af-cbtn" onclick="auditCheck(3,true,this)">🚩 Flag</button></div></div>
+          <div class="af-check-item" data-flag="true"><div class="af-check-icon">🔔</div><div class="af-check-text">Monitoring: No failure notifications configured. Failures detected how? Unknown.</div><div class="af-check-btns"><button class="af-cbtn" onclick="auditCheck(4,false,this)">✅ OK</button><button class="af-cbtn" onclick="auditCheck(4,true,this)">🚩 Flag</button></div></div>
+          <div class="af-check-item" data-flag="true"><div class="af-check-icon">📦</div><div class="af-check-text">Training data: Unavailable. Original builder left. Cannot assess what data the model trained on or how old it is.</div><div class="af-check-btns"><button class="af-cbtn" onclick="auditCheck(5,false,this)">✅ OK</button><button class="af-cbtn" onclick="auditCheck(5,true,this)">🚩 Flag</button></div></div>
+        </div>
+      </div>
+      <div class="audit-score" id="auditScore"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Prioritizing What to Fix — The Risk Matrix</h2>
+    <p>An audit will typically surface multiple findings. Use the risk matrix to prioritize: which findings deserve immediate action vs. planned remediation vs. monitoring?</p>
+    <div class="risk-matrix">
+      <div class="rm-card high"><div class="rm-label">🔴 Immediate</div><div class="rm-title">High impact + long detection time</div><div class="rm-desc">Fix before the next business day. Examples: no monitoring on a financial automation, no HITL on security-critical routing, undocumented automation in production with no named owner.</div></div>
+      <div class="rm-card medium"><div class="rm-label">🟠 Planned</div><div class="rm-title">High impact OR long detection time (not both)</div><div class="rm-desc">Address within 2 weeks. Examples: review step exists but appears to be rubber-stamping, output sanity checks missing but failure notifications are configured.</div></div>
+      <div class="rm-card low"><div class="rm-label">🟢 Monitor</div><div class="rm-title">Low impact AND fast detection</div><div class="rm-desc">Log and watch. Examples: documentation is thin but the automation owner knows how it works, training data is 12 months old but the category distribution hasn't changed significantly.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">During an automation audit, you discover that a report generation workflow has been running for 9 months with no output sanity checks, no failure notifications, and a success rate of 99.8%. The reports are used by leadership for quarterly planning. A colleague argues: "The 99.8% success rate proves it's working fine — no audit findings needed here." What's wrong with this argument?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">99.8% success rate is too low — automations used for leadership decisions should be at 100%</button>
+        <button class="qopt" onclick="cq(this,true)">Run success rate measures whether each run completed without errors — not whether outputs are correct. The 0.2% of failed runs are visible and presumably handled. But the 99.8% of "successful" runs could be producing systematically wrong outputs due to dirty data, API changes, or data transformation errors — and nobody would know because there are no output sanity checks and no failure notifications for wrong outputs (only for errors). The dirty data case study in Article 1 of this lesson is exactly this scenario: 100% of runs succeeded for 6 weeks while producing false numbers that drove a $2M hiring decision. Success rate is not output accuracy.</button>
+        <button class="qopt" onclick="cq(this,false)">The automation has been running too long without retraining — 9 months of data drift is the real issue</button>
+        <button class="qopt" onclick="cq(this,false)">Leadership shouldn't be using automated reports for planning decisions without manual verification</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>An automation audit covers six domains: design understanding (do you know what it does?), performance data (what do the run logs show?), output quality (are outputs actually correct?), human oversight (is review genuine or rubber-stamping?), monitoring and alerting (will you know when it breaks?), and risk assessment (what's the worst case if it fails silently?). Each domain has specific questions and specific red flags.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Run success rate is not output accuracy. An automation with 99.8% run success rate can be producing systematically wrong outputs in every successful run — if the underlying data changed, an API format shifted, or a logic error produces wrong results without throwing an error. Output quality auditing requires sampling actual outputs and comparing them to ground truth, not checking whether runs completed.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Prioritize audit findings using the risk matrix: high-impact outputs + long detection time = immediate remediation. The most dangerous inherited automation is one that runs successfully in the background, produces decision-driving outputs, and has no monitoring — because when its assumptions become wrong, nobody will know until the damage is done.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleAD(header){header.classList.toggle("open");}
+const auditAnswers=[null,null,null,null,null,null];
+const correctFlags=[true,true,false,true,true,true];
+function auditCheck(idx,flagged,btn){
+  const row=btn.closest(".af-check-item");
+  row.querySelectorAll(".af-cbtn").forEach(b=>{b.className="af-cbtn";});
+  btn.classList.add(flagged?"flag":"ok");
+  auditAnswers[idx]=flagged;
+  if(auditAnswers.every(a=>a!==null)){showAuditScore();}
+}
+function showAuditScore(){
+  const correct=auditAnswers.filter((a,i)=>a===correctFlags[i]).length;
+  const flags=auditAnswers.filter(a=>a===true).length;
+  const score=document.getElementById("auditScore");
+  score.className="audit-score show";
+  score.innerHTML=`<strong style="color:var(--purple)">Audit complete — ${correct}/6 items correctly assessed</strong><br><br>
+  <span style="font-size:14px;line-height:1.7;color:var(--gray-text)">This workflow has <strong style="color:var(--red)">5 significant findings</strong>: no meaningful documentation, 7% failure rate worth investigating, rubber-stamp review (100% approval, 9-sec average), no failure notifications, and no access to training data. The only non-finding is the production volume — the automation is actively used, which makes all five findings more urgent.<br><br>Risk assessment: This automation processes security-relevant decisions (ticket routing could affect security incident handling) with no monitoring and ineffective review. <strong>Classification: High priority for remediation before continuing to trust its outputs.</strong></span>`;
+}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Success rate and output accuracy are independent measurements. Run success rate measures whether the automation executed without throwing errors. Output accuracy measures whether the outputs are correct. An automation can have 100% run success while producing 100% wrong outputs — if the wrong outputs don't cause an error condition, every run 'succeeds.' The report generation case study in Article 1 of this lesson is exactly this: all runs succeeded for 6 weeks while the data pipeline silently produced inflated numbers. No error was thrown. The success rate looked perfect. The outputs were wrong.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Success rate measures"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ 99.8% is actually very high for a complex automation — the success rate is not the problem. Data drift is worth monitoring but isn't the specific concern this colleague's argument raises. And while manual verification of leadership reports is a good practice, the specific flaw in the argument is that success rate ≠ output accuracy. An automation can produce perfectly wrong results every time while showing 100% success rate.";}
+}
+</script>
+</body>
+</html>
