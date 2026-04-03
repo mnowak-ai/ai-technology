@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Correlation vs. Causation in Data: The Mistake That Misleads Teams Every Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Three-type cards */
+.type-cards{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.type-card{border-radius:16px;overflow:hidden;border:2px solid var(--purple-mid);}
+.tc-header{padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.tc-header.causal{background:var(--green-pale);}
+.tc-header.spurious{background:var(--orange-pale);}
+.tc-header.confound{background:var(--blue-pale);}
+.tc-header.reverse{background:var(--red-pale);}
+.tc-icon{font-size:28px;flex-shrink:0;}
+.tc-meta{}
+.tc-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.tc-header.causal .tc-type{color:var(--green);}
+.tc-header.spurious .tc-type{color:var(--orange);}
+.tc-header.confound .tc-type{color:var(--blue);}
+.tc-header.reverse .tc-type{color:var(--red);}
+.tc-name{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--gray-text);}
+.tc-body{background:var(--white);padding:16px 20px;}
+.tc-body p{font-size:14px;line-height:1.75;margin-bottom:10px;}
+.tc-body p:last-child{margin-bottom:0;}
+.tc-example{background:var(--gray-soft);border-radius:8px;padding:11px 14px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+.tc-ai-note{background:var(--purple-pale);border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.6;color:var(--purple-dark);margin-top:8px;}
+
+/* Correlation explorer sim */
+.corr-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.corr-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.corr-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.corr-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.corr-items{display:flex;flex-direction:column;gap:14px;}
+.corr-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;}
+.corr-ctx{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:8px;}
+.corr-finding{background:var(--purple-pale);border-radius:8px;padding:11px 14px;font-size:13px;line-height:1.6;color:var(--purple-dark);margin-bottom:12px;}
+.corr-finding-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:4px;}
+.corr-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.corr-opts{display:flex;flex-direction:column;gap:8px;}
+.corr-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:left;line-height:1.5;}
+.corr-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.corr-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.corr-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.corr-fb{font-size:13px;line-height:1.65;padding:10px 14px;border-radius:10px;margin-top:10px;display:none;}
+.corr-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.corr-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Five questions */
+.five-q{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.fq-item{display:flex;gap:0;}
+.fq-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.fq-dot{width:38px;height:38px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700;flex-shrink:0;}
+.fq-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.fq-item:last-child .fq-line{display:none;}
+.fq-body{flex:1;padding:0 0 18px 14px;padding-top:4px;}
+.fq-q{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.fq-why{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.2 — Pattern Recognition & Insights</div>
+  <h1>Correlation vs. Causation in Data: The Mistake That Misleads Teams Every Day</h1>
+  <p class="hero-sub">AI systems surface correlations constantly. Two things move together — and it looks like one is causing the other. This article teaches you to distinguish correlation from causation in real tech scenarios, so you stop acting on patterns that don't mean what they seem to.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why This Mistake Is So Easy to Make</h2>
+    <p>Correlation is when two things tend to move together — when A goes up, B tends to go up (or down). Causation is when one thing <em>causes</em> the other to change. These sound similar but are fundamentally different, and confusing them leads to wrong decisions every day in every type of organization.</p>
+    <p>AI tools make this harder, not easier. An AI can scan millions of data points and surface correlations faster than any human analyst. <mark>But AI correlation detection has no understanding of cause and effect. It finds patterns that move together. Whether one causes the other, or both are caused by something else, or the correlation is pure coincidence — the AI cannot tell you.</mark> That determination requires human reasoning.</p>
+    <div class="pull-quote">
+      <p>AI is extraordinarily good at finding patterns. It is completely unable to explain them. The explanation is always yours to provide — and getting it wrong means fixing the wrong problem.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Types of Correlation — Only One Is Causation</h2>
+    <div class="type-cards">
+      <div class="type-card">
+        <div class="tc-header causal"><div class="tc-icon">✅</div><div class="tc-meta"><div class="tc-type">Type 1</div><div class="tc-name">Real Causation</div></div></div>
+        <div class="tc-body">
+          <p>A genuinely causes B. The mechanism is real, testable, and consistent. If you change A, B changes as a result. This is what you're looking for when investigating data patterns — and it's rarer than it seems.</p>
+          <div class="tc-example"><strong>Tech example:</strong> A deployment pushed at 14:32 introduced a database query with no index. As traffic increased after the deployment, query time increased (unbounded table scan gets slower with more rows being processed). Error rate increased as query timeouts exceeded the connection pool capacity. This is a real causal chain: deployment → slow query → connection exhaustion → errors.</div>
+          <div class="tc-ai-note">🤖 AI can flag the timing correlation (errors started after deployment). It cannot verify the causal mechanism — a human reading the query execution plan confirms the index is missing.</div>
+        </div>
+      </div>
+      <div class="type-card">
+        <div class="tc-header spurious"><div class="tc-icon">⚠️</div><div class="tc-meta"><div class="tc-type">Type 2</div><div class="tc-name">Spurious Correlation</div></div></div>
+        <div class="tc-body">
+          <p>A and B move together by coincidence, with no real relationship. This happens constantly in large datasets — when you have thousands of metrics, some will correlate with each other purely by chance. The more metrics you track, the more spurious correlations you'll find.</p>
+          <div class="tc-example"><strong>Tech example:</strong> An AI analysis finds that help desk ticket volume is strongly correlated with the marketing team's social media posting frequency. This is almost certainly spurious — more social posts probably don't cause more IT tickets. The correlation might exist because both activities increase on certain days of the week, or during product launch periods. Correcting for the shared factor (product launches) likely eliminates the correlation.</div>
+          <div class="tc-ai-note">🤖 AI will surface this correlation because it exists in the data. It cannot flag it as spurious — that requires domain knowledge. The question to always ask: what is the plausible mechanism connecting these two things?</div>
+        </div>
+      </div>
+      <div class="type-card">
+        <div class="tc-header confound"><div class="tc-icon">🔀</div><div class="tc-meta"><div class="tc-type">Type 3</div><div class="tc-name">Confounding Variable</div></div></div>
+        <div class="tc-body">
+          <p>A and B both move because C causes both of them — not because A causes B or B causes A. The hidden variable C is the confound. This is one of the most common sources of misleading conclusions in data analysis.</p>
+          <div class="tc-example"><strong>Tech example:</strong> An analysis finds that server CPU usage is correlated with help desk ticket volume. Is high CPU causing users to submit tickets? Are support calls somehow stressing the servers? Neither — the confounding variable is time of day. From 9am to 11am, both CPU usage AND ticket volume are high because users are actively working. From 3am to 5am, both are low because nobody's working. Time of day causes both — removing that variable likely eliminates the correlation.</div>
+          <div class="tc-ai-note">🤖 AI correlation analysis on unadjusted time series data will almost always find spurious time-of-day correlations. Controlling for temporal confounds (by looking at residuals or within-hour comparisons) requires human-directed analysis design.</div>
+        </div>
+      </div>
+      <div class="type-card">
+        <div class="tc-header reverse"><div class="tc-icon">🔄</div><div class="tc-meta"><div class="tc-type">Type 4</div><div class="tc-name">Reverse Causation</div></div></div>
+        <div class="tc-body">
+          <p>B causes A, but you assumed A causes B. The causal direction is reversed from your assumption. This produces confidently wrong recommendations: you try to fix A, but since B is the real driver, nothing changes.</p>
+          <div class="tc-example"><strong>Tech example:</strong> A team notices that tickets from the Sales department have longer resolution times than tickets from other departments. They conclude that Sales users are submitting poorly-described tickets, making them harder to resolve. They build a training program for Sales users on better ticket writing. Resolution time doesn't improve. Investigation reveals the actual cause: Sales tickets are more complex because they involve CRM integrations and licensing issues that require specialized knowledge the L1 team doesn't have. The complexity causes the longer resolution time — Sales users' ticket writing didn't cause it.</div>
+          <div class="tc-ai-note">🤖 AI can identify that Sales tickets and longer resolution times are correlated. It cannot determine the causal direction — whether complexity causes long resolution, or some property of Sales users causes it. A human who reads the ticket content determines the actual mechanism.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practice: Correlation or Causation?</h2>
+    <div class="corr-sim">
+      <div class="corr-label">🎯 Practice — Diagnose the Relationship</div>
+      <div class="corr-title">What type of relationship is this?</div>
+      <div class="corr-sub">An AI analysis surfaced each finding below. For each one, determine whether it's likely real causation, a confounding variable, spurious correlation, or reverse causation.</div>
+      <div class="corr-items">
+
+        <div class="corr-item">
+          <div class="corr-ctx">Scenario 1 — IT Operations</div>
+          <div class="corr-finding"><div class="corr-finding-label">🤖 AI Finding</div>Strong correlation found: On days when database backup jobs run, average API response time is 340% higher. r = 0.94 (very strong).</div>
+          <div class="corr-q">What is the most likely relationship here?</div>
+          <div class="corr-opts" id="c1o">
+            <button class="corr-opt" onclick="doCorr('c1',true,this,'✅ Correct. This is almost certainly real causation — and a highly actionable finding. The backup jobs run at a specific time and consume significant disk I/O and CPU. During that window, the database is competing for resources with API requests, slowing both down. The r=0.94 correlation is not suspicious here because the mechanism is completely plausible: backup job runs → I/O contention → slower database → slower API responses. The fix: schedule backups during off-peak hours.')">✅ Real causation — backup jobs consume resources, causing API slowdowns</button>
+            <button class="corr-opt" onclick="doCorr('c1',false,this,'❌ This is not a confounding variable situation. The backup jobs directly consume the same resources (disk I/O, CPU) that the API depends on. There\'s no hidden third factor causing both — the backup jobs cause the slowdown directly.')">🔀 Confounding variable — both are caused by something else</button>
+            <button class="corr-opt" onclick="doCorr('c1',false,this,'❌ This is not spurious. A 0.94 correlation with a clear plausible mechanism (resource contention) is a real relationship, not a coincidence.')">⚠️ Spurious — coincidental correlation with no real mechanism</button>
+          </div>
+          <div class="corr-fb" id="c1f"></div>
+        </div>
+
+        <div class="corr-item">
+          <div class="corr-ctx">Scenario 2 — Help Desk Analytics</div>
+          <div class="corr-finding"><div class="corr-finding-label">🤖 AI Finding</div>Strong correlation: Days with more help desk tickets also have more commits to the code repository. r = 0.81.</div>
+          <div class="corr-q">What is the most likely relationship here?</div>
+          <div class="corr-opts" id="c2o">
+            <button class="corr-opt" onclick="doCorr('c2',false,this,'❌ There\'s no plausible mechanism by which more code commits would directly cause more help desk tickets — or vice versa. The most likely explanation is a confounding variable.')">✅ Real causation — more code commits introduce bugs, causing tickets</button>
+            <button class="corr-opt" onclick="doCorr('c2',true,this,'✅ Correct. Both more code commits AND more help desk tickets are driven by the same confounding variable: active workdays. Developers commit more code on Tuesdays, Wednesdays, and Thursdays than on Mondays and Fridays. Users generate more support requests on those same high-activity days. Neither causes the other — day-of-week drives both. Controlling for day of week likely eliminates or dramatically reduces this correlation.')">🔀 Confounding variable — both are driven by active workday patterns</button>
+            <button class="corr-opt" onclick="doCorr('c2',false,this,'❌ While spurious correlation is possible, the more likely explanation is that a real third variable (day-of-week / active workday) drives both. Spurious correlation implies pure coincidence with no shared driver — but here there\'s an obvious common driver to investigate first.')">⚠️ Spurious — coincidental, no real connection</button>
+          </div>
+          <div class="corr-fb" id="c2f"></div>
+        </div>
+
+        <div class="corr-item">
+          <div class="corr-ctx">Scenario 3 — Performance Analysis</div>
+          <div class="corr-finding"><div class="corr-finding-label">🤖 AI Finding</div>Teams that resolve tickets faster have higher user satisfaction scores. The correlation is r = 0.78. Recommendation: reduce resolution time to improve satisfaction.</div>
+          <div class="corr-q">What's the problem with acting on this finding directly?</div>
+          <div class="corr-opts" id="c3o">
+            <button class="corr-opt" onclick="doCorr('c3',false,this,'❌ The relationship probably is real — faster resolution likely does contribute to satisfaction. But the issue is more subtle: is faster resolution the primary driver, or does something else explain more of the satisfaction variance?')">The correlation is probably spurious — customer satisfaction is too complex to correlate with one variable</button>
+            <button class="corr-opt" onclick="doCorr('c3',true,this,'✅ Correct. The correlation is real, but the causal story is incomplete. The AI\'s recommendation ("reduce resolution time to improve satisfaction") assumes resolution time is the primary lever for satisfaction. But the same correlation could emerge if: quality of resolution drives satisfaction AND quality of resolution also reduces time (good technicians are both faster and more satisfying). Or if other factors (communication, empathy, first contact resolution) drive satisfaction more than speed does. Blindly reducing resolution time — by, say, auto-closing tickets faster — could decrease satisfaction even as the metric improves. The recommendation needs causal investigation before action.')">The correlation is real but the recommendation assumes causation — the mechanism needs investigation before acting</button>
+            <button class="corr-opt" onclick="doCorr('c3',false,this,'❌ The correlation likely isn\'t reverse causation — satisfaction probably doesn\'t cause faster resolution (though there\'s a small argument that satisfied users who reply promptly speed resolution). The main issue is that correlation alone doesn\'t tell you whether speed is the primary driver of satisfaction or a proxy for other quality factors.')">This is reverse causation — higher satisfaction causes faster resolution, not the other way around</button>
+          </div>
+          <div class="corr-fb" id="c3f"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Five Questions to Ask Before Acting on Any AI-Surfaced Correlation</h2>
+    <div class="five-q">
+      <div class="fq-item">
+        <div class="fq-left"><div class="fq-dot">1</div><div class="fq-line"></div></div>
+        <div class="fq-body">
+          <div class="fq-q">What is the plausible mechanism? How would A actually cause B?</div>
+          <div class="fq-why">If you can't describe a specific, realistic mechanism connecting the two things, the correlation may be spurious or driven by a confound. "More commits → more bugs → more tickets" is a plausible mechanism. "More social posts → more IT tickets" is not.</div>
+        </div>
+      </div>
+      <div class="fq-item">
+        <div class="fq-left"><div class="fq-dot">2</div><div class="fq-line"></div></div>
+        <div class="fq-body">
+          <div class="fq-q">Could a third variable cause both? What else changes when A changes?</div>
+          <div class="fq-why">If A and B both go up on Tuesdays, or both spike during product launches, or both increase when the team is at full capacity — you may have a confound. The test: when you hold the third variable constant, does the correlation disappear?</div>
+        </div>
+      </div>
+      <div class="fq-item">
+        <div class="fq-left"><div class="fq-dot">3</div><div class="fq-line"></div></div>
+        <div class="fq-body">
+          <div class="fq-q">What's the time sequence? Does A consistently precede B?</div>
+          <div class="fq-why">Causation requires A to come before B in time. If the error rate spike precedes the deployment by 10 minutes, the deployment didn't cause it. If the deployment reliably precedes the errors by 5–10 minutes across multiple deployments, that's a meaningful causal signal.</div>
+        </div>
+      </div>
+      <div class="fq-item">
+        <div class="fq-left"><div class="fq-dot">4</div><div class="fq-line"></div></div>
+        <div class="fq-body">
+          <div class="fq-q">What happens when you intervene? If you change A, does B actually change?</div>
+          <div class="fq-why">The strongest test of causation is intervention: deliberately change A and observe whether B changes as predicted. In tech operations, this often means A/B testing or controlled rollouts — deploy the change to 10% of servers first and check if the correlated metric changes before rolling out to all of them.</div>
+        </div>
+      </div>
+      <div class="fq-item">
+        <div class="fq-left"><div class="fq-dot">5</div><div class="fq-line"></div></div>
+        <div class="fq-body">
+          <div class="fq-q">What's the cost of being wrong? If this is spurious, what's the impact of acting on it?</div>
+          <div class="fq-why">Higher-stakes decisions require more causal certainty. Acting on a spurious correlation that causes you to reschedule a backup job is low-cost if you're wrong. Acting on a spurious correlation that causes you to restructure a team or invest in an expensive infrastructure change is very high-cost if you're wrong. Scale your causal rigor to the decision's reversibility.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An AI analysis of the past year's data shows a strong correlation: weeks where the IT team runs more employee training sessions have lower help desk ticket volumes the following week. An IT manager concludes that training reduces ticket volume and proposes doubling the training schedule to reduce support load. A data analyst pushes back. What's the most likely alternative explanation, and why does it matter before spending money on more training?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The correlation is probably spurious — training and ticket volume have no plausible relationship</button>
+        <button class="qopt" onclick="cq(this,true)">Training sessions are more likely to be scheduled during slower business periods — summer, post-holiday weeks, or between project phases. During those same slow weeks, employees are less actively using IT-dependent systems, so they generate fewer IT tickets. The training didn't cause the lower ticket volume — both the training and the low ticket volume are caused by the same confounding variable: slower business periods. If you double training during high-activity weeks, you'll see training AND high ticket volumes together — and the correlation will disappear. Spending money on more training won't reduce ticket volume; addressing the underlying causes of tickets (better documentation, self-service tools, better onboarding) might.</button>
+        <button class="qopt" onclick="cq(this,false)">The relationship is reverse causation — lower ticket volume gives the team time to run more training</button>
+        <button class="qopt" onclick="cq(this,false)">The correlation is real — training improves user skills and reduces support needs</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Correlation means two things move together. Causation means one causes the other. These are completely different, and AI systems only detect correlation — they have no mechanism for distinguishing which of the four relationship types (real causation, spurious correlation, confounding variable, reverse causation) applies to any given finding.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The confounding variable trap is the most common in tech data — two metrics that both vary with time of day, day of week, or business cycle will appear correlated even if they have no real relationship. Always ask: is there something else that changes when both of these change?</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Before acting on any AI-surfaced correlation, ask: what is the plausible mechanism, could a third variable explain both, does A precede B in time, what happens when you intervene, and what's the cost of being wrong? Scale your causal rigor to the reversibility of the decision — cheap and reversible decisions can tolerate more uncertainty; expensive and irreversible ones require more causal confidence.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doCorr(id,correct,btn,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;btn.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="corr-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a classic confounding variable scenario. Training and low ticket volumes are both caused by the same underlying factor — slower business periods. The manager is observing a real correlation but drawing a causal conclusion that the data doesn't support. The intervention test would reveal this quickly: schedule training during a normally high-volume week and see if ticket volume drops. It almost certainly won't. This is why spending money on more training to reduce ticket volume is likely to produce no result — you'd be addressing a correlation, not the actual cause of high ticket volumes.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("confounding variable"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The relationship isn't purely spurious (there IS a shared driver — business cycle pace) and it's not reverse causation (low ticket volume doesn't schedule training). Training potentially improving user skills is plausible — but the data pattern here (training follows low-volume weeks) points much more strongly to a confound: slow business periods create conditions for both training AND low ticket volumes simultaneously. The alternative explanation needs to be ruled out (by scheduling training during high-volume periods) before investing in more training as a ticket reduction strategy.";}
+}
+</script>
+</body>
+</html>

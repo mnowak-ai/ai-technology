@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Strong Insight Analysis Framework: Accurate, Context-Aware, Actionable, Verified</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Four pillars */
+.pillars{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.pillar{border-radius:16px;padding:20px;border:2px solid;}
+.pillar.acc{background:var(--blue-pale);border-color:var(--blue-mid);}
+.pillar.ctx{background:var(--purple-pale);border-color:var(--purple-mid);}
+.pillar.act{background:var(--green-pale);border-color:#B5D5C0;}
+.pillar.ver{background:var(--orange-pale);border-color:#F5D5A2;}
+.pillar-num{font-size:32px;font-weight:900;font-family:"Fraunces",serif;margin-bottom:6px;}
+.pillar.acc .pillar-num{color:var(--blue);}
+.pillar.ctx .pillar-num{color:var(--purple);}
+.pillar.act .pillar-num{color:var(--green);}
+.pillar.ver .pillar-num{color:var(--orange);}
+.pillar-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;margin-bottom:8px;color:var(--gray-text);}
+.pillar-def{font-size:13px;line-height:1.65;color:var(--gray-text);margin-bottom:10px;}
+.pillar-test{font-size:12px;font-weight:600;margin-bottom:4px;}
+.pillar.acc .pillar-test{color:var(--blue);}
+.pillar.ctx .pillar-test{color:var(--purple);}
+.pillar.act .pillar-test{color:var(--green);}
+.pillar.ver .pillar-test{color:var(--orange);}
+.pillar-q{font-size:12px;line-height:1.6;color:var(--gray-text);padding-left:12px;position:relative;margin-bottom:3px;}
+.pillar-q::before{content:"→";position:absolute;left:0;font-weight:700;}
+.pillar.acc .pillar-q::before{color:var(--blue);}
+.pillar.ctx .pillar-q::before{color:var(--purple);}
+.pillar.act .pillar-q::before{color:var(--green);}
+.pillar.ver .pillar-q::before{color:var(--orange);}
+
+/* Full scenario walkthrough */
+.scenario-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sc-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sc-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.sc-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.sc-insight{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.sc-insight-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:8px;}
+.sc-insight-body{font-size:15px;line-height:1.7;color:var(--purple-dark);font-family:"Fraunces",serif;font-style:italic;}
+.sc-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);margin-bottom:0;}
+.sc-tab{flex:1;padding:10px 8px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.sc-tab.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.sc-tab.pass{border-bottom-color:var(--green);color:var(--green);background:var(--green-pale);}
+.sc-tab.fail{border-bottom-color:var(--red);color:var(--red);background:var(--red-pale);}
+.sc-panel{display:none;background:var(--white);border:1px solid var(--purple-mid);border-top:none;border-radius:0 0 14px 14px;padding:20px 22px;}
+.sc-panel.active{display:block;}
+.sc-check-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.sc-evidence{background:var(--gray-soft);border-radius:10px;padding:14px 16px;margin-bottom:12px;}
+.sc-ev-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:6px;}
+.sc-ev-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.sc-verdict{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;margin-top:10px;}
+.sc-verdict.pass{background:var(--green-pale);color:var(--green);}
+.sc-verdict.fail{background:var(--red-pale);color:var(--red);}
+.sc-verdict.partial{background:var(--orange-pale);color:var(--orange);}
+.sc-verdict-icon{font-size:18px;flex-shrink:0;}
+.sc-verdict-text{font-size:13px;font-weight:700;line-height:1.5;}
+
+/* Rate sim */
+.rate-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.rs-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.rs-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.rs-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.rs-insights{display:flex;flex-direction:column;gap:12px;}
+.rs-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.rs-item-insight{font-size:14px;font-style:italic;color:var(--purple-dark);font-family:"Fraunces",serif;margin-bottom:12px;line-height:1.5;}
+.rs-ratings{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.rs-rating-col{text-align:center;}
+.rs-rating-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-muted);margin-bottom:6px;}
+.rs-btn-group{display:flex;flex-direction:column;gap:4px;}
+.rs-btn{border:2px solid var(--purple-mid);border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.rs-btn:hover{border-color:var(--purple);background:var(--purple-pale);}
+.rs-btn.selected-pass{background:var(--green-pale);border-color:var(--green);color:var(--green);font-weight:700;}
+.rs-btn.selected-fail{background:var(--red-pale);border-color:var(--red);color:var(--red);font-weight:700;}
+.rs-feedback{font-size:13px;line-height:1.6;padding:10px 14px;border-radius:8px;margin-top:10px;display:none;}
+.rs-feedback.show{display:block;background:var(--purple-pale);color:var(--purple-dark);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.2 — Pattern Recognition & Insights</div>
+  <h1>The Strong Insight Analysis Framework: Accurate, Context-Aware, Actionable, Verified</h1>
+  <p class="hero-sub">The video closed lesson 4.2 with this four-part model. It deserves its own article — walked through a complete real scenario so you can internalize each filter as a practiced skill, not just a concept on a slide.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why You Need a Framework for Evaluating Insights</h2>
+    <p>AI tools produce insights constantly — pattern findings, anomaly alerts, correlation surfacing, trend predictions. Some of these are gold. Some are misleading. Some are technically accurate but irrelevant. Some are accurate and relevant but not actionable. Without a consistent evaluation framework, you end up either acting on everything (exhausting, error-prone) or dismissing too much (missing real signals).</p>
+    <p><mark>The four-filter framework — Accurate, Context-Aware, Actionable, Verified — gives you a sequence of questions that separates strong insights from weak ones before you act on them.</mark> Each filter eliminates a specific category of bad insight. Together, they define what a finding needs to pass before it earns a decision.</p>
+    <div class="pull-quote">
+      <p>A weak insight acted on confidently causes more damage than no insight at all. The framework's purpose isn't to be skeptical — it's to make sure the insights you act on are worth acting on.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Filters — What Each One Does</h2>
+    <div class="pillars">
+      <div class="pillar acc">
+        <div class="pillar-num">01</div>
+        <div class="pillar-title">Accurate</div>
+        <div class="pillar-def">The data underlying the insight is correct, complete, and free of the quality problems (missing values, duplicates, format conflicts) that could distort the finding. An insight built on dirty data is wrong even if the analysis is correct.</div>
+        <div class="pillar-test">Test questions:</div>
+        <div class="pillar-q">Where did this data come from and when was it collected?</div>
+        <div class="pillar-q">Are there known data quality issues with this source?</div>
+        <div class="pillar-q">Does the number seem plausible? Does it match what I know from the raw data?</div>
+        <div class="pillar-q">Could dirty data (auto-closures, format conflicts, missing fields) be distorting this finding?</div>
+      </div>
+      <div class="pillar ctx">
+        <div class="pillar-num">02</div>
+        <div class="pillar-title">Context-Aware</div>
+        <div class="pillar-def">The insight accounts for the business and operational context that might explain the pattern. A number that looks anomalous without context often makes complete sense once you know what was happening in the business at that time.</div>
+        <div class="pillar-test">Test questions:</div>
+        <div class="pillar-q">Is there a known event (deployment, campaign, holiday, new policy) that explains this?</div>
+        <div class="pillar-q">Is this pattern seasonal or cyclical rather than a new anomaly?</div>
+        <div class="pillar-q">Am I comparing against the right baseline for this period?</div>
+        <div class="pillar-q">Would someone with full business context find this surprising?</div>
+      </div>
+      <div class="pillar act">
+        <div class="pillar-num">03</div>
+        <div class="pillar-title">Actionable</div>
+        <div class="pillar-def">The insight points toward a specific decision or action that can be taken. An insight that correctly describes a real problem but offers no path forward has limited value. Strong insights connect a finding to a concrete next step.</div>
+        <div class="pillar-test">Test questions:</div>
+        <div class="pillar-q">What would someone do differently because of this insight?</div>
+        <div class="pillar-q">Does it point to a specific cause that can be investigated or addressed?</div>
+        <div class="pillar-q">Is this within the team's control to change?</div>
+        <div class="pillar-q">If the finding is "interesting but no clear action," what additional analysis would make it actionable?</div>
+      </div>
+      <div class="pillar ver">
+        <div class="pillar-num">04</div>
+        <div class="pillar-title">Verified</div>
+        <div class="pillar-def">The insight has been checked against a second source, a corroborating signal, or a sanity-check before significant action is taken. Single-source findings that haven't been corroborated can lead to expensive mistakes.</div>
+        <div class="pillar-test">Test questions:</div>
+        <div class="pillar-q">Does this finding show up in a second data source or from a different angle?</div>
+        <div class="pillar-q">Does it match what people in the field are observing?</div>
+        <div class="pillar-q">What would change if this finding turned out to be wrong?</div>
+        <div class="pillar-q">Is the potential cost of acting on a false insight proportionate to the verification effort?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Walk Through the Framework: A Full Scenario</h2>
+    <p>An AI analysis tool surfaces an insight about app engagement. Walk through each filter to evaluate it before deciding how to act. Click each filter tab to see the analysis.</p>
+
+    <div class="scenario-sim">
+      <div class="sc-label">🎯 Full Framework Walkthrough</div>
+      <div class="sc-title">Evaluating an AI-surfaced engagement insight</div>
+      <div class="sc-sub">Apply all four filters to determine whether this insight is strong enough to act on.</div>
+      <div class="sc-insight">
+        <div class="sc-insight-lbl">🤖 AI Insight Surfaced</div>
+        <div class="sc-insight-body">"Mobile app daily active users declined 31% week-over-week, from 48,200 to 33,300. The decline is concentrated in users who accessed the app via the iOS platform. Android DAU remained flat."</div>
+      </div>
+
+      <div class="sc-tabs">
+        <button class="sc-tab active" onclick="showSC(0,this)">01 Accurate</button>
+        <button class="sc-tab" onclick="showSC(1,this)">02 Context-Aware</button>
+        <button class="sc-tab" onclick="showSC(2,this)">03 Actionable</button>
+        <button class="sc-tab" onclick="showSC(3,this)">04 Verified</button>
+      </div>
+
+      <div class="sc-panel active" id="sc0">
+        <div class="sc-check-title">Filter 1: Is this accurate?</div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you check</div>
+          <div class="sc-ev-body">You open the analytics platform and look at the raw event counts behind the DAU number. You check: Are iOS sessions being counted correctly? Did any SDK updates deploy this week that might affect tracking? Is the 33,300 number consistent with the raw event logs?</div>
+        </div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you find</div>
+          <div class="sc-ev-body">The raw event data confirms: iOS sessions dropped from ~48K to ~33K. The analytics SDK on iOS was not updated this week. The Android session count is stable. The numbers in the insight match the raw data. No obvious data collection issue.</div>
+        </div>
+        <div class="sc-verdict pass"><div class="sc-verdict-icon">✅</div><div class="sc-verdict-text">PASS: The data appears accurate. The 31% iOS-specific decline is real in the tracking data and not attributable to a measurement failure.</div></div>
+      </div>
+
+      <div class="sc-panel" id="sc1">
+        <div class="sc-check-title">Filter 2: Is this context-aware?</div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you check</div>
+          <div class="sc-ev-body">You review what happened this week that might explain an iOS-specific drop. You check: Was there an iOS app update this week? Did Apple release a new iOS version? Was there any news about the app or a permission change? You also check whether the same week last year had similar patterns.</div>
+        </div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you find</div>
+          <div class="sc-ev-body">An iOS app update (v4.2.1) released Tuesday — two days before the DAU decline started Thursday. The update included a change to push notification permissions. Apple's App Store review confirms the update was downloaded by 78% of active iOS users within 48 hours of release. No similar drop occurred in the same week last year. The timing of the decline correlates with the update deployment.</div>
+        </div>
+        <div class="sc-verdict partial"><div class="sc-verdict-icon">🟡</div><div class="sc-verdict-text">PARTIAL PASS: The iOS app update is the most plausible contextual explanation. The context has narrowed the likely cause significantly — but hasn't confirmed it definitively yet.</div></div>
+      </div>
+
+      <div class="sc-panel" id="sc2">
+        <div class="sc-check-title">Filter 3: Is this actionable?</div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you check</div>
+          <div class="sc-ev-body">Given the likely cause (iOS update v4.2.1), is there a specific action? You review what the update changed. The notification permission change in v4.2.1 changed the default permission request from "always allow" to "ask each time." You check: how many users likely saw the new permission dialog and declined? Did declining the permission affect their session behavior?</div>
+        </div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you find</div>
+          <div class="sc-ev-body">Post-update analytics show: 41% of users who upgraded declined the new notification permission. Users who declined notifications have a 67% lower 7-day return rate than users who accepted. The notification permission change is almost certainly driving the DAU decline — users who don't receive re-engagement notifications are not returning. Actionable: revert or modify the notification permission default, or add an in-app prompt explaining the value of notifications to users who declined.</div>
+        </div>
+        <div class="sc-verdict pass"><div class="sc-verdict-icon">✅</div><div class="sc-verdict-text">PASS: Highly actionable. The finding points directly to a specific cause (notification permission change) with a specific remediation (prompt declined users, consider reverting the default, A/B test notification permission UX).</div></div>
+      </div>
+
+      <div class="sc-panel" id="sc3">
+        <div class="sc-check-title">Filter 4: Is this verified?</div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you check</div>
+          <div class="sc-ev-body">Before recommending a product change (reverting the notification permission default or adding an in-app prompt), you corroborate the finding. You check: do users who declined notifications also show up in support tickets or reviews? Can you cross-reference with user interviews or customer success reports? Is there a cohort of users who upgraded early vs. late where you can see the effect?</div>
+        </div>
+        <div class="sc-evidence">
+          <div class="sc-ev-label">What you find</div>
+          <div class="sc-ev-body">Customer success team confirms 3 enterprise accounts flagged that "mobile usage seemed lower this week" — independently corroborating the DAU decline without being prompted. App Store reviews this week include 7 new reviews mentioning "I keep forgetting to check the app" — consistent with users not receiving push notifications. The finding is corroborated by two independent sources (customer reports and App Store reviews), both consistent with the notification hypothesis.</div>
+        </div>
+        <div class="sc-verdict pass"><div class="sc-verdict-icon">✅</div><div class="sc-verdict-text">PASS: Corroborated by independent sources. This insight passes all four filters — it's accurate, context-aware, actionable, and verified. It's ready to drive a product decision.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Rate Three More Insights — Apply the Framework</h2>
+    <div class="rate-sim">
+      <div class="rs-label">🎯 Practice — Rate Each Filter</div>
+      <div class="rs-title">Apply the four filters to each insight</div>
+      <div class="rs-sub">For each insight, click PASS or FAIL for each of the four filters based on the evidence provided. After rating all four, see the explanation.</div>
+      <div class="rs-insights">
+
+        <div class="rs-item">
+          <div class="rs-item-insight">"Help desk ticket volume increased 40% this month compared to last month. The team needs more headcount immediately."</div>
+          <p style="font-size:13px;color:var(--gray-muted);line-height:1.6;margin-bottom:12px;">Context: Last month included a 5-day company holiday. This month is the first full working month after two months of below-normal volume. No new products launched. Team size and skills unchanged.</p>
+          <div class="rs-ratings" id="r1ratings">
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Accurate?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r1','acc','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r1','acc','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Context-aware?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r1','ctx','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r1','ctx','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Actionable?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r1','act','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r1','act','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Verified?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r1','ver','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r1','ver','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+          </div>
+          <div class="rs-feedback" id="r1fb"></div>
+        </div>
+
+        <div class="rs-item">
+          <div class="rs-item-insight">"Error rate on the payment API jumped from 0.08% to 3.4% at 14:32 today — a 42× increase sustained for 11 minutes before dropping back to 0.1%."</div>
+          <p style="font-size:13px;color:var(--gray-muted);line-height:1.6;margin-bottom:12px;">Context: A deployment ran at 14:29. The error log shows "database connection pool exhausted" during the window. The payment service processed 847 failed transactions. No other anomalies today. The same pattern occurred 3 weeks ago after a different deployment.</p>
+          <div class="rs-ratings" id="r2ratings">
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Accurate?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r2','acc','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r2','acc','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Context-aware?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r2','ctx','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r2','ctx','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Actionable?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r2','act','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r2','act','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+            <div class="rs-rating-col">
+              <div class="rs-rating-label">Verified?</div>
+              <div class="rs-btn-group">
+                <button class="rs-btn" onclick="rateIt('r2','ver','pass',this)">✅ Pass</button>
+                <button class="rs-btn" onclick="rateIt('r2','ver','fail',this)">❌ Fail</button>
+              </div>
+            </div>
+          </div>
+          <div class="rs-feedback" id="r2fb"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A manager receives an AI-generated report stating: "Technicians who use the knowledge base more frequently resolve tickets 23% faster on average." The manager immediately sends a company-wide message requiring all technicians to log at least 5 knowledge base searches per ticket. Ticket resolution time does not improve the following month. Which filter of the Strong Insight framework most clearly failed before the manager acted?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Accurate — the knowledge base search data was probably collected incorrectly</button>
+        <button class="qopt" onclick="cq(this,false)">Context-aware — the manager didn't account for seasonal variation in ticket types</button>
+        <button class="qopt" onclick="cq(this,true)">Actionable — the insight was misread as actionable when it wasn't. "Technicians who use KB more are faster" describes a correlation, not a mechanism. Skilled technicians know when to use the KB and are also fast — the KB use is a byproduct of skill, not the cause of speed. Mandating more KB searches by less-skilled technicians won't transfer the skill. The actionable finding would be: identify WHY fast technicians use the KB differently and build training around that behavior, not just the quantity of searches.</button>
+        <button class="qopt" onclick="cq(this,false)">Verified — the manager should have checked a second data source before acting</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The four filters — Accurate, Context-Aware, Actionable, Verified — are applied in sequence. Accuracy catches data quality problems before analysis. Context-awareness catches patterns that are real but explainable by known events. Actionability separates interesting findings from findings that can drive decisions. Verification prevents acting on uncorroborated single-source findings.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The actionability filter is the most commonly skipped — and the most costly to miss. A finding that describes a correlation ("users who do X perform better") is often misread as a prescription ("make everyone do X"). Actionable insights must identify a specific mechanism that can be changed, not just a pattern that correlates with good outcomes.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Scale verification effort to decision reversibility. A low-stakes, easily-reversed decision can tolerate weaker verification. A high-stakes, expensive, or hard-to-undo decision deserves independent corroboration before action. The framework isn't meant to make you slower — it's meant to make sure the insights you act on are worth acting on.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showSC(i,btn){document.querySelectorAll(".sc-tab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".sc-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById("sc"+i).classList.add("active");}
+
+const r1state={acc:null,ctx:null,act:null,ver:null};
+const r2state={acc:null,ctx:null,act:null,ver:null};
+const r1answers={acc:"pass",ctx:"fail",act:"fail",ver:"fail"};
+const r2answers={acc:"pass",ctx:"pass",act:"pass",ver:"pass"};
+const r1exp="The data (volume up 40%) is accurate — but the insight fails every other filter. Context-awareness: 40% vs. last month ignores that last month had a holiday week and was below normal; the correct comparison is vs. the 4-week average before the holiday, which shows a much smaller gap. Actionability: 'needs headcount immediately' is not a well-reasoned action from this data alone. Verification: no second source corroborates a genuine capacity crisis. This insight failed context, actionability, and verification — acting on it risks unnecessary hiring.";
+const r2exp="This insight passes all four filters. Accurate: error rate data is confirmed, 847 failed transactions documented. Context-aware: the deployment timing correlation is identified and a prior similar incident provides additional context. Actionable: the mechanism (connection pool exhaustion post-deployment) points directly to a specific investigation and fix. Verified: the prior deployment pattern corroborates that this is a systematic issue, not a one-time event. Strong insight — ready to drive immediate action.";
+
+function rateIt(id,dim,val,btn){
+  const state=id==="r1"?r1state:r2state;
+  state[dim]=val;
+  const group=btn.parentElement;
+  group.querySelectorAll(".rs-btn").forEach(b=>b.className="rs-btn");
+  btn.className="rs-btn selected-"+(val==="pass"?"pass":"fail");
+  if(Object.values(state).every(v=>v!==null)){
+    const fb=document.getElementById(id+"fb");
+    fb.className="rs-feedback show";
+    fb.textContent=(id==="r1"?r1exp:r2exp);
+  }
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The insight correctly describes a real correlation — frequent KB users ARE faster on average. But the actionability filter requires asking: what is the mechanism? Is KB use causing speed, or is it a proxy for a skill level that independently produces both more KB use and faster resolution? The data strongly suggests the latter: skilled technicians naturally reach for the KB at the right moments because they know what they're looking for. Mandating more searches by all technicians doesn't transfer that knowledge — it creates busywork. The actionable version of this insight requires understanding the mechanism before prescribing the behavior.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("misread as actionable"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The data collection is probably fine, seasonal context doesn't explain this finding, and a second source would likely confirm the correlation (it's probably real). The core failure is in actionability — specifically, misreading a correlation as a causal prescription. Mandating KB searches assumes that KB use causes speed, when the evidence suggests both are products of underlying skill. The framework's actionability filter is specifically designed to catch this: does the insight point to a specific mechanism that can be changed, or does it just describe a pattern?";}
+}
+</script>
+</body>
+</html>

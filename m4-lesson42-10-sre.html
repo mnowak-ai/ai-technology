@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is Site Reliability Engineering (SRE)? The Role That Lives Inside Pattern Recognition and Alerts</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* SRE vs Ops compare */
+.compare-split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.cs-col{padding:20px 22px;}
+.cs-col.ops{background:var(--orange-pale);border-right:1px solid var(--purple-mid);}
+.cs-col.sre{background:var(--purple-pale);}
+.cs-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.cs-col.ops .cs-label{color:var(--orange);}
+.cs-col.sre .cs-label{color:var(--purple);}
+.cs-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;margin-bottom:10px;color:var(--gray-text);}
+.cs-item{font-size:13px;line-height:1.6;color:var(--gray-text);margin-bottom:5px;padding-left:14px;position:relative;}
+.cs-item::before{content:"→";position:absolute;left:0;font-weight:700;}
+.cs-col.ops .cs-item::before{color:var(--orange);}
+.cs-col.sre .cs-item::before{color:var(--purple);}
+
+/* SRE core concepts */
+.concepts{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.concept-card{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;}
+.cc-header{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .2s;}
+.cc-header:hover{background:var(--purple-pale);}
+.cc-header.open{background:var(--purple-pale);}
+.cc-icon{font-size:22px;flex-shrink:0;}
+.cc-name{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);flex:1;}
+.cc-abbr{font-size:11px;font-weight:700;color:var(--purple);background:var(--purple-pale);padding:3px 8px;border-radius:5px;flex-shrink:0;}
+.cc-chevron{font-size:16px;color:var(--purple);transition:transform .3s;}
+.cc-header.open .cc-chevron{transform:rotate(180deg);}
+.cc-body{display:none;padding:0 18px 16px;background:var(--white);}
+.cc-header.open+.cc-body{display:block;}
+.cc-def{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:12px;}
+.cc-example{background:var(--gray-soft);border-radius:9px;padding:11px 14px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+.cc-lesson-link{background:var(--purple-pale);border-radius:9px;padding:9px 14px;font-size:12px;line-height:1.6;color:var(--purple-dark);margin-top:8px;}
+
+/* Day timeline */
+.day-timeline{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.dt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:16px;}
+.dt-entries{display:flex;flex-direction:column;gap:10px;}
+.dt-entry{background:var(--white);border-radius:12px;padding:14px 18px;}
+.dt-time{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:4px;}
+.dt-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.dt-skills{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;}
+.dt-skill{background:var(--purple-pale);color:var(--purple);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;}
+.dt-entry.incident{border-left:4px solid var(--red);}
+.dt-entry.project{border-left:4px solid var(--purple);}
+.dt-entry.review{border-left:4px solid var(--green);}
+
+/* Career path */
+.career-path{display:flex;align-items:center;gap:0;overflow-x:auto;margin:20px 0;padding-bottom:4px;}
+.cp-step{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;}
+.cp-box{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 10px;text-align:center;width:100%;margin-right:10px;}
+.cp-box.entry{border-color:var(--blue);background:var(--blue-pale);}
+.cp-box.mid{border-color:var(--purple);background:var(--purple-pale);}
+.cp-box.senior{border-color:var(--green);background:var(--green-pale);}
+.cp-title{font-size:12px;font-weight:700;color:var(--gray-text);margin-bottom:4px;}
+.cp-time{font-size:10px;color:var(--gray-muted);}
+.cp-arrow{font-size:20px;color:var(--purple-mid);padding:0 6px;margin-top:-20px;}
+
+/* Skills map */
+.skills-map{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.skill-item{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.si-lesson{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:6px;}
+.si-skill{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.si-sre{font-size:13px;line-height:1.55;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.2 — Career Pathways</div>
+  <h1>What Is Site Reliability Engineering (SRE)? The Role That Lives Inside Pattern Recognition and Alerts</h1>
+  <p class="hero-sub">SRE is one of the fastest-growing technical roles in tech — and it sits exactly at the intersection of everything you've learned in Lesson 4.2. This article explains what SREs actually do, the concepts they use, and how the skills you're building right now map directly to this career path.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What SRE Actually Is</h2>
+    <p>Site Reliability Engineering (SRE) was invented at Google in the early 2000s as a way to solve a persistent problem: operations teams kept systems running, but the work was mostly reactive — responding to incidents, applying patches, maintaining servers. As systems grew more complex and user expectations for uptime increased, this reactive approach didn't scale.</p>
+    <p>SRE's answer: <mark>treat reliability as a software engineering problem, not a maintenance problem.</mark> Instead of manually responding to every incident, SREs automate the detection, response, and prevention of reliability problems. Instead of reacting to outages, they design systems to be predictably reliable, measure reliability quantitatively, and use data to prioritize where engineering effort produces the most reliability improvement.</p>
+    <p>Today SRE is a distinct engineering discipline practiced at companies ranging from Google and Amazon to mid-sized startups. The role carries different names at different organizations (Platform Engineer, DevOps Engineer, Production Engineer) but the core principles are the same.</p>
+    <div class="pull-quote">
+      <p>SRE is what you get when you ask a software engineer to solve the problem of keeping large systems reliable — using the same tools, rigor, and automation mindset they'd apply to any other engineering challenge.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>SRE vs. Traditional IT Operations — The Key Difference</h2>
+    <div class="compare-split">
+      <div class="cs-col ops">
+        <div class="cs-label">Traditional IT Operations</div>
+        <div class="cs-title">Reactive, manual, process-driven</div>
+        <div class="cs-item">Responds to incidents when they occur</div>
+        <div class="cs-item">Maintains systems through manual procedures and runbooks</div>
+        <div class="cs-item">Measures success by keeping systems running</div>
+        <div class="cs-item">Handles problems one at a time as they arise</div>
+        <div class="cs-item">Success = "nothing is on fire right now"</div>
+        <div class="cs-item">Often inherits systems built by others without ownership of reliability design</div>
+      </div>
+      <div class="cs-col sre">
+        <div class="cs-label">Site Reliability Engineering</div>
+        <div class="cs-title">Proactive, automated, data-driven</div>
+        <div class="cs-item">Designs systems to prevent incidents or fail gracefully</div>
+        <div class="cs-item">Automates detection, response, and remediation at scale</div>
+        <div class="cs-item">Measures success with quantitative reliability targets (SLOs)</div>
+        <div class="cs-item">Identifies and eliminates the root causes of repeated problems</div>
+        <div class="cs-item">Success = "reliability is meeting targets and improving over time"</div>
+        <div class="cs-item">Co-owns reliability design with the product engineering team</div>
+      </div>
+    </div>
+    <p>The practical difference: a traditional ops team responds to the same VPN authentication outage every three weeks. An SRE team responds once, conducts a postmortem to find the root cause, fixes the underlying problem, and instruments monitoring to catch the next similar failure before users see it. The SRE mindset is to eliminate toil — repetitive, reactive manual work — through automation and system design.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Core SRE Concepts — Explained Simply</h2>
+    <p>SRE has a specific vocabulary. These concepts will appear in job descriptions, interviews, and technical conversations if you pursue this path. Click each one to understand what it means and how it connects to skills from this lesson.</p>
+    <div class="concepts">
+      <div class="concept-card">
+        <div class="cc-header" onclick="toggleCC(this)"><div class="cc-icon">🎯</div><div class="cc-name">Service Level Objective (SLO)</div><div class="cc-abbr">SLO</div><div class="cc-chevron">▾</div></div>
+        <div class="cc-body">
+          <div class="cc-def">A specific, measurable reliability target that a team commits to. An SLO defines what "good enough" reliability looks like for a given service — not perfect (100% uptime is impossible and too expensive to pursue), but reliably good enough for users. SLOs are the quantitative foundation of all SRE work.</div>
+          <div class="cc-example"><strong>Example:</strong> "The payment API will process 99.9% of requests successfully and respond to 95% of requests within 200ms, measured over any rolling 30-day window." This is an SLO. It's specific, measurable, and defines what the team is accountable for delivering.</div>
+          <div class="cc-lesson-link">📚 Module 4.2 connection: SLOs define the thresholds that anomaly detection systems monitor. When a metric breaches its SLO, that's a signal — not just a number going up or down.</div>
+        </div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-header" onclick="toggleCC(this)"><div class="cc-icon">💰</div><div class="cc-name">Error Budget</div><div class="cc-abbr">Budget</div><div class="cc-chevron">▾</div></div>
+        <div class="cc-body">
+          <div class="cc-def">The amount of unreliability a service is allowed to have while still meeting its SLO. If your SLO is 99.9% availability, you have a 0.1% error budget — that's about 43 minutes per month that the service can be unavailable. The error budget is the key to balancing reliability work with feature development: if you're burning error budget too fast, slow down risky deployments. If you have budget to spare, you can move faster.</div>
+          <div class="cc-example"><strong>Example:</strong> A service used 38 of its 43 monthly error budget minutes by the 20th of the month. The SRE team flags: if any deployment this week causes even a small outage, the error budget will be exhausted and the team will breach the SLO. Risky deployments are delayed until next month's budget resets.</div>
+          <div class="cc-lesson-link">📚 Module 4.2 connection: Error budget tracking is one of the key KPIs SREs watch. Understanding how to read and interpret this metric — and how patterns in error budget consumption signal problems — is directly the pattern recognition skill from this lesson.</div>
+        </div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-header" onclick="toggleCC(this)"><div class="cc-icon">🚨</div><div class="cc-name">The Four Golden Signals</div><div class="cc-abbr">Signals</div><div class="cc-chevron">▾</div></div>
+        <div class="cc-body">
+          <div class="cc-def">Google's SRE book defined four metrics that, together, comprehensively describe the health of any service. Monitoring these four — and only these four — at the right thresholds gives you full visibility into whether a service is healthy without drowning in thousands of less important metrics.</div>
+          <div class="cc-example">
+            <strong>Latency:</strong> How long requests take to complete. Track separately for successful and failed requests — a spike in error latency is different from a spike in success latency.<br><br>
+            <strong>Traffic:</strong> How much demand the service is receiving (requests per second, active users, transactions per minute). Provides context for all other signals.<br><br>
+            <strong>Errors:</strong> The rate of requests that fail — either explicitly (HTTP 500 errors) or implicitly (requests that succeed technically but return wrong content). The error rate is the most direct signal of user-facing quality.<br><br>
+            <strong>Saturation:</strong> How "full" the service is — CPU usage, memory usage, queue depth, connection pool utilization. Saturation predicts problems before they become errors.
+          </div>
+          <div class="cc-lesson-link">📚 Module 4.2 connection: The four golden signals are exactly the metrics pattern recognition focuses on — and the patterns (spikes, dips, bottlenecks) are the shapes these signals take when things go wrong.</div>
+        </div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-header" onclick="toggleCC(this)"><div class="cc-icon">📋</div><div class="cc-name">Blameless Postmortem</div><div class="cc-abbr">Postmortem</div><div class="cc-chevron">▾</div></div>
+        <div class="cc-body">
+          <div class="cc-def">A structured analysis conducted after an incident to understand what happened, why it happened, and how to prevent it or reduce its impact in the future — without assigning personal blame to individual engineers. The principle: incidents are caused by system failures (inadequate monitoring, insufficient testing, unclear runbooks), not by individual mistakes. Fixing systems is more effective than punishing people.</div>
+          <div class="cc-example"><strong>A good postmortem covers:</strong> Timeline of events (when did the anomaly start, when was it detected, when was it resolved), contributing factors (what conditions allowed this to happen), impact (how many users affected, what was the business cost), action items (specific, assigned changes to prevent recurrence), and lessons learned (what did we discover about how the system behaves).</div>
+          <div class="cc-lesson-link">📚 Module 4.2 connection: Writing a good postmortem requires exactly the pattern recognition skills from this lesson — reconstructing the sequence of signals, identifying which was the root cause vs. downstream effect, and distinguishing what the AI detected from what human investigation revealed.</div>
+        </div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-header" onclick="toggleCC(this)"><div class="cc-icon">🤖</div><div class="cc-name">Toil</div><div class="cc-abbr">Toil</div><div class="cc-chevron">▾</div></div>
+        <div class="cc-body">
+          <div class="cc-def">Repetitive, manual, automatable operational work that doesn't produce lasting value — responding to the same type of alert every week, manually restarting services that could self-heal, running the same deployment checklist by hand every time. SREs are expected to eliminate toil through automation, targeting no more than 50% of their time on toil so the other 50% can go toward engineering work that improves the system.</div>
+          <div class="cc-example"><strong>Toil examples:</strong> Manually restarting a service every Monday when the scheduled job exceeds its memory limit. Responding to "disk full" alerts by manually clearing temp files. Running a 30-step deployment checklist by hand. These are all candidates for automation — and eliminating each one is a concrete SRE accomplishment with measurable time savings.</div>
+          <div class="cc-lesson-link">📚 Module 4.2 connection: Alert fatigue (from the previous article) is a symptom of too much toil. When engineers spend all their time responding to repetitive alerts that could be automated away, they have no capacity for the engineering work that would prevent those alerts from firing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Day in the Life of an SRE</h2>
+    <div class="day-timeline">
+      <div class="dt-label">SRE — Wednesday — Mixed reactive and proactive work</div>
+      <div class="dt-entries">
+        <div class="dt-entry incident">
+          <div class="dt-time">9:00 AM — Incident response</div>
+          <div class="dt-body">Watchdog fired an alert at 8:47am: payment service error rate elevated. You pick up the page (you're on-call this week), investigate the correlated metrics, identify a database connection pool problem introduced by last night's deployment, coordinate with the dev team to roll back the specific change, confirm recovery. Total time: 42 minutes. You document the timeline in the incident ticket.</div>
+          <div class="dt-skills"><div class="dt-skill">Anomaly detection</div><div class="dt-skill">Correlated metrics</div><div class="dt-skill">Root cause analysis</div><div class="dt-skill">Signal vs. noise</div></div>
+        </div>
+        <div class="dt-entry project">
+          <div class="dt-time">10:30 AM — Toil elimination project</div>
+          <div class="dt-body">Working on an automation script that will automatically restart the authentication service when it exhibits the specific memory pattern that precedes crashes — a task that currently requires manual intervention 2–3 times per week. If the automation works, you eliminate an estimated 2 hours of weekly on-call toil. You also add a check to the monitoring system to detect the pattern earlier, before the crash occurs.</div>
+          <div class="dt-skills"><div class="dt-skill">Pattern recognition</div><div class="dt-skill">Automation</div><div class="dt-skill">Monitoring design</div></div>
+        </div>
+        <div class="dt-entry review">
+          <div class="dt-time">2:00 PM — Error budget review</div>
+          <div class="dt-body">Monthly error budget review with the product team. You present: the API gateway consumed 78% of its monthly availability budget by day 22 — mostly from three deployment-related incidents. You recommend that no new risky deployments go to production this week, and share the postmortem findings from each incident. The team agrees to implement canary deployment (releasing to 5% of users first) for all major changes going forward.</div>
+          <div class="dt-skills"><div class="dt-skill">KPI analysis</div><div class="dt-skill">Insight framework</div><div class="dt-skill">Data-driven decisions</div></div>
+        </div>
+        <div class="dt-entry review">
+          <div class="dt-time">3:30 PM — Postmortem write-up</div>
+          <div class="dt-body">Writing the formal postmortem for this morning's incident. Timeline, contributing factors (deployment didn't have adequate connection pool stress testing), impact (847 failed payment transactions, ~$12K in affected revenue), action items (add connection pool saturation to deployment runbook checks, add stress test to CI pipeline). Shared with the team and the engineering org for shared learning.</div>
+          <div class="dt-skills"><div class="dt-skill">Blameless postmortem</div><div class="dt-skill">Pattern documentation</div><div class="dt-skill">Insight analysis</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How Module 4.2 Skills Map to SRE Work</h2>
+    <div class="skills-map">
+      <div class="skill-item">
+        <div class="si-lesson">4.2 Skill</div>
+        <div class="si-skill">Signal vs. Noise</div>
+        <div class="si-sre">SREs spend a significant portion of on-call time distinguishing real incidents from alert noise. Miscalibrated monitors are themselves a reliability problem — they cause alert fatigue, which causes real incidents to be missed.</div>
+      </div>
+      <div class="skill-item">
+        <div class="si-lesson">4.2 Skill</div>
+        <div class="si-skill">Pattern Recognition (Errors, Spikes, Dips, Bottlenecks)</div>
+        <div class="si-sre">These are the exact four pattern types SREs investigate during incident response. Recognizing which pattern you're dealing with determines the investigation strategy and the type of fix required.</div>
+      </div>
+      <div class="skill-item">
+        <div class="si-lesson">4.2 Skill</div>
+        <div class="si-skill">Anomaly Detection</div>
+        <div class="si-sre">SREs design and tune the anomaly detection systems that catch incidents. Knowing how these systems work — including their failure modes like alert fatigue and baseline drift — is essential for calibrating them effectively.</div>
+      </div>
+      <div class="skill-item">
+        <div class="si-lesson">4.2 Skill</div>
+        <div class="si-skill">Correlation vs. Causation</div>
+        <div class="si-sre">Every postmortem requires identifying the root cause — not just what correlated with the incident but what caused it. Confusing correlation and causation in a postmortem leads to action items that don't fix the real problem.</div>
+      </div>
+      <div class="skill-item">
+        <div class="si-lesson">4.2 Skill</div>
+        <div class="si-skill">KPI Tracking and Interpretation</div>
+        <div class="si-sre">Error budgets, SLOs, MTTR, and the four golden signals are all KPIs. SREs are the primary owners of these metrics and are responsible for making the data accurate, contextual, and actionable.</div>
+      </div>
+      <div class="skill-item">
+        <div class="si-lesson">4.2 Skill</div>
+        <div class="si-skill">Strong Insight Framework</div>
+        <div class="si-sre">Every postmortem and every reliability recommendation an SRE produces needs to pass the four filters: is the analysis accurate, does it account for context, does it lead to specific action items, and is it corroborated by evidence?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Career Entry Points Into SRE</h2>
+    <p>SRE is rarely an entry-level role — it typically requires a foundation in either software engineering or systems administration. But several adjacent roles build directly toward it.</p>
+    <div class="career-path">
+      <div class="cp-step"><div class="cp-box entry"><div class="cp-title">IT Support / Help Desk</div><div class="cp-time">Entry level</div></div></div>
+      <div class="cp-arrow">→</div>
+      <div class="cp-step"><div class="cp-box entry"><div class="cp-title">IT Operations / SysAdmin</div><div class="cp-time">1–3 years</div></div></div>
+      <div class="cp-arrow">→</div>
+      <div class="cp-step"><div class="cp-box mid"><div class="cp-title">DevOps / Platform Engineer</div><div class="cp-time">2–5 years</div></div></div>
+      <div class="cp-arrow">→</div>
+      <div class="cp-step"><div class="cp-box senior"><div class="cp-title">Site Reliability Engineer</div><div class="cp-time">3–7 years</div></div></div>
+    </div>
+    <p>The most direct path for someone starting with a certification like this: <strong>IT Operations or DevOps</strong>, where you'll work directly with monitoring systems, incident response, and automation tools. Building Python or scripting skills alongside operational experience accelerates the transition toward SRE significantly. Understanding the concepts in this article — SLOs, error budgets, the golden signals — puts you ahead of most peers when you start in an operations role.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An SRE team's monthly review shows: the payment service used 94% of its error budget by day 18, with 6 days remaining. The product team has two features ready to deploy — one is a high-risk database schema migration, and one is a low-risk UI color update. The SRE team recommends deploying the UI update but delaying the database migration until next month. A product manager argues: "We should deploy both — we still have 6% of the error budget left." Who is right and why?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The product manager is right — 6% remaining error budget means the team has room for both deployments</button>
+        <button class="qopt" onclick="cq(this,true)">The SRE team is right. Having 6% remaining error budget with 6 days left (20% of the month) means the budget is almost exhausted. A high-risk database schema migration has a meaningful probability of causing an incident — and if it does, even a small outage would breach the SLO for this month. The low-risk UI update is appropriate because it's unlikely to consume any error budget. Error budgets are not "spend whatever's left" — they're risk management tools. Deploying risky changes when the budget is nearly exhausted is how teams consistently breach their SLOs.</button>
+        <button class="qopt" onclick="cq(this,false)">Both should be delayed — when error budget is below 10%, no deployments should occur</button>
+        <button class="qopt" onclick="cq(this,false)">The database migration should be deployed first to leave room for emergency fixes afterward</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Site Reliability Engineering is a discipline that treats reliability as an engineering problem — using automation, data, and quantitative targets to make systems predictably reliable rather than reactively maintained. SREs own the monitoring systems, incident response processes, and reliability metrics that determine whether a service meets its commitments to users.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The core SRE concepts — SLOs (reliability targets), error budgets (allowed unreliability), the four golden signals (latency, traffic, errors, saturation), blameless postmortems (root cause analysis), and toil elimination (automating repetitive manual work) — are the operational framework within which all the pattern recognition and insight analysis skills from Lesson 4.2 are applied daily.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The most direct entry path into SRE is through IT Operations or DevOps, where you work with monitoring systems, incident response, and automation. The concepts in Module 4.2 — signal vs. noise, anomaly detection, KPI tracking, correlation vs. causation, and the insight analysis framework — map directly to the daily work of an SRE. Building these foundations now puts you ahead of most candidates for those roles.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleCC(header){header.classList.toggle("open");}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Error budgets are risk management tools, not \"spending money\" — the question isn't whether budget remains, but whether the team wants to risk burning the rest of it on a high-risk deployment. At 94% consumed with 20% of the month remaining, any incident would breach the SLO. A database schema migration is one of the highest-risk deployment types (schema changes are often hard to roll back cleanly). The right approach is to assess each deployment by its probability of consuming error budget and only deploy high-risk changes when there's sufficient budget to absorb a potential incident. The SRE team's recommendation is the principled one.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("SRE team is right"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ '6% remaining' sounds like room, but context matters: 6% remaining with only 6 days left means the team is on pace to consume budget at ~5× the monthly sustainable rate. More importantly, a high-risk deployment has a meaningful probability of causing an incident that consumes that entire remaining budget — and then some. Error budgets don't work on a \"use whatever's left\" basis. They're decision frameworks: when budget is nearly exhausted, only low-risk deployments are appropriate. Strict \"no deployments under 10%\" is too rigid; the right threshold depends on deployment risk assessment.";}
+}
+</script>
+</body>
+</html>

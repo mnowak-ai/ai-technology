@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real-World Spotlight: How Datadog AI Monitors Infrastructure in Real Time</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Spotlight header */
+.spotlight-header{background:linear-gradient(135deg,#1a1025 0%,#2d1b4e 100%);border-radius:20px;padding:28px;margin:20px 0;display:flex;align-items:center;gap:20px;}
+.sh-logo{width:60px;height:60px;border-radius:14px;background:#7B2FBE;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.sh-name{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.sh-tagline{font-size:13px;color:#C4B5FD;line-height:1.5;}
+.sh-url{font-size:11px;color:#9580C8;margin-top:4px;}
+
+/* What it monitors grid */
+.monitors-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.mg-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.mg-icon{font-size:24px;margin-bottom:8px;}
+.mg-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.mg-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.mg-examples{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;}
+.mg-ex{background:var(--purple-pale);color:var(--purple);font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px;}
+
+/* Incident walkthrough */
+.incident-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.is-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.is-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.is-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.is-steps{display:flex;flex-direction:column;gap:0;}
+.is-step{display:flex;gap:0;cursor:pointer;}
+.is-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.is-dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .3s;border:2px solid var(--purple-mid);background:var(--white);color:var(--gray-muted);}
+.is-dot.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.is-dot.human{background:var(--green);border-color:var(--green);color:var(--white);}
+.is-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.is-step:last-child .is-line{display:none;}
+.is-body{flex:1;padding:0 0 18px 14px;padding-top:4px;}
+.is-step-who{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.is-step.ai-step .is-step-who{color:var(--purple);}
+.is-step.human-step .is-step-who{color:var(--green);}
+.is-step-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.is-step-desc{font-size:13px;line-height:1.65;color:var(--gray-text);max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;}
+.is-step-desc.open{max-height:300px;opacity:1;}
+.is-step-teaser{font-size:12px;color:var(--gray-muted);font-style:italic;}
+.is-alert-box{background:#1a1025;border-radius:12px;padding:14px 16px;margin:8px 0;font-family:"Courier New",monospace;font-size:11.5px;line-height:1.8;color:#E2D9F3;}
+.is-alert-box .hi{color:#F87171;}
+.is-alert-box .warn{color:#FCD34D;}
+.is-alert-box .ok{color:#86EFAC;}
+.is-next-btn{background:var(--purple);color:var(--white);border:none;border-radius:9px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:10px;transition:background .2s;}
+.is-next-btn:hover{background:var(--purple-dark);}
+.is-next-btn:disabled{background:var(--gray-muted);cursor:default;}
+
+/* AI features */
+.ai-features{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.af-item{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start;}
+.af-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.af-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.af-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.af-human{background:var(--green-pale);border-radius:7px;padding:6px 10px;margin-top:7px;font-size:12px;line-height:1.5;color:var(--green);}
+
+/* Limits */
+.limits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.lmt{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.lmt-icon{font-size:20px;margin-bottom:6px;}
+.lmt-title{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;}
+.lmt-body{font-size:12px;line-height:1.6;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.2 — Real-World Spotlight</div>
+  <h1>How Datadog AI Monitors Infrastructure in Real Time</h1>
+  <p class="hero-sub">The video's Datadog case study covered one slide. This article gives you the full picture: what Datadog actually monitors, how its AI features work, what the workflow looks like when an alert fires, and exactly where human judgment enters the process.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <div class="spotlight-header">
+      <div class="sh-logo">🐶</div>
+      <div>
+        <div class="sh-name">Datadog</div>
+        <div class="sh-tagline">Cloud infrastructure monitoring, APM, log management, and AI-powered anomaly detection. Used by over 27,000 organizations to monitor billions of metrics per second across distributed infrastructure.</div>
+        <div class="sh-url">datadoghq.com/solutions/ai</div>
+      </div>
+    </div>
+    <p>Datadog's job is to make the invisible visible. Modern tech infrastructure runs across dozens of servers, cloud services, databases, and network components simultaneously — no human can watch all of them at once. Datadog centralizes all of that observability data into one place, and its AI layer (called Watchdog) continuously scans it for patterns and anomalies that no human team could detect at that speed and scale.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Datadog Actually Monitors</h2>
+    <p>Datadog collects four major categories of observability data. Understanding what's in each category helps you understand what kinds of problems Datadog can and can't detect.</p>
+    <div class="monitors-grid">
+      <div class="mg-card">
+        <div class="mg-icon">📊</div>
+        <div class="mg-title">Infrastructure Metrics</div>
+        <div class="mg-body">Quantitative measurements of server and system health, collected every few seconds from every monitored host. This is the "vital signs" data — the continuous health checkup running 24/7 on every piece of infrastructure.</div>
+        <div class="mg-examples"><div class="mg-ex">CPU usage %</div><div class="mg-ex">Memory used/free</div><div class="mg-ex">Disk I/O</div><div class="mg-ex">Network bytes/sec</div><div class="mg-ex">Process count</div></div>
+      </div>
+      <div class="mg-card">
+        <div class="mg-icon">🌐</div>
+        <div class="mg-title">Application Performance (APM)</div>
+        <div class="mg-body">Metrics that measure how well the software running on the infrastructure is actually performing — from the user's perspective. APM tracks every request flowing through an application and how long each step takes.</div>
+        <div class="mg-examples"><div class="mg-ex">Request latency</div><div class="mg-ex">Error rate (4xx/5xx)</div><div class="mg-ex">Throughput (req/sec)</div><div class="mg-ex">Apdex score</div><div class="mg-ex">Database query time</div></div>
+      </div>
+      <div class="mg-card">
+        <div class="mg-icon">📋</div>
+        <div class="mg-title">Log Management</div>
+        <div class="mg-body">All log output from all monitored services, centralized in one searchable index. Instead of SSH-ing into individual servers to read logs, engineers can search across all logs from all services simultaneously and see correlated events across the entire system.</div>
+        <div class="mg-examples"><div class="mg-ex">Error messages</div><div class="mg-ex">Access logs</div><div class="mg-ex">Deployment events</div><div class="mg-ex">Application warnings</div><div class="mg-ex">Security events</div></div>
+      </div>
+      <div class="mg-card">
+        <div class="mg-icon">🔔</div>
+        <div class="mg-title">Synthetic Monitoring</div>
+        <div class="mg-body">Automated tests that simulate real user actions on a schedule — clicking through a checkout flow, logging in, loading a dashboard — and alert if the experience degrades or fails. This catches user-facing problems before real users report them.</div>
+        <div class="mg-examples"><div class="mg-ex">Uptime checks</div><div class="mg-ex">Browser tests</div><div class="mg-ex">API endpoint tests</div><div class="mg-ex">SSL cert expiry</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Watchdog: Datadog's AI Anomaly Detection Engine</h2>
+    <p>Watchdog is the AI component that continuously scans all of the above data for patterns that deviate from learned baselines. It doesn't wait for a human to define threshold rules — it learns what "normal" looks like for each metric on each service, and flags deviations automatically.</p>
+    <div class="ai-features">
+      <div class="af-item">
+        <div class="af-icon">📈</div>
+        <div>
+          <div class="af-title">Automated Metric Anomaly Detection</div>
+          <div class="af-body">Watchdog learns baseline behavior for every monitored metric — accounting for time-of-day patterns, day-of-week variation, and seasonal trends. When a metric deviates significantly from its learned baseline, Watchdog surfaces it automatically. Unlike static threshold alerts ("fire when CPU exceeds 90%"), Watchdog adapts to each service's unique normal behavior: a 70% CPU on a database server might be normal during nightly batch jobs, while 70% on a usually-idle cache server is anomalous.</div>
+          <div class="af-human">👤 Human role: After Watchdog flags an anomaly, a human investigates whether it represents a real problem or a false positive. Watchdog shows the deviation — it doesn't determine the cause or severity.</div>
+        </div>
+      </div>
+      <div class="af-item">
+        <div class="af-icon">🔗</div>
+        <div>
+          <div class="af-title">Correlated Incident Detection</div>
+          <div class="af-body">When Watchdog detects anomalies across multiple related metrics simultaneously — say, elevated error rates, increased response time, and rising database query latency all happening at the same time on related services — it groups them into a single correlated incident rather than firing separate alerts for each. This dramatically reduces alert noise and gives engineers a single coherent view of a problem rather than a flood of individual metric alerts.</div>
+          <div class="af-human">👤 Human role: Review the correlated incident to understand the scope. Which services are affected? Which is the root cause and which are downstream effects? Correlated detection shows what's happening together — it doesn't tell you what caused what.</div>
+        </div>
+      </div>
+      <div class="af-item">
+        <div class="af-icon">🔍</div>
+        <div>
+          <div class="af-title">Log Pattern Analysis</div>
+          <div class="af-body">Watchdog scans log streams to identify new error patterns that haven't appeared before, or existing error patterns that are suddenly appearing at a higher rate than usual. Rather than requiring engineers to manually grep through millions of log lines, it surfaces the patterns that matter. It can also correlate log anomalies with metric anomalies — showing, for example, that an error message that started appearing in the logs 10 minutes ago correlates with the latency spike in the metrics.</div>
+          <div class="af-human">👤 Human role: Read the actual log lines Watchdog surfaced to understand the nature of the error. Is this a new error or a regression? Does the error message point to a specific component, query, or code path?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Real Incident — From Alert to Resolution</h2>
+    <p>This is what the Datadog workflow actually looks like when an anomaly fires. Click each step to see what happens — and pay attention to where AI work ends and human work begins.</p>
+    <div class="incident-sim">
+      <div class="is-label">⚡ Incident Walkthrough — Click Each Step</div>
+      <div class="is-title">Tuesday 14:32 — Something is wrong with the payment service</div>
+      <div class="is-sub">Work through each step of the real Datadog incident response workflow.</div>
+      <div class="is-steps">
+        <div class="is-step ai-step" onclick="revealIS(0,this)">
+          <div class="is-left"><div class="is-dot active" id="isd0">🤖</div><div class="is-line"></div></div>
+          <div class="is-body">
+            <div class="is-step-who">AI — Watchdog</div>
+            <div class="is-step-title">Anomaly detected across 3 correlated metrics</div>
+            <div class="is-step-teaser">Click to see what Watchdog detected →</div>
+            <div class="is-step-desc" id="isd0b">
+              <div class="is-alert-box">
+<span class="hi">⚠ WATCHDOG INCIDENT — Severity: HIGH</span>
+Detected: 2024-11-14 14:37:22 UTC
+
+<span class="warn">Anomaly 1:</span> payment-service error rate
+  Current: 4.2%  |  Expected: 0.05%–0.3%
+  Duration: 5m12s sustained
+
+<span class="warn">Anomaly 2:</span> payment-db query latency
+  Current: 8,400ms  |  Expected: 45ms–120ms
+  Duration: 5m08s sustained
+
+<span class="warn">Anomaly 3:</span> payment-service 503 responses
+  Current: 847/min  |  Expected: 0–2/min
+
+<span class="hi">Root cause signal: payment-db anomalies
+preceded payment-service anomalies by 4m.</span>
+              </div>
+              Watchdog detected three anomalies, grouped them into one incident (rather than three separate alerts), and identified a likely causal sequence: the database latency anomaly appeared 4 minutes before the payment service errors — suggesting the database is the root cause, not the application.
+            </div>
+          </div>
+        </div>
+        <div class="is-step human-step" onclick="revealIS(1,this)">
+          <div class="is-left"><div class="is-dot" id="isd1">👤</div><div class="is-line"></div></div>
+          <div class="is-body">
+            <div class="is-step-who">Human — On-call engineer (paged)</div>
+            <div class="is-step-title">Receive alert, open Datadog dashboard, assess scope</div>
+            <div class="is-step-teaser">Click to see what the engineer does →</div>
+            <div class="is-step-desc" id="isd1b">The on-call engineer receives a PagerDuty page at 14:37. They open the Datadog incident view on their laptop. They see: 847 users per minute are receiving 503 errors on the payment service. The correlated incident shows database query latency is 70× above normal. They check the deployment log — no deployments in the past 2 hours. They check the database connection pool metrics — the connection pool is at 98% capacity, with threads queueing. This points to a connection pool exhaustion, not a query performance regression.</div>
+          </div>
+        </div>
+        <div class="is-step human-step" onclick="revealIS(2,this)">
+          <div class="is-left"><div class="is-dot" id="isd2">👤</div><div class="is-line"></div></div>
+          <div class="is-body">
+            <div class="is-step-who">Human — On-call engineer</div>
+            <div class="is-step-title">Search correlated logs to identify the cause</div>
+            <div class="is-step-teaser">Click to see what the logs reveal →</div>
+            <div class="is-step-desc" id="isd2b">
+              <div class="is-alert-box">
+<span class="ok">Log pattern surfaced by Watchdog:</span>
+First occurrence: 14:28:14 — new pattern
+
+ERROR [payment-db] Connection pool exhausted
+  pool_size: 100  |  active: 100  |  waiting: 247
+  query: SELECT * FROM transactions WHERE
+         user_id IN (...) — <span class="hi">47,821 user IDs</span>
+
+Frequency: 847 occurrences in last 5 minutes
+Prior 30 days: 0 occurrences
+              </div>
+              Watchdog surfaced a log pattern that appeared for the first time at 14:28 — 9 minutes before it was flagged (it didn't trigger the alert threshold until it became sustained). The root cause: a new background job is running a query with 47,821 user IDs in a single IN() clause — an unbounded query that saturates all database connections and prevents the payment service from getting a connection.
+            </div>
+          </div>
+        </div>
+        <div class="is-step human-step" onclick="revealIS(3,this)">
+          <div class="is-left"><div class="is-dot" id="isd3">👤</div><div class="is-line"></div></div>
+          <div class="is-body">
+            <div class="is-step-who">Human — Engineering team</div>
+            <div class="is-step-title">Decide on mitigation and implement fix</div>
+            <div class="is-step-teaser">Click to see the human decision →</div>
+            <div class="is-step-desc" id="isd3b">The engineer identifies that the background job was deployed 3 days ago but only now ran against the full user table for the first time (it was tested against a small dataset). Immediate mitigation: kill the background job, restart the payment service connection pool. Total downtime: 14 minutes. Root cause fix: the query is refactored to batch users in groups of 1,000 rather than all at once. A query timeout limit is added to the background job configuration to prevent future runaway queries from exhausting the connection pool.</div>
+          </div>
+        </div>
+        <div class="is-step ai-step" onclick="revealIS(4,this)">
+          <div class="is-left"><div class="is-dot" id="isd4">🤖</div><div class="is-line"></div></div>
+          <div class="is-body">
+            <div class="is-step-who">AI — Watchdog</div>
+            <div class="is-step-title">Confirm recovery — metrics return to normal</div>
+            <div class="is-step-teaser">Click to see the all-clear →</div>
+            <div class="is-step-desc" id="isd4b">
+              <div class="is-alert-box">
+<span class="ok">✅ WATCHDOG INCIDENT RESOLVED — 14:51 UTC</span>
+
+payment-service error rate:  <span class="ok">0.08%</span>  (normal)
+payment-db query latency:    <span class="ok">52ms</span>  (normal)
+payment-service 503 rate:    <span class="ok">0/min</span>  (normal)
+
+Incident duration: 14 minutes
+Users impacted:   ~11,900 failed payment attempts
+              </div>
+              Once the connection pool is restarted, all three anomaly metrics return to their expected ranges within 90 seconds. Watchdog automatically resolves the incident and sends the resolution notification. The engineer documents the postmortem: root cause, timeline, mitigation, and the code change that prevents recurrence.
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="is-next-btn" id="isNextBtn" onclick="nextIS()">Next Step →</button>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Datadog AI Can't Do — The Honest Version</h2>
+    <div class="limits">
+      <div class="lmt"><div class="lmt-icon">🧠</div><div class="lmt-title">Can't explain why</div><div class="lmt-body">Watchdog knew that database latency was 70× above normal. It couldn't tell you that an unbounded IN() clause with 47,821 IDs was the cause. Root cause analysis required reading the actual log lines.</div></div>
+      <div class="lmt"><div class="lmt-icon">📅</div><div class="lmt-title">Can't know what changed</div><div class="lmt-body">Watchdog detected an anomaly onset but didn't know a background job was deployed 3 days ago and ran against the full table for the first time today. Deployment history context is human-supplied.</div></div>
+      <div class="lmt"><div class="lmt-icon">⚖️</div><div class="lmt-title">Can't decide the fix</div><div class="lmt-body">Once the cause was identified, the engineer had to decide: kill the job immediately vs. let it finish vs. throttle it. That tradeoff — speed vs. data completeness — requires business judgment.</div></div>
+      <div class="lmt"><div class="lmt-icon">🔮</div><div class="lmt-title">Can miss slow-building problems</div><div class="lmt-body">If the unbounded query had run daily but grown slowly from 1,000 users to 47,821 over months, each day's baseline would have adjusted. The trend might never have triggered an alert until it was too late.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Datadog's Watchdog flagged a high-severity correlated incident: both the API gateway error rate and the database query latency are anomalous simultaneously. A junior engineer sees the incident and immediately scales up the number of API gateway servers (adding more compute capacity). The incident continues. What did the engineer likely misunderstand, and what should they have done first?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">They should have restarted the API gateway servers rather than scaling them up</button>
+        <button class="qopt" onclick="cq(this,true)">They misread the causal direction of the correlated incident. Database latency being anomalous alongside API errors strongly suggests the database is the cause and the API is the victim — API errors are occurring because the API can't get responses from the database fast enough, not because the API gateway lacks compute capacity. Scaling the API gateway adds more servers that will all be equally stuck waiting on the slow database. The correct first step was to investigate the database anomaly: why is query latency elevated? Is it a runaway query, connection pool saturation, a missing index, or a storage problem? That diagnosis determines the right fix.</button>
+        <button class="qopt" onclick="cq(this,false)">They should have immediately rolled back the most recent deployment without investigating</button>
+        <button class="qopt" onclick="cq(this,false)">Scaling the API gateway was the correct first step — more capacity always helps during incidents</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Datadog monitors four categories of infrastructure observability: infrastructure metrics (server vital signs), application performance metrics (request speed and error rates), log management (all log output searchable in one place), and synthetic monitoring (automated user journey tests). Its AI engine, Watchdog, scans all of this continuously for anomalies — at a scale no human team could match manually.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Watchdog's most important capability is correlated incident detection: grouping multiple simultaneous anomalies across related services into one incident, and identifying which anomaly appeared first (the likely cause) vs. which appeared later (the downstream effects). This dramatically reduces alert noise and gives engineers a single coherent view of a problem.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Datadog finds the anomaly. Humans find the cause, decide the fix, and implement the solution. The 14-minute incident in this article was resolved because a human read the actual log lines (surfaced by Watchdog) and identified the specific unbounded query — something no automated system could have diagnosed from metrics alone. AI and human work are sequential, not competing.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+let isStep=-1;
+const isTotal=5;
+function revealIS(idx,el){
+  if(document.getElementById("isd"+idx+"b").classList.contains("open"))return;
+  document.getElementById("isd"+idx+"b").classList.add("open");
+  const dot=document.getElementById("isd"+idx);
+  if(el.classList.contains("human-step"))dot.classList.add("human");
+  else dot.classList.add("active");
+  isStep=Math.max(isStep,idx);
+}
+function nextIS(){
+  isStep++;
+  if(isStep>=isTotal){document.getElementById("isNextBtn").textContent="All steps complete ✓";document.getElementById("isNextBtn").disabled=true;return;}
+  const steps=document.querySelectorAll(".is-step");
+  revealIS(isStep,steps[isStep]);
+  if(isStep>=isTotal-1){document.getElementById("isNextBtn").textContent="All steps complete ✓";document.getElementById("isNextBtn").disabled=true;}
+}
+// Auto-reveal first step
+revealIS(0,document.querySelectorAll(".is-step")[0]);
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. In a correlated incident where database latency is anomalous alongside API errors, the database problem almost always causes the API problem — not the other way around. Adding more API servers doesn't help if they're all waiting on the same slow database. This is the causal direction mistake: treating the downstream symptom (API errors) as the root cause and applying a fix (more API capacity) that addresses only the symptom. The right investigation sequence is always to understand the causal chain before applying a fix — and in this incident, that means starting with why database latency is 70× above normal.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("misread the causal direction"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Restarting vs. scaling is a secondary detail. Rolling back without investigation is often right — but here the deployment was 3 days old, so rollback causation isn't clear. And 'more capacity always helps' is a dangerous assumption — more capacity at a saturated resource doesn't help; it just creates more waiting requests. The fundamental error is treating the API (downstream victim) as the root cause and trying to fix it, when the correlated data clearly points to the database as the origin of the problem.";}
+}
+</script>
+</body>
+</html>
