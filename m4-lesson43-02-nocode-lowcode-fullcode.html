@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No-Code vs. Low-Code vs. Full Code: What's the Difference and Which One Should You Use?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Three-tier cards */
+.tier-cards{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.tier-card{border:2px solid var(--purple-mid);border-radius:18px;overflow:hidden;}
+.tc-hdr{padding:18px 22px;display:flex;align-items:center;gap:14px;}
+.tc-hdr.nc{background:var(--green-pale);}
+.tc-hdr.lc{background:var(--purple-pale);}
+.tc-hdr.fc{background:var(--blue-pale);}
+.tc-badge{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.tc-hdr.nc .tc-badge{background:var(--green);}
+.tc-hdr.lc .tc-badge{background:var(--purple);}
+.tc-hdr.fc .tc-badge{background:var(--blue);}
+.tc-meta{flex:1;}
+.tc-tier{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;}
+.tc-hdr.nc .tc-tier{color:var(--green);}
+.tc-hdr.lc .tc-tier{color:var(--purple);}
+.tc-hdr.fc .tc-tier{color:var(--blue);}
+.tc-name{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--gray-text);}
+.tc-skill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:5px;}
+.tc-hdr.nc .tc-skill{background:var(--green);color:white;}
+.tc-hdr.lc .tc-skill{background:var(--purple);color:white;}
+.tc-hdr.fc .tc-skill{background:var(--blue);color:white;}
+.tc-bdy{background:var(--white);padding:18px 22px;}
+.tc-bdy p{font-size:14px;line-height:1.75;margin-bottom:12px;}
+.tc-bdy p:last-child{margin-bottom:0;}
+.tc-tools{margin:12px 0;display:flex;flex-wrap:wrap;gap:6px;}
+.tc-tool{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:var(--gray-text);}
+.tc-best{border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.6;margin-top:8px;}
+.tc-hdr.nc+.tc-bdy .tc-best{background:var(--green-pale);color:var(--green);}
+.tc-hdr.lc+.tc-bdy .tc-best{background:var(--purple-pale);color:var(--purple-dark);}
+.tc-hdr.fc+.tc-bdy .tc-best{background:var(--blue-pale);color:var(--blue);}
+.tc-limit{background:var(--orange-pale);border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.6;margin-top:6px;color:var(--orange);}
+
+/* Comparison table */
+.compare-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.compare-table th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.compare-table th.nc{background:var(--green-pale);color:var(--green);}
+.compare-table th.lc{background:var(--purple-pale);color:var(--purple-dark);}
+.compare-table th.fc{background:var(--blue-pale);color:var(--blue);}
+.compare-table td{padding:11px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:nth-child(even) td{background:var(--gray-soft);}
+.compare-table td:first-child{font-weight:700;color:var(--purple-dark);font-size:12px;}
+
+/* Scenario picker */
+.scenario-picker{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sp-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sp-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.sp-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.sp-scenarios{display:flex;flex-direction:column;gap:12px;}
+.sp-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.sp-ctx{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:6px;}
+.sp-task{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;line-height:1.4;}
+.sp-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.sp-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.sp-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sp-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.sp-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.sp-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.sp-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.sp-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.3 — No-Code & Low-Code Automation</div>
+  <h1>No-Code vs. Low-Code vs. Full Code: What's the Difference and Which One Should You Use?</h1>
+  <p class="hero-sub">The video uses all three terms but never defines the distinction. This article fixes that — clearly explaining what each tier means, what tools live in each tier, and how to choose the right one for any automation task you encounter in a tech role.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why the Distinction Matters</h2>
+    <p>These three tiers are not just different names for the same thing. They represent fundamentally different trade-offs between speed, flexibility, skill requirement, and maintainability. <mark>Choosing the wrong tier for a task costs you either time, capability, or maintenance burden.</mark> Choosing the right one means you build it faster, maintain it more easily, and don't create a burden for whoever has to support it later.</p>
+    <p>The good news: most tech roles that aren't software engineering will primarily live in the no-code and low-code tiers. You don't need to write Python to build meaningful, valuable automation workflows. But you do need to know when a task requires moving to a higher tier — and when to involve a developer.</p>
+    <div class="pull-quote">
+      <p>The goal isn't to stay at the no-code tier. The goal is to use the right tool for the task. A no-code tool that handles your use case is always better than code you can't maintain.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Tiers — In Full</h2>
+    <div class="tier-cards">
+
+      <div class="tier-card">
+        <div class="tc-hdr nc">
+          <div class="tc-badge">🟩</div>
+          <div class="tc-meta">
+            <div class="tc-tier">Tier 1</div>
+            <div class="tc-name">No-Code Automation</div>
+          </div>
+          <div class="tc-skill">No coding required</div>
+        </div>
+        <div class="tc-bdy">
+          <p>No-code tools let you build automation workflows entirely through a visual interface — connecting apps, defining triggers and actions, setting conditions — without typing a single line of code. The tool generates all underlying logic from your visual configuration. You build by dragging, clicking, and filling in fields.</p>
+          <p>No-code is designed for business users, operations teams, and non-engineering tech workers. The interface is intentionally approachable — if you can fill out a form and understand "if-then" logic, you can build no-code automations. Most platforms offer pre-built templates for common workflows that you can activate and customize without starting from scratch.</p>
+          <div class="tc-tools">
+            <div class="tc-tool">⚡ Zapier</div>
+            <div class="tc-tool">🔄 Make (formerly Integromat)</div>
+            <div class="tc-tool">📧 Mailchimp automations</div>
+            <div class="tc-tool">📋 Airtable automations</div>
+            <div class="tc-tool">🤖 Microsoft Power Automate (basic flows)</div>
+            <div class="tc-tool">📊 Google Workspace automation</div>
+          </div>
+          <div class="tc-best">✅ Best for: Connecting cloud apps (send data from app A to app B when X happens), automating notifications and emails, scheduling recurring tasks, routing data between tools your team already uses. Works well when your use case matches existing templates and integrations.</div>
+          <div class="tc-limit">⚠️ Limitation: You're constrained to what the platform supports. If your trigger or action isn't in the platform's library, you can't use it. Logic is limited to the conditions the visual interface exposes. Can become expensive at scale (many platforms charge per "operation" or "task").</div>
+        </div>
+      </div>
+
+      <div class="tier-card">
+        <div class="tc-hdr lc">
+          <div class="tc-badge">🟣</div>
+          <div class="tc-meta">
+            <div class="tc-tier">Tier 2</div>
+            <div class="tc-name">Low-Code Automation</div>
+          </div>
+          <div class="tc-skill">Some scripting helpful</div>
+        </div>
+        <div class="tc-bdy">
+          <p>Low-code tools provide the same visual interface as no-code, but add the ability to write small amounts of code for the steps that need custom logic. Most of the workflow is still built visually — you're not writing a full application — but you can drop into a code editor when the visual blocks aren't flexible enough for your specific need.</p>
+          <p>Low-code platforms are designed for "citizen developers" — people who aren't professional software engineers but have enough technical comfort to write simple expressions, configure APIs, or paste and modify code snippets. The platform handles the infrastructure; you handle the logic. Many IT operations roles, business analysts, and technical coordinators work at this tier.</p>
+          <div class="tc-tools">
+            <div class="tc-tool">🔵 Microsoft Power Automate (with expressions)</div>
+            <div class="tc-tool">🟧 Retool</div>
+            <div class="tc-tool">📦 OutSystems</div>
+            <div class="tc-tool">🏗️ Mendix</div>
+            <div class="tc-tool">🔌 n8n (self-hosted)</div>
+            <div class="tc-tool">🎨 Bubble</div>
+          </div>
+          <div class="tc-best">✅ Best for: More complex conditional logic than no-code supports, workflows that need to call APIs not in the standard integration library, internal tools that require some custom UI or data transformation, and situations where the cost of no-code scaling is prohibitive. The "middle tier" that grows with your needs.</div>
+          <div class="tc-limit">⚠️ Limitation: Still has platform limits. Very complex or high-performance requirements push you toward full code. Maintenance can become harder as workflows grow — visual flows with inline code are sometimes harder to debug than pure code. Requires some technical literacy to troubleshoot when things break.</div>
+        </div>
+      </div>
+
+      <div class="tier-card">
+        <div class="tc-hdr fc">
+          <div class="tc-badge">🔵</div>
+          <div class="tc-meta">
+            <div class="tc-tier">Tier 3</div>
+            <div class="tc-name">Full Code / Custom Development</div>
+          </div>
+          <div class="tc-skill">Software engineering required</div>
+        </div>
+        <div class="tc-bdy">
+          <p>Full code automation means writing the complete logic in a programming language — Python, JavaScript, Go, or others — and building the infrastructure to run it. There is no visual interface layer. The developer controls everything: the logic, the error handling, the scheduling, the data transformation, the API calls. This tier has no platform constraints — if a computer can do it, code can automate it.</p>
+          <p>Full code is appropriate when no-code and low-code platforms can't meet the requirements — either because the use case is too complex, too high-volume, too performance-sensitive, or requires integration with systems that don't have pre-built connectors. This is the domain of software engineers and DevOps teams, not typical business or operations tech workers.</p>
+          <div class="tc-tools">
+            <div class="tc-tool">🐍 Python scripts</div>
+            <div class="tc-tool">🔧 Bash/shell scripts</div>
+            <div class="tc-tool">☁️ AWS Lambda / Azure Functions</div>
+            <div class="tc-tool">🔄 Apache Airflow</div>
+            <div class="tc-tool">⚙️ Custom APIs</div>
+            <div class="tc-tool">🤖 GitHub Actions</div>
+          </div>
+          <div class="tc-best">✅ Best for: High-volume data pipelines, complex business logic that exceeds platform capabilities, performance-critical automation, integrations with proprietary or unsupported systems, and situations where you need complete control over execution, error handling, and scaling. The right answer when no-code and low-code genuinely can't do the job.</div>
+          <div class="tc-limit">⚠️ Limitation: Requires software engineering skills to build and maintain. Higher upfront investment. Needs version control, testing, and deployment infrastructure. Changes require a developer, not just a business user clicking through a visual interface. The "best" tool when needed — but overkill for tasks no-code handles fine.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Side-by-Side Comparison</h2>
+    <table class="compare-table">
+      <thead><tr><th>Dimension</th><th class="nc">No-Code</th><th class="lc">Low-Code</th><th class="fc">Full Code</th></tr></thead>
+      <tbody>
+        <tr><td>Skill required</td><td>Anyone comfortable with apps</td><td>Technical non-developer</td><td>Software engineer</td></tr>
+        <tr><td>Build time</td><td>Minutes to hours</td><td>Hours to days</td><td>Days to weeks</td></tr>
+        <tr><td>Flexibility</td><td>Limited to platform features</td><td>Moderate — extend with code</td><td>Unlimited</td></tr>
+        <tr><td>Maintenance</td><td>Non-technical users can update</td><td>Technical user required</td><td>Developer required</td></tr>
+        <tr><td>Cost model</td><td>Per-task/operation fees</td><td>Subscription + usage</td><td>Engineering time + infra</td></tr>
+        <tr><td>Best example use case</td><td>Route form submissions to CRM</td><td>Custom SLA breach workflow with API call</td><td>Real-time log processing pipeline</td></tr>
+        <tr><td>Who maintains it</td><td>Operations / business team</td><td>Technical operations / IT analyst</td><td>Engineering team</td></tr>
+        <tr><td>When it breaks</td><td>Non-technical person can fix</td><td>Technical user can investigate</td><td>Developer required to debug</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Which Tier Should You Use? — Practice</h2>
+    <div class="scenario-picker">
+      <div class="sp-label">🎯 Scenario Practice</div>
+      <div class="sp-title">Which tier fits this task?</div>
+      <div class="sp-sub">For each scenario, choose the most appropriate automation tier.</div>
+      <div class="sp-scenarios">
+        <div class="sp-item">
+          <div class="sp-ctx">IT Support</div>
+          <div class="sp-task">When a new ticket is submitted via the web form, automatically add the submitter's email to your help desk CRM and send them a confirmation email with their ticket number.</div>
+          <div class="sp-opts" id="p1o">
+            <button class="sp-opt" onclick="doSP('p1','nc',this,'✅ Correct. This is a textbook no-code use case: two cloud apps (ticketing form + CRM) that major platforms already have connectors for, a simple trigger (form submitted), and two simple actions (add to CRM, send email). Zapier or Make can build this in under 30 minutes with no code. Full code would be significant overkill.')">🟩 No-Code</button>
+            <button class="sp-opt" onclick="doSP('p1','lc',this,'Low-code would work — but it\'s overkill for this scenario. The trigger and both actions (add to CRM, send email) are standard integrations that no-code platforms already support with pre-built connectors. Start with no-code; move up only if you need something the platform can\'t do.')">🟣 Low-Code</button>
+            <button class="sp-opt" onclick="doSP('p1','fc',this,'Way too much for this use case. Writing code to send a CRM entry and a confirmation email for a form submission would take days to build and would be expensive to maintain — when a no-code tool can do it in 30 minutes.')">🔵 Full Code</button>
+          </div>
+          <div class="sp-fb" id="p1f"></div>
+        </div>
+        <div class="sp-item">
+          <div class="sp-ctx">IT Operations</div>
+          <div class="sp-task">Build a workflow that monitors server disk usage via the infrastructure monitoring API, and when any server exceeds 80%, automatically runs a custom script to delete temp files older than 7 days, then sends a Slack notification with the server name, disk usage before and after, and a list of deleted files.</div>
+          <div class="sp-opts" id="p2o">
+            <button class="sp-opt" onclick="doSP('p2','nc',this,'No-code won\'t work here. The custom script execution and the API call to retrieve disk metrics with custom parameters likely exceed what no-code platforms support. The data transformation (calculating before/after usage, generating a file list) requires more logic than visual blocks provide.')">🟩 No-Code</button>
+            <button class="sp-opt" onclick="doSP('p2','lc',true,'✅ Correct. This is a low-code scenario: a monitoring API call (available in low-code platforms with custom HTTP connectors), a conditional trigger (>80%), a custom script execution step (low-code platforms can call external scripts), and a Slack notification with dynamic content. The data transformation (before/after calculation, file list formatting) benefits from a small amount of inline code. No-code can\'t handle the custom API call and script execution; full code is more than necessary.')">🟣 Low-Code</button>
+            <button class="sp-opt" onclick="doSP('p2','fc',false,'Full code would work — but low-code handles this case with significantly less development time. Unless there are performance requirements or system constraints that low-code can\'t meet, starting with low-code and moving to full code only if needed is the right approach.')">🔵 Full Code</button>
+          </div>
+          <div class="sp-fb" id="p2f"></div>
+        </div>
+        <div class="sp-item">
+          <div class="sp-ctx">Data Engineering</div>
+          <div class="sp-task">Process 50 million log records per day from 200 servers, parse each record to extract error codes and timing data, join against a reference database to enrich with service metadata, and write the results to a data warehouse for real-time querying — all within 30 seconds of a log line being written.</div>
+          <div class="sp-opts" id="p3o">
+            <button class="sp-opt" onclick="doSP('p3','nc',false,'No-code cannot handle 50M records/day at 30-second latency. The scale and performance requirements immediately eliminate no-code platforms.')">🟩 No-Code</button>
+            <button class="sp-opt" onclick="doSP('p3','lc',false,'Low-code platforms are not designed for real-time high-volume data pipelines at this scale. The 30-second latency requirement and 50M daily records exceed what low-code platforms typically support.')">🟣 Low-Code</button>
+            <button class="sp-opt" onclick="doSP('p3','fc',true,'✅ Correct. This is a full-code requirement. The scale (50M records/day), real-time latency requirement (30 seconds), and complexity (parsing, joining, enriching, writing to warehouse) all push this into dedicated stream processing infrastructure — Apache Kafka + Flink, AWS Kinesis, or similar. No visual tool handles this use case reliably at production scale.')">🔵 Full Code</button>
+          </div>
+          <div class="sp-fb" id="p3f"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A non-technical IT coordinator builds a no-code automation that processes about 200 transactions per day — well within the platform's free tier limits. Over six months, the workflow grows to handle 2,000 transactions per day as the company scales. The coordinator receives a bill for $340/month from the no-code platform. A developer on the team offers to rewrite it in Python, which would eliminate the platform fee. What factors should the coordinator consider before deciding?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Always choose the Python version — writing your own code is always cheaper and more flexible</button>
+        <button class="qopt" onclick="cq(this,true)">The coordinator should weigh: (1) $340/month vs. the developer's time to rewrite and maintain the Python version (developer time is often more expensive than $340/month); (2) who will maintain the Python script — if the coordinator can't debug it when it breaks, it creates a support dependency on the developer; (3) whether the no-code version's limitations are actually causing problems, or whether it's working fine at the new scale; (4) whether a mid-tier no-code plan or a different platform could handle the volume more cost-effectively. Jumping to full code to eliminate a platform fee often costs more in hidden engineering time than the fee itself.</button>
+        <button class="qopt" onclick="cq(this,false)">The no-code version should always be kept — platform tools are more reliable than custom code</button>
+        <button class="qopt" onclick="cq(this,false)">Switch to low-code immediately since the volume has grown</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>No-code is visual-only, no programming required, fast to build, limited to platform features. Best for: connecting common cloud apps, routing data between tools, sending automated notifications. Low-code adds the ability to write small amounts of code for custom logic, extending what's possible without a full development project. Full code is unlimited flexibility with full engineering overhead — appropriate when no/low-code genuinely can't meet the requirements.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The right tier is determined by four questions: What skill level does the team have to build and maintain it? Does the use case fit within existing platform integrations? What are the performance and scale requirements? And what's the total cost of building AND maintaining at each tier — not just the build cost?</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Most tech roles that aren't software engineering work primarily in the no-code and low-code tiers. This is where the majority of practical automation in IT support, IT operations, and technical coordination lives. You don't need to write Python to build meaningful, valuable automation — but you do need to know when a task exceeds what these tiers can handle and requires a developer.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSP(id,tier,el,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;const correct=(tier==="nc"&&id==="p1")||(tier==="lc"&&id==="p2")||(tier==="fc"&&id==="p3");el.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="sp-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The build-vs-buy (or build-vs-platform) decision is always more complex than it looks on the surface. Developer time is expensive — often $150–300/hour at agency rates or equivalent in salary. A rewrite might cost 20–40 hours of developer time to build, test, and deploy correctly. That's $3,000–12,000 upfront, amortized over the lifetime of the script. Meanwhile, $340/month = $4,080/year — a reasonable price if the developer's time is genuinely scarce. The key questions: who maintains the Python version when it breaks? And does the $340/month fee actually exceed the full cost of the alternative?";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("weigh"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Neither 'always code' nor 'always platform' is the right answer. The right answer requires understanding the full cost of each option: the platform fee vs. developer time to build, test, and maintain custom code; who can maintain each option when something breaks; and whether the current solution actually has functional problems beyond the cost issue. These factors together determine the right choice — not a general preference for one tier over another.";}
+}
+</script>
+</body>
+</html>

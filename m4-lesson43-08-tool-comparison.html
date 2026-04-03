@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tool Comparison: Zapier vs. Power Automate vs. Make — When to Use Each</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;--zapier:#FF4A00;--make:#6D00CC;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Tool header cards */
+.tool-headers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.th-card{border-radius:18px;padding:20px;text-align:center;}
+.th-card.zap{background:linear-gradient(135deg,#FF4A00,#FF7A45);}
+.th-card.pa{background:linear-gradient(135deg,#0078D4,#1E9BD7);}
+.th-card.mk{background:linear-gradient(135deg,#6D00CC,#9B3DFF);}
+.th-logo{font-size:32px;margin-bottom:8px;}
+.th-name{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.th-tagline{font-size:12px;color:rgba(255,255,255,.85);line-height:1.5;margin-bottom:10px;}
+.th-tier{font-size:11px;font-weight:700;background:rgba(255,255,255,.2);color:var(--white);padding:3px 9px;border-radius:5px;display:inline-block;}
+
+/* Strength cards */
+.strength-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;}
+.st{flex:1;min-width:110px;padding:11px 10px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.st:hover{color:var(--purple-dark);}
+.st.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.strength-panel{display:none;padding-top:20px;}
+.strength-panel.active{display:block;}
+.sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.sp-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.sp-icon{font-size:22px;margin-bottom:8px;}
+.sp-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.sp-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.sp-good{background:var(--green-pale);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;line-height:1.5;color:var(--green);}
+.sp-bad{background:var(--red-pale);border-radius:8px;padding:8px 10px;margin-top:6px;font-size:12px;line-height:1.5;color:var(--red);}
+
+/* Comparison table */
+.comp-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.comp-table th{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 14px;text-align:left;}
+.comp-table th.dim{background:var(--gray-soft);color:var(--gray-muted);}
+.comp-table th.zap{background:#FFF0EB;color:var(--zapier);}
+.comp-table th.pa{background:var(--blue-pale);color:var(--blue);}
+.comp-table th.mk{background:var(--purple-pale);color:var(--make);}
+.comp-table td{padding:11px 14px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table td:first-child{font-weight:700;color:var(--purple-dark);font-size:12px;background:var(--gray-soft);}
+.rating{display:flex;gap:2px;}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dot.on{background:var(--purple);}
+.dot.off{background:var(--purple-mid);}
+
+/* Scenario picker */
+.scenario-picker{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sp2-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sp2-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.sp2-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.sp2-items{display:flex;flex-direction:column;gap:12px;}
+.sp2-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.sp2-ctx{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:6px;}
+.sp2-task{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;line-height:1.4;}
+.sp2-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.sp2-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.sp2-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sp2-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.sp2-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.sp2-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.sp2-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.sp2-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Decision flowchart */
+.decision-flow{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.df-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:14px;}
+.df-question{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.df-q{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;}
+.df-options{display:flex;gap:8px;flex-wrap:wrap;}
+.df-opt{border:1.5px solid var(--purple-mid);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;font-weight:600;}
+.df-opt:hover{background:var(--purple-pale);border-color:var(--purple);}
+.df-opt.selected{background:var(--purple);color:var(--white);border-color:var(--purple);}
+.df-result{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:16px;margin-top:10px;display:none;}
+.df-result.show{display:block;}
+.df-result-tool{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.df-result-why{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.3 — No-Code & Low-Code Automation</div>
+  <h1>Tool Comparison: Zapier vs. Power Automate vs. Make — When to Use Each</h1>
+  <p class="hero-sub">Three major platforms, genuinely different strengths. This article gives you a practical decision framework — not a "best tool" ranking, but a clear picture of when each one fits and when it doesn't, so you can make the right call for any situation.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Tool Choice Actually Matters</h2>
+    <p>Zapier, Power Automate, and Make all do roughly the same thing: connect apps and automate workflows visually. But they're built for different users, different complexity levels, and different ecosystems. <mark>Choosing the wrong tool doesn't just mean a suboptimal experience — it can mean rebuilding everything when you hit a capability wall, paying far more than necessary, or creating a workflow nobody else on the team can maintain.</mark></p>
+    <p>The goal isn't to find the "best" tool in the abstract. It's to find the right tool for your specific use case, team technical level, cost tolerance, and existing software ecosystem. This article gives you the framework to make that call.</p>
+    <div class="pull-quote">
+      <p>The best automation tool is the one your team can build in, maintain when it breaks, and afford as it scales. Those three criteria together — not raw features — determine the right choice.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Tools — At a Glance</h2>
+    <div class="tool-headers">
+      <div class="th-card zap">
+        <div class="th-logo">⚡</div>
+        <div class="th-name">Zapier</div>
+        <div class="th-tagline">The fastest path from "I want to connect two apps" to a working automation. Best-in-class ease of use and app coverage.</div>
+        <div class="th-tier">No-Code → Light Low-Code</div>
+      </div>
+      <div class="th-card pa">
+        <div class="th-logo">🔵</div>
+        <div class="th-name">Power Automate</div>
+        <div class="th-tagline">Microsoft's automation platform, included with M365. The natural choice for Microsoft-heavy organizations. More complex to learn; more powerful for enterprise use.</div>
+        <div class="th-tier">No-Code → Low-Code</div>
+      </div>
+      <div class="th-card mk">
+        <div class="th-logo">🟣</div>
+        <div class="th-name">Make (formerly Integromat)</div>
+        <div class="th-tagline">The visual flow builder with the most flexibility. Steeper learning curve but significantly more power for complex data transformation and multi-step workflows.</div>
+        <div class="th-tier">Low-Code → Near-Full-Code Power</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Strengths and Weaknesses — In Depth</h2>
+    <div class="strength-tabs">
+      <button class="st active" onclick="showStrength(0,this)">⚡ Zapier</button>
+      <button class="st" onclick="showStrength(1,this)">🔵 Power Automate</button>
+      <button class="st" onclick="showStrength(2,this)">🟣 Make</button>
+    </div>
+    <div class="strength-panel active" id="sp0">
+      <div class="sp-grid">
+        <div class="sp-card"><div class="sp-icon">🚀</div><div class="sp-title">Speed to first working automation</div><div class="sp-body">Zapier has the gentlest learning curve of the three. If you know what two apps you want to connect, you can build a working Zap in 10–20 minutes on your first day. The interface is streamlined and opinionated — fewer choices means less confusion.</div><div class="sp-good">✅ Best for: Teams with no prior automation experience who need working flows immediately. The onboarding experience is industry-leading.</div></div>
+        <div class="sp-card"><div class="sp-icon">🔌</div><div class="sp-title">App library — 7,000+ integrations</div><div class="sp-body">Zapier has the largest connector library of any automation platform. If you're wondering whether an app has a Zapier integration, it almost certainly does — from major enterprise tools to niche SaaS products. This is Zapier's strongest competitive advantage.</div><div class="sp-good">✅ Best for: Workflows connecting obscure or niche apps that other platforms haven't built connectors for yet.</div></div>
+        <div class="sp-card"><div class="sp-icon">💰</div><div class="sp-title">Cost — per-task pricing</div><div class="sp-body">Zapier charges per "task" (each action execution). This is affordable at low volumes but can become expensive quickly at scale. 100 tasks/month is free. 750 tasks/month starts at ~$20. High-volume workflows (thousands of tasks/day) can cost hundreds of dollars monthly.</div><div class="sp-bad">⚠️ Watch: For high-volume workflows, Zapier's per-task pricing can significantly exceed Make or custom code alternatives. Always model the cost at scale before committing.</div></div>
+        <div class="sp-card"><div class="sp-icon">⚡</div><div class="sp-title">Complexity ceiling</div><div class="sp-body">Zapier excels at simple "A → B" flows and moderately complex multi-step workflows. For complex data transformation, iterating over arrays, or sophisticated conditional logic, Zapier's interface becomes limiting. Advanced features exist but feel bolted on.</div><div class="sp-bad">⚠️ Watch: If your workflow needs to process lists of items, perform complex data manipulation, or handle sophisticated branching, Zapier may frustrate you. Make handles this more naturally.</div></div>
+      </div>
+    </div>
+    <div class="strength-panel" id="sp1">
+      <div class="sp-grid">
+        <div class="sp-card"><div class="sp-icon">🏢</div><div class="sp-title">Microsoft ecosystem integration</div><div class="sp-body">If your organization uses M365 — Outlook, Teams, SharePoint, Dynamics, Azure — Power Automate is unmatched. The deep native integration with the Microsoft stack, combined with its inclusion in most M365 licenses, makes it the obvious choice for Microsoft-heavy environments.</div><div class="sp-good">✅ Best for: Any organization already paying for M365. It's included — you're already paying for it. The Microsoft connectors work more reliably and deeply than any third-party platform's M365 connectors.</div></div>
+        <div class="sp-card"><div class="sp-icon">🤖</div><div class="sp-title">AI Builder integration</div><div class="sp-body">Power Automate's AI Builder (document processing, text classification, object detection) is uniquely powerful among no/low-code platforms. Training custom AI models that plug directly into your workflows — without leaving the platform or writing code — is a major differentiator for enterprise document workflows.</div><div class="sp-good">✅ Best for: Document processing automation, invoice extraction, form processing, and any workflow that needs custom AI classification built in.</div></div>
+        <div class="sp-card"><div class="sp-icon">📈</div><div class="sp-title">Learning curve</div><div class="sp-body">Power Automate is more complex to learn than Zapier. The interface is powerful but dense — expressions, dynamic content, apply-to-each loops, and error handling all require meaningful investment to understand. First flows take longer to build than in Zapier.</div><div class="sp-bad">⚠️ Watch: Teams that need immediate simple automations may find Power Automate's complexity discouraging. Plan for a learning curve — or consider Zapier for initial simple flows and Power Automate for complex enterprise workflows.</div></div>
+        <div class="sp-card"><div class="sp-icon">🔐</div><div class="sp-title">Enterprise compliance and security</div><div class="sp-body">As a Microsoft product, Power Automate inherits Microsoft's enterprise compliance certifications (SOC 2, ISO 27001, HIPAA, GDPR, FedRAMP). For organizations in regulated industries or with strict IT governance, this is a significant advantage over standalone SaaS platforms.</div><div class="sp-good">✅ Best for: Healthcare, government, financial services, and other regulated sectors where data handling compliance is non-negotiable.</div></div>
+      </div>
+    </div>
+    <div class="strength-panel" id="sp2">
+      <div class="sp-grid">
+        <div class="sp-card"><div class="sp-icon">🎨</div><div class="sp-title">Visual flow builder — most powerful</div><div class="sp-body">Make's visual canvas is the most expressive of the three platforms. You see your entire workflow as a connected graph — not a linear list — which makes complex multi-branch, multi-path flows much easier to understand at a glance. Data transformation between steps is highly visual.</div><div class="sp-good">✅ Best for: Complex workflows with multiple branches, loops, error handling paths, and data transformation steps where seeing the whole flow at once matters for design and debugging.</div></div>
+        <div class="sp-card"><div class="sp-icon">💡</div><div class="sp-title">Data transformation — best in class</div><div class="sp-body">Make handles complex data manipulation far better than Zapier or basic Power Automate. Array processing (iterating over lists of records), data aggregation, format conversion, and multi-step data transformation are native capabilities, not afterthoughts. This is Make's clearest advantage over Zapier.</div><div class="sp-good">✅ Best for: Workflows that need to process lists of items, restructure data between systems, aggregate records, or perform complex data manipulation before passing results to the next step.</div></div>
+        <div class="sp-card"><div class="sp-icon">💰</div><div class="sp-title">Cost — operations-based, more economical at scale</div><div class="sp-body">Make charges per "operation" (each module execution) rather than per completed task. This makes it significantly more economical than Zapier for high-volume workflows. The free tier includes 1,000 operations/month; paid plans start lower than Zapier for equivalent volume.</div><div class="sp-good">✅ Best for: High-volume workflows where Zapier's per-task costs have become significant. Make often costs 3–5× less for the same workflow at scale.</div></div>
+        <div class="sp-card"><div class="sp-icon">📚</div><div class="sp-title">Learning curve — steepest of the three</div><div class="sp-body">Make's power comes with complexity. The visual canvas, while intuitive once learned, is unfamiliar to beginners. Concepts like iterators, aggregators, and routers have no equivalent in simpler tools. The learning investment is real — budget 2–3× more time for first-time users compared to Zapier.</div><div class="sp-bad">⚠️ Watch: For teams without a dedicated "automation person" willing to invest learning time, Make can be discouraging. Zapier is the better starting point; Make is the upgrade path when Zapier's limits are hit.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Side-by-Side Comparison</h2>
+    <table class="comp-table">
+      <thead><tr><th class="dim">Dimension</th><th class="zap">⚡ Zapier</th><th class="pa">🔵 Power Automate</th><th class="mk">🟣 Make</th></tr></thead>
+      <tbody>
+        <tr><td>Ease of first use</td><td>⭐⭐⭐⭐⭐ Easiest</td><td>⭐⭐⭐ Moderate</td><td>⭐⭐ Steeper curve</td></tr>
+        <tr><td>App integrations</td><td>7,000+ (largest)</td><td>1,000+ (M365 depth)</td><td>1,500+ (API-flexible)</td></tr>
+        <tr><td>Microsoft ecosystem</td><td>Good connectors</td><td>Native — unmatched</td><td>Good connectors</td></tr>
+        <tr><td>Complex logic / data transform</td><td>Limited</td><td>Moderate (with expressions)</td><td>Excellent</td></tr>
+        <tr><td>Cost at low volume</td><td>Free tier (100 tasks/mo)</td><td>Included in M365</td><td>Free tier (1,000 ops/mo)</td></tr>
+        <tr><td>Cost at high volume</td><td>Expensive per task</td><td>Predictable subscription</td><td>Most economical</td></tr>
+        <tr><td>AI features</td><td>Basic (OpenAI integration)</td><td>AI Builder — powerful</td><td>API-based AI calls</td></tr>
+        <tr><td>Who should build it</td><td>Anyone on the team</td><td>Technical non-developer</td><td>Dedicated automation lead</td></tr>
+        <tr><td>Best starting scenario</td><td>First automation, simple connections</td><td>Microsoft-heavy org, compliance needs</td><td>Replacing Zapier at scale, complex data flows</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Which Tool for This Scenario? — Practice</h2>
+    <div class="scenario-picker">
+      <div class="sp2-label">🎯 Scenario Practice</div>
+      <div class="sp2-title">Which tool fits best?</div>
+      <div class="sp2-sub">For each scenario, pick the best-fit platform based on what you've learned.</div>
+      <div class="sp2-items">
+        <div class="sp2-item">
+          <div class="sp2-ctx">Small marketing agency</div>
+          <div class="sp2-task">A team of 5 non-technical marketers wants to automatically post new blog articles to their Twitter, LinkedIn, and Facebook accounts and add a row to a tracking spreadsheet. They need it working this week and nobody has IT support.</div>
+          <div class="sp2-opts" id="sc1o">
+            <button class="sp2-opt" onclick="doSC('sc1','zap',this,'✅ Correct. Zapier is the right call here: non-technical team, simple multi-app connection (RSS/CMS → 3 social platforms + spreadsheet), needs to work immediately, and the volume is low enough that per-task pricing is not a concern. This is exactly Zapier\'s target use case — and it would take under an hour to set up with their built-in templates.')">⚡ Zapier</button>
+            <button class="sp2-opt" onclick="doSC('sc1','pa',this,'Power Automate would work but is overkill here. The team isn\'t using Microsoft 365, the learning curve is higher than needed, and there\'s no reason to use an enterprise tool for a simple social media posting workflow. Zapier handles this with far less friction.')">🔵 Power Automate</button>
+            <button class="sp2-opt" onclick="doSC('sc1','mk',this,'Make would technically work, but the learning curve is the wrong tradeoff for non-technical users who need something working this week. Zapier\'s templates make this a 30-minute setup. Make would take significantly longer to learn and configure for the same result.')">🟣 Make</button>
+          </div>
+          <div class="sp2-fb" id="sc1f"></div>
+        </div>
+        <div class="sp2-item">
+          <div class="sp2-ctx">Large healthcare organization on Microsoft 365</div>
+          <div class="sp2-task">An IT team needs to automate invoice processing: extract data from scanned PDF invoices, route invoices above $10,000 for dual approval (manager + finance), and log all decisions in SharePoint for HIPAA compliance audits.</div>
+          <div class="sp2-opts" id="sc2o">
+            <button class="sp2-opt" onclick="doSC('sc2','zap',this,'Zapier lacks the AI document processing (PDF extraction), the built-in approval workflow with dual-approver support, and the compliance certifications needed for HIPAA. While Zapier could handle pieces of this, the overall workflow exceeds what it does well.')">⚡ Zapier</button>
+            <button class="sp2-opt" onclick="doSC('sc2','pa',true,'✅ Correct. This scenario is made for Power Automate: AI Builder handles PDF invoice extraction, the built-in Approvals connector supports multi-approver workflows, native SharePoint integration handles the audit log, and Microsoft\'s HIPAA compliance certifications cover the regulatory requirement. The M365 inclusion means no additional licensing. This is the scenario Power Automate was specifically designed for.')">🔵 Power Automate</button>
+            <button class="sp2-opt" onclick="doSC('sc2','mk',false,'Make could handle most of this with API calls to AI services and custom HTTP requests — but it lacks the native AI Builder document processing, built-in Approval workflows, and Microsoft\'s HIPAA compliance certification. Power Automate is the clearly superior choice for this M365 + compliance + AI Builder scenario.')">🟣 Make</button>
+          </div>
+          <div class="sp2-fb" id="sc2f"></div>
+        </div>
+        <div class="sp2-item">
+          <div class="sp2-ctx">E-commerce operations team</div>
+          <div class="sp2-task">Process 5,000 orders per day: for each order, look up the customer in the CRM, check inventory across 3 warehouses, route to the nearest available warehouse, update 4 systems simultaneously, and send a tracking notification. The team's Zapier costs hit $800/month and are climbing.</div>
+          <div class="sp2-opts" id="sc3o">
+            <button class="sp2-opt" onclick="doSC('sc3','zap',false,'This is the scenario that drives teams off Zapier. At 5,000 orders/day with multiple actions per order, per-task costs compound dramatically. The $800/month cost is the signal that they\'ve outgrown Zapier\'s pricing model for this use case.')">⚡ Zapier</button>
+            <button class="sp2-opt" onclick="doSC('sc3','pa',false,'Power Automate could work — it\'s built for enterprise scale and has predictable subscription pricing. However, unless this team is in a Microsoft ecosystem, adding Power Automate licensing for a non-Microsoft workflow isn\'t the obvious choice. Make is more economical and better at array processing (iterating over order items).')">🔵 Power Automate</button>
+            <button class="sp2-opt" onclick="doSC('sc3','mk',true,'✅ Correct. This is the scenario Make was built for: high volume (5K/day), complex multi-step data processing per record, array iteration (checking 3 warehouses), multi-system updates, and cost scaling. Make\'s operations-based pricing would likely cost 60–80% less than Zapier for this workflow. The visual canvas handles the branching warehouse routing logic clearly. This is the most common reason teams migrate from Zapier to Make.')">🟣 Make</button>
+          </div>
+          <div class="sp2-fb" id="sc3f"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A friend starting her first IT support job asks you: "My company uses Google Workspace, Zendesk, and Slack — no Microsoft products. I want to build a simple automation that creates a Zendesk ticket when a specific email arrives in Gmail. Should I use Power Automate?" What's your recommendation and why?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Yes — Power Automate is the most powerful option and should always be the first choice</button>
+        <button class="qopt" onclick="cq(this,true)">No — Zapier is the better choice here. The workflow connects three non-Microsoft apps (Gmail, Zendesk, potentially Slack for notification). Power Automate's core strength is deep Microsoft integration, and it requires additional licensing when not already included in M365. Zapier has native connectors for all three apps, templates for Gmail-to-Zendesk flows that would take 20 minutes to set up, and costs nothing at low volume. Power Automate makes sense when an organization is already in the Microsoft ecosystem — it's not a universal first recommendation.</button>
+        <button class="qopt" onclick="cq(this,false)">She should use Make — it's always more powerful than Zapier</button>
+        <button class="qopt" onclick="cq(this,false)">She should write a Python script — automation tools aren't reliable enough for production</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Zapier wins on ease of use and app library breadth — the right choice for non-technical teams, simple connections between common apps, and situations where time-to-working-automation matters most. Its weakness is per-task cost at scale and limited complex data transformation.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Power Automate wins for Microsoft-ecosystem organizations, regulated industries requiring compliance certifications, and workflows involving AI Builder document processing or multi-approver workflows. Included with most M365 subscriptions, which makes it effectively free for orgs already paying for M365. Higher learning curve than Zapier but more enterprise capability.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Make wins on cost at scale and complex data transformation — the right upgrade path when Zapier's per-task costs become significant, or when workflows require iterating over arrays, restructuring data between systems, or sophisticated multi-branch logic. Steepest learning curve of the three; best suited for a dedicated automation lead rather than a general team tool.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showStrength(i,btn){document.querySelectorAll(".st").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".strength-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById("sp"+i).classList.add("active");}
+function doSC(id,tool,el,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;const correct=(id==="sc1"&&tool==="zap")||(id==="sc2"&&tool==="pa")||(id==="sc3"&&tool==="mk");el.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="sp2-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Tool recommendation should always start with the specific ecosystem and use case, not with a general preference. Power Automate's advantages (M365 integration, AI Builder, compliance certs) are irrelevant here — the workflow connects three non-Microsoft apps and the org has no Microsoft 365 subscription. Zapier's app library covers Gmail, Zendesk, and Slack natively with templates. For a simple, low-volume, first-automation use case on a non-Microsoft stack, Zapier is the obvious starting point. Make would be overkill; Power Automate would require licensing not already in place.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("better choice here"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ 'Most powerful' and 'always first choice' are both wrong framings for tool selection. Power Automate's power is primarily in the Microsoft ecosystem — it doesn't add value when connecting non-Microsoft apps. Make is more powerful than Zapier for complex workflows, but this is a simple, low-volume connection that doesn't need that power. The right recommendation considers the specific stack, team technical level, and workflow complexity — not a general ranking of tool power.";}
+}
+</script>
+</body>
+</html>

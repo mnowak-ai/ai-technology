@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Day in the Life: How a Help Desk Technician Uses No-Code Automation to Handle 3× More Tickets</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Profile */
+.profile-card{background:linear-gradient(135deg,var(--purple-pale) 0%,var(--blue-pale) 100%);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;display:flex;gap:18px;align-items:flex-start;}
+.profile-avatar{width:60px;height:60px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.profile-name{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:2px;}
+.profile-role{font-size:13px;color:var(--gray-muted);margin-bottom:8px;}
+.profile-stats{display:flex;gap:14px;flex-wrap:wrap;}
+.pstat{background:var(--white);border-radius:8px;padding:6px 10px;text-align:center;}
+.pstat-val{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);}
+.pstat-lbl{font-size:10px;color:var(--gray-muted);font-weight:600;}
+
+/* Timeline */
+.day-timeline{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.dte{display:flex;gap:0;}
+.dte-left{display:flex;flex-direction:column;align-items:center;width:52px;flex-shrink:0;}
+.dte-time{font-size:10px;font-weight:700;color:var(--gray-muted);text-align:center;width:52px;flex-shrink:0;padding-top:2px;}
+.dte-dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:2px solid;}
+.dte-dot.auto{background:var(--purple-pale);border-color:var(--purple);}
+.dte-dot.human{background:var(--green-pale);border-color:var(--green);}
+.dte-dot.collab{background:var(--orange-pale);border-color:var(--orange);}
+.dte-dot.issue{background:var(--red-pale);border-color:var(--red);}
+.dte-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.dte:last-child .dte-line{display:none;}
+.dte-body{flex:1;padding:0 0 20px 14px;padding-top:4px;}
+.dte-who{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.dte.auto .dte-who{color:var(--purple);}
+.dte.human .dte-who{color:var(--green);}
+.dte.collab .dte-who{color:var(--orange);}
+.dte.issue .dte-who{color:var(--red);}
+.dte-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.dte-desc{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.dte-flow{background:var(--gray-soft);border-radius:9px;padding:9px 12px;margin-top:8px;font-size:12px;line-height:1.65;color:var(--gray-muted);font-style:italic;}
+.dte-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-top:5px;}
+.dte.auto .dte-tag{background:var(--purple-pale);color:var(--purple);}
+.dte.human .dte-tag{background:var(--green-pale);color:var(--green);}
+.dte.collab .dte-tag{background:var(--orange-pale);color:var(--orange);}
+.dte.issue .dte-tag{background:var(--red-pale);color:var(--red);}
+
+/* Flows inventory */
+.flows-inventory{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.fi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:14px;}
+.fi-items{display:flex;flex-direction:column;gap:8px;}
+.fi-item{background:var(--white);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.fi-icon{font-size:18px;flex-shrink:0;}
+.fi-name{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:2px;}
+.fi-desc{font-size:12px;color:var(--gray-muted);}
+.fi-time{font-size:11px;font-weight:700;color:var(--green);background:var(--green-pale);padding:3px 8px;border-radius:5px;flex-shrink:0;margin-left:auto;}
+
+/* Without/with compare */
+.ww-compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.ww-col{padding:20px 22px;}
+.ww-col.without{background:var(--orange-pale);border-right:1px solid var(--purple-mid);}
+.ww-col.with{background:var(--purple-pale);}
+.ww-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.ww-col.without .ww-label{color:var(--orange);}
+.ww-col.with .ww-label{color:var(--purple);}
+.ww-item{font-size:13px;line-height:1.6;color:var(--gray-text);margin-bottom:6px;display:flex;gap:8px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.3 — Career in Practice</div>
+  <h1>A Day in the Life: How a Help Desk Technician Uses No-Code Automation to Handle 3× More Tickets</h1>
+  <p class="hero-sub">Abstract concepts become real when you see them in a concrete workday. This article walks through an IT support technician's Tuesday — showing exactly when automation tools appear, what they do, what the human controls, and what still requires judgment that no tool can replicate.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Meet Jordan — IT Support Technician, 18 Months In</h2>
+    <div class="profile-card">
+      <div class="profile-avatar">👤</div>
+      <div>
+        <div class="profile-name">Jordan Chen</div>
+        <div class="profile-role">IT Support Technician — Mid-size healthcare software company, 400 employees</div>
+        <div class="profile-stats">
+          <div class="pstat"><div class="pstat-val">~85</div><div class="pstat-lbl">Tickets/day routed</div></div>
+          <div class="pstat"><div class="pstat-val">~30</div><div class="pstat-lbl">Jordan resolves directly</div></div>
+          <div class="pstat"><div class="pstat-val">4</div><div class="pstat-lbl">Active automation flows</div></div>
+          <div class="pstat"><div class="pstat-val">~3.5h</div><div class="pstat-lbl">Saved per day vs. manual</div></div>
+        </div>
+      </div>
+    </div>
+    <p>Jordan built their automation stack gradually over 18 months — starting with one simple flow and adding more as they got comfortable. None of the four flows required a developer. All were built in Power Automate over a total of about 6 hours. They collectively save Jordan approximately 3.5 hours per day that would otherwise go to repetitive triage, data entry, and report generation.</p>
+    <p>This article is a realistic account of what automation actually looks like from the inside — including the parts that still require Jordan's judgment, the morning it breaks, and what the job has actually become as a result of automation.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Jordan's Four Automation Flows</h2>
+    <div class="flows-inventory">
+      <div class="fi-label">⚡ Active Flows — Built in Power Automate</div>
+      <div class="fi-items">
+        <div class="fi-item"><div class="fi-icon">🎫</div><div><div class="fi-name">Ticket Auto-Triage</div><div class="fi-desc">Classifies new tickets by category and priority, routes to correct queue, sends confirmation email to submitter</div></div><div class="fi-time">Saves ~2.5h/day</div></div>
+        <div class="fi-item"><div class="fi-icon">👤</div><div><div class="fi-name">New Employee Onboarding</div><div class="fi-desc">Triggered by HR system: creates AD account, email, Slack, ticketing system — sends welcome email with credentials</div></div><div class="fi-time">Saves ~25 min/new hire</div></div>
+        <div class="fi-item"><div class="fi-icon">📊</div><div><div class="fi-name">Weekly Metrics Report</div><div class="fi-desc">Runs every Friday at 4pm: pulls ticket data, calculates KPIs, sends formatted report to IT manager</div></div><div class="fi-time">Saves ~90 min/week</div></div>
+        <div class="fi-item"><div class="fi-icon">✅</div><div><div class="fi-name">SLA Breach Alert</div><div class="fi-desc">Runs every 2 hours: checks for P1/P2 tickets approaching SLA deadline, sends Teams alert to on-call engineer</div></div><div class="fi-time">Prevents missed SLAs</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Tuesday — Hour by Hour</h2>
+    <div class="day-timeline">
+
+      <div class="dte auto">
+        <div class="dte-left"><div class="dte-time">8:00</div><div class="dte-dot auto">🤖</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Automation — ticket auto-triage</div>
+          <div class="dte-title">37 overnight tickets have been processed before Jordan arrives</div>
+          <div class="dte-desc">The triage flow ran overnight: 37 tickets that arrived after 5pm yesterday were classified, prioritized, and routed to the correct queues automatically. 34 of them have already received confirmation emails. Jordan's queue dashboard shows the 37 tickets already organized — no morning inbox chaos.</div>
+          <div class="dte-flow">Flow: New ticket submitted in Zendesk → AI classifies category and priority → Route to team queue → Send confirmation email to submitter</div>
+          <div class="dte-tag">🤖 Automation handled</div>
+        </div>
+      </div>
+
+      <div class="dte human">
+        <div class="dte-left"><div class="dte-time">8:05</div><div class="dte-dot human">👤</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Human — Jordan</div>
+          <div class="dte-title">Review overnight triage classifications — 5 minutes</div>
+          <div class="dte-desc">Jordan scans the overnight triage in the queue dashboard. 35 of the 37 classifications look correct. Two need adjustment: one ticket describing "my Excel keeps crashing when saving to the network drive" was classified as "Software" when it's actually a network storage issue. Jordan reroutes it to the infrastructure team and flags the keyword combination ("Excel" + "network") for the AI to learn from.</div>
+          <div class="dte-tag">👤 Human judgment</div>
+        </div>
+      </div>
+
+      <div class="dte auto">
+        <div class="dte-left"><div class="dte-time">8:30</div><div class="dte-dot auto">🤖</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Automation — onboarding flow</div>
+          <div class="dte-title">Two new employees start today — accounts created automatically</div>
+          <div class="dte-desc">HR finalized two new hire records in the HRIS last night. The onboarding flow triggered at 7am: both employees now have Active Directory accounts, Microsoft 365 email, Slack workspace access, and a Zendesk agent profile. Welcome emails with temporary credentials were sent at 7:15am. Jordan hasn't done anything — the accounts are ready.</div>
+          <div class="dte-flow">Flow: New employee added in HRIS → Create AD account → Create M365 account → Add to Slack → Create ticketing profile → Send welcome email with credentials</div>
+          <div class="dte-tag">🤖 Automation handled</div>
+        </div>
+      </div>
+
+      <div class="dte collab">
+        <div class="dte-left"><div class="dte-time">8:45</div><div class="dte-dot collab">🤝</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Collaboration — human + automation working together</div>
+          <div class="dte-title">New hire onboarding: automation did the accounts, Jordan adds the context</div>
+          <div class="dte-desc">Jordan calls one of the new hires to walk her through the setup. The automation provisioned the standard accounts — but Jordan knows that this employee is a data analyst who will need access to the company's SQL reporting server, which isn't in the standard analyst role template. Jordan submits a separate access request and handles it manually. The automation handles the 95% that's the same for every employee; Jordan handles the 5% that's specific to this person's role.</div>
+          <div class="dte-tag">🤝 AI + Human together</div>
+        </div>
+      </div>
+
+      <div class="dte human">
+        <div class="dte-left"><div class="dte-time">9:00</div><div class="dte-dot human">👤</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Human — Jordan resolving tickets</div>
+          <div class="dte-title">Two hours of focused ticket resolution — the work only humans can do</div>
+          <div class="dte-desc">From 9am to 11am, Jordan works through the ticket queue — investigating, diagnosing, and resolving. This is the work that automation has made room for by eliminating the routing overhead. Jordan handles 8 tickets in this window: a VPN configuration issue, two printer problems (one hardware, one driver), a password reset, two access requests, and two software installation questions. Each requires actual troubleshooting — reading logs, testing configurations, calling users. Automation doesn't touch any of this.</div>
+          <div class="dte-tag">👤 Human judgment — irreplaceable</div>
+        </div>
+      </div>
+
+      <div class="dte issue">
+        <div class="dte-left"><div class="dte-time">11:15</div><div class="dte-dot issue">🚨</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Automation — failure alert</div>
+          <div class="dte-title">SLA breach alert fires — ticket approaching deadline unnoticed</div>
+          <div class="dte-desc">Jordan's phone buzzes: a Teams notification from the SLA breach alert flow. TKT-9142 is a P1 ticket that was submitted 6.5 hours ago — 30 minutes from breaching the 7-hour P1 SLA. It was assigned to the network team but hasn't been claimed. The SLA alert caught it before the breach. Jordan immediately contacts the network team lead who claims the ticket and starts working it. SLA preserved.</div>
+          <div class="dte-flow">Flow: Every 2 hours → check Zendesk for P1/P2 tickets approaching SLA → if within 45 minutes of breach → send Teams alert to on-call engineer with ticket link and time remaining</div>
+          <div class="dte-tag">🚨 Alert → human response</div>
+        </div>
+      </div>
+
+      <div class="dte human">
+        <div class="dte-left"><div class="dte-time">11:30</div><div class="dte-dot human">👤</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Human — Jordan troubleshooting a broken flow</div>
+          <div class="dte-title">The triage automation starts failing — Jordan investigates</div>
+          <div class="dte-desc">Jordan gets a failure notification from Power Automate: three triage runs failed in the last 20 minutes with "Connection error: Zendesk authentication failed." Jordan opens Power Automate, checks the Zendesk connection, and sees the OAuth token expired — the 90-day expiration cycle hit. Jordan re-authenticates the connection (takes 3 minutes), verifies the next triage run succeeds, and sets a calendar reminder for 85 days out to re-authenticate before the next expiration.</div>
+          <div class="dte-tag">👤 Human maintenance required</div>
+        </div>
+      </div>
+
+      <div class="dte human">
+        <div class="dte-left"><div class="dte-time">1:00</div><div class="dte-dot human">👤</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Human — Jordan resolving complex tickets</div>
+          <div class="dte-title">Afternoon: three complex tickets that require real investigation</div>
+          <div class="dte-desc">Jordan's afternoon is complex tickets that take genuine troubleshooting: a recurring Teams audio issue affecting a specific user (requires driver investigation, Teams diagnostics, and coordination with the network team), a SharePoint permissions issue that turns out to be inherited from a parent site (requires permissions hierarchy investigation), and a laptop that works fine in diagnostics but fails in the field (eventually tracked to a specific building's WiFi configuration). These are the tickets automation was never going to solve. They're also the most interesting part of Jordan's job.</div>
+          <div class="dte-tag">👤 Deep investigation — human only</div>
+        </div>
+      </div>
+
+      <div class="dte auto">
+        <div class="dte-left"><div class="dte-time">4:00</div><div class="dte-dot auto">🤖</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Automation — weekly report (it's Friday today)</div>
+          <div class="dte-title">Weekly metrics report generates and sends itself</div>
+          <div class="dte-desc">At exactly 4:00pm, the weekly report flow triggers: pulls 7 days of ticket data from Zendesk, calculates volume, resolution time, FCR, and SLA compliance by category, formats the data into a report template, and emails it to the IT manager and Jordan's team lead. Jordan gets the email at 4:02pm. They scan it and notice something: resolution time for the "Integration" category spiked to 22 hours this week vs. the 8-hour average. That's worth flagging before the manager sees it — Jordan adds a note explaining there was one very complex integration issue this week that pulled the average up.</div>
+          <div class="dte-flow">Flow: Every Friday at 4pm → query Zendesk API for 7-day ticket data → calculate KPIs → insert into report template → email to distribution list</div>
+          <div class="dte-tag">🤖 Automation + 👤 Human commentary</div>
+        </div>
+      </div>
+
+      <div class="dte human">
+        <div class="dte-left"><div class="dte-time">4:30</div><div class="dte-dot human">👤</div><div class="dte-line"></div></div>
+        <div class="dte-body">
+          <div class="dte-who">Human — Jordan — end of day</div>
+          <div class="dte-title">Wrap-up: 8 tickets resolved, 85 tickets processed, 3 flows maintained</div>
+          <div class="dte-desc">Jordan closes the day having directly resolved 8 tickets — the complex ones that required real investigation. The automation handled routing and confirmation for all 85 that came in. Two new employees have complete system access without Jordan manually creating a single account. The weekly report sent itself. The SLA breach that would have been missed was caught with 30 minutes to spare. The triage flow that broke was diagnosed and fixed in under 10 minutes.</div>
+          <div class="dte-tag">✅ Day complete</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Before and After Automation — The Honest Comparison</h2>
+    <div class="ww-compare">
+      <div class="ww-col without">
+        <div class="ww-label">⏮ Before Automation (Day 1)</div>
+        <div class="ww-item"><span>⏱️</span><span>5+ hours/day reading and routing tickets manually</span></div>
+        <div class="ww-item"><span>⏱️</span><span>25–40 minutes per new employee, 5–10 new hires/month</span></div>
+        <div class="ww-item"><span>⏱️</span><span>90 min/week generating the weekly report manually</span></div>
+        <div class="ww-item"><span>❌</span><span>SLA breaches discovered only after they happened</span></div>
+        <div class="ww-item"><span>🔢</span><span>~25 tickets resolved directly per day</span></div>
+        <div class="ww-item"><span>😓</span><span>Mentally exhausting repetitive triage work</span></div>
+        <div class="ww-item"><span>📧</span><span>Confirmation emails often forgotten or delayed</span></div>
+      </div>
+      <div class="ww-col with">
+        <div class="ww-label">⚡ After Automation (18 Months)</div>
+        <div class="ww-item"><span>⚡</span><span>~15–20 min/day reviewing and correcting AI classifications</span></div>
+        <div class="ww-item"><span>⚡</span><span>~5 min per new employee — review + the custom stuff automation misses</span></div>
+        <div class="ww-item"><span>⚡</span><span>~5 min reviewing the auto-generated weekly report</span></div>
+        <div class="ww-item"><span>✅</span><span>SLA alerts fire 45 minutes before breach — recoverable</span></div>
+        <div class="ww-item"><span>🔢</span><span>~30+ tickets resolved directly per day (more time for deep work)</span></div>
+        <div class="ww-item"><span>😊</span><span>More time on interesting problems — the work Jordan actually got into IT for</span></div>
+        <div class="ww-item"><span>📧</span><span>Confirmation emails 100% consistent — automated every time</span></div>
+      </div>
+    </div>
+    <div class="pull-quote">
+      <p>The job didn't get easier. It got more interesting. Automation took the part of the work that was repetitive and rule-based. What's left is the part that requires a human — and that's also the part that's worth doing.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Jordan's automation handles 85 tickets per day while Jordan directly resolves about 30. A colleague suggests: "If the automation is so good at routing, you should use it to auto-close easy tickets too — like password resets. That way you can handle even more volume." Jordan pushes back. What's the most important reason Jordan's instinct is right?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Password reset automation is too technically complex to build</button>
+        <button class="qopt" onclick="cq(this,true)">Routing tickets and resolving tickets are fundamentally different tasks. Routing is classification — determining where something should go — which can be rule-based and automated because a wrong classification is correctable in seconds. Auto-closing tickets as "resolved" without verifying they were actually resolved is a different action with different stakes: a ticket "closed" by automation that wasn't actually solved means a user's problem is still unresolved, they have no indication of what happened, and the resolution metric is inflated. The SLA breach and resolution time metrics Jordan monitors would become meaningless if closures aren't real resolutions. High volume isn't the goal — actual resolution of user problems is the goal.</button>
+        <button class="qopt" onclick="cq(this,false)">The automation tool Jordan uses doesn't support ticket closing actions</button>
+        <button class="qopt" onclick="cq(this,false)">Users expect to speak to a human for password resets specifically</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Automation in a real IT role runs in the background — Jordan's four flows collectively save 3.5 hours per day without Jordan initiating any of them. That time goes directly into the investigative, judgment-intensive work that automation can't do: complex troubleshooting, relationship-building with users, and handling the unexpected. Automation didn't replace the job — it made room for the parts that matter most.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Human oversight is built into Jordan's daily workflow — not as a burden but as a functional check. The 15-minute triage review catches misclassifications before they become delays. The broken authentication token was caught by a failure alert and fixed in minutes. The SLA near-breach was caught with time to recover. None of this happens without active human engagement with what the automation is producing.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The distinction between automating routing (where a ticket goes) and automating resolution (marking it closed) is the difference between automating classification and automating outcomes. Classification errors are correctable in seconds. False resolutions corrupt every metric the team depends on. The rule: automate the preparation for human action; don't automate the action itself unless you have complete confidence in the automation's judgment — which, for complex and variable tasks like ticket resolution, you shouldn't.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The fundamental distinction is between routing (where something goes — classification that's correctable) and resolving (closing a ticket as done — an outcome claim with real consequences if false). Auto-closing password reset tickets without verifying resolution means: users with unresolved problems see 'Closed' status and don't know what happened; the FCR and resolution time metrics become inflated by false closures; and the team loses visibility into whether simple ticket types are actually being resolved. High volume isn't the goal — actual, verified resolution of user problems is. The automation's job is to create the conditions for faster resolution, not to claim resolution has happened.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("fundamentally different"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Password reset automation is technically feasible in many environments. Users' expectations about human contact vary. The core issue is about the distinction between routing (classifiable, correctable) and resolution (outcome claim, consequential if false). Auto-closing tickets that haven't been verified as resolved corrupts the metrics the team depends on and leaves users without the help they need. That's why Jordan's instinct to push back is right — not because of technical limits or user preferences, but because of what auto-closure would do to the integrity of the team's outcomes.";}
+}
+</script>
+</body>
+</html>

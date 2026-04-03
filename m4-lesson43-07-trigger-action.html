@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is a Trigger and an Action? The Two Building Blocks of Every Automation</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Core anatomy */
+.anatomy-split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.an-col{padding:22px 24px;}
+.an-col.trig{background:var(--blue-pale);border-right:1px solid var(--purple-mid);}
+.an-col.act{background:var(--green-pale);}
+.an-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.an-col.trig .an-label{color:var(--blue);}
+.an-col.act .an-label{color:var(--green);}
+.an-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gray-text);}
+.an-def{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:12px;}
+.an-types{display:flex;flex-direction:column;gap:5px;}
+.an-type{font-size:13px;line-height:1.55;color:var(--gray-text);padding-left:14px;position:relative;}
+.an-type::before{content:"→";position:absolute;left:0;font-weight:700;}
+.an-col.trig .an-type::before{color:var(--blue);}
+.an-col.act .an-type::before{color:var(--green);}
+
+/* Trigger type cards */
+.trigger-types{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.tt-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.tt-icon{font-size:24px;margin-bottom:8px;}
+.tt-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:6px;}
+.tt-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.tt-def{font-size:13px;line-height:1.65;color:var(--gray-text);margin-bottom:8px;}
+.tt-examples{font-size:12px;color:var(--gray-muted);line-height:1.6;}
+
+/* Live builder */
+.live-builder{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.lb-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.lb-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.lb-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.lb-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start;margin-bottom:16px;}
+.lb-col{}
+.lb-col-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.lb-trig-label{color:var(--blue);}
+.lb-act-label{color:var(--green);}
+.lb-select{width:100%;border:2px solid var(--purple-mid);border-radius:10px;padding:10px 12px;font-size:13px;font-family:"DM Sans",sans-serif;color:var(--gray-text);background:var(--white);cursor:pointer;}
+.lb-select:focus{outline:none;border-color:var(--purple);}
+.lb-arrow{font-size:28px;color:var(--purple-mid);text-align:center;padding-top:32px;}
+.lb-output{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px 20px;}
+.lb-out-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:10px;}
+.lb-sentence{font-family:"Fraunces",serif;font-size:18px;font-style:italic;color:var(--purple-dark);line-height:1.55;margin-bottom:10px;}
+.lb-detail{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Conditions */
+.condition-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.cb-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.cb-flow{display:flex;flex-direction:column;gap:0;}
+.cb-step{display:flex;gap:14px;}
+.cb-left{display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0;}
+.cb-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.cb-dot.trigger{background:var(--blue-pale);border:2px solid var(--blue-mid);}
+.cb-dot.condition{background:var(--orange-pale);border:2px solid #F5D5A2;}
+.cb-dot.action-y{background:var(--green-pale);border:2px solid #B5D5C0;}
+.cb-dot.action-n{background:var(--red-pale);border:2px solid #F5C2C2;}
+.cb-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.cb-step:last-child .cb-line{display:none;}
+.cb-body{flex:1;padding:0 0 14px 12px;padding-top:4px;}
+.cb-step-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.cb-step.trigger .cb-step-type{color:var(--blue);}
+.cb-step.condition .cb-step-type{color:var(--orange);}
+.cb-step.action-y .cb-step-type{color:var(--green);}
+.cb-step.action-n .cb-step-type{color:var(--red);}
+.cb-step-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.cb-code{background:#1a1025;border-radius:7px;padding:8px 12px;font-family:"Courier New",monospace;font-size:11px;line-height:1.65;color:#C4B5FD;margin-top:6px;}
+
+/* Identify sim */
+.identify-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.id-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.id-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.id-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.id-items{display:flex;flex-direction:column;gap:14px;}
+.id-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.id-scenario{font-size:14px;line-height:1.7;color:var(--gray-text);font-style:italic;margin-bottom:12px;}
+.id-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.id-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.id-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:7px 14px;font-size:13px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.id-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.id-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.id-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.id-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.id-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.id-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.3 — No-Code & Low-Code Automation</div>
+  <h1>What Is a Trigger and an Action? The Two Building Blocks of Every Automation</h1>
+  <p class="hero-sub">Every automation — from the simplest email notification to a complex multi-step workflow — is built from exactly two things: a trigger and one or more actions. This article makes those concepts concrete with examples across every tech role context you'll encounter.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Grammar of Automation</h2>
+    <p>Before you can build an automation, you need to be fluent in its grammar. Every automation is a sentence: <strong>When [trigger], do [action].</strong> That's the complete structure. Everything you'll ever build in Zapier, Power Automate, Make, or any other automation tool is a version of that sentence.</p>
+    <p>The trigger is the "when." The action is the "do." Understanding each one deeply — what types exist, what information they carry, how they connect — is the difference between struggling with automation tools and moving through them confidently.</p>
+    <div class="pull-quote">
+      <p>A trigger without an action is just a notification. An action without a trigger never runs. Together, they're a complete automated decision — executed reliably every time the condition is met.</p>
+    </div>
+    <div class="anatomy-split">
+      <div class="an-col trig">
+        <div class="an-label">🔵 Trigger</div>
+        <div class="an-title">The "When"</div>
+        <div class="an-def">A trigger is an event that starts a workflow. It watches for something to happen — in an app, on a schedule, or based on data — and fires the automation when the condition is met.</div>
+        <div class="an-types">
+          <div class="an-type">Something is created (new email, new row, new ticket)</div>
+          <div class="an-type">Something changes (status updated, field modified)</div>
+          <div class="an-type">A schedule is reached (every Monday at 9am)</div>
+          <div class="an-type">A threshold is crossed (file size exceeds 80%, error rate above 2%)</div>
+          <div class="an-type">A form is submitted or a button is clicked</div>
+        </div>
+      </div>
+      <div class="an-col act">
+        <div class="an-label">🟢 Action</div>
+        <div class="an-title">The "Do"</div>
+        <div class="an-def">An action is what the automation does after the trigger fires. Actions use data from the trigger — plus data from previous actions — to perform a task in an app or service automatically.</div>
+        <div class="an-types">
+          <div class="an-type">Create something (a record, a file, a ticket, a calendar event)</div>
+          <div class="an-type">Send something (an email, a Teams message, an SMS)</div>
+          <div class="an-type">Update something (change a field, move a row, modify a record)</div>
+          <div class="an-type">Retrieve something (look up a user, get a record, fetch data)</div>
+          <div class="an-type">Notify someone (page on-call, post to Slack, send alert)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Types of Triggers — With Real Examples</h2>
+    <div class="trigger-types">
+      <div class="tt-card">
+        <div class="tt-icon">📥</div>
+        <div class="tt-type">Event-based trigger</div>
+        <div class="tt-title">Something happens in an app</div>
+        <div class="tt-def">The most common trigger type. The automation platform watches an app for a specific event — a new item created, a form submitted, a file uploaded — and fires when it happens. The platform polls the app periodically (every minute or faster) or receives a webhook notification instantly.</div>
+        <div class="tt-examples">New ticket submitted in Zendesk · New row added to Google Sheets · Email received matching a filter · File uploaded to SharePoint folder · New user created in Active Directory</div>
+      </div>
+      <div class="tt-card">
+        <div class="tt-icon">⏰</div>
+        <div class="tt-type">Schedule-based trigger</div>
+        <div class="tt-title">Time-based — runs on a cadence</div>
+        <div class="tt-def">The automation fires on a schedule rather than waiting for an event. Useful for recurring tasks that need to happen at a specific time regardless of whether anything "happened" — generating reports, sending reminders, checking for items that match a condition.</div>
+        <div class="tt-examples">Every weekday at 8:45am · Every Monday at 4pm · First day of each month · Every 15 minutes · Every hour during business hours · Once a year on a specific date</div>
+      </div>
+      <div class="tt-card">
+        <div class="tt-icon">📊</div>
+        <div class="tt-type">Data condition trigger</div>
+        <div class="tt-title">A value crosses a threshold</div>
+        <div class="tt-def">The automation monitors a metric or value and fires when it crosses a defined threshold — above or below a number, matching a specific value, or entering a specific state. Most common in monitoring and alerting workflows. Often combined with a schedule to poll the data source regularly.</div>
+        <div class="tt-examples">Server CPU exceeds 85% · Disk usage above threshold · Ticket queue depth exceeds 50 items · Response time over 500ms · Stock level below reorder point · Failed login attempts exceed 10/hour</div>
+      </div>
+      <div class="tt-card">
+        <div class="tt-icon">👆</div>
+        <div class="tt-type">Manual trigger</div>
+        <div class="tt-title">A human initiates it</div>
+        <div class="tt-def">The automation runs when a person explicitly triggers it — clicking a button, sending a command, or approving a request. Not fully automatic, but still eliminates repetitive steps once initiated. Useful for workflows that need human judgment to start but then run automatically from that point.</div>
+        <div class="tt-examples">Click "Run report" button · Approve request in email · Send /command in Slack · Right-click a file → "Process with workflow" · Submit an internal tool form · Scan a QR code at a workstation</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Build a Sentence — Interactive Trigger + Action Pairs</h2>
+    <div class="live-builder">
+      <div class="lb-label">⚙️ Interactive — Combine Any Trigger With Any Action</div>
+      <div class="lb-title">See how trigger + action creates a complete automation</div>
+      <div class="lb-sub">Choose any trigger and any action from the dropdowns. See how the two combine into a coherent automation sentence — and what that workflow would actually do.</div>
+      <div class="lb-row">
+        <div class="lb-col">
+          <div class="lb-col-label lb-trig-label">🔵 Trigger — When this happens...</div>
+          <select class="lb-select" id="trigSel" onchange="rebuildSentence()">
+            <option value="0">A new support ticket is submitted</option>
+            <option value="1">An email arrives from a specific domain</option>
+            <option value="2">Server disk usage exceeds 85%</option>
+            <option value="3">Every Friday at 4:00 PM</option>
+            <option value="4">A form response is submitted</option>
+            <option value="5">A ticket status changes to "Resolved"</option>
+            <option value="6">A new employee is created in HR system</option>
+            <option value="7">Error rate exceeds 2% for 5 minutes</option>
+          </select>
+        </div>
+        <div class="lb-arrow">→</div>
+        <div class="lb-col">
+          <div class="lb-col-label lb-act-label">🟢 Action — Do this automatically</div>
+          <select class="lb-select" id="actSel" onchange="rebuildSentence()">
+            <option value="0">Classify and route to the correct team</option>
+            <option value="1">Send an email confirmation to the submitter</option>
+            <option value="2">Post an alert in the #ops-alerts Slack channel</option>
+            <option value="3">Generate and email a weekly summary report</option>
+            <option value="4">Create accounts in 4 systems (AD, email, Slack, ticketing)</option>
+            <option value="5">Send a satisfaction survey to the user</option>
+            <option value="6">Page the on-call engineer via PagerDuty</option>
+            <option value="7">Add the response to a SharePoint tracking list</option>
+          </select>
+        </div>
+      </div>
+      <div class="lb-output">
+        <div class="lb-out-label">Your automation reads:</div>
+        <div class="lb-sentence" id="lbSentence"></div>
+        <div class="lb-detail" id="lbDetail"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Beyond Simple: Conditions and Chains</h2>
+    <p>Most real automations don't have just one trigger and one action. They have conditions — branches that take different actions depending on the trigger data — and chains — sequences of multiple actions that run in order. Here's a real example that shows both.</p>
+    <div class="condition-box">
+      <div class="cb-label">📋 Conditional workflow — IT access request with approval routing</div>
+      <div class="cb-flow">
+        <div class="cb-step trigger"><div class="cb-left"><div class="cb-dot trigger">📥</div><div class="cb-line"></div></div><div class="cb-body"><div class="cb-step-type">Trigger</div><div class="cb-step-desc">An access request form is submitted. Data captured: employee name, system requested, business justification, manager's email, request urgency.</div></div></div>
+        <div class="cb-step condition"><div class="cb-left"><div class="cb-dot condition">⚖️</div><div class="cb-line"></div></div><div class="cb-body"><div class="cb-step-type">Condition</div><div class="cb-step-desc">Evaluate: is the requested system classified as "high sensitivity" (production database, HR system, financial records)?<div class="cb-code">IF system_sensitivity == "high"
+  → BRANCH: requires_security_approval
+ELSE
+  → BRANCH: manager_approval_only</div></div></div></div>
+        <div class="cb-step action-y"><div class="cb-left"><div class="cb-dot action-y">🔒</div><div class="cb-line"></div></div><div class="cb-body"><div class="cb-step-type">Action — High sensitivity branch</div><div class="cb-step-desc">Send approval request to manager AND security team simultaneously. Both must approve within 48 hours. If either rejects, deny the request and notify the employee with the reason.</div></div></div>
+        <div class="cb-step action-n"><div class="cb-left"><div class="cb-dot action-n">✅</div><div class="cb-line"></div></div><div class="cb-body"><div class="cb-step-type">Action — Standard branch</div><div class="cb-step-desc">Send approval request to manager only. Manager has 24 hours. If approved, immediately provision access. If no response in 24 hours, escalate to manager's manager.</div></div></div>
+        <div class="cb-step action-y"><div class="cb-left"><div class="cb-dot action-y">🎉</div></div><div class="cb-body"><div class="cb-step-type">Final action (both branches)</div><div class="cb-step-desc">When approved: provision access, send confirmation to employee with login details, log the access grant in the audit trail, create a 90-day access review reminder.</div></div></div>
+      </div>
+    </div>
+    <p>This workflow has one trigger, one condition (with two branches), and multiple chained actions. <mark>Conditions let you handle different situations differently. Chains let you sequence multiple actions so each one uses the output of the previous step.</mark> This is still no-code or low-code — you build it visually in Power Automate or Make — but the logic is meaningfully complex.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Identify the Trigger and Action — Practice</h2>
+    <div class="identify-sim">
+      <div class="id-label">🎯 Practice — Name the Building Block</div>
+      <div class="id-title">For each scenario, identify what's acting as the trigger and what's the action</div>
+      <div class="id-sub">Read the automation description and answer the question about its structure.</div>
+      <div class="id-items">
+        <div class="id-item">
+          <div class="id-scenario">"Every Sunday at 11pm, the system queries the ticketing database for all unresolved tickets older than 7 days and sends a list to the IT manager's email."</div>
+          <div class="id-q">What type of trigger is this?</div>
+          <div class="id-opts" id="i1o">
+            <button class="id-opt" onclick="doID('i1',false,this,'❌ There\'s no event — nothing has to happen for this automation to run. It fires on a fixed schedule.')">Event-based — something happened in an app</button>
+            <button class="id-opt" onclick="doID('i1',true,this,'✅ Correct. "Every Sunday at 11pm" is a schedule-based trigger — it fires on a time cadence regardless of whether any particular event occurred. The automation then queries the database as its first action, using the trigger only to initiate the sequence.')">Schedule-based — fires on a time cadence</button>
+            <button class="id-opt" onclick="doID('i1',false,this,'❌ A data condition trigger fires when a value crosses a threshold (like "more than 50 unresolved tickets"). This automation fires on schedule and then checks the data — the timing is the trigger, not the data condition.')">Data condition — a value crossed a threshold</button>
+          </div>
+          <div class="id-fb" id="i1f"></div>
+        </div>
+        <div class="id-item">
+          <div class="id-scenario">"When the monitoring system detects that any server's CPU has been above 90% for 10 consecutive minutes, it creates a high-priority ticket in Jira and sends a Slack message to the #infrastructure channel."</div>
+          <div class="id-q">How many actions does this automation have?</div>
+          <div class="id-opts" id="i2o">
+            <button class="id-opt" onclick="doID('i2',false,this,'❌ Look again — after the trigger fires, the automation does two separate things: creates a Jira ticket AND sends a Slack message. Those are two distinct actions, each interacting with a different system.')">One — it responds to one alert</button>
+            <button class="id-opt" onclick="doID('i2',true,this,'✅ Correct. One trigger (CPU above 90% for 10 minutes) fires two sequential actions: (1) create a Jira ticket, (2) send a Slack message to #infrastructure. Chaining multiple actions from a single trigger is one of the core patterns for making automation workflows useful — one event can set off a coordinated sequence of responses across multiple systems.')">Two — create a Jira ticket AND send a Slack message</button>
+            <button class="id-opt" onclick="doID('i2',false,this,'❌ There\'s one trigger (the CPU condition) and two actions. The monitoring detection is the trigger; creating the ticket and sending the message are the actions.')">Three — detect the issue, create ticket, send message</button>
+          </div>
+          <div class="id-fb" id="i2f"></div>
+        </div>
+        <div class="id-item">
+          <div class="id-scenario">"When a new row is added to the 'Vendor Requests' Google Sheet, check if the 'Status' column says 'Approved.' If yes, create a vendor record in the CRM. If no, send an email asking the requestor to get approval first."</div>
+          <div class="id-q">What makes this more complex than a simple trigger + action?</div>
+          <div class="id-opts" id="i3o">
+            <button class="id-opt" onclick="doID('i3',false,this,'❌ Using two apps (Google Sheets and CRM) doesn\'t add logical complexity — many automations connect two or more apps. The complexity comes from what the automation does differently depending on the data.')">It uses two different apps (Google Sheets and a CRM)</button>
+            <button class="id-opt" onclick="doID('i3',true,this,'✅ Correct. The "if yes / if no" logic is a condition — a branch that takes different actions depending on the value of a field in the trigger data. Without the condition, the automation would always do the same thing. The condition makes it smart enough to handle two different situations appropriately. This pattern — trigger + condition + different actions per branch — is the foundation of almost every real-world automation.')">It has a condition — it takes different actions based on the Status field value</button>
+            <button class="id-opt" onclick="doID('i3',false,this,'❌ An email notification is a simple, common action that doesn\'t add structural complexity on its own. The complexity is in the branch logic — the if/else condition that determines which action to take.')">It sends an email, which requires additional configuration</button>
+          </div>
+          <div class="id-fb" id="i3f"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A tech worker wants to build an automation: "Every morning, check if there are any tickets in the queue that were submitted yesterday and are still unassigned. If there are, send me a summary list." They open Power Automate and search for a trigger. They can't find one called "Check if unassigned tickets exist." What's the correct approach?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Search for a different automation platform that supports this specific trigger</button>
+        <button class="qopt" onclick="cq(this,true)">Use a schedule-based trigger ("Every day at 8am") combined with a "Get items" action that queries the ticketing system for unassigned tickets from yesterday. The existence check isn't the trigger — the time is the trigger. The automation runs on schedule, then uses an action to look up the data it needs. If unassigned tickets exist (a condition), it sends the summary. If none exist, the workflow ends without sending anything. Most monitoring automations work this way: schedule triggers the run, actions perform the data lookup, conditions evaluate the results.</button>
+        <button class="qopt" onclick="cq(this,false)">The automation isn't possible without custom code — no-code tools can't check data conditions</button>
+        <button class="qopt" onclick="cq(this,false)">Use an event-based trigger set to "When a ticket is not assigned for 24 hours"</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every automation is "When [trigger], do [action]." The trigger is the event that starts the workflow — event-based (something happened), schedule-based (a time was reached), data condition (a threshold was crossed), or manual (a human initiated it). The action is what the automation does in response — create, send, update, retrieve, or notify.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Conditions let one trigger produce different responses depending on the data. Chains let multiple actions run sequentially from one trigger, each using data from previous steps. Most real automations combine trigger + condition + multiple chained actions — but the underlying grammar is always the same: when this, do that.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When you can't find the exact trigger you're looking for, think about what could serve as a proxy trigger for the condition you actually care about. "Check if unassigned tickets exist" isn't a trigger — "every morning at 8am" is, with a data lookup action immediately after. Framing what you want as a trigger + action pair almost always reveals the correct implementation, even when the natural language description doesn't map directly to a trigger type.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const trigs=["A new support ticket is submitted","An email arrives from a specific domain","Server disk usage exceeds 85%","Every Friday at 4:00 PM","A form response is submitted","A ticket status changes to 'Resolved'","A new employee is created in the HR system","Error rate exceeds 2% for 5 minutes"];
+const acts=["classify and route it to the correct team queue","send an email confirmation to the submitter with a ticket number","post an alert in the #ops-alerts Slack channel","generate and email a weekly summary report to the team","create accounts in Active Directory, email, Slack, and the ticketing system","send a satisfaction survey email to the user who submitted it","page the on-call engineer via PagerDuty and create an incident record","add the response data to a SharePoint tracking list"];
+const details=["This is a pure event-based flow. Every time a ticket arrives, it fires. The trigger carries the ticket's content (description, submitter info, attachments) — the action uses that data to determine the right routing destination.","Event-based trigger with a filter condition. Only fires for emails matching the domain. The trigger carries the email content, subject, and sender — which the action uses to look up the correct record to associate the email with.","Data condition trigger — fires when a threshold is crossed. After firing, the alert action uses the trigger data (which server, current percentage) to include specific details in the notification.","Schedule-based trigger — fires at exactly 4pm Friday every week regardless of what else happened. The action queries the relevant data sources at that moment and synthesizes the week's activity into a report.","Event-based trigger. Every form submission fires the flow. The trigger carries all the form field values — name, request details, contact info — which the action maps to the correct fields in each system.","Event-based trigger watching for a specific status change. Fires only when the status field changes to 'Resolved' specifically — not on any other status change. The trigger data includes the ticket ID and submitter info used to address the survey.","Event-based trigger. Fires when a specific data change occurs in the HR system. Carries the new employee's name, role, department, and email — all of which the account creation actions use to provision with correct defaults.","Data condition trigger with a duration requirement (5 minutes sustained — not just a spike). After firing, the paging action uses the trigger data to include the specific service, current rate, and expected baseline in the incident record."];
+
+function rebuildSentence(){
+  const t=parseInt(document.getElementById("trigSel").value);
+  const a=parseInt(document.getElementById("actSel").value);
+  document.getElementById("lbSentence").textContent=`When ${trigs[t]}, automatically ${acts[a]}.`;
+  document.getElementById("lbDetail").textContent=details[t];
+}
+rebuildSentence();
+
+function doID(id,correct,btn,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;btn.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="id-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is one of the most important pattern shifts in learning to design automations: almost no platform has a trigger for 'check if something doesn't exist.' Instead, you use a schedule as the trigger and a data lookup as the first action. The schedule fires the automation; the action retrieves the data; a condition evaluates whether any results were returned; a second action sends the summary if they were. 'Check if X exists' is always built as: schedule trigger → get data → condition (did we get any results?) → act accordingly.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("schedule-based trigger"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Switching platforms won't help — no platform has a 'check if X doesn't exist' trigger because triggers watch for things that happen, not things that don't happen. No-code tools absolutely can handle this — they just implement it differently: schedule trigger → query action → condition. And event-based triggers watching for 'not assigned for 24 hours' exist in some advanced platforms but not all, and they're less reliable than a scheduled poll. The schedule + lookup pattern is the standard, reliable implementation.";}
+}
+</script>
+</body>
+</html>

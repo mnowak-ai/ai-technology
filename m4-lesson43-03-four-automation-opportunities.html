@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Four Most Common Automation Opportunities in Tech Roles: Ticket Triage, Data Entry, Log Analysis, and Report Generation</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Opportunity tabs */
+.opp-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;}
+.ot{flex:1;min-width:120px;padding:12px 10px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.ot:hover{color:var(--purple-dark);}
+.ot.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.opp-panel{display:none;padding-top:24px;}
+.opp-panel.active{display:block;}
+
+/* Manual vs AI flow */
+.flow-compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:16px 0;}
+.fc-col{padding:18px 20px;}
+.fc-col.manual{background:var(--orange-pale);border-right:1px solid var(--purple-mid);}
+.fc-col.automated{background:var(--purple-pale);}
+.fc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.fc-col.manual .fc-label{color:var(--orange);}
+.fc-col.automated .fc-label{color:var(--purple);}
+.fc-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;margin-bottom:8px;color:var(--gray-text);}
+.fc-step{font-size:12px;line-height:1.6;color:var(--gray-text);margin-bottom:4px;padding-left:14px;position:relative;}
+.fc-step::before{content:"→";position:absolute;left:0;font-weight:700;}
+.fc-col.manual .fc-step::before{color:var(--orange);}
+.fc-col.automated .fc-step::before{color:var(--purple);}
+.fc-step.human{color:var(--green);}
+.fc-step.human::before{color:var(--green);}
+.fc-time{margin-top:10px;font-size:11px;font-weight:700;padding:5px 9px;border-radius:6px;display:inline-block;}
+.fc-col.manual .fc-time{background:var(--orange);color:var(--white);}
+.fc-col.automated .fc-time{background:var(--purple);color:var(--white);}
+
+/* Human role + tools */
+.hr-tools-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+.hr-box{background:var(--green-pale);border:1.5px solid #B5D5C0;border-radius:12px;padding:14px 16px;}
+.hr-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:8px;}
+.hr-item{font-size:13px;line-height:1.6;color:var(--gray-text);margin-bottom:4px;padding-left:12px;position:relative;}
+.hr-item::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700;}
+.tools-box{background:var(--blue-pale);border:1.5px solid var(--blue-mid);border-radius:12px;padding:14px 16px;}
+.tools-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:8px;}
+.tool-chip{display:inline-block;background:var(--white);border:1.5px solid var(--blue-mid);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:var(--blue);margin:2px 2px 2px 0;}
+
+/* Value callout */
+.value-callout{background:var(--purple-pale);border-left:4px solid var(--purple);border-radius:0 12px 12px 0;padding:14px 18px;margin:12px 0;font-size:14px;line-height:1.7;color:var(--purple-dark);}
+
+/* Practice quiz within section */
+.mini-quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;margin:16px 0;}
+.mq-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;line-height:1.4;}
+.mq-opts{display:flex;flex-direction:column;gap:7px;}
+.mq-opt{border:2px solid var(--purple-mid);border-radius:9px;padding:9px 14px;font-size:13px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:left;line-height:1.5;}
+.mq-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.mq-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.mq-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.mq-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.mq-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.mq-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.3 — No-Code & Low-Code Automation</div>
+  <h1>The Four Most Common Automation Opportunities in Tech Roles: Ticket Triage, Data Entry, Log Analysis, and Report Generation</h1>
+  <p class="hero-sub">The video listed these in one slide. Each one deserves a full treatment — what the manual process actually costs, how AI-assisted automation changes it, what the human's role remains, and what tools make it real. This is the most career-practical article in Lesson 4.3.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why These Four?</h2>
+    <p>These four automation opportunities appear across almost every tech role — from help desk to IT operations to data coordination. They share a common profile: <mark>high volume, repetitive structure, rule-based routing, and a significant time cost when done manually.</mark> Together they represent hundreds of hours per year of recoverable time in most tech teams.</p>
+    <p>Each one also illustrates a different aspect of AI-assisted automation — ticket triage shows classification, data entry shows validation and routing, log analysis shows pattern detection at scale, and report generation shows scheduled synthesis. Understanding all four gives you a practical vocabulary for the automation conversations you'll have in any tech role.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Opportunities — Explore Each</h2>
+    <div class="opp-tabs">
+      <button class="ot active" onclick="showOpp(0,this)">🎫 Ticket Triage</button>
+      <button class="ot" onclick="showOpp(1,this)">📝 Data Entry</button>
+      <button class="ot" onclick="showOpp(2,this)">📋 Log Analysis</button>
+      <button class="ot" onclick="showOpp(3,this)">📊 Report Generation</button>
+    </div>
+
+    <!-- TICKET TRIAGE -->
+    <div class="opp-panel active" id="op0">
+      <p>Ticket triage is the process of reading new support requests and deciding: what is this about, how urgent is it, and who should handle it? In most help desk environments, a technician does this manually for every ticket that arrives — reading, categorizing, prioritizing, and assigning, one by one.</p>
+      <div class="flow-compare">
+        <div class="fc-col manual">
+          <div class="fc-label">⏮ Manual Triage</div>
+          <div class="fc-title">~80 tickets/day × 4 min each</div>
+          <div class="fc-step">Open ticket queue, read new ticket</div>
+          <div class="fc-step">Determine category from description text</div>
+          <div class="fc-step">Assess priority (HIGH/MEDIUM/LOW)</div>
+          <div class="fc-step">Assign to correct team or individual</div>
+          <div class="fc-step">Send acknowledgment to submitter</div>
+          <div class="fc-step">Log routing decision in notes</div>
+          <div class="fc-step">Move to next ticket, repeat</div>
+          <div class="fc-time">⏱ ~5.3 hrs/day on routing alone</div>
+        </div>
+        <div class="fc-col automated">
+          <div class="fc-label">⚡ AI-Assisted Triage</div>
+          <div class="fc-title">Automation handles volume; human handles edge cases</div>
+          <div class="fc-step">AI reads ticket text, classifies category (auto)</div>
+          <div class="fc-step">Rules engine assigns priority based on keywords + history (auto)</div>
+          <div class="fc-step">Ticket routes to correct queue (auto)</div>
+          <div class="fc-step">Acknowledgment email sent (auto)</div>
+          <div class="fc-step human">Technician reviews AI classifications (human)</div>
+          <div class="fc-step human">Technician corrects misroutes (human)</div>
+          <div class="fc-step human">Technician handles complex/ambiguous tickets (human)</div>
+          <div class="fc-time">⚡ ~40 min/day review — 290 min freed</div>
+        </div>
+      </div>
+      <div class="hr-tools-row">
+        <div class="hr-box">
+          <div class="hr-box-label">👤 What the human still does</div>
+          <div class="hr-item">Reviews AI classifications in the queue dashboard</div>
+          <div class="hr-item">Corrects misrouted tickets (edge cases, ambiguous descriptions)</div>
+          <div class="hr-item">Handles tickets the AI flagged as low-confidence</div>
+          <div class="hr-item">Trains the AI by flagging systematic errors</div>
+          <div class="hr-item">Manages VIP submitters and sensitive escalations</div>
+        </div>
+        <div class="tools-box">
+          <div class="tools-box-label">🔧 Tools that enable this</div>
+          <div class="tool-chip">Zendesk AI</div><div class="tool-chip">Freshdesk Freddy</div>
+          <div class="tool-chip">ServiceNow AI</div><div class="tool-chip">Jira Service Management</div>
+          <div class="tool-chip">Power Automate</div><div class="tool-chip">Intercom</div>
+        </div>
+      </div>
+      <div class="value-callout">💡 The real value of ticket triage automation isn't just time savings — it's <strong>consistency</strong>. A manual triage process varies by who's doing it and how tired they are. An automated system applies the same rules to every ticket, every time. Consistency reduces misroutes, reduces SLA breaches, and produces cleaner data for analytics.</div>
+      <div class="mini-quiz">
+        <div class="mq-q">A user submits a ticket: "My laptop keeps crashing when I open Excel. It's probably the network but I'm not sure." The AI classifies it as a "Network" ticket and routes it to the network team. What should the reviewing technician do?</div>
+        <div class="mq-opts" id="mq0o">
+          <button class="mq-opt" onclick="doMQ('mq0',true,this,'✅ Correct. The ticket describes a software/hardware crash symptom that the user speculatively attributed to the network. The AI picked up the word "network" and classified accordingly — a predictable edge case where user vocabulary misleads the classifier. This is exactly the type of misroute human review catches. The technician re-routes to hardware or software support, and flags the pattern so the AI can learn from the correction.')">Override the classification — reroute to hardware/software support and flag the misroute</button>
+          <button class="mq-opt" onclick="doMQ('mq0',false,this,'❌ The user themselves said they\'re not sure. AI picking up the word "network" from speculative user language is a known failure mode of keyword-based classification. The correct destination is hardware or software support — the technician\'s job is to catch exactly this type of edge case.')">Trust the AI — the user mentioned network so the classification is correct</button>
+        </div>
+        <div class="mq-fb" id="mq0f"></div>
+      </div>
+    </div>
+
+    <!-- DATA ENTRY -->
+    <div class="opp-panel" id="op1">
+      <p>Data entry — moving information from one system into another, or from paper/email into a database — is one of the highest-volume, lowest-value manual tasks in any tech-adjacent role. It's also one of the highest error-rate tasks: humans copying data manually make mistakes at a predictable rate, and those mistakes propagate through every downstream system that uses the data.</p>
+      <div class="flow-compare">
+        <div class="fc-col manual">
+          <div class="fc-label">⏮ Manual Data Entry</div>
+          <div class="fc-title">New vendor form arrives via email</div>
+          <div class="fc-step">Open email, read vendor information</div>
+          <div class="fc-step">Open procurement system in another tab</div>
+          <div class="fc-step">Manually type company name, address, contact</div>
+          <div class="fc-step">Copy-paste tax ID (error-prone step)</div>
+          <div class="fc-step">Look up vendor category in dropdown</div>
+          <div class="fc-step">Enter payment terms manually</div>
+          <div class="fc-step">Email confirmation back to vendor</div>
+          <div class="fc-step">File email in correct folder</div>
+          <div class="fc-time">⏱ ~8 min/vendor × 30/week = 4 hrs/week</div>
+        </div>
+        <div class="fc-col automated">
+          <div class="fc-label">⚡ Automated Data Entry</div>
+          <div class="fc-title">Form submitted → data flows automatically</div>
+          <div class="fc-step">Vendor fills web form with structured fields (auto)</div>
+          <div class="fc-step">Form validates required fields and formats (auto)</div>
+          <div class="fc-step">Data maps directly to procurement system fields (auto)</div>
+          <div class="fc-step">Tax ID format validated against expected pattern (auto)</div>
+          <div class="fc-step">Confirmation email sent automatically (auto)</div>
+          <div class="fc-step">Record created in system, filed in database (auto)</div>
+          <div class="fc-step human">Staff reviews new entries weekly for quality (human)</div>
+          <div class="fc-time">⚡ ~15 min/week review — 3.75 hrs freed</div>
+        </div>
+      </div>
+      <div class="hr-tools-row">
+        <div class="hr-box">
+          <div class="hr-box-label">👤 What the human still does</div>
+          <div class="hr-item">Reviews new entries for obvious errors or anomalies</div>
+          <div class="hr-item">Handles vendors who submit incomplete information</div>
+          <div class="hr-item">Makes judgment calls on ambiguous data (duplicate vendors, unusual formats)</div>
+          <div class="hr-item">Manages exceptions the form validation can't catch</div>
+        </div>
+        <div class="tools-box">
+          <div class="tools-box-label">🔧 Tools that enable this</div>
+          <div class="tool-chip">Microsoft Forms + Power Automate</div>
+          <div class="tool-chip">Google Forms + Sheets</div>
+          <div class="tool-chip">Typeform + Zapier</div>
+          <div class="tool-chip">Airtable forms</div>
+          <div class="tool-chip">ServiceNow catalog</div>
+        </div>
+      </div>
+      <div class="value-callout">💡 Data entry automation doesn't just save time — it eliminates a class of errors that are invisible until they cause downstream problems. A mistyped tax ID sits quietly in a database until it causes a payment failure six months later. Structured web forms with validation catch format errors at the moment of entry, not months later.</div>
+      <div class="mini-quiz">
+        <div class="mq-q">A team automates vendor data entry using web forms. Three weeks in, they notice that 12% of form submissions have a blank "payment terms" field — which causes the procurement system to default to "net 30" regardless of what was agreed. What's the right fix?</div>
+        <div class="mq-opts" id="mq1o">
+          <button class="mq-opt" onclick="doMQ('mq1',false,this,'❌ Manual review catches the error after it\'s already created a bad record in the system. The fix should happen at entry time, not after — preventing the bad record from being created at all.')">Add a weekly review step to catch the blank payment terms before they default</button>
+          <button class="mq-opt" onclick="doMQ('mq1',true,this,'✅ Correct. The right fix is at the source: make the payment terms field required on the form, so submissions with a blank field are rejected before they reach the system. This is the principle of validation at entry — catch the error before it creates a bad record. Reviewing after the fact is a detection mechanism; requiring the field is a prevention mechanism.')">Make payment terms a required field on the form with validation — submissions can\'t be submitted blank</button>
+        </div>
+        <div class="mq-fb" id="mq1f"></div>
+      </div>
+    </div>
+
+    <!-- LOG ANALYSIS -->
+    <div class="opp-panel" id="op2">
+      <p>Log files are the most information-dense and most underused data source in tech operations. Every server, application, and network device produces continuous streams of logs. Manually reading logs to find problems is slow, error-prone, and simply impossible at scale. AI-assisted log analysis turns this problem around — automatically scanning millions of log lines to surface the patterns and anomalies that matter.</p>
+      <div class="flow-compare">
+        <div class="fc-col manual">
+          <div class="fc-label">⏮ Manual Log Analysis</div>
+          <div class="fc-title">Investigating a performance complaint</div>
+          <div class="fc-step">SSH into each server to access log files</div>
+          <div class="fc-step">Use grep/search to find relevant time window</div>
+          <div class="fc-step">Read through hundreds of lines looking for errors</div>
+          <div class="fc-step">Cross-reference logs from multiple services manually</div>
+          <div class="fc-step">Try to reconstruct timeline of what happened when</div>
+          <div class="fc-step">Guess at root cause from fragmented log evidence</div>
+          <div class="fc-time">⏱ 2–4 hrs per significant incident investigation</div>
+        </div>
+        <div class="fc-col automated">
+          <div class="fc-label">⚡ AI-Assisted Log Analysis</div>
+          <div class="fc-title">Logs centralized and continuously scanned</div>
+          <div class="fc-step">All logs from all services stream to central platform (auto)</div>
+          <div class="fc-step">AI detects new error patterns as they emerge (auto)</div>
+          <div class="fc-step">Correlated events across services are grouped (auto)</div>
+          <div class="fc-step">Timeline of related events reconstructed automatically (auto)</div>
+          <div class="fc-step">Alert fires with pattern summary and affected services (auto)</div>
+          <div class="fc-step human">Engineer reads flagged log lines to understand cause (human)</div>
+          <div class="fc-step human">Engineer determines fix and implements it (human)</div>
+          <div class="fc-time">⚡ 20–40 min per investigation — 75% time saved</div>
+        </div>
+      </div>
+      <div class="hr-tools-row">
+        <div class="hr-box">
+          <div class="hr-box-label">👤 What the human still does</div>
+          <div class="hr-item">Reads the specific log lines the AI flagged</div>
+          <div class="hr-item">Understands the causal sequence (why, not just what)</div>
+          <div class="hr-item">Determines the correct fix based on system knowledge</div>
+          <div class="hr-item">Validates that the fix actually resolved the issue</div>
+          <div class="hr-item">Documents findings in the postmortem</div>
+        </div>
+        <div class="tools-box">
+          <div class="tools-box-label">🔧 Tools that enable this</div>
+          <div class="tool-chip">Datadog Log Management</div>
+          <div class="tool-chip">Splunk</div>
+          <div class="tool-chip">Elastic Stack (ELK)</div>
+          <div class="tool-chip">Grafana Loki</div>
+          <div class="tool-chip">Sumo Logic</div>
+          <div class="tool-chip">AWS CloudWatch</div>
+        </div>
+      </div>
+      <div class="value-callout">💡 The shift from manual to automated log analysis is one of the most dramatic productivity gains in IT operations — not because the human's job disappears, but because they stop spending 90% of their investigation time finding the relevant log lines and can focus entirely on understanding what those lines mean and what to do about them.</div>
+    </div>
+
+    <!-- REPORT GENERATION -->
+    <div class="opp-panel" id="op3">
+      <p>Regular reports — weekly ticket summaries, monthly uptime reports, quarterly performance reviews — are necessary for operational visibility and management communication. Generating them manually is pure toil: pulling data from multiple systems, formatting it consistently, calculating the same metrics week after week. This is exactly the category of work that should be automated first.</p>
+      <div class="flow-compare">
+        <div class="fc-col manual">
+          <div class="fc-label">⏮ Manual Report Generation</div>
+          <div class="fc-title">Weekly help desk performance report</div>
+          <div class="fc-step">Log into ticketing system, run ticket volume query</div>
+          <div class="fc-step">Export to spreadsheet, calculate averages</div>
+          <div class="fc-step">Log into monitoring tool, pull uptime numbers</div>
+          <div class="fc-step">Log into satisfaction tool, pull CSAT scores</div>
+          <div class="fc-step">Manually combine data in spreadsheet</div>
+          <div class="fc-step">Format charts and tables to match template</div>
+          <div class="fc-step">Write summary paragraph, email to manager</div>
+          <div class="fc-time">⏱ ~2 hrs/week × 52 weeks = 104 hrs/year</div>
+        </div>
+        <div class="fc-col automated">
+          <div class="fc-label">⚡ Automated Report Generation</div>
+          <div class="fc-title">Every Friday at 4pm, report builds and sends itself</div>
+          <div class="fc-step">Scheduled trigger fires at 4pm Friday (auto)</div>
+          <div class="fc-step">Pulls ticket data from ticketing API (auto)</div>
+          <div class="fc-step">Pulls uptime from monitoring API (auto)</div>
+          <div class="fc-step">Pulls CSAT from satisfaction tool API (auto)</div>
+          <div class="fc-step">Calculates metrics, generates charts (auto)</div>
+          <div class="fc-step">Inserts data into report template (auto)</div>
+          <div class="fc-step">Emails formatted report to distribution list (auto)</div>
+          <div class="fc-step human">Manager reviews and adds commentary if needed (human)</div>
+          <div class="fc-time">⚡ ~10 min review/week — 99 hrs/year freed</div>
+        </div>
+      </div>
+      <div class="hr-tools-row">
+        <div class="hr-box">
+          <div class="hr-box-label">👤 What the human still does</div>
+          <div class="hr-item">Reviews the generated report for obvious anomalies</div>
+          <div class="hr-item">Adds contextual commentary ("spike due to onboarding week")</div>
+          <div class="hr-item">Makes decisions based on the data</div>
+          <div class="hr-item">Updates the template when reporting needs change</div>
+        </div>
+        <div class="tools-box">
+          <div class="tools-box-label">🔧 Tools that enable this</div>
+          <div class="tool-chip">Power Automate + Power BI</div>
+          <div class="tool-chip">Google Looker Studio</div>
+          <div class="tool-chip">Tableau + scheduled extracts</div>
+          <div class="tool-chip">Python + cron + email</div>
+          <div class="tool-chip">Zapier + Google Sheets</div>
+        </div>
+      </div>
+      <div class="value-callout">💡 Report generation automation is almost always the highest ROI starting point for a team new to automation — it's repetitive, well-defined, produces immediate time savings, and the output is easy to validate. If the automated report matches what you'd generate manually, it works. If something looks wrong, you can catch it in the weekly review.</div>
+      <div class="mini-quiz">
+        <div class="mq-q">A team sets up automated weekly reports. In week 7, the report shows average resolution time dropped from 6.1 hours to 1.2 hours — a 5× improvement. The automation ran normally with no changes. What should the reviewer's first instinct be?</div>
+        <div class="mq-opts" id="mq3o">
+          <button class="mq-opt" onclick="doMQ('mq3',false,this,'❌ A 5× improvement in one week without any change to the team or processes is almost certainly a data problem, not a real improvement. This is exactly what the human review step exists to catch. Celebrate after investigation confirms it\'s real.')">Celebrate — a 5× improvement is outstanding performance</button>
+          <button class="mq-opt" onclick="doMQ('mq3',true,this,'✅ Correct. A 5× single-week improvement with no operational changes is a data quality red flag. The reviewer should immediately check: did any tickets get auto-closed (reducing the resolution time calculation)? Did a data source change? Did the date range shift? A real improvement of this magnitude would have a visible cause — and the absence of a visible cause is the signal that something is wrong with the data, not the operations.')">Investigate the data before reporting it — this magnitude of change without a known cause is a red flag</button>
+        </div>
+        <div class="mq-fb" id="mq3f"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A manager reviews data showing that since implementing automated ticket triage 3 months ago, the team's SLA breach rate dropped from 18% to 4%. The manager concludes that automated triage is directly responsible and proposes removing all human review of AI classifications to save more time. A team lead pushes back. What's the strongest argument against removing human review entirely?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI classification model will stop improving without human feedback</button>
+        <button class="qopt" onclick="cq(this,true)">Human review is what catches the systematic edge cases that would otherwise accumulate undetected. The current 4% breach rate includes the benefit of humans correcting misroutes before they become SLA problems. Removing review doesn't just eliminate the time spent reviewing — it eliminates the error-correction mechanism. If the AI has a systematic misclassification problem (a new ticket type it wasn't trained on, a change in how users describe issues), there would be no mechanism to detect it until the breach rate climbed again. The 4% success is partly the AI's work and partly the review layer's work. Removing one without understanding the contribution of each is risky.</button>
+        <button class="qopt" onclick="cq(this,false)">Human reviewers are faster than the AI at classification</button>
+        <button class="qopt" onclick="cq(this,false)">The automation tool requires human review as part of its license agreement</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Ticket triage, data entry, log analysis, and report generation share a profile: high volume, repetitive, rule-based, and a significant time cost when done manually. AI-assisted automation handles the volume; humans handle the oversight, edge cases, and judgment calls. In all four cases, removing the human review step entirely trades a small time saving for a significant loss of error-detection capability.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Report generation is almost always the highest-ROI starting point for a team new to automation: it's well-defined, time savings are immediate, and the output is easy to validate. Start there, demonstrate value, then expand to triage and data entry workflows where edge cases require more careful design.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>In every automation scenario, the human's job shifts from doing the repetitive work to overseeing, validating, and correcting the automated work. This shift requires a different kind of attention — catching systematic errors, noticing when outputs don't make sense, and updating rules when the automation encounters situations it wasn't designed for.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showOpp(i,btn){document.querySelectorAll(".ot").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".opp-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById("op"+i).classList.add("active");}
+function doMQ(id,correct,btn,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;btn.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="mq-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The SLA improvement is partly the AI's contribution and partly the human review layer's contribution — and there's no way to know how much each is responsible without removing one and observing what changes. Human review catches systematic misclassification that the AI can't self-detect. If the AI develops a blind spot (a new ticket type, a vocabulary shift), review catches it before it compounds. Removing review saves time at the cost of the error-correction mechanism that's keeping the breach rate at 4%. The team lead is right to push back on this trade-off.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("systematic edge cases"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ While AI feedback loops do benefit from human correction, that's a secondary argument. The strongest argument is the direct error-detection function: human review catches misroutes before they become SLA breaches. Without review, systematic misclassifications accumulate undetected until metrics start degrading. The current 4% success depends on both the AI and the review layer working together — not the AI alone.";}
+}
+</script>
+</body>
+</html>

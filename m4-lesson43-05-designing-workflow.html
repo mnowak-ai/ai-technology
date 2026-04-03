@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designing Your First Automated Workflow: A Step-by-Step Guide From Map to Deploy</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Step guide */
+.step-guide{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.sg-item{display:flex;gap:0;}
+.sg-left{display:flex;flex-direction:column;align-items:center;width:52px;flex-shrink:0;}
+.sg-dot{width:42px;height:42px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-family:"Fraunces",serif;font-size:18px;font-weight:700;flex-shrink:0;}
+.sg-line{flex:1;width:2px;background:var(--purple-mid);margin:4px 0;}
+.sg-item:last-child .sg-line{display:none;}
+.sg-body{flex:1;padding:0 0 28px 16px;padding-top:6px;}
+.sg-step-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:4px;}
+.sg-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.sg-body p{font-size:15px;line-height:1.78;margin-bottom:12px;}
+.sg-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;margin:10px 0;}
+.sg-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:8px;}
+.sg-box-item{font-size:13px;line-height:1.65;color:var(--gray-text);margin-bottom:4px;padding-left:14px;position:relative;}
+.sg-box-item::before{content:"→";position:absolute;left:0;font-weight:700;color:var(--purple);}
+.sg-callout{background:var(--purple-pale);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6;color:var(--purple-dark);margin-top:10px;}
+
+/* Process mapping sim */
+.process-map{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:16px 0;}
+.pm-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:12px;}
+.pm-steps{display:flex;flex-direction:column;gap:6px;}
+.pm-step{background:var(--white);border:2px solid var(--purple-mid);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;}
+.pm-step:hover{border-color:var(--purple);}
+.pm-step.automate{border-color:var(--green);background:var(--green-pale);}
+.pm-step.keep{border-color:var(--orange);background:var(--orange-pale);}
+.pm-step.selected-a{border-color:var(--green);background:var(--green-pale);}
+.pm-step.selected-k{border-color:var(--orange);background:var(--orange-pale);}
+.pm-step-icon{font-size:18px;flex-shrink:0;}
+.pm-step-text{font-size:13px;font-weight:600;color:var(--gray-text);flex:1;}
+.pm-step-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;flex-shrink:0;}
+.pm-step.automate .pm-step-tag,.pm-step.selected-a .pm-step-tag{background:var(--green);color:white;}
+.pm-step.keep .pm-step-tag,.pm-step.selected-k .pm-step-tag{background:var(--orange);color:white;}
+.pm-classify-btns{display:flex;gap:6px;margin-top:6px;}
+.pm-btn{border:2px solid var(--purple-mid);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.pm-btn.auto-btn:hover{border-color:var(--green);background:var(--green-pale);color:var(--green);}
+.pm-btn.keep-btn:hover{border-color:var(--orange);background:var(--orange-pale);color:var(--orange);}
+.pm-result{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:10px;padding:14px;margin-top:12px;font-size:13px;line-height:1.65;display:none;}
+.pm-result.show{display:block;}
+
+/* Test checklist */
+.test-list{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.test-item{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 16px;display:flex;gap:10px;align-items:flex-start;}
+.test-icon{font-size:18px;flex-shrink:0;}
+.test-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.test-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.3 — No-Code & Low-Code Automation</div>
+  <h1>Designing Your First Automated Workflow: A Step-by-Step Guide From Map to Deploy</h1>
+  <p class="hero-sub">This article turns the video's workflow design slide into something you can actually do. Follow these five steps with any repetitive process in your current or future tech role — and by the end, you'll have a workflow design ready to build.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Before You Build Anything: The Design-First Rule</h2>
+    <p>The most common automation mistake is jumping straight into a tool and starting to build before you fully understand the process you're automating. The result is automations that technically work but don't actually solve the problem, or that break the moment an edge case arrives.</p>
+    <p><mark>The design-first rule: spend more time understanding and mapping the current process than you spend building the automation.</mark> A workflow you fully understand takes 30 minutes to build. A workflow you half-understand takes 3 hours to build and breaks in week two.</p>
+    <p>This five-step guide walks through the complete design process — from identifying what to automate, through mapping the current workflow, to building, testing, and deploying. Work through each step deliberately, and the build itself becomes straightforward.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Five-Step Workflow Design Process</h2>
+
+    <div class="step-guide">
+
+      <div class="sg-item">
+        <div class="sg-left"><div class="sg-dot">1</div><div class="sg-line"></div></div>
+        <div class="sg-body">
+          <div class="sg-step-label">Step 1 of 5</div>
+          <div class="sg-title">Find Your Best Automation Candidate</div>
+          <p>Before you can design an automation, you need to know which process to automate. Not everything should be automated — and not everything that could be automated is worth automating first. Start with the process that meets the most of these criteria:</p>
+          <div class="sg-box">
+            <div class="sg-box-label">Automation candidate criteria — the more you check, the better the candidate</div>
+            <div class="sg-box-item">You do this task more than once a week (high frequency)</div>
+            <div class="sg-box-item">It follows the same steps every time (consistent, rule-based)</div>
+            <div class="sg-box-item">It requires little or no judgment — just following defined rules (low cognitive complexity)</div>
+            <div class="sg-box-item">It involves moving data between systems or apps (integration opportunity)</div>
+            <div class="sg-box-item">It takes meaningful time per occurrence (high time cost)</div>
+            <div class="sg-box-item">Errors are correctable — if the automation gets it wrong, you can fix it (low irreversibility risk)</div>
+          </div>
+          <p>For a first automation, pick the simplest possible candidate — not the most impactful one. Build something that works completely, learn from it, then tackle more complex workflows. A working simple automation teaches you more than a broken complex one.</p>
+          <div class="sg-callout">💡 <strong>Good first automation examples:</strong> Sending a confirmation email when a form is submitted. Creating a ticket when an alert threshold is reached. Posting a Slack notification when a new item is added to a spreadsheet. Generating a weekly summary from a database query. All simple, all fast to build, all immediately useful.</div>
+        </div>
+      </div>
+
+      <div class="sg-item">
+        <div class="sg-left"><div class="sg-dot">2</div><div class="sg-line"></div></div>
+        <div class="sg-body">
+          <div class="sg-step-label">Step 2 of 5</div>
+          <div class="sg-title">Map the Current Process — Every Single Step</div>
+          <p>Write down every step in the current manual process. Don't skip steps that seem obvious — often those are exactly the ones the automation needs to replicate. For each step, note: who does it, how long it takes, what tool or system is involved, and what input it requires from the previous step.</p>
+
+          <div class="process-map">
+            <div class="pm-label">✏️ Interactive — Classify steps: Automate or Keep Human?</div>
+            <p style="font-size:13px;color:var(--gray-muted);margin-bottom:12px;">You've mapped a new-employee onboarding workflow below. For each step, click "Automate" or "Keep Human" to classify it. There are no wrong answers — the goal is to practice the thinking.</p>
+            <div class="pm-steps" id="pmSteps">
+              <div class="pm-step" data-idx="0"><div class="pm-step-icon">📥</div><div class="pm-step-text">HR notifies IT that a new employee starts Monday</div><div class="pm-step-tag" style="display:none"></div></div>
+              <div class="pm-step" data-idx="1"><div class="pm-step-icon">💻</div><div class="pm-step-text">IT creates Active Directory account with correct username format</div><div class="pm-step-tag" style="display:none"></div></div>
+              <div class="pm-step" data-idx="2"><div class="pm-step-icon">📧</div><div class="pm-step-text">IT creates email account and sets up forwarding</div><div class="pm-step-tag" style="display:none"></div></div>
+              <div class="pm-step" data-idx="3"><div class="pm-step-icon">🔐</div><div class="pm-step-text">IT determines which security groups the role requires (varies by role)</div><div class="pm-step-tag" style="display:none"></div></div>
+              <div class="pm-step" data-idx="4"><div class="pm-step-icon">🔑</div><div class="pm-step-text">IT adds employee to correct security groups</div><div class="pm-step-tag" style="display:none"></div></div>
+              <div class="pm-step" data-idx="5"><div class="pm-step-icon">💬</div><div class="pm-step-text">IT sends welcome email with credentials and setup instructions</div><div class="pm-step-tag" style="display:none"></div></div>
+              <div class="pm-step" data-idx="6"><div class="pm-step-icon">🤝</div><div class="pm-step-text">IT meets with new employee on day 1 to answer setup questions</div><div class="pm-step-tag" style="display:none"></div></div>
+            </div>
+            <div class="pm-classify-btns">
+              <button class="pm-btn auto-btn" onclick="classifySelected('auto')">🟢 Mark selected as Automate</button>
+              <button class="pm-btn keep-btn" onclick="classifySelected('keep')">🟠 Mark selected as Keep Human</button>
+              <button class="pm-btn" onclick="resetPM()" style="border-color:var(--gray-muted);color:var(--gray-muted)">↺ Reset</button>
+            </div>
+            <div class="pm-result" id="pmResult"></div>
+          </div>
+
+          <div class="sg-callout">💡 <strong>The pattern you'll usually find:</strong> Account creation, credential sending, and notification steps → automate. Role determination, relationship-building, and judgment-based steps → keep human. Automation handles the consistent, rules-based volume. Humans handle the contextual, variable, relationship-dependent parts.</div>
+        </div>
+      </div>
+
+      <div class="sg-item">
+        <div class="sg-left"><div class="sg-dot">3</div><div class="sg-line"></div></div>
+        <div class="sg-body">
+          <div class="sg-step-label">Step 3 of 5</div>
+          <div class="sg-title">Define the Trigger, Actions, and Conditions</div>
+          <p>With your steps classified, translate them into automation language: one trigger, a sequence of actions, and the conditional branches that handle different cases. Write this out in plain English before you open any tool — this is the specification the tool will implement.</p>
+          <div class="sg-box">
+            <div class="sg-box-label">Your automation specification template</div>
+            <div class="sg-box-item"><strong>Trigger:</strong> When [specific event] happens in [system]</div>
+            <div class="sg-box-item"><strong>Condition(s):</strong> Only if [filter criteria] — (leave blank if always trigger)</div>
+            <div class="sg-box-item"><strong>Action 1:</strong> [Do this] in [system] using [data from trigger]</div>
+            <div class="sg-box-item"><strong>Action 2:</strong> [Do this next] — wait for action 1 to complete first</div>
+            <div class="sg-box-item"><strong>Branch:</strong> If [condition], do [action A]; otherwise do [action B]</div>
+            <div class="sg-box-item"><strong>Human checkpoint:</strong> Pause here and notify [who] before proceeding (if needed)</div>
+            <div class="sg-box-item"><strong>Error handling:</strong> If any action fails, [notify / retry / stop and alert]</div>
+          </div>
+          <p>Writing this out forces you to answer questions the tool will definitely ask: what data does each action need? Where does that data come from? What should happen if a step fails? Answering these in plain English first means you won't get stuck in the middle of building the flow in the tool.</p>
+        </div>
+      </div>
+
+      <div class="sg-item">
+        <div class="sg-left"><div class="sg-dot">4</div><div class="sg-line"></div></div>
+        <div class="sg-body">
+          <div class="sg-step-label">Step 4 of 5</div>
+          <div class="sg-title">Choose Your Tool and Build in Test Mode</div>
+          <p>Based on your specification, select the appropriate tier (no-code, low-code, or full code) and tool. For your first automation, use the simplest tool that supports your trigger and actions — don't pick a tool based on its name recognition, pick it based on whether it has native connectors for the specific apps you need to connect.</p>
+          <div class="sg-box">
+            <div class="sg-box-label">Build order — always in this sequence</div>
+            <div class="sg-box-item">Build the trigger first — confirm the tool can detect the event you need</div>
+            <div class="sg-box-item">Add the first action — confirm the data passes correctly from trigger to action</div>
+            <div class="sg-box-item">Test each action individually before chaining them</div>
+            <div class="sg-box-item">Add conditional branches only after the happy path works completely</div>
+            <div class="sg-box-item">Add error handling last — once you know what can go wrong</div>
+          </div>
+          <div class="sg-callout">💡 <strong>Most first automations fail not because the logic is wrong, but because data mapping is incorrect</strong> — the trigger captures a field with a slightly different name than the action expects, or a date format doesn't match. Build slowly and verify data at each step rather than building the whole flow and testing it at the end.</div>
+        </div>
+      </div>
+
+      <div class="sg-item">
+        <div class="sg-left"><div class="sg-dot">5</div><div class="sg-line"></div></div>
+        <div class="sg-body">
+          <div class="sg-step-label">Step 5 of 5</div>
+          <div class="sg-title">Test, Monitor, and Deploy Gradually</div>
+          <p>Never deploy an automation directly to full production volume. Always test against real (or realistic) data in a controlled way first, verify the outputs are correct, then roll out gradually. This is the step most beginners skip — and the most expensive one to skip.</p>
+          <div class="test-list">
+            <div class="test-item"><div class="test-icon">🧪</div><div><div class="test-title">Test with a single real example first</div><div class="test-desc">Trigger the automation once with a real test case. Check every output: did the right record get created? Did the email send to the right address? Did the data map correctly? Don't move forward until the single-case test is completely correct.</div></div></div>
+            <div class="test-item"><div class="test-icon">🔄</div><div><div class="test-title">Test the edge cases explicitly</div><div class="test-desc">What happens when a required field is empty? When a user submits a ticket with unusual characters? When the destination system is temporarily unavailable? Design 3–5 edge case tests based on the failure modes you're most worried about.</div></div></div>
+            <div class="test-item"><div class="test-icon">👥</div><div><div class="test-title">Have someone else review before full deployment</div><div class="test-desc">A second pair of eyes catches things you've become blind to. Share your workflow specification and ask: does this do what you intended? Are there scenarios this doesn't handle? Fresh eyes find gaps the builder misses.</div></div></div>
+            <div class="test-item"><div class="test-icon">📈</div><div><div class="test-title">Deploy to 10–20% of volume first</div><div class="test-desc">If your automation processes 100 tickets/day, run it on 10–20 tickets/day for one week while manually handling the rest. Compare outputs to what manual processing would have produced. Only when outputs consistently match should you scale to full volume.</div></div></div>
+            <div class="test-item"><div class="test-icon">📊</div><div><div class="test-title">Monitor error rates and outputs weekly</div><div class="test-desc">Build a simple monitoring check into your workflow: a weekly summary of how many times the automation triggered, how many succeeded, and how many failed. Even a simple spreadsheet log reviewed weekly catches systematic problems before they compound.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team builds an automation that sends an onboarding email with login credentials to every new employee the moment their account is created. They test it with one test account, it works perfectly, and they deploy it to full production. Two days later, a new employee reports they never received their onboarding email. Investigation reveals: the employee's email address contained a hyphen, which the automation's email validation regex rejected — silently failing without sending the email or logging an error. What two design errors contributed to this failure?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The automation should have required manual approval before sending any credentials</button>
+        <button class="qopt" onclick="cq(this,true)">Two errors: (1) Testing with only one case — a standard email address — didn't reveal how the automation handles edge cases like hyphens, plus signs, or other valid-but-unusual email formats. Edge case testing should have included at least a few variations. (2) Silent failure — when the email validation rejected the address, the automation should have logged an error and notified someone, not silently done nothing. An automation that fails quietly is more dangerous than one that fails loudly, because silent failures go undetected until someone reports a problem. Both error handling and edge case testing are identified in Step 4 and Step 5 of the design process.</button>
+        <button class="qopt" onclick="cq(this,false)">The automation deployed too quickly — it needed a two-week testing period minimum</button>
+        <button class="qopt" onclick="cq(this,false)">The email regex pattern should have been written by a developer, not configured in a no-code tool</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The design-first rule: spend more time mapping and specifying the current process than you spend building. A workflow you fully understand takes 30 minutes to build. Map every step, classify each as automate or keep-human, then write the specification in plain English before opening any tool.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Build in sequence: trigger first, then first action, then chain. Test each piece individually before connecting them. Most first automations fail at data mapping — a field name difference, a format mismatch — not at logic. Build slowly and verify data at each step.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Never skip testing and gradual deployment. Test the happy path, then test edge cases explicitly. Deploy to 10–20% of volume first. Build error handling that fails loudly (logs, alerts) rather than silently. Monitor outputs weekly — the automation doesn't run itself; it just runs the steps. Someone still needs to check that those steps are producing the right results.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+let selected=null;
+const answers={0:"auto",1:"auto",2:"auto",3:"keep",4:"auto",5:"auto",6:"keep"};
+const reasons={
+  0:"HR notification step — this triggers the automation. The trigger itself can be automated (an HR system webhook or scheduled check).",
+  1:"Account creation — same username format every time, same system. This is a perfect automation target: rule-based, consistent, no judgment needed.",
+  2:"Email setup — same steps for every employee. Can be scripted or automated through the email admin API.",
+  3:"Security group determination — this varies by role, department, and sometimes individual circumstances. Requires someone who understands what access each role needs. Keep human (or build a lookup table that maps roles to groups).",
+  4:"Adding to security groups — once the correct groups are determined, adding the employee to them is mechanical and automatable.",
+  5:"Welcome email — same template, same information every time. Classic automation. Trigger when all accounts are created, send credentials.",
+  6:"Day-1 meeting — this is relationship-building and Q&A. Automation can't replace a human conversation. Keep this human."
+};
+document.querySelectorAll(".pm-step").forEach(step=>{step.addEventListener("click",()=>{document.querySelectorAll(".pm-step").forEach(s=>s.style.outline="none");step.style.outline="2px solid var(--purple)";selected=parseInt(step.dataset.idx);});});
+function classifySelected(cls){
+  if(selected===null)return;
+  const step=document.querySelectorAll(".pm-step")[selected];
+  step.className="pm-step "+(cls==="auto"?"selected-a":"selected-k");
+  const tag=step.querySelector(".pm-step-tag");
+  tag.style.display="block";
+  tag.textContent=cls==="auto"?"🟢 Automate":"🟠 Keep Human";
+  const result=document.getElementById("pmResult");
+  const correct=answers[selected]===cls;
+  result.className="pm-result show";
+  result.innerHTML=`<strong style="color:${correct?"var(--green)":"var(--orange)"}">${correct?"✅ Good choice":"🟡 Consider this:"}</strong> ${reasons[selected]}`;
+  step.style.outline="none";
+  selected=null;
+}
+function resetPM(){document.querySelectorAll(".pm-step").forEach(s=>{s.className="pm-step";const tag=s.querySelector(".pm-step-tag");tag.style.display="none";s.style.outline="none";});document.getElementById("pmResult").className="pm-result";}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Both errors are part of the testing and error handling steps in the design process. Testing with one standard case doesn't reveal how the automation handles valid edge cases (hyphens in email addresses are perfectly valid). And silent failure — doing nothing when something goes wrong without logging or alerting — is one of the most dangerous automation design choices because problems stay invisible until they cause downstream impact. Build automations that fail loudly: log every failure, alert when something unexpected happens, never let an error pass silently.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Two errors"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The specific failures here are insufficient edge case testing and silent error handling — not the lack of manual approval, the speed of deployment, or who wrote the validation. A two-week testing period with the same single test case would still miss the hyphen issue. The fix is edge case testing (using varied, realistic test data including edge cases) and error handling (alerting when any step fails, never silently doing nothing).";}
+}
+</script>
+</body>
+</html>

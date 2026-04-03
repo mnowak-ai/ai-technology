@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation Ethics: What Tech Workers Need to Think About Before Automating Decisions That Affect People</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Stakes cards */
+.stakes-cards{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.sc2{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;}
+.sc2-header{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;background:var(--white);transition:background .2s;}
+.sc2-header:hover{background:var(--purple-pale);}
+.sc2-header.open{background:var(--purple-pale);}
+.sc2-icon{font-size:24px;flex-shrink:0;}
+.sc2-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);flex:1;}
+.sc2-chevron{font-size:16px;color:var(--purple);transition:transform .3s;}
+.sc2-header.open .sc2-chevron{transform:rotate(180deg);}
+.sc2-body{display:none;padding:16px 20px;background:var(--white);border-top:1px solid var(--purple-mid);}
+.sc2-header.open+.sc2-body{display:block;}
+.sc2-body p{font-size:14px;line-height:1.75;margin-bottom:12px;}
+.sc2-body p:last-child{margin-bottom:0;}
+.sc2-q{background:var(--orange-pale);border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.6;color:var(--orange);}
+.sc2-design{background:var(--green-pale);border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.6;color:var(--green);margin-top:8px;}
+
+/* Ethics questions */
+.ethics-checklist{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.ec{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;}
+.ec-num{font-family:"Fraunces",serif;font-weight:900;font-size:20px;color:var(--purple);flex-shrink:0;width:28px;}
+.ec-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ec-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* Scenario analysis */
+.scenario-analysis{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sa-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sa-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.sa-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.sa-items{display:flex;flex-direction:column;gap:14px;}
+.sa-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;}
+.sa-scenario{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:14px;}
+.sa-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.sa-opts{display:flex;flex-direction:column;gap:8px;}
+.sa-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:left;line-height:1.5;}
+.sa-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sa-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.sa-opt.wrong{background:var(--orange-pale);border-color:var(--orange);cursor:default;}
+.sa-fb{font-size:13px;line-height:1.65;padding:10px 14px;border-radius:10px;margin-top:10px;display:none;}
+.sa-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.sa-fb.show.bad{display:block;background:var(--orange-pale);color:var(--orange);}
+
+/* Principles */
+.principles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.prin{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.prin-icon{font-size:24px;margin-bottom:8px;}
+.prin-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.prin-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.3 — No-Code & Low-Code Automation</div>
+  <h1>Automation Ethics: What Tech Workers Need to Think About Before Automating Decisions That Affect People</h1>
+  <p class="hero-sub">Automating ticket routing affects who gets help first. Automating report generation shapes which decisions get made. When automation touches workflows that affect people — colleagues, users, job applicants, patients — there are real ethical questions that technical capability alone doesn't answer.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Automation Ethics Is a Tech Worker's Problem — Not Just Management's</h2>
+    <p>A common assumption: ethical questions about automation are for leadership to decide. Tech workers just build what they're asked to build. This assumption is wrong, and understanding why is important for your career.</p>
+    <p>The person who builds the automation makes dozens of small decisions that have real ethical consequences: which keywords trigger priority escalation, which data fields are included in routing logic, how low-confidence cases are handled, whether a human review step is included or excluded. <mark>These are design choices with downstream effects on real people — and they're made by whoever is sitting at the keyboard building the flow, not by a policy committee.</mark></p>
+    <p>This doesn't mean you need to refuse to build automations or escalate everything to leadership. It means you need to think about impact before you build, ask questions when something doesn't feel right, and advocate for design choices that are fair and transparent — even when nobody asked you to.</p>
+    <div class="pull-quote">
+      <p>The person who builds the automation makes choices. Those choices have consequences for people who will never know the automation exists. That's a responsibility — not a technicality.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four High-Stakes Automation Scenarios in Tech Roles</h2>
+    <p>These aren't hypotheticals. They're the types of decisions made in IT departments, operations teams, and tech companies every day. Click each one to see the ethical questions embedded in what looks like a technical task.</p>
+    <div class="stakes-cards">
+
+      <div class="sc2">
+        <div class="sc2-header" onclick="toggleSC(this)"><div class="sc2-icon">🎫</div><div class="sc2-title">Ticket triage: whose request gets served first?</div><div class="sc2-chevron">▾</div></div>
+        <div class="sc2-body">
+          <p>An automated ticket triage system assigns priority based on keywords, submitter role, and historical patterns. This sounds neutral — but the rules embed assumptions that have real consequences for who gets help, and when.</p>
+          <p>If the system learns from historical ticket data, and historically executives got faster service than frontline workers, the AI learns to prioritize executive-looking requests. The automation doesn't create the inequality — it inherits and scales it. If the system prioritizes based on department, and certain departments (often higher-status ones) tend to submit "urgent" tickets more frequently, those departments receive disproportionately fast service.</p>
+          <div class="sc2-q">⚠️ Questions to ask before building: Are the priority rules based on actual urgency to the organization, or on historical patterns that reflect existing power structures? Does the automation have a way to catch and correct systematic over-prioritization of certain user groups? Is there a human review step that can catch cases where someone's urgent need is being deprioritized because they didn't use the "right" vocabulary?</div>
+          <div class="sc2-design">✅ Better design: Base priority on impact (how many users affected, what's blocked) rather than submitter seniority. Audit priority distribution quarterly by department and role to detect systematic bias. Include a low-confidence override mechanism for tickets that humans believe are incorrectly prioritized.</div>
+        </div>
+      </div>
+
+      <div class="sc2">
+        <div class="sc2-header" onclick="toggleSC(this)"><div class="sc2-icon">📊</div><div class="sc2-title">Report generation: what gets measured gets managed</div><div class="sc2-chevron">▾</div></div>
+        <div class="sc2-body">
+          <p>Automated reports make certain metrics visible and ignore others. When a report is generated automatically and sent to management every week, those metrics become the basis for decisions — resource allocation, performance evaluation, investment priorities. The metrics that aren't in the report don't factor into decisions even if they're equally important.</p>
+          <p>A weekly help desk performance report that tracks tickets closed and average resolution time creates pressure to close tickets and resolve them quickly — even if that means closing hard tickets without fully resolving them, or rushing through resolutions that need more investigation. The automation's output shapes behavior. That's power.</p>
+          <div class="sc2-q">⚠️ Questions to ask before building: Does this report measure what actually matters, or what's easy to measure? Could the metrics in this report create perverse incentives — where optimizing for the metric leads to worse real-world outcomes? Who is being measured and evaluated based on these numbers? Do they know? Do they have a way to add context?</div>
+          <div class="sc2-design">✅ Better design: Include metric definitions and known limitations in the report template itself. Add a "context" field where the team can annotate unusual numbers before the report is distributed. Audit whether behavior is changing in response to the report — and whether those changes are actually improvements or gaming the metric.</div>
+        </div>
+      </div>
+
+      <div class="sc2">
+        <div class="sc2-header" onclick="toggleSC(this)"><div class="sc2-icon">🔐</div><div class="sc2-title">Access provisioning: who gets what automatically</div><div class="sc2-chevron">▾</div></div>
+        <div class="sc2-body">
+          <p>Automated employee onboarding provisions system access based on role. This creates efficiency — new employees have everything they need on day one. But the automation also embeds assumptions about what each role should have access to, and those assumptions may reflect historical norms rather than current needs or least-privilege principles.</p>
+          <p>If the "Sales Associate" role was created five years ago and has accumulated permissions over time — including some that were granted temporarily for a project and never removed — the automation provisions every new Sales Associate with that bloated permission set. The automation doesn't distinguish between necessary access and accumulated technical debt.</p>
+          <div class="sc2-q">⚠️ Questions to ask before building: Are the access permissions in each role profile based on current least-privilege principles, or on accumulated historical grants? When was the last time each role's permissions were reviewed? Does the automation include a mechanism to alert security when provisioned access seems broader than expected?</div>
+          <div class="sc2-design">✅ Better design: Require a role permission audit before automating provisioning — don't automate the inheritance of permission debt. Add a 90-day access review trigger to the offboarding flow. Log all automated access grants for security audit purposes.</div>
+        </div>
+      </div>
+
+      <div class="sc2">
+        <div class="sc2-header" onclick="toggleSC(this)"><div class="sc2-icon">🤖</div><div class="sc2-title">AI-assisted decisions: transparency and explainability</div><div class="sc2-chevron">▾</div></div>
+        <div class="sc2-body">
+          <p>When an AI classifies a support ticket as "low priority" and it waits three days for resolution, the person who submitted it deserves to understand why — and to have a way to challenge that classification if it's wrong. When an automated system denies an access request, the person who made the request should understand the basis for the denial and have a path to appeal.</p>
+          <p>Many automation workflows make decisions that affect people without providing any explanation of how the decision was made. The ticket submitter sees "Priority: Low" without understanding what the AI evaluated. The access requester sees "Request denied" without understanding which criteria failed. The absence of explanation makes errors invisible and leaves people without recourse.</p>
+          <div class="sc2-q">⚠️ Questions to ask before building: When this automation makes a decision that affects someone, do they know it happened? Do they understand the basis? Do they have a way to request human review if they believe the decision is wrong? Are the decision criteria available to the people being decided about?</div>
+          <div class="sc2-design">✅ Better design: Include a brief explanation in automated decisions ("This ticket was classified as medium priority because no other users reported the same issue and no critical systems are affected"). Provide a clear escalation path ("If you believe this priority is incorrect, click here to request human review"). Audit appeal rates — high appeals indicate a classification problem.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Five Questions Before You Automate Any People-Affecting Decision</h2>
+    <div class="ethics-checklist">
+      <div class="ec"><div class="ec-num">1</div><div><div class="ec-title">Who is affected by this automation, and how?</div><div class="ec-body">Name the actual humans. "Ticket submitters" isn't specific enough. Are they frontline workers? Patients? Job applicants? The more vulnerable or less powerful the affected group, the more scrutiny the automation design deserves — and the more important the human override mechanism becomes.</div></div></div>
+      <div class="ec"><div class="ec-num">2</div><div><div class="ec-title">What biases might be embedded in the training data or rules?</div><div class="ec-body">If the automation learns from historical data, what patterns are in that data? If executives historically got faster service, the data reflects that. If certain phrases or formats are associated with high-priority cases, users who communicate differently may be systematically deprioritized. Name the bias risks before deployment.</div></div></div>
+      <div class="ec"><div class="ec-num">3</div><div><div class="ec-title">Is there a meaningful human override mechanism?</div><div class="ec-body">Not just a theoretical one. Can a real person, in a real workflow, challenge and overturn an automated decision quickly? If the override path is so cumbersome that nobody uses it, the effective policy is "the automation's decision is final." Design override paths that people can actually use.</div></div></div>
+      <div class="ec"><div class="ec-num">4</div><div><div class="ec-title">Will the people being decided about know, and can they understand?</div><div class="ec-body">Transparency about automated decision-making is increasingly a legal requirement in many jurisdictions — and an ethical baseline everywhere. The person whose ticket was deprioritized, whose access was denied, or whose account was flagged deserves to know an automated system was involved and how it made its decision.</div></div></div>
+      <div class="ec"><div class="ec-num">5</div><div><div class="ec-title">What will you monitor to catch systematic unfairness after deployment?</div><div class="ec-body">Bias in automation often isn't visible at the individual decision level — it shows up in aggregate patterns over time. Plan your audit before deployment: what breakdown will reveal unfairness? Resolution times by department and role. Denial rates by demographic. Escalation rates by ticket category. Identify your audit metric before you deploy.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Apply the Framework — Scenario Analysis</h2>
+    <div class="scenario-analysis">
+      <div class="sa-label">🎯 Ethics Analysis Practice</div>
+      <div class="sa-title">What's the ethical concern — and the better design?</div>
+      <div class="sa-sub">For each scenario, identify the most significant ethical issue and what would address it.</div>
+      <div class="sa-items">
+
+        <div class="sa-item">
+          <div class="sa-scenario">An IT team builds an automation that monitors all employee communication on company Slack channels and automatically creates a security alert ticket if certain keywords appear (password, credential, breach, vulnerability). The automation was designed for security monitoring. Employees were not informed it exists.</div>
+          <div class="sa-q">What is the primary ethical concern?</div>
+          <div class="sa-opts" id="e1o">
+            <button class="sa-opt" onclick="doEthics('e1',false,this,'⚠️ Accuracy is a real concern — keyword matching will produce many false positives. But the more fundamental ethical issue is the transparency and consent dimension: employees are being monitored without their knowledge. Even if the monitoring is legally permissible (employer-owned systems), the absence of disclosure affects trust and may violate reasonable expectations of privacy. The accuracy issue compounds this: employees being flagged for saying "password" in a security training context won\'t understand why they\'ve been investigated.')">The automation will generate too many false positives from legitimate conversations</button>
+            <button class="sa-opt" onclick="doEthics('e1',true,this,'✅ Correct. Employees are being monitored without their knowledge on communications they may reasonably treat as somewhat private (within a team channel). Even if legally permissible, the lack of transparency is the core ethical issue. Better design: disclose in the employee handbook that company Slack is monitored for security keywords. This doesn\'t necessarily reduce security value — it may actually deter bad behavior. It also means employees who accidentally say a flagged word understand why they might receive a follow-up, and can explain the context.')">Employees are being monitored without knowledge or disclosure — a transparency issue</button>
+            <button class="sa-opt" onclick="doEthics('e1',false,this,'⚠️ Legal compliance matters and varies by jurisdiction — some states and countries require disclosure of employee monitoring. But even where it\'s legally permissible without disclosure, the ethical question of whether it\'s right to monitor without informing employees remains. Legal permissibility is a floor, not a ceiling, for ethical behavior.')">The automation may violate labor laws about employee monitoring</button>
+          </div>
+          <div class="sa-fb" id="e1f"></div>
+        </div>
+
+        <div class="sa-item">
+          <div class="sa-scenario">A help desk manager notices that the AI ticket triage system consistently assigns "low priority" to tickets from the customer service department and "high priority" to tickets from engineering. She checks the historical data the AI trained on: engineers historically escalated tickets more aggressively, so the training data shows their tickets resolved faster. The AI learned that engineering tickets are "more important."</div>
+          <div class="sa-q">What should the manager do?</div>
+          <div class="sa-opts" id="e2o">
+            <button class="sa-opt" onclick="doEthics('e2',false,this,'⚠️ The bias is real and needs addressing — but keeping both groups aware doesn\'t fix the problem. Customer service still gets systematically slower service. Awareness is not the same as fairness.')">Keep the automation running and inform both departments to be aware of the bias</button>
+            <button class="sa-opt" onclick="doEthics('e2',false,this,'⚠️ Rebuilding the model doesn\'t help if it trains on the same biased historical data. The model learned a real pattern in the historical data — that engineering tickets historically resolved faster. Retraining on the same data produces the same bias.')">Retrain the AI model on more recent data to reduce the historical bias</button>
+            <button class="sa-opt" onclick="doEthics('e2',true,this,'✅ Correct. The problem is that the priority rules embed historical service inequity — engineering escalated more aggressively, so they got faster service, so the AI learned their tickets are higher priority. The fix is to redesign the priority criteria around objective measures of business impact (how many people are blocked, which systems are affected, what\'s the revenue or operational consequence) rather than learning from historical resolution patterns that reflect historical inequity. Then audit the new system\'s outputs by department quarterly to verify the bias is not reproduced.')">Redesign the priority criteria around objective business impact, not historical patterns — then audit outcomes by department</button>
+          </div>
+          <div class="sa-fb" id="e2f"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Principles for Ethical Automation Design</h2>
+    <div class="principles">
+      <div class="prin"><div class="prin-icon">👁️</div><div class="prin-title">Transparency</div><div class="prin-body">People affected by automated decisions should know an automated system was involved, understand what criteria it used, and have a path to request human review. "The algorithm decided" is not an acceptable explanation to give someone whose request was denied or who was deprioritized.</div></div>
+      <div class="prin"><div class="prin-icon">⚖️</div><div class="prin-title">Fairness by design</div><div class="prin-body">Don't inherit unfairness from historical data. Actively design priority and routing criteria around objective, justifiable criteria — and audit outputs by affected group to detect systematic disparities after deployment. Fairness doesn't happen by accident in automated systems.</div></div>
+      <div class="prin"><div class="prin-icon">🔄</div><div class="prin-title">Meaningful override</div><div class="prin-body">Every automated decision that materially affects a person should have a real, usable override mechanism. Not a theoretical one — a practical path that an average user can find and use without specialized knowledge. An override path nobody uses isn't a protection; it's theater.</div></div>
+      <div class="prin"><div class="prin-icon">📊</div><div class="prin-title">Ongoing accountability</div><div class="prin-body">Ethical design isn't a one-time assessment at deployment. Plan your post-deployment audit before you launch: which metrics will you check, at what frequency, and who is responsible for acting if the data shows a problem? Accountability needs an owner.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A tech worker is asked to build an automation that automatically denies IT access requests from employees who have had more than 2 security policy violations in the past year. The system would deny the request silently — the employee would just see "Request denied" with no explanation and no appeal path. The manager says it would save review time. What should the tech worker do?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Build it as specified — the manager has the authority to make this policy decision</button>
+        <button class="qopt" onclick="cq(this,true)">Build it with modifications and raise the design concerns with the manager: (1) Silent denial with no explanation denies employees the ability to understand or contest the decision — even if the policy is legitimate, people deserve to know why they were denied and who to contact. (2) An automated denial with no appeal path eliminates human judgment from situations that may have legitimate context (the violations happened 11 months ago under a previous manager, the policy has since changed, one of the violations was disputed). Raise these concerns, propose adding an explanation in the denial message and a clear appeal path, and document the conversation. Building it as specified while knowing these design gaps exist isn't ethically neutral — it's a choice.</button>
+        <button class="qopt" onclick="cq(this,false)">Refuse to build it — automated denial systems are unethical</button>
+        <button class="qopt" onclick="cq(this,false)">Build it exactly as specified and document that the design was management's decision</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The tech worker who builds an automation makes design choices with real consequences for real people. Those choices — which criteria drive priority, whether human override exists, whether people are informed — are ethical decisions even when they look like technical ones. "I just built what I was asked to build" doesn't eliminate the responsibility to raise concerns when design choices seem unfair.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Before automating any decision that affects people, ask five questions: Who is affected and how? What biases might be embedded in the training data or rules? Is there a meaningful human override? Will affected people know and understand? What will you monitor after deployment to catch systematic unfairness?</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The four principles of ethical automation design — transparency (people know and can understand), fairness by design (criteria are objective and audited), meaningful override (real, usable appeal paths), and ongoing accountability (someone owns the post-deployment audit) — are a practical checklist, not abstract ideals. Apply them before deployment and revisit them regularly after.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleSC(header){header.classList.toggle("open");}
+function doEthics(id,correct,btn,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;btn.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="sa-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The right response is neither full compliance nor refusal — it's raising the specific design concerns and proposing concrete improvements. The policy itself (deny access to employees with repeated violations) may be legitimate. But silent denial with no explanation and no appeal path denies employees due process in a way that creates real problems: employees can't understand or contest a decision, managers lose visibility into denials that may have legitimate context, and the organization creates legal and HR exposure if the policy is applied inconsistently. A tech worker who builds it as specified knowing these gaps exist is making a choice — not just executing an order. Raising concerns and proposing additions (explanation + appeal path) is the professional standard.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("modifications"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Building exactly as specified while documenting that it was management's decision doesn't resolve the ethical concern — it just creates a paper trail. Management's authority to set policy doesn't eliminate the tech worker's responsibility to raise design concerns that create real problems for affected employees. Refusing outright is also not warranted here — the policy may be legitimate; the design flaws are the specific concern. The professional approach is to build with improvements and document the conversation about why those improvements matter.";}
+}
+</script>
+</body>
+</html>
