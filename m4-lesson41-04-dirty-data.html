@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dirty Data: What Incomplete Records, Duplicates, and Conflicting Formats Actually Cost a Tech Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Dirty data explorer */
+.dirty-explorer{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:20px 0;}
+.de-tabs{display:flex;border-bottom:1.5px solid var(--purple-mid);}
+.de-tab{flex:1;padding:12px 16px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;}
+.de-tab.active{background:var(--red-pale);color:var(--red);}
+.de-panel{display:none;padding:0;}
+.de-panel.active{display:block;}
+.de-header{padding:22px 26px;background:var(--red-pale);border-bottom:1px solid #F5C2C2;}
+.de-icon{font-size:28px;margin-bottom:6px;}
+.de-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--red);margin-bottom:6px;}
+.de-def{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.de-example{padding:20px 26px;background:var(--white);border-bottom:1px solid var(--purple-mid);}
+.de-ex-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:12px;}
+.dirty-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.dirty-table th{background:var(--purple-pale);color:var(--purple-dark);font-weight:700;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;}
+.dirty-table td{padding:8px 12px;border-bottom:1px solid var(--purple-mid);line-height:1.4;vertical-align:middle;}
+.dirty-table tr:last-child td{border-bottom:none;}
+.dirty-table .bad{background:#FFF1F1;color:var(--red);font-weight:600;}
+.dirty-table .warn{background:var(--orange-pale);color:var(--orange);}
+.dirty-table .good{background:var(--green-pale);color:var(--green);}
+.dirty-table .missing{color:var(--gray-muted);font-style:italic;}
+.de-impact{padding:20px 26px;background:var(--gray-soft);border-bottom:1px solid var(--purple-mid);}
+.de-impact-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:10px;}
+.de-impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.de-impact-item{background:var(--white);border-radius:10px;padding:12px 14px;border-left:3px solid var(--red);}
+.de-impact-context{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-bottom:4px;}
+.de-impact-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.de-fix{padding:20px 26px;background:var(--green-pale);border-top:1px solid #B5D5C0;}
+.de-fix-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:10px;}
+.de-fix-items{display:flex;flex-direction:column;gap:6px;}
+.de-fix-item{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* Cascade sim */
+.cascade-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.cs-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.cs-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:6px;font-weight:700;}
+.cs-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.cs-steps{display:flex;flex-direction:column;gap:0;}
+.cs-step{display:flex;gap:0;cursor:pointer;}
+.cs-left{display:flex;flex-direction:column;align-items:center;width:44px;flex-shrink:0;}
+.cs-dot{width:36px;height:36px;border-radius:50%;background:var(--purple-mid);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .3s;}
+.cs-dot.revealed{background:var(--red);}
+.cs-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;transition:all .3s;}
+.cs-line.revealed{background:var(--red);}
+.cs-step:last-child .cs-line{display:none;}
+.cs-body{flex:1;padding:0 0 16px 12px;padding-top:4px;}
+.cs-step-title{font-size:14px;font-weight:700;color:var(--gray-muted);margin-bottom:3px;transition:all .3s;}
+.cs-step-title.revealed{color:var(--red);}
+.cs-step-desc{font-size:13px;line-height:1.6;color:var(--gray-muted);max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;}
+.cs-step-desc.revealed{max-height:200px;opacity:1;color:var(--gray-text);}
+.cs-btn{background:var(--purple);color:var(--white);border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:8px;transition:all .2s;}
+.cs-btn:hover{background:var(--purple-dark);}
+.cs-btn:disabled{background:var(--gray-muted);cursor:default;}
+
+/* Prevention checklist */
+.checklist{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.cl-item{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:all .2s;}
+.cl-item:hover{border-color:var(--purple);}
+.cl-item.checked{border-color:var(--green);background:var(--green-pale);}
+.cl-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--purple-mid);flex-shrink:0;margin-top:2px;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.cl-item.checked .cl-check{background:var(--green);border-color:var(--green);color:white;font-size:12px;}
+.cl-body{}
+.cl-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+.cl-item.checked .cl-title{color:var(--green);}
+.cl-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.cl-progress{background:var(--purple-pale);border-radius:10px;padding:12px 16px;margin-top:4px;font-size:13px;color:var(--purple-dark);display:none;}
+.cl-progress.show{display:block;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Data Literacy for Tech Roles</div>
+  <h1>Dirty Data: What Incomplete Records, Duplicates, and Conflicting Formats Actually Cost a Tech Team</h1>
+  <p class="hero-sub">The video showed three data challenges on one slide. This article shows you what each one actually looks like in a real dataset, what it costs when it goes undetected, and what you can do about it — including what happens when AI gets fed dirty data.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What "Dirty Data" Actually Means</h2>
+    <p>Dirty data is any data that has quality problems that make it unreliable for analysis, reporting, or AI processing. It's not exotic or rare — <mark>every real tech environment has dirty data</mark>. The question isn't whether your organization has it. The question is whether it gets caught before it causes problems.</p>
+    <p>The three most common types are incomplete data (missing values in fields that should have them), duplicate records (the same event or entity appearing multiple times), and conflicting formats (the same kind of information stored differently across records or systems). Each one looks different, causes different problems, and requires different remediation.</p>
+    <p>Most data quality problems don't announce themselves loudly. They hide inside datasets that look superficially normal. A report is generated, a metric is calculated, an AI makes a routing decision — and the dirty data underneath produces a wrong result that no one notices until something breaks or a decision turns out to be wrong.</p>
+
+    <div class="pull-quote">
+      <p>AI doesn't compensate for dirty data. It amplifies it — applying patterns learned from bad records to millions of new decisions, faster than any human could. Clean data is not a technical nicety. It's a safety requirement.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Types — Up Close</h2>
+    <p>Click each tab to see what each data quality problem actually looks like inside a real dataset, the impact it causes, and how it gets fixed.</p>
+
+    <div class="dirty-explorer">
+      <div class="de-tabs">
+        <button class="de-tab active" onclick="showDE(0,this)">⚠️ Incomplete Data</button>
+        <button class="de-tab" onclick="showDE(1,this)">⚠️ Duplicate Records</button>
+        <button class="de-tab" onclick="showDE(2,this)">⚠️ Conflicting Formats</button>
+      </div>
+
+      <!-- INCOMPLETE -->
+      <div class="de-panel active" id="de0">
+        <div class="de-header">
+          <div class="de-icon">🕳️</div>
+          <div class="de-title">Incomplete Data</div>
+          <div class="de-def">Records with missing values in fields that should be populated. The data exists — an event happened, a ticket was created — but one or more fields weren't filled in, leaving gaps that affect analysis.</div>
+        </div>
+        <div class="de-example">
+          <div class="de-ex-label">📋 What it looks like in a help desk ticket dataset</div>
+          <table class="dirty-table">
+            <thead><tr><th>Ticket ID</th><th>Category</th><th>Priority</th><th>Resolved By</th><th>Resolution Time</th><th>SLA Met?</th></tr></thead>
+            <tbody>
+              <tr><td>TKT-8819</td><td>VPN Access</td><td>High</td><td>J. Rivera</td><td class="good">1.2 hrs</td><td class="good">✅ Yes</td></tr>
+              <tr><td>TKT-8820</td><td class="bad">null</td><td>High</td><td>M. Torres</td><td class="good">2.8 hrs</td><td class="good">✅ Yes</td></tr>
+              <tr><td>TKT-8821</td><td>VPN Access</td><td class="missing">— not set —</td><td class="missing">— unassigned —</td><td class="bad">null</td><td class="bad">❌ Unknown</td></tr>
+              <tr><td>TKT-8822</td><td>Hardware</td><td>Low</td><td>J. Rivera</td><td class="good">3.1 hrs</td><td class="good">✅ Yes</td></tr>
+              <tr><td>TKT-8823</td><td class="bad">null</td><td class="missing">— not set —</td><td class="missing">— unassigned —</td><td class="bad">null</td><td class="bad">❌ Unknown</td></tr>
+              <tr><td>TKT-8824</td><td>Software</td><td>Medium</td><td>M. Torres</td><td class="good">4.4 hrs</td><td class="warn">⚠️ Borderline</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:13px;color:var(--gray-muted);margin-top:10px;margin-bottom:0;line-height:1.6;">TKT-8820 has no category. TKT-8821 and TKT-8823 are missing category, priority, assignee, and resolution time — they were likely created but never properly filled out.</p>
+        </div>
+        <div class="de-impact">
+          <div class="de-impact-label">What this costs in practice</div>
+          <div class="de-impact-grid">
+            <div class="de-impact-item"><div class="de-impact-context">AI routing</div><div class="de-impact-body">Tickets missing a category field can't be routed by category. The AI either skips them, assigns them to a default queue, or makes a guess based on the description alone — often incorrectly.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">SLA reporting</div><div class="de-impact-body">If resolution time is null, those tickets are excluded from average resolution time calculations — artificially improving the metric. If they're included as zero, they artificially lower it. Either way, the metric is wrong.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">AI training</div><div class="de-impact-body">If this dataset is used to train an AI classifier, records missing the category label are useless or actively harmful — the AI can't learn what kind of ticket it is if that field isn't filled in.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">Workload analysis</div><div class="de-impact-body">Tickets without an assigned agent don't show up in anyone's workload report. Managers think some tickets are assigned when they're not — tickets sit in limbo.</div></div>
+          </div>
+        </div>
+        <div class="de-fix">
+          <div class="de-fix-label">✅ How incomplete data gets caught and fixed</div>
+          <div class="de-fix-items">
+            <div class="de-fix-item">• <strong>Required fields:</strong> Configure the ticketing system to require category and priority before a ticket can be saved — prevents most gaps at creation time</div>
+            <div class="de-fix-item">• <strong>Validation rules:</strong> Run weekly checks that flag any ticket older than 24 hours with null required fields — creates a human review queue for cleanup</div>
+            <div class="de-fix-item">• <strong>AI-assisted backfill:</strong> For legacy incomplete records, AI can infer likely categories from the ticket description — but human review of AI-inferred values is required before treating them as authoritative</div>
+            <div class="de-fix-item">• <strong>Monitor the data, not just the metrics:</strong> When a metric improves unexpectedly, check whether the improvement is real or whether incomplete records are being excluded from the calculation</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DUPLICATES -->
+      <div class="de-panel" id="de1">
+        <div class="de-header">
+          <div class="de-icon">👯</div>
+          <div class="de-title">Duplicate Records</div>
+          <div class="de-def">The same event, entity, or transaction appears multiple times in the dataset. Duplicates inflate counts, skew metrics, cause AI systems to over-learn certain patterns, and result in double-actions in automated workflows.</div>
+        </div>
+        <div class="de-example">
+          <div class="de-ex-label">📋 What duplicates look like in an IT asset inventory</div>
+          <table class="dirty-table">
+            <thead><tr><th>Asset ID</th><th>Serial Number</th><th>Model</th><th>Assigned To</th><th>Status</th><th>Problem</th></tr></thead>
+            <tbody>
+              <tr><td>A-1041</td><td>SN-88291</td><td>MacBook Pro 14"</td><td>Chen, J.</td><td>Active</td><td class="good">—</td></tr>
+              <tr><td class="bad">A-1042</td><td class="warn">SN-88291</td><td>MacBook Pro 14"</td><td>Chen, J.</td><td>Active</td><td class="bad">⚠️ Duplicate SN</td></tr>
+              <tr><td>A-1043</td><td>SN-77104</td><td>Dell Latitude 15"</td><td>Torres, M.</td><td>Active</td><td class="good">—</td></tr>
+              <tr><td class="bad">A-1044</td><td>SN-77104</td><td>Dell Latitude 15"</td><td class="bad">Rivera, S.</td><td>Active</td><td class="bad">⚠️ Duplicate SN, different owner</td></tr>
+              <tr><td>A-1045</td><td>SN-91002</td><td>HP EliteBook</td><td>Park, H.</td><td>Decommissioned</td><td class="good">—</td></tr>
+              <tr><td class="bad">A-1046</td><td class="warn">SN-91002</td><td>HP EliteBook</td><td>Park, H.</td><td class="bad">Active</td><td class="bad">⚠️ Decommissioned device still Active</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:13px;color:var(--gray-muted);margin-top:10px;margin-bottom:0;line-height:1.6;">SN-88291 appears twice under the same owner — probably imported twice. SN-77104 appears twice but with different owners — a data entry error from when the device was reassigned. SN-91002 exists as both active and decommissioned.</p>
+        </div>
+        <div class="de-impact">
+          <div class="de-impact-label">What this costs in practice</div>
+          <div class="de-impact-grid">
+            <div class="de-impact-item"><div class="de-impact-context">Security audits</div><div class="de-impact-body">A decommissioned device that still appears as "active" in the inventory passes security checks it should fail. If the physical device was resold or lost, its credentials may still appear valid to automated access control systems.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">Automated workflows</div><div class="de-impact-body">An automated offboarding workflow that deactivates all assets assigned to a departing employee will trigger twice for any duplicated device — potentially sending two deactivation requests, two notifications, two access revocations.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">Budget and procurement</div><div class="de-impact-body">If the asset count is inflated by duplicates, the team appears to have more equipment than it does — leading to incorrect refresh cycle planning and potential procurement shortfalls.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">AI training</div><div class="de-impact-body">Duplicate records make some patterns appear more common than they are. An AI trained on ticket data with duplicates will over-learn those ticket types, classifying more future tickets into them than warranted.</div></div>
+          </div>
+        </div>
+        <div class="de-fix">
+          <div class="de-fix-label">✅ How duplicates get caught and fixed</div>
+          <div class="de-fix-items">
+            <div class="de-fix-item">• <strong>Unique constraints:</strong> Configure the system to enforce that serial numbers must be unique — prevents two records with the same SN from existing simultaneously</div>
+            <div class="de-fix-item">• <strong>Deduplication scripts:</strong> Automated scripts that regularly compare records against each other and flag probable duplicates for human review</div>
+            <div class="de-fix-item">• <strong>AI-assisted deduplication:</strong> For large datasets, AI tools can identify probable duplicates based on fuzzy matching — catching records where names are spelled differently or serial numbers have typos</div>
+            <div class="de-fix-item">• <strong>Change process discipline:</strong> Many duplicates are created during data migrations or system integrations — requiring validation checks at the point of import prevents them from entering the system</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFLICTING FORMATS -->
+      <div class="de-panel" id="de2">
+        <div class="de-header">
+          <div class="de-icon">🔀</div>
+          <div class="de-title">Conflicting Formats</div>
+          <div class="de-def">The same type of information stored in different formats across records. Dates as "11/14/2024" in some records and "2024-11-14" in others. Priorities as "1", "High", "P1", and "CRITICAL" all meaning the same thing. To a computer, these are entirely different values.</div>
+        </div>
+        <div class="de-example">
+          <div class="de-ex-label">📋 What format conflicts look like — same field, many formats</div>
+          <table class="dirty-table">
+            <thead><tr><th>Ticket ID</th><th>Created Date</th><th>Priority</th><th>Resolution Time</th><th>SLA Status</th></tr></thead>
+            <tbody>
+              <tr><td>TKT-8810</td><td class="good">2024-11-10</td><td class="good">HIGH</td><td class="good">2.5 hours</td><td class="good">MET</td></tr>
+              <tr><td>TKT-8811</td><td class="bad">11/11/2024</td><td class="bad">P1</td><td class="bad">150 min</td><td class="bad">Yes</td></tr>
+              <tr><td>TKT-8812</td><td class="bad">Nov 12, 2024</td><td class="bad">1</td><td class="bad">2h30m</td><td class="bad">Y</td></tr>
+              <tr><td>TKT-8813</td><td class="good">2024-11-13</td><td class="bad">CRITICAL</td><td class="bad">02:15:00</td><td class="bad">met</td></tr>
+              <tr><td>TKT-8814</td><td class="bad">13/11/2024</td><td class="good">HIGH</td><td class="good">3.1 hours</td><td class="good">MET</td></tr>
+              <tr><td>TKT-8815</td><td class="bad">2024/11/14</td><td class="bad">urgent</td><td class="bad">187</td><td class="bad">TRUE</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:13px;color:var(--gray-muted);margin-top:10px;margin-bottom:0;line-height:1.6;">The date field has at least 5 different formats — some ambiguous (is 11/13 November 13 or the 11th of an unlabeled month?). Priority uses "HIGH", "P1", "1", "CRITICAL", and "urgent" for what may all be the same level. Resolution time is in hours, minutes, hours+minutes, and seconds across different records.</p>
+        </div>
+        <div class="de-impact">
+          <div class="de-impact-label">What this costs in practice</div>
+          <div class="de-impact-grid">
+            <div class="de-impact-item"><div class="de-impact-context">Sorting and filtering</div><div class="de-impact-body">Filtering for "HIGH" priority tickets misses "P1", "CRITICAL", and "urgent" — which may all mean the same thing. A query for high-priority tickets returned in under 4 hours would give a completely wrong answer if formats are mixed.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">Date ambiguity</div><div class="de-impact-body">"13/11/2024" is unambiguous. "11/13/2024" could be November 13 (US format) or the 11th of the 13th month (impossible, so probably November 11 in DD/MM format). When dates are ambiguous, trend analysis across time is unreliable.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">AI classification training</div><div class="de-impact-body">If priority labels are inconsistent, the AI learns that "P1", "CRITICAL", "urgent", and "1" are different categories — and distributes future tickets across all of them rather than routing everything with those labels as high-priority.</div></div>
+            <div class="de-impact-item"><div class="de-impact-context">System integrations</div><div class="de-impact-body">When data is exported from one system to another, format conflicts cause parsing failures. A receiving system expecting dates in YYYY-MM-DD format will error out on "Nov 12, 2024" — potentially dropping those records entirely from the integration.</div></div>
+          </div>
+        </div>
+        <div class="de-fix">
+          <div class="de-fix-label">✅ How format conflicts get caught and fixed</div>
+          <div class="de-fix-items">
+            <div class="de-fix-item">• <strong>Standardized input validation:</strong> Require date pickers (not free text) for date fields, dropdown menus for priority levels — prevents format variation at entry time</div>
+            <div class="de-fix-item">• <strong>Data normalization scripts:</strong> Automated scripts that transform all values in a field to a single standard format — converting "P1", "1", "CRITICAL", "urgent" all to "HIGH" based on a defined mapping</div>
+            <div class="de-fix-item">• <strong>Schema documentation:</strong> Define and document the accepted format for every field — so that when data is imported from external systems or migrated from old platforms, the format requirements are explicit</div>
+            <div class="de-fix-item">• <strong>Integration testing:</strong> Before connecting two systems, run sample data through the integration pipeline and verify that formats are correctly parsed on both ends — format conflicts discovered in testing are far cheaper than those discovered in production</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How One Dirty Record Cascades Through a System</h2>
+    <p>The danger of dirty data isn't just one wrong record. It's what happens as that record flows through a pipeline. Click through this sequence to see how a single incomplete ticket corrupts multiple downstream outputs.</p>
+
+    <div class="cascade-sim">
+      <div class="cs-label">⚡ Cascade Simulation</div>
+      <div class="cs-title">One missing field. Five downstream problems.</div>
+      <div class="cs-sub">A new ticket (TKT-9001) is created without a category field. Click "Next" to watch the impact propagate through the pipeline.</div>
+      <div class="cs-steps">
+        <div class="cs-step" id="cs0">
+          <div class="cs-left"><div class="cs-dot" id="csd0">1</div><div class="cs-line" id="csl0"></div></div>
+          <div class="cs-body"><div class="cs-step-title" id="cst0">TKT-9001 created — Category field left blank</div><div class="cs-step-desc" id="csb0">A user submits a ticket. They're in a hurry and skip the category dropdown. The system doesn't require it, so the ticket saves successfully with category = null.</div></div>
+        </div>
+        <div class="cs-step" id="cs1">
+          <div class="cs-left"><div class="cs-dot" id="csd1">2</div><div class="cs-line" id="csl1"></div></div>
+          <div class="cs-body"><div class="cs-step-title" id="cst1">AI routing receives the ticket</div><div class="cs-step-desc" id="csb1">The automated routing system checks the category field to determine which team to assign the ticket to. Category = null. The routing rule doesn't have a team for "null." The ticket goes to a default catch-all queue — general IT support — even though it's a high-priority security issue.</div></div>
+        </div>
+        <div class="cs-step" id="cs2">
+          <div class="cs-left"><div class="cs-dot" id="csd2">3</div><div class="cs-line" id="csl2"></div></div>
+          <div class="cs-body"><div class="cs-step-title" id="cst2">SLA clock starts — but nobody's watching</div><div class="cs-step-desc" id="csb2">The general IT queue has a 24-hour SLA. The security team's SLA for this type of issue is 2 hours. Because the ticket was miscategorized, it's being held to the wrong standard. 2 hours pass. The real deadline expires. No alert fires.</div></div>
+        </div>
+        <div class="cs-step" id="cs3">
+          <div class="cs-left"><div class="cs-dot" id="csd3">4</div><div class="cs-line" id="csl3"></div></div>
+          <div class="cs-body"><div class="cs-step-title" id="cst3">Weekly metrics report generated</div><div class="cs-step-desc" id="csb3">The automated weekly report pulls all tickets. TKT-9001 is excluded from category-based breakdowns because its category is null. It's included in total volume count. The security category shows fewer tickets than actually occurred — making the security team's workload appear lighter than it is. Management sees no reason to add security support capacity.</div></div>
+        </div>
+        <div class="cs-step" id="cs4">
+          <div class="cs-left"><div class="cs-dot" id="csd4">5</div><div class="cs-line" id="csl4"></div></div>
+          <div class="cs-body"><div class="cs-step-title" id="cst4">Monthly AI model retraining</div><div class="cs-step-desc" id="csb4">The ticket classification AI is retrained monthly on new ticket data. TKT-9001 has no category label, so it's excluded from training. But similar tickets in the future will also lack category context — the AI never learns that this description pattern maps to the security category. The problem compounds with each training cycle.</div></div>
+        </div>
+      </div>
+      <button class="cs-btn" id="csBtn" onclick="nextCascade()">Next Step →</button>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Your Data Quality Validation Checklist</h2>
+    <p>These are the practical habits that tech workers use to catch dirty data before it causes problems. Check each one off as you review it — these are the behaviors that distinguish workers who catch problems early from those who discover them after a report went to the wrong person.</p>
+
+    <div class="checklist">
+      <div class="cl-item" onclick="toggleCheck(this)">
+        <div class="cl-check">✓</div>
+        <div class="cl-body">
+          <div class="cl-title">Before distributing any report, spot-check 5 records in the underlying data</div>
+          <div class="cl-desc">Find the source data the report was built from and manually look at a few records. Does the data match what the report is claiming? Are there null values in key fields? Do the totals add up?</div>
+        </div>
+      </div>
+      <div class="cl-item" onclick="toggleCheck(this)">
+        <div class="cl-check">✓</div>
+        <div class="cl-body">
+          <div class="cl-title">Question unexpected metric improvements before celebrating them</div>
+          <div class="cl-desc">When a metric improves suddenly, ask why before accepting it at face value. Did something genuinely get better, or did data quality change (incomplete records being excluded, duplicate resolutions being counted, a category definition shift)?</div>
+        </div>
+      </div>
+      <div class="cl-item" onclick="toggleCheck(this)">
+        <div class="cl-check">✓</div>
+        <div class="cl-body">
+          <div class="cl-title">When validating AI outputs, look for patterns in where it's wrong</div>
+          <div class="cl-desc">AI doesn't usually get random errors — it gets systematic ones. If you notice the AI consistently miscategorizes a certain ticket type, or always misroutes tickets from a certain team, there's likely a data quality issue in how those records were labeled in the training data.</div>
+        </div>
+      </div>
+      <div class="cl-item" onclick="toggleCheck(this)">
+        <div class="cl-check">✓</div>
+        <div class="cl-body">
+          <div class="cl-title">Flag data quality issues — don't silently work around them</div>
+          <div class="cl-desc">When you notice a format inconsistency, a pattern of missing fields, or probable duplicates, report it. A workaround you apply quietly (manually re-categorizing tickets before running the report) doesn't fix the underlying problem and doesn't scale when you're not there.</div>
+        </div>
+      </div>
+      <div class="cl-item" onclick="toggleCheck(this)">
+        <div class="cl-check">✓</div>
+        <div class="cl-body">
+          <div class="cl-title">After any system migration or integration, run a data validation check before going live</div>
+          <div class="cl-desc">System migrations are the most common source of dirty data. Records imported from one system often lose field mappings, introduce format conflicts, or create duplicates. Validate a sample before declaring the migration complete.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cl-progress" id="clProgress"></div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A help desk team deploys an AI tool to predict which tickets will breach SLA so they can prioritize them. After two weeks, the team notices the AI rarely predicts SLA breaches for the "Integration Issues" ticket category, even though that category has the worst historical SLA performance. You investigate the training data and find that Integration Issues tickets historically had the resolution_time field left blank at a much higher rate than other categories. What most likely explains the AI's poor performance on this category?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI model wasn't trained on enough data overall — it needs more tickets to learn from</button>
+        <button class="qopt" onclick="cq(this,true)">The AI learned to predict SLA breaches using the resolution_time field as a key signal. Because Integration Issues tickets had this field blank at a high rate, the AI had very little training signal for that category — it effectively learned that Integration Issues tickets have "no resolution time pattern," which it interprets as low breach risk. The dirty data (missing resolution times) directly caused the AI to learn a wrong pattern for that category.</button>
+        <button class="qopt" onclick="cq(this,false)">Integration Issues are genuinely less likely to breach SLA — the AI is correct</button>
+        <button class="qopt" onclick="cq(this,false)">The AI tool doesn't support the Integration Issues category and needs to be reconfigured</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The three most common data quality problems are incomplete data (missing values in required fields), duplicate records (the same entity or event appearing multiple times), and conflicting formats (the same kind of information stored in different formats across records). Each causes different downstream problems and requires different remediation.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Dirty data doesn't just produce one wrong output — it cascades. A single missing category field can cause wrong routing, missed SLA alerts, incorrect metrics, misleading reports, and corrupted AI training data. The further downstream a problem travels before it's caught, the more expensive it is to fix.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI amplifies data quality problems rather than compensating for them. An AI trained on data with systematic missing values, duplicates, or format conflicts will learn wrong patterns and apply them at scale — faster than any human could. Catching data quality issues before they reach AI systems is one of the most important responsibilities in any tech role that works with AI tools.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function showDE(i,btn){
+  document.querySelectorAll(".de-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".de-panel").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("de"+i).classList.add("active");
+}
+
+let cascadeStep=0;
+const totalCascade=5;
+function nextCascade(){
+  if(cascadeStep>=totalCascade)return;
+  const dot=document.getElementById("csd"+cascadeStep);
+  const line=document.getElementById("csl"+cascadeStep);
+  const title=document.getElementById("cst"+cascadeStep);
+  const body=document.getElementById("csb"+cascadeStep);
+  dot.classList.add("revealed");
+  if(line)line.classList.add("revealed");
+  title.classList.add("revealed");
+  body.classList.add("revealed");
+  cascadeStep++;
+  if(cascadeStep>=totalCascade){
+    const btn=document.getElementById("csBtn");
+    btn.textContent="That's all 5 impacts ↑";
+    btn.disabled=true;
+  }
+}
+
+let checked=0;
+const totalChecks=5;
+function toggleCheck(el){
+  if(el.classList.contains("checked"))return;
+  el.classList.add("checked");
+  el.querySelector(".cl-check").textContent="✓";
+  checked++;
+  const prog=document.getElementById("clProgress");
+  prog.className="cl-progress show";
+  if(checked<totalChecks){prog.textContent=`${checked} of ${totalChecks} reviewed. Keep going — each habit compounds.`;}
+  else{prog.textContent="✅ All five habits reviewed. These aren't optional polish — they're the baseline for working responsibly with data and AI tools in any tech role.";}
+}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a direct example of how incomplete data corrupts AI learning. The AI needed the resolution_time field to identify which tickets breach SLA — but for Integration Issues, that field was often blank. The AI saw hundreds of Integration Issues tickets with no resolution time data, and learned to treat them as a category with no clear SLA pattern. It didn't learn they breach SLA because the evidence of the breach (the resolution time) was missing from the training data. Fixing this requires back-filling resolution times for historical Integration Issues tickets before retraining the model.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("directly caused"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The volume of training data isn't the issue here — the problem is data quality for a specific category. The AI had plenty of training data overall; it just lacked clean resolution_time data for Integration Issues specifically. AI tools can't compensate for missing training signals by having more data from other categories. Each category the model needs to understand must have complete, accurate labeled examples in the training set. Missing the key signal field (resolution time) for one category produces exactly the failure described: the AI appears to work well overall but performs poorly for that specific category.";}
+}
+</script>
+</body>
+</html>

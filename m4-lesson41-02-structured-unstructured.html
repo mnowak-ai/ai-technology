@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structured vs. Unstructured Data: A Field Guide With Real Examples From Tech Workflows</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Side-by-side comparison blocks */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.split-col{padding:22px 24px;}
+.split-col.s{background:var(--blue-pale);border-right:1px solid var(--purple-mid);}
+.split-col.u{background:var(--orange-pale);}
+.split-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.split-col.s .split-label{color:var(--blue);}
+.split-col.u .split-label{color:var(--orange);}
+.split-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;margin-bottom:10px;}
+.split-col.s .split-title{color:#1E3A8A;}
+.split-col.u .split-title{color:#92400E;}
+.split-code{background:rgba(0,0,0,.06);border-radius:8px;padding:12px 14px;font-family:"Courier New",monospace;font-size:11.5px;line-height:1.75;color:var(--gray-text);white-space:pre-wrap;margin-top:8px;}
+.split-note{font-size:12px;line-height:1.6;color:var(--gray-muted);margin-top:10px;font-style:italic;}
+
+/* Drag-and-drop classify game */
+.classify-game{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.cg-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.cg-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:6px;font-weight:700;}
+.cg-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.cg-items{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.cg-item{background:var(--white);border:2px solid var(--purple-mid);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif;line-height:1.4;}
+.cg-item:hover{border-color:var(--purple);background:var(--purple-pale);}
+.cg-item.placed-s{background:var(--blue-pale);border-color:var(--blue);cursor:default;}
+.cg-item.placed-u{background:var(--orange-pale);border-color:var(--orange);cursor:default;}
+.cg-item.placed-m{background:var(--purple-pale);border-color:var(--purple);cursor:default;}
+.cg-item.correct{background:var(--green-pale);border-color:var(--green);}
+.cg-item.wrong{background:var(--red-pale);border-color:var(--red);}
+.cg-bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cg-bin{border-radius:16px;padding:16px;min-height:80px;}
+.cg-bin.s-bin{background:var(--blue-pale);border:2px dashed var(--blue-mid);}
+.cg-bin.u-bin{background:var(--orange-pale);border:2px dashed #F5D5A2;}
+.cg-bin-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.cg-bin.s-bin .cg-bin-label{color:var(--blue);}
+.cg-bin.u-bin .cg-bin-label{color:var(--orange);}
+.cg-placed{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;}
+.cg-placed-item{background:var(--white);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:var(--gray-text);}
+.cg-actions{display:flex;gap:10px;margin-top:16px;}
+.cg-btn{padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid;font-family:"DM Sans",sans-serif;transition:all .2s;}
+.cg-btn.check{background:var(--purple);color:var(--white);border-color:var(--purple);}
+.cg-btn.check:hover{background:var(--purple-dark);}
+.cg-btn.reset{background:var(--white);color:var(--gray-muted);border-color:var(--purple-mid);}
+.cg-btn.reset:hover{border-color:var(--purple);color:var(--purple);}
+.cg-result{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.cg-result.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.cg-result.show.partial{display:block;background:var(--orange-pale);color:var(--orange);}
+
+/* Why it matters cards */
+.matter-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.matter-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.mc-scenario{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:8px;}
+.mc-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;line-height:1.3;}
+.mc-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.mc-tag{display:inline-block;margin-top:8px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+.mc-tag.structured{background:var(--blue-pale);color:var(--blue);}
+.mc-tag.unstructured{background:var(--orange-pale);color:var(--orange);}
+
+/* Spectrum bar */
+.spectrum{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:24px;margin:20px 0;}
+.spectrum-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:14px;}
+.spectrum-bar{height:10px;border-radius:100px;background:linear-gradient(90deg,var(--blue) 0%,var(--purple) 50%,var(--orange) 100%);margin-bottom:16px;}
+.spectrum-items{display:flex;flex-direction:column;gap:8px;}
+.spec-item{display:flex;align-items:center;gap:12px;}
+.spec-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.spec-dot.s{background:var(--blue);}
+.spec-dot.m{background:var(--purple);}
+.spec-dot.u{background:var(--orange);}
+.spec-text{font-size:13px;line-height:1.5;color:var(--gray-text);}
+.spec-text strong{color:var(--gray-text);font-weight:700;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Data Literacy for Tech Roles</div>
+  <h1>Structured vs. Unstructured Data: A Field Guide With Real Examples From Tech Workflows</h1>
+  <p class="hero-sub">The video showed you the graphic. This article makes the difference visceral — with real examples from real tech workflows, a hands-on classification exercise, and a clear explanation of why this distinction matters so much for AI.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Start With the Core Distinction</h2>
+    <p>The difference between structured and unstructured data comes down to one question: <mark>does the data fit into a defined format that a computer can easily read and query?</mark></p>
+    <p>Structured data fits into rows and columns — like a spreadsheet or a database table. Every record has the same fields. Every field has a defined data type (number, date, text). You can query it: "give me all tickets where priority = 'high' and status = 'open' and date > 2024-11-01." The computer understands the structure and can execute that request precisely.</p>
+    <p>Unstructured data doesn't fit neatly into rows and columns. It's the full text of a support email, a recorded customer call, a screenshot, a video tutorial, a technician's freeform notes. The information is in there — but a computer can't extract it as easily as it can query a database field. To get useful information out of unstructured data, you need to process it — and increasingly, that processing is done by AI.</p>
+
+    <div class="pull-quote">
+      <p>About 80% of all data generated in the world is unstructured. Most of the data you'll encounter in a tech role — emails, ticket notes, call recordings, documentation — falls into this category. AI's ability to work with unstructured data is what makes it genuinely new.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Same Information, Two Different Structures</h2>
+    <p>Here's the most useful way to understand the difference: take the same real-world information and look at how it appears in each format.</p>
+
+    <div class="split">
+      <div class="split-col s">
+        <div class="split-label">🔵 Structured Version</div>
+        <div class="split-title">Support ticket in a ticketing database</div>
+        <div class="split-code">ticket_id:    TKT-8821
+created:      2024-11-14 09:14:02
+priority:     HIGH
+category:     VPN_ACCESS
+status:       OPEN
+user_id:      usr_4471
+assigned_to:  NULL
+sla_breach:   FALSE
+region:       NORTH_EAST</div>
+        <div class="split-note">A computer can instantly find all high-priority VPN tickets created today, sort by SLA risk, and assign them in order. Every field is queryable.</div>
+      </div>
+      <div class="split-col u">
+        <div class="split-label">🟠 Unstructured Version</div>
+        <div class="split-title">The actual email the user sent</div>
+        <div class="split-code">From: j.chen@company.com
+Subject: can't get in!!
+
+Hi team — really urgent, I have a board
+presentation in 20 minutes and my VPN 
+just stopped working. I've tried restarting
+my laptop twice and turning the VPN app
+off and on again. The error says "auth
+failed" but my password hasn't changed.
+Please help ASAP!!
+
+Thanks
+Jessica</div>
+        <div class="split-note">A computer can't easily query this. It can't tell you the priority is "HIGH" without inferring it from "urgent," "20 minutes," and "board presentation."</div>
+      </div>
+    </div>
+
+    <p>Notice what's in the unstructured version that isn't in the structured record: the urgency of the deadline ("board presentation in 20 minutes"), what the user already tried (restarted twice, toggled the app), and the specific error message ("auth failed"). That context matters for resolution — but it only exists in the unstructured email, not the structured database fields.</p>
+    <p>This is the core tension tech teams deal with constantly: <mark>structured data is easier to analyze, but unstructured data often contains richer information.</mark> AI is increasingly the bridge between them — reading the unstructured email and populating the structured fields.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Dozen Real Examples From Tech Workflows</h2>
+    <p>Here are twelve examples of data you'll encounter in tech roles. For each one, the structure type determines how you can use it, what tools work with it, and how AI interacts with it.</p>
+
+    <div class="matter-cards">
+      <div class="matter-card">
+        <div class="mc-scenario">IT Support</div>
+        <div class="mc-title">Ticketing system database records</div>
+        <div class="mc-body">Every ticket has defined fields: ID, category, priority, status, assigned agent, timestamps. You can run queries: "all unresolved P1 tickets older than 4 hours."</div>
+        <div class="mc-tag structured">Structured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">IT Support</div>
+        <div class="mc-title">Ticket description and comment threads</div>
+        <div class="mc-body">The free-text fields where users describe their problem and technicians write notes. Rich with diagnostic detail, but impossible to query directly by meaning.</div>
+        <div class="mc-tag unstructured">Unstructured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">IT Operations</div>
+        <div class="mc-title">System performance metrics CSV</div>
+        <div class="mc-body">CPU usage, memory, response time, error count — tabular data exported from monitoring tools. Rows = time intervals, columns = metrics. Easily queryable, chartable, trend-able.</div>
+        <div class="mc-tag structured">Structured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">IT Operations</div>
+        <div class="mc-title">Server error logs</div>
+        <div class="mc-body">Lines of text with timestamps and messages. Technically semi-structured (consistent format) but treated as unstructured for analysis — you can't query "all errors caused by memory pressure" without text processing.</div>
+        <div class="mc-tag unstructured">Unstructured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">Analytics / Reporting</div>
+        <div class="mc-title">User behavior event database</div>
+        <div class="mc-body">Click events, screen views, feature usage — each row is one user action with defined fields. Can be queried: "all users who opened the app but never submitted a ticket."</div>
+        <div class="mc-tag structured">Structured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">HR / Onboarding</div>
+        <div class="mc-title">Employee onboarding emails</div>
+        <div class="mc-body">Welcome emails, policy documents, access request instructions sent to new hires. Contains important procedural information, but each email is different — no consistent structure a database can query.</div>
+        <div class="mc-tag unstructured">Unstructured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">Security</div>
+        <div class="mc-title">User access database</div>
+        <div class="mc-body">Who has access to what system, since when, at what permission level. Clean relational data: user ID, system ID, permission level, grant date, expiry date. Auditable and queryable.</div>
+        <div class="mc-tag structured">Structured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">Customer Support</div>
+        <div class="mc-title">Call recordings</div>
+        <div class="mc-body">Audio files of support calls between technicians and users. Contain a complete record of what was said — but are inaccessible to any computer analysis without first transcribing them into text (itself an AI task).</div>
+        <div class="mc-tag unstructured">Unstructured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">Development</div>
+        <div class="mc-title">Bug tracker database</div>
+        <div class="mc-body">Reported bugs with defined fields: ID, severity, status, component, reporter, assignee, sprint. Development teams query this constantly: "all open critical bugs in the authentication component."</div>
+        <div class="mc-tag structured">Structured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">Development</div>
+        <div class="mc-title">Code review comments</div>
+        <div class="mc-body">The written feedback engineers leave on each other's code. Contains detailed technical reasoning and decisions — but as free text that can't be systematically queried for meaning without NLP tools.</div>
+        <div class="mc-tag unstructured">Unstructured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">Operations</div>
+        <div class="mc-title">Asset inventory database</div>
+        <div class="mc-body">Every device the company owns: serial number, model, purchase date, assigned user, location, status. Completely structured — can query "all laptops more than 4 years old assigned to employees in NY."</div>
+        <div class="mc-tag structured">Structured</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">Knowledge Management</div>
+        <div class="mc-title">Internal knowledge base articles</div>
+        <div class="mc-body">How-to guides, troubleshooting documentation, runbooks. Written in natural language for human readers — valuable institutional knowledge, but requires semantic search (AI) to find the right article for a given problem.</div>
+        <div class="mc-tag unstructured">Unstructured</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Classify It Yourself</h2>
+    <div class="classify-game">
+      <div class="cg-label">🎯 Practice — Classify the Data</div>
+      <div class="cg-title">Structured or unstructured?</div>
+      <div class="cg-sub">Click each item to assign it to a bin, then check your answers.</div>
+      <div class="cg-items" id="cgItems">
+        <div class="cg-item" data-correct="s" onclick="assignItem(this,'s')">📊 Monthly help desk report spreadsheet (CSV)</div>
+        <div class="cg-item" data-correct="u" onclick="assignItem(this,'u')">📧 Email from a user describing a network outage</div>
+        <div class="cg-item" data-correct="s" onclick="assignItem(this,'s')">🗃️ Employee directory database (name, role, department, start date)</div>
+        <div class="cg-item" data-correct="u" onclick="assignItem(this,'u')">🎙️ Recording of a customer support call</div>
+        <div class="cg-item" data-correct="s" onclick="assignItem(this,'s')">📋 Ticket database (ID, priority, status, category, timestamps)</div>
+        <div class="cg-item" data-correct="u" onclick="assignItem(this,'u')">📝 Technician's freeform notes on a resolved ticket</div>
+        <div class="cg-item" data-correct="u" onclick="assignItem(this,'u')">📸 Screenshot a user sent to show an error message</div>
+        <div class="cg-item" data-correct="s" onclick="assignItem(this,'s')">📈 Server uptime metrics exported as a table</div>
+      </div>
+      <div class="cg-bins">
+        <div class="cg-bin s-bin">
+          <div class="cg-bin-label">🔵 Structured Data</div>
+          <div class="cg-placed" id="sBin"></div>
+        </div>
+        <div class="cg-bin u-bin">
+          <div class="cg-bin-label">🟠 Unstructured Data</div>
+          <div class="cg-placed" id="uBin"></div>
+        </div>
+      </div>
+      <div class="cg-actions">
+        <button class="cg-btn check" onclick="checkClassify()">Check Answers</button>
+        <button class="cg-btn reset" onclick="resetClassify()">Reset</button>
+      </div>
+      <div class="cg-result" id="cgResult"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Spectrum: It's Not Always Binary</h2>
+    <p>In practice, the structured/unstructured distinction isn't always a clean binary. There's a middle zone — data that has <em>some</em> structure but isn't fully tabular. This is called semi-structured data, and it's covered in its own article. But it helps to see the full spectrum now.</p>
+    <div class="spectrum">
+      <div class="spectrum-label">The Structure Spectrum</div>
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-items">
+        <div class="spec-item"><div class="spec-dot s"></div><div class="spec-text"><strong>Fully Structured:</strong> Database tables, spreadsheets, CSV exports. Every record has identical fields. Query-ready. AI processes this like any other tabular data.</div></div>
+        <div class="spec-item"><div class="spec-dot m"></div><div class="spec-text"><strong>Semi-Structured:</strong> JSON, XML, log files, HTML. Has a consistent format and tags, but doesn't fit into rows/columns. Machines can parse it, but it requires transformation. (Covered in the next article.)</div></div>
+        <div class="spec-item"><div class="spec-dot u"></div><div class="spec-text"><strong>Fully Unstructured:</strong> Emails, audio recordings, images, free-text notes, video. No consistent machine-readable format. Requires AI (NLP, computer vision, speech recognition) to extract structured meaning.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why This Distinction Matters for AI — Specifically</h2>
+    <p>Traditional database tools and reporting software were designed for structured data. Give them a table, they can query it, aggregate it, chart it. Give them an email folder, they're essentially useless.</p>
+    <p>AI changed this. Modern AI tools — especially large language models — can read unstructured text and extract structured meaning from it. This is genuinely new and genuinely powerful: <mark>an AI can read a support email, identify that it's about a VPN issue, classify the urgency as "high" based on the user's language, and populate the ticket fields automatically.</mark> It can transcribe a call recording into searchable text. It can read a thousand knowledge base articles and find the most relevant one for a given support question.</p>
+    <p>But AI tools are better at structured data in several important ways:</p>
+    <div class="matter-cards">
+      <div class="matter-card">
+        <div class="mc-scenario">With structured data, AI can:</div>
+        <div class="mc-title">Find patterns with high precision and speed</div>
+        <div class="mc-body">Analyzing structured ticket data to find which categories have the worst resolution times, which agents have the highest escalation rates, or which times of day have the highest volume — AI does this instantly and accurately.</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">With unstructured data, AI can:</div>
+        <div class="mc-title">Extract meaning — but with risk of error</div>
+        <div class="mc-body">Reading 500 support emails and categorizing them by topic is something AI can do that would take a human days. But AI makes classification mistakes on ambiguous or unusual text — and those mistakes propagate through any downstream analysis.</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">The critical consequence</div>
+        <div class="mc-title">Unstructured data requires more validation</div>
+        <div class="mc-body">When AI processes unstructured data to create structured outputs (classifying emails into categories), the output needs validation. A miscategorized email creates a wrong data point in the structured system — and from there, it affects metrics, reports, and AI routing decisions.</div>
+      </div>
+      <div class="matter-card">
+        <div class="mc-scenario">The practical implication</div>
+        <div class="mc-title">Your oversight role changes by data type</div>
+        <div class="mc-body">With structured data: validate that the structure is correct and data is complete. With unstructured data: validate that the AI's extraction and classification is accurate. Both require judgment — but different kinds.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A tech team wants to use AI to automatically categorize incoming support tickets by issue type. They have two data sources available: (A) the "subject line" field from their ticketing system — short, structured text like "VPN issue," "laptop broken," "can't print"; and (B) the full ticket description — free text written by users like "Hi, I got to work this morning and my laptop won't turn on. I tried holding the power button for 10 seconds. The screen stays black but I can hear the fan running." Which source will the AI likely categorize more accurately — and why?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">Source A — short, structured subject lines are always more accurate for AI classification because they're simpler</button>
+        <button class="qopt" onclick="cq(this,true)">Source B — even though it's unstructured free text, the full description contains far more signals for AI to classify correctly. "VPN issue" could mean many different things; the full description of symptoms, what was tried, and the specific error gives an AI classifier much more to work with. Richer context produces more accurate classification, even from unstructured text. The tradeoff is that free text requires an AI that can read natural language, and its classifications will need human validation.</button>
+        <button class="qopt" onclick="cq(this,false)">Source A — structured data is always better for AI than unstructured data</button>
+        <button class="qopt" onclick="cq(this,false)">It makes no difference — both will produce equally accurate results</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Structured data fits into rows and columns with defined fields — database tables, spreadsheets, CSV exports. A computer can query it directly: "all high-priority tickets opened in the last 24 hours." It's easier to analyze but may contain less context than the underlying reality.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Unstructured data doesn't fit into rows and columns — emails, call recordings, images, free-text notes. It often contains richer information than structured records, but requires processing to extract usable meaning. About 80% of the world's data is unstructured, and most of what you encounter in daily tech work falls into this category.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI's ability to extract structured meaning from unstructured data is one of its most practically powerful capabilities — reading emails, classifying ticket text, transcribing calls, finding relevant documentation. But AI makes errors on unstructured data more often than on structured data, which means the human validation role is especially important whenever AI is processing free text or other unstructured sources.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+const assignments={};
+function assignItem(el,bin){
+  if(el.classList.contains("correct")||el.classList.contains("wrong"))return;
+  const text=el.textContent.trim();
+  const prev=assignments[text];
+  if(prev){
+    const prevBin=document.getElementById(prev+"Bin");
+    Array.from(prevBin.querySelectorAll(".cg-placed-item")).forEach(pi=>{if(pi.textContent===text)pi.remove();});
+  }
+  assignments[text]=bin;
+  el.className="cg-item placed-"+(bin==="s"?"s":"u");
+  const targetBin=document.getElementById(bin+"Bin");
+  const pi=document.createElement("div");
+  pi.className="cg-placed-item";
+  pi.textContent=text;
+  targetBin.appendChild(pi);
+}
+function checkClassify(){
+  const items=document.querySelectorAll(".cg-item");
+  let correct=0,total=items.length;
+  items.forEach(item=>{
+    const text=item.textContent.trim();
+    const ans=assignments[text];
+    const correct_ans=item.dataset.correct;
+    if(ans===correct_ans){item.classList.add("correct");correct++;}
+    else if(ans){item.classList.add("wrong");}
+  });
+  const r=document.getElementById("cgResult");
+  if(correct===total){r.className="cg-result show good";r.textContent="✅ Perfect! All 8 correct. Structured data has defined fields and fits into tables — spreadsheets, databases, metric exports. Unstructured data is free-form content that doesn't fit into rows and columns — emails, recordings, screenshots, free-text notes.";}
+  else{r.className="cg-result show partial";r.textContent=`You got ${correct} of ${total} correct. Items highlighted in red were classified incorrectly. Remember: structured = fits cleanly into rows/columns with defined fields. Unstructured = free text, audio, images, anything that doesn't have a fixed field format.`;}
+}
+function resetClassify(){
+  Object.keys(assignments).forEach(k=>delete assignments[k]);
+  document.querySelectorAll(".cg-item").forEach(el=>el.className="cg-item");
+  document.getElementById("sBin").innerHTML="";
+  document.getElementById("uBin").innerHTML="";
+  document.getElementById("cgResult").className="cg-result";
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Richer context — even in unstructured form — gives AI more signals to work with. 'VPN issue' is a two-word phrase that could mean a dozen different specific problems. The full description tells you what symptoms appeared, what was already tried, and what the error message said. A well-trained NLP classifier will correctly categorize the full description more often than the terse subject line, because it has more evidence to work from. The tradeoff is that free text processing requires more sophisticated AI and produces outputs that need more careful human validation.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("far more signals"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Structured doesn't always mean better for AI classification. Short structured fields can be too sparse to classify accurately — 'VPN issue' or 'laptop broken' doesn't tell an AI which specific category the ticket belongs in. Richer unstructured context — even with the challenges of free text — gives the model more signal. The real insight is that structured vs. unstructured determines which tools you use, not which source is inherently more accurate. For classification tasks, more context usually wins over cleaner format.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semi-Structured Data: The Type Everyone Forgets (And Why JSON and XML Are Everywhere in Tech)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Code explorer */
+.code-explorer{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:20px 0;}
+.ce-tabs{display:flex;border-bottom:1.5px solid var(--purple-mid);}
+.ce-tab{padding:12px 22px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;flex:1;text-align:center;}
+.ce-tab.active{background:var(--white);color:var(--purple-dark);}
+.ce-panel{display:none;}
+.ce-panel.active{display:block;}
+.ce-split{display:grid;grid-template-columns:1fr 1fr;}
+.ce-left{padding:20px 24px;border-right:1px solid var(--purple-mid);background:var(--purple-dark);}
+.ce-right{padding:20px 24px;background:var(--white);}
+.ce-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:10px;}
+.ce-left .ce-label{color:var(--purple-mid);}
+.ce-code{font-family:"Courier New",monospace;font-size:12px;line-height:1.8;color:#E8D5FF;white-space:pre-wrap;}
+.ce-code .key{color:#93C5FD;}
+.ce-code .val{color:#F9C74F;}
+.ce-code .str{color:#86EFAC;}
+.ce-code .num{color:#FCA5A5;}
+.ce-code .tag{color:#C4B5FD;}
+.ce-code .attr{color:#93C5FD;}
+.ce-code .aval{color:#86EFAC;}
+.ce-code .comment{color:#6B7280;font-style:italic;}
+.ce-annotation{display:flex;flex-direction:column;gap:12px;}
+.ce-note{background:var(--gray-soft);border-left:3px solid var(--purple);border-radius:0 10px 10px 0;padding:12px 14px;}
+.ce-note-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:4px;}
+.ce-note-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.ce-desc{padding:16px 24px;background:var(--gray-soft);border-top:1px solid var(--purple-mid);font-size:14px;line-height:1.7;color:var(--gray-text);}
+
+/* Where you see it cards */
+.where-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.where-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.wc-context{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:8px;}
+.wc-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.wc-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.wc-snippet{background:var(--purple-dark);border-radius:8px;padding:8px 10px;font-family:"Courier New",monospace;font-size:11px;color:#C4B5FD;margin-top:8px;white-space:pre;}
+
+/* Three-way comparison */
+.three-compare{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.three-compare th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.three-compare th.s{background:var(--blue-pale);color:var(--blue);}
+.three-compare th.m{background:var(--purple-pale);color:var(--purple-dark);}
+.three-compare th.u{background:var(--orange-pale);color:var(--orange);}
+.three-compare td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.three-compare tr:last-child td{border-bottom:none;}
+.three-compare tr:nth-child(even) td{background:var(--gray-soft);}
+.three-compare td:first-child{font-weight:700;color:var(--purple-dark);font-size:12px;}
+
+/* Spot the field sim */
+.spot-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.ss-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.ss-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:6px;font-weight:700;}
+.ss-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.ss-code{background:var(--purple-dark);border-radius:14px;padding:20px 24px;font-family:"Courier New",monospace;font-size:12.5px;line-height:1.85;color:#E8D5FF;margin-bottom:16px;overflow-x:auto;}
+.ss-code .hl{background:#4A1580;border-radius:3px;padding:1px 3px;cursor:pointer;transition:all .2s;}
+.ss-code .hl:hover{background:#7B2FBE;}
+.ss-code .hl.found{background:#276749;color:#D1FAE5;}
+.ss-code .hl.missed{background:#DC2626;color:#FEE2E2;}
+.ss-q{font-family:"Fraunces",serif;font-size:16px;color:var(--purple-dark);margin-bottom:12px;font-weight:700;}
+.ss-score{font-size:14px;line-height:1.6;padding:12px 16px;border-radius:10px;display:none;}
+.ss-score.show{display:block;background:var(--green-pale);color:var(--green);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Data Literacy for Tech Roles</div>
+  <h1>Semi-Structured Data: The Type Everyone Forgets (And Why JSON and XML Are Everywhere in Tech)</h1>
+  <p class="hero-sub">The video's quiz tested you on semi-structured data — but never explained it. This article fills that gap completely. By the end, you'll recognize JSON and XML in the wild and understand exactly why they're the backbone of modern AI integrations.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What Makes Data "Semi-Structured"?</h2>
+    <p>Fully structured data (like a database table) has a rigid schema: every record has the same fields, in the same order, with the same data types. Fully unstructured data (like an email) has no schema at all — it's just free text.</p>
+    <p>Semi-structured data sits between these two. It has <mark>self-describing tags or markers that give it some organization</mark>, but it doesn't fit into rows and columns. Instead of a rigid table, it's more like a labeled container: the data uses labels to identify what each piece of information is, but the structure can vary from record to record, and values can be nested inside other values.</p>
+    <p>The most important semi-structured formats in tech are <strong>JSON</strong> and <strong>XML</strong>. If you work in any tech role, you will encounter both — in API responses, in configuration files, in log processing pipelines, and in virtually every system that needs to send data between applications.</p>
+
+    <div class="pull-quote">
+      <p>Every time a mobile app asks a server for data and the server sends a response — the conversation almost always happens in JSON. Every AI API integration you'll ever encounter uses it. Semi-structured data isn't obscure. It's the water tech runs in.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>JSON and XML — Side by Side</h2>
+    <p>The best way to understand these formats is to see them. Both formats below represent the same support ticket record. Click each tab to explore the format and see what makes it "semi-structured."</p>
+
+    <div class="code-explorer">
+      <div class="ce-tabs">
+        <button class="ce-tab active" onclick="showCE(0,this)">JSON (JavaScript Object Notation)</button>
+        <button class="ce-tab" onclick="showCE(1,this)">XML (Extensible Markup Language)</button>
+      </div>
+
+      <div class="ce-panel active" id="ce0">
+        <div class="ce-split">
+          <div class="ce-left">
+            <div class="ce-label">The actual JSON data</div>
+            <div class="ce-code">{
+  <span class="key">"ticket_id"</span>: <span class="str">"TKT-8821"</span>,
+  <span class="key">"created_at"</span>: <span class="str">"2024-11-14T09:14:02Z"</span>,
+  <span class="key">"priority"</span>: <span class="str">"high"</span>,
+  <span class="key">"category"</span>: <span class="str">"vpn_access"</span>,
+  <span class="key">"status"</span>: <span class="str">"open"</span>,
+  <span class="key">"submitter"</span>: {
+    <span class="key">"user_id"</span>: <span class="str">"usr_4471"</span>,
+    <span class="key">"name"</span>: <span class="str">"Jessica Chen"</span>,
+    <span class="key">"department"</span>: <span class="str">"Sales"</span>
+  },
+  <span class="key">"description"</span>: <span class="str">"Can't connect to VPN. Auth failed error. Board presentation in 20 min."</span>,
+  <span class="key">"tags"</span>: [
+    <span class="str">"vpn"</span>,
+    <span class="str">"urgent"</span>,
+    <span class="str">"auth"</span>
+  ],
+  <span class="key">"sla_hours"</span>: <span class="num">4</span>,
+  <span class="key">"assigned_to"</span>: <span class="val">null</span>
+}</div>
+          </div>
+          <div class="ce-right">
+            <div class="ce-label">What makes this semi-structured</div>
+            <div class="ce-annotation">
+              <div class="ce-note"><div class="ce-note-label">Key-value pairs</div><div class="ce-note-body">Every piece of data has a label (the "key" in quotes) followed by its value. A machine can extract any field by name: ticket_id, priority, status. No need to know the column number — the label is self-describing.</div></div>
+              <div class="ce-note"><div class="ce-note-label">Nested objects</div><div class="ce-note-body">The "submitter" field isn't a simple value — it contains its own set of key-value pairs (user_id, name, department). This nesting is something a flat database table can't represent cleanly. JSON handles complex relationships naturally.</div></div>
+              <div class="ce-note"><div class="ce-note-label">Arrays</div><div class="ce-note-body">The "tags" field is a list of values (an array). One ticket can have multiple tags. In a flat database, this would require a separate table and a join query. In JSON, it's just a list inside the same record.</div></div>
+              <div class="ce-note"><div class="ce-note-label">Flexible structure</div><div class="ce-note-body">Different tickets can have different fields. One ticket might have an "escalation_reason" field; another might not. JSON handles this — a database table would need every column defined in advance.</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="ce-desc">📡 <strong>Where you see JSON in tech:</strong> API responses (every time an app talks to a server), configuration files (how AI tools are configured), webhook payloads (how automated systems notify each other of events), log aggregation pipelines, and the input/output format of virtually every modern AI API including the tools used throughout this course.</div>
+      </div>
+
+      <div class="ce-panel" id="ce1">
+        <div class="ce-split">
+          <div class="ce-left">
+            <div class="ce-label">The same ticket in XML</div>
+            <div class="ce-code"><span class="tag">&lt;ticket&gt;</span>
+  <span class="tag">&lt;ticket_id&gt;</span>TKT-8821<span class="tag">&lt;/ticket_id&gt;</span>
+  <span class="tag">&lt;created_at&gt;</span>2024-11-14T09:14:02Z<span class="tag">&lt;/created_at&gt;</span>
+  <span class="tag">&lt;priority&gt;</span>high<span class="tag">&lt;/priority&gt;</span>
+  <span class="tag">&lt;category&gt;</span>vpn_access<span class="tag">&lt;/category&gt;</span>
+  <span class="tag">&lt;status&gt;</span>open<span class="tag">&lt;/status&gt;</span>
+  <span class="tag">&lt;submitter <span class="attr">user_id</span>=<span class="aval">"usr_4471"</span>&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Jessica Chen<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;department&gt;</span>Sales<span class="tag">&lt;/department&gt;</span>
+  <span class="tag">&lt;/submitter&gt;</span>
+  <span class="tag">&lt;description&gt;</span>
+    Can't connect to VPN. Auth failed error.
+    Board presentation in 20 min.
+  <span class="tag">&lt;/description&gt;</span>
+  <span class="tag">&lt;tags&gt;</span>
+    <span class="tag">&lt;tag&gt;</span>vpn<span class="tag">&lt;/tag&gt;</span>
+    <span class="tag">&lt;tag&gt;</span>urgent<span class="tag">&lt;/tag&gt;</span>
+    <span class="tag">&lt;tag&gt;</span>auth<span class="tag">&lt;/tag&gt;</span>
+  <span class="tag">&lt;/tags&gt;</span>
+  <span class="tag">&lt;sla_hours&gt;</span>4<span class="tag">&lt;/sla_hours&gt;</span>
+<span class="tag">&lt;/ticket&gt;</span></div>
+          </div>
+          <div class="ce-right">
+            <div class="ce-label">What makes XML different from JSON</div>
+            <div class="ce-annotation">
+              <div class="ce-note"><div class="ce-note-label">Opening and closing tags</div><div class="ce-note-body">Instead of key-value pairs, XML uses opening tags (&lt;priority&gt;) and closing tags (&lt;/priority&gt;) to mark each field. The content between the tags is the value. If you've seen HTML, this syntax looks familiar — they're related formats.</div></div>
+              <div class="ce-note"><div class="ce-note-label">Attributes inside tags</div><div class="ce-note-body">Tags can contain attributes (user_id="usr_4471" inside the &lt;submitter&gt; tag). This is different from JSON — it's a way of embedding metadata about an element directly in its tag.</div></div>
+              <div class="ce-note"><div class="ce-note-label">More verbose than JSON</div><div class="ce-note-body">XML requires both an opening and closing tag for every field, making it significantly longer than the equivalent JSON. For this reason, modern systems tend to prefer JSON — but XML remains widespread in older systems and enterprise integrations.</div></div>
+              <div class="ce-note"><div class="ce-note-label">Still self-describing</div><div class="ce-note-body">Like JSON, XML is self-describing — the tags tell you what each piece of data is. A machine can extract the priority value by finding the content between &lt;priority&gt; and &lt;/priority&gt; tags, without needing to know a column number.</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="ce-desc">📡 <strong>Where you see XML in tech:</strong> Enterprise software integrations (especially older systems), configuration files for many applications, RSS/Atom feeds, SOAP web services (an older API standard still common in finance and healthcare), Microsoft Office document formats (.docx, .xlsx are actually XML inside a ZIP file), and network device configuration exports.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Where Semi-Structured Data Lives in Real Tech Workflows</h2>
+    <div class="where-grid">
+      <div class="where-card">
+        <div class="wc-context">AI Tool Integrations</div>
+        <div class="wc-title">API requests and responses</div>
+        <div class="wc-body">When an automation tool sends a ticket to an AI classification service and gets a category back, both the request and response are JSON. Every modern AI API — including the ones powering tools in this course — speaks JSON.</div>
+        <div class="wc-snippet">{"ticket": "VPN not working",
+ "category": "network_access",
+ "confidence": 0.94}</div>
+      </div>
+      <div class="where-card">
+        <div class="wc-context">Log Processing</div>
+        <div class="wc-title">Structured log formats (JSON logs)</div>
+        <div class="wc-body">Modern applications increasingly write logs as JSON instead of plain text. This makes them machine-parseable without custom text processing — AI monitoring tools can read JSON logs directly and extract any field they need.</div>
+        <div class="wc-snippet">{"ts":"2024-11-14T14:42:08Z",
+ "level":"ERROR",
+ "msg":"auth failed",
+ "user":"usr_4471"}</div>
+      </div>
+      <div class="where-card">
+        <div class="wc-context">Automation Workflows</div>
+        <div class="wc-title">Webhook payloads</div>
+        <div class="wc-body">When a system wants to notify another system that something happened (a new ticket was created, a payment was processed, a deployment completed), it sends a JSON payload to a webhook URL. This is how Power Automate, Zapier, and most no-code tools receive triggers.</div>
+        <div class="wc-snippet">{"event": "ticket.created",
+ "ticket_id": "TKT-8821",
+ "priority": "high",
+ "timestamp": "2024-11-14..."}</div>
+      </div>
+      <div class="where-card">
+        <div class="wc-context">Configuration</div>
+        <div class="wc-title">Application configuration files</div>
+        <div class="wc-body">Most software is configured through JSON or XML files — telling the application what database to connect to, what thresholds to use for alerts, what features to enable. Tech workers editing these files are working with semi-structured data directly.</div>
+        <div class="wc-snippet">{"alert_threshold": 0.05,
+ "auto_escalate": true,
+ "sla_hours": {"high":4,
+               "low":24}}</div>
+      </div>
+      <div class="where-card">
+        <div class="wc-context">Data Exchange</div>
+        <div class="wc-title">System-to-system data transfers</div>
+        <div class="wc-body">When an HR system exports employee records to an IT provisioning system, or when a CRM exports customer data to a support tool, the transfer format is almost always JSON or XML. Semi-structured data is the universal language of system integration.</div>
+        <div class="wc-snippet">&lt;employee id="4471"&gt;
+  &lt;name&gt;Jessica Chen&lt;/name&gt;
+  &lt;access_level&gt;standard&lt;/access_level&gt;
+&lt;/employee&gt;</div>
+      </div>
+      <div class="where-card">
+        <div class="wc-context">Mobile & Web Apps</div>
+        <div class="wc-title">Every app on your phone uses JSON</div>
+        <div class="wc-body">When you open an app and it loads your data — your messages, your account info, your settings — the server sends that data as JSON. When you submit a form or make a request, your app sends JSON back. Every modern app conversation is in semi-structured data.</div>
+        <div class="wc-snippet">{"user": {"id": "usr_4471",
+  "name": "Jessica Chen",
+  "notifications": 3,
+  "theme": "dark"}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Read the JSON — Find the Fields</h2>
+    <div class="spot-sim">
+      <div class="ss-label">🎯 Hands-On Practice</div>
+      <div class="ss-title">Read a real API response</div>
+      <div class="ss-sub">This is a JSON payload an AI ticket classification API might return after analyzing a support ticket. Click the highlighted values to identify what each one means.</div>
+      <div class="ss-code" id="ssCode">{
+  "request_id": "<span class="hl" data-answer="A unique ID for this API call, used to trace the request in logs" onclick="revealField(this)">req_a7f2c9d1</span>",
+  "processed_at": "2024-11-14T09:14:22Z",
+  "input_ticket_id": "TKT-8821",
+  "classification": {
+    "primary_category": "<span class="hl" data-answer="The main category the AI assigned — 'network_access' means it identified this as a network/VPN issue" onclick="revealField(this)">network_access</span>",
+    "sub_category": "vpn_authentication",
+    "confidence_score": <span class="hl" data-answer="How confident the AI is in its classification — 0.91 means 91% confidence. Below 0.70 typically means a human should review." onclick="revealField(this)">0.91</span>,
+    "requires_human_review": <span class="hl" data-answer="false means the AI is confident enough that it doesn't flag this for manual review. If confidence were below threshold, this would be true." onclick="revealField(this)">false</span>
+  },
+  "suggested_routing": {
+    "team": "network_support",
+    "priority_override": "<span class="hl" data-answer="The AI detected urgency signals in the text ('board presentation in 20 min') and escalated the priority from 'high' to 'critical'" onclick="revealField(this)">critical</span>",
+    "override_reason": "Urgency signals detected in description"
+  },
+  "processing_time_ms": 47
+}</div>
+      <div class="ss-q">Click each highlighted value above to learn what it means in context.</div>
+      <div class="ss-score" id="ssScore"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How All Three Data Types Compare</h2>
+    <p>Now that you've seen all three types, here's how they sit relative to each other across the dimensions that matter most in tech work.</p>
+    <table class="three-compare">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th class="s">🔵 Structured</th>
+          <th class="m">🟣 Semi-Structured</th>
+          <th class="u">🟠 Unstructured</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Example formats</td><td>Database tables, CSV, spreadsheets</td><td>JSON, XML, HTML, log files</td><td>Emails, PDFs, images, audio, video</td></tr>
+        <tr><td>Machine readability</td><td>Very easy — query directly</td><td>Moderate — needs parsing</td><td>Hard — needs AI/NLP to extract meaning</td></tr>
+        <tr><td>Flexibility</td><td>Low — fixed schema required</td><td>High — fields can vary between records</td><td>Total — no constraints</td></tr>
+        <tr><td>Where you see it</td><td>Reporting, databases, dashboards</td><td>APIs, automation tools, config files</td><td>Emails, tickets text, recordings</td></tr>
+        <tr><td>AI interaction</td><td>Pattern detection on tables</td><td>API input/output, pipeline integration</td><td>NLP, classification, transcription</td></tr>
+        <tr><td>Your validation role</td><td>Check for missing/wrong values</td><td>Check API responses are correctly parsed</td><td>Check AI classification accuracy</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A no-code automation workflow is set up to receive a JSON webhook from the ticketing system whenever a new ticket is created, then automatically send the ticket details to an AI classification API, and route the ticket based on the response. The workflow suddenly stops routing tickets correctly. You check the logs and find this error: "KeyError: 'primary_category' — field not found in API response." What most likely happened, and what do you check first?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The ticketing system stopped sending webhooks — check that webhooks are still enabled</button>
+        <button class="qopt" onclick="cq(this,false)">The AI classification API is offline — check if the API service is down</button>
+        <button class="qopt" onclick="cq(this,true)">The AI classification API likely changed its response format — the field the workflow was reading ('primary_category') no longer exists in the JSON response, or was renamed. This is a breaking change in the API's output structure. Check the API's documentation or recent changelog to see if the response schema changed, and update the workflow to use the new field name.</button>
+        <button class="qopt" onclick="cq(this,false)">There's a bug in the automation logic — the routing rules need to be rewritten</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Semi-structured data has self-describing labels that give it organization, but doesn't fit into rows and columns. JSON uses key-value pairs and can nest objects and arrays. XML uses opening and closing tags. Both formats are self-describing: a machine can extract any field by name without knowing column positions.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>JSON is everywhere in modern tech. Every API response, every automation webhook, every AI tool integration, every mobile app data exchange uses JSON. You don't need to write JSON code in most tech roles — but you need to be able to read it, understand its structure, and recognize when a field is missing or has changed.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Semi-structured data is the connective tissue of AI integrations. When an automation workflow sends data to an AI API and receives a classification result, both ends of that conversation are JSON. Understanding this format is what lets you troubleshoot when integrations break — recognizing that "field not found" errors mean the API's structure changed, not that the routing logic is wrong.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function showCE(i,btn){
+  document.querySelectorAll(".ce-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".ce-panel").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("ce"+i).classList.add("active");
+}
+
+let revealed=0;
+const total=5;
+function revealField(el){
+  if(el.classList.contains("found"))return;
+  el.classList.add("found");
+  el.title=el.dataset.answer;
+  // Show tooltip-style popup
+  const tip=document.createElement("div");
+  tip.style.cssText="position:fixed;background:#1e1b4b;color:#e8d5ff;font-size:12px;line-height:1.6;padding:10px 14px;border-radius:10px;max-width:260px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none;";
+  tip.textContent=el.dataset.answer;
+  document.body.appendChild(tip);
+  const r=el.getBoundingClientRect();
+  tip.style.left=Math.min(r.left,window.innerWidth-280)+"px";
+  tip.style.top=(r.bottom+8+window.scrollY)+"px";
+  setTimeout(()=>tip.remove(),3500);
+  revealed++;
+  if(revealed>=total){
+    const sc=document.getElementById("ssScore");
+    sc.className="ss-score show";
+    sc.textContent="✅ Great work! You read all the key fields. Notice that the AI raised the priority to 'critical' based on urgency signals in the text — this is AI extracting meaning from unstructured description and expressing its conclusion in structured JSON output. The confidence score (0.91) tells a human reviewer how much to trust the classification without manually reviewing the ticket.";
+  }
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. 'KeyError: primary_category — field not found' is a classic semi-structured data integration error. The automation workflow was written to read a specific JSON field name from the API response — but when the API changed its response structure (renaming the field, or restructuring the response object), the field the workflow expected was gone. This happens frequently when using third-party APIs: the vendor updates their API, and any code or automation that depends on the old field names breaks. The fix is to check the API's documentation for the new structure and update the field reference in the automation workflow.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("changed its response format"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The error message 'primary_category field not found in API response' is very specific: a field that the automation expected to find in the JSON is missing. Webhooks being disabled would cause a different error (no data received). The API being offline would cause a connection error. A routing logic bug would produce wrong routes, not a missing field error. The most likely cause is that the API's JSON response structure changed — and the automation is now looking for a field name that no longer exists in the new format.";}
+}
+</script>
+</body>
+</html>

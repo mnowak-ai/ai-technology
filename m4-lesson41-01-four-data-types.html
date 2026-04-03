@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Are Logs, Metrics, User Behavior Data, and Reports — And Why Each One Tells a Different Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Data type tabs */
+.dtype-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);margin-bottom:0;overflow-x:auto;}
+.dtype-tab{padding:12px 22px;font-size:13px;font-weight:700;color:var(--gray-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:"DM Sans",sans-serif;}
+.dtype-tab:hover{color:var(--purple-dark);}
+.dtype-tab.active{color:var(--purple-dark);border-bottom-color:var(--purple);}
+.dtype-panel{display:none;border:1.5px solid var(--purple-mid);border-top:none;border-radius:0 0 20px 20px;overflow:hidden;}
+.dtype-panel.active{display:block;}
+.dp-header{padding:24px 28px 20px;}
+.dp-icon{font-size:36px;margin-bottom:10px;}
+.dp-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.dp-def{font-size:15px;line-height:1.7;color:var(--gray-muted);}
+.dp-body{padding:0 28px 8px;background:var(--white);}
+.dp-body p{font-size:15px;line-height:1.75;margin-bottom:14px;}
+.dp-raw{background:var(--gray-soft);border-top:1px solid var(--purple-mid);padding:20px 28px;}
+.dp-raw-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:10px;}
+.dp-code{background:var(--purple-dark);color:#E8D5FF;font-family:"Courier New",monospace;font-size:12px;line-height:1.7;padding:16px 20px;border-radius:10px;overflow-x:auto;white-space:pre;}
+.dp-code .dim{color:#8B7FA0;}
+.dp-code .hi{color:#F9C74F;}
+.dp-code .err{color:#F87171;}
+.dp-ai{background:var(--purple-pale);border-top:1px solid var(--purple-mid);padding:18px 28px;display:flex;gap:12px;align-items:flex-start;}
+.dp-ai-icon{font-size:20px;flex-shrink:0;}
+.dp-ai-body{font-size:13px;line-height:1.65;color:var(--purple-dark);}
+.dp-ai-body strong{font-weight:700;}
+.dp-examples{padding:0 28px 20px;background:var(--white);}
+.dp-ex-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:10px;margin-top:16px;}
+.dp-ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dp-ex-item{background:var(--gray-soft);border:1px solid var(--purple-mid);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.55;color:var(--gray-text);}
+.dp-ex-item strong{display:block;font-size:12px;font-weight:700;color:var(--purple-dark);margin-bottom:3px;}
+
+/* Comparison table */
+.compare-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:14px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.compare-table th{background:var(--purple-pale);color:var(--purple-dark);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;}
+.compare-table td{padding:12px 16px;font-size:13px;line-height:1.6;border-bottom:1px solid var(--purple-mid);vertical-align:top;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:nth-child(even) td{background:var(--gray-soft);}
+.compare-table td:first-child{font-weight:700;color:var(--purple-dark);}
+
+/* Scenario sim */
+.sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);margin-bottom:6px;font-weight:700;line-height:1.3;}
+.sim-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.sim-scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:20px;margin-bottom:16px;}
+.sim-scenario-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:8px;}
+.sim-scenario-body{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.sim-q{font-family:"Fraunces",serif;font-size:17px;color:var(--purple-dark);margin-bottom:16px;font-weight:700;line-height:1.35;}
+.sim-opts{display:flex;flex-direction:column;gap:8px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:13px;line-height:1.6;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.right{background:var(--green-pale);border-color:var(--green);}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.sim-opt.reveal{background:var(--green-pale);border-color:var(--green);opacity:.7;}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.sim-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.sim-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.1 — Data Literacy for Tech Roles</div>
+  <h1>What Are Logs, Metrics, User Behavior Data, and Reports — And Why Each One Tells a Different Story</h1>
+  <p class="hero-sub">The video introduced four data types in a single slide. Each one deserves a full treatment — because on the job, confusing them leads to real mistakes. This is the reference article you'll come back to.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Four Different Types?</h2>
+    <p>Tech environments produce an enormous amount of data — and not all of it is created equal, works the same way, or answers the same questions. A server log tells you something happened. A metric tells you how often. User behavior data tells you what a person did. A report tells you what someone concluded from all of the above.</p>
+    <p><mark>Each data type has a different purpose, a different structure, a different shelf life, and a different relationship to AI tools.</mark> Using the wrong type to answer a question — or trusting a report when you should be checking the raw data — produces bad decisions. Understanding what each one is for is foundational to everything in Module 4.</p>
+    <p>Click each tab below for a full breakdown — with real examples of what the data actually looks like.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="dtype-tabs">
+      <button class="dtype-tab active" onclick="showType(0,this)">📋 Logs</button>
+      <button class="dtype-tab" onclick="showType(1,this)">📊 Metrics</button>
+      <button class="dtype-tab" onclick="showType(2,this)">🖱️ User Behavior</button>
+      <button class="dtype-tab" onclick="showType(3,this)">📄 Reports</button>
+    </div>
+
+    <!-- LOGS -->
+    <div class="dtype-panel active" id="dtype0">
+      <div class="dp-header">
+        <div class="dp-icon">📋</div>
+        <div class="dp-title">Logs</div>
+        <div class="dp-def">Automatic, timestamped records that a system writes every time something happens. Logs are the raw evidence of what occurred — the system's own account of its activity.</div>
+      </div>
+      <div class="dp-body">
+        <p>Every time a server receives a request, it writes a log entry. Every time an application throws an error, it writes a log entry. Every time a user logs in, out, or fails to authenticate, the system writes a log entry. Logs happen automatically — no human decides to record them. They exist whether or not anyone ever looks at them.</p>
+        <p>The defining characteristics of logs: they are <strong>event-driven</strong> (created when something happens, not on a schedule), <strong>extremely granular</strong> (each entry represents a single event with a timestamp down to the millisecond), and <strong>high volume</strong> (a busy server can generate millions of log entries per day). They are the closest thing to a raw, unfiltered record of system activity.</p>
+        <p>On the job, logs are used to investigate problems — "the system crashed at 2:47 PM, let's look at the logs from 2:40–2:50 to see what happened leading up to it." They are the go-to source when you need to understand exactly what occurred and when. The challenge: they're too granular and too voluminous to read manually. This is where AI tools that scan logs for patterns earn their value.</p>
+      </div>
+      <div class="dp-raw">
+        <div class="dp-raw-label">📄 What a Real Server Log Actually Looks Like</div>
+        <div class="dp-code"><span class="dim">2024-11-14 14:42:07.331</span> <span class="hi">INFO</span>  [web-01] GET /api/tickets/8821 — 200 OK (42ms)
+<span class="dim">2024-11-14 14:42:07.889</span> <span class="hi">INFO</span>  [web-01] POST /api/tickets — 201 Created (87ms)
+<span class="dim">2024-11-14 14:42:08.102</span> <span class="err">ERROR</span> [web-01] GET /api/users/profile — 500 Internal Server Error
+<span class="dim">2024-11-14 14:42:08.103</span> <span class="err">ERROR</span> [web-01] NullPointerException: user.session is null
+<span class="dim">2024-11-14 14:42:08.104</span> <span class="dim">TRACE</span> [web-01]   at UserController.getProfile(UserController.java:94)
+<span class="dim">2024-11-14 14:42:09.441</span> <span class="hi">INFO</span>  [web-01] GET /api/tickets/8821 — 200 OK (38ms)
+<span class="dim">2024-11-14 14:42:10.018</span> <span class="hi">INFO</span>  [auth-01] User login: id=4471 from 192.168.1.42 — success
+<span class="dim">2024-11-14 14:42:10.551</span> <span class="err">WARN</span>  [auth-01] User login: id=4471 from 203.0.113.7 — failed (wrong password)</div>
+      </div>
+      <div class="dp-examples">
+        <div class="dp-ex-label">Where you encounter logs in common tech roles</div>
+        <div class="dp-ex-grid">
+          <div class="dp-ex-item"><strong>IT Support</strong>When a user can't log in, you check the auth log to see whether the failure is a wrong password, a locked account, or a system error — each has a different resolution.</div>
+          <div class="dp-ex-item"><strong>IT Operations</strong>When a server goes unresponsive, you pull the system log to find the last successful activity and the first error — the gap tells you the failure window.</div>
+          <div class="dp-ex-item"><strong>DevOps / Platform</strong>After a failed deployment, you read the deployment log line-by-line to find which step failed and what error it threw.</div>
+          <div class="dp-ex-item"><strong>Security roles</strong>You scan authentication logs for unusual patterns — multiple failed logins from the same IP, successful logins from unusual locations, access to sensitive resources at odd hours.</div>
+        </div>
+      </div>
+      <div class="dp-ai">
+        <div class="dp-ai-icon">🤖</div>
+        <div class="dp-ai-body"><strong>How AI uses logs:</strong> AI monitoring tools (like Datadog) continuously ingest log streams and learn what "normal" log patterns look like. When a pattern deviates — more errors than usual, a new type of error appearing, event sequences that historically precede outages — the AI flags it. Without AI, humans would have to read millions of log lines to catch these patterns. AI doesn't replace the human investigation that follows an alert — it makes the human's attention go to the right place.</div>
+      </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="dtype-panel" id="dtype1">
+      <div class="dp-header">
+        <div class="dp-icon">📊</div>
+        <div class="dp-title">Metrics</div>
+        <div class="dp-def">Quantitative measurements of system or team performance, tracked over time. Metrics answer the question "how much?" and "how fast?" — not "what happened?"</div>
+      </div>
+      <div class="dp-body">
+        <p>Where logs record individual events, metrics summarize them into numbers that can be trended over time. Instead of reading 10,000 log entries, you look at a single number: "average response time was 87ms this hour." That number was calculated from thousands of individual log events — but you don't need to read each one to understand performance.</p>
+        <p>Metrics are defined by someone making a deliberate choice: <em>this number matters enough that we should track it.</em> Common tech metrics include: <strong>uptime percentage</strong> (how often is the system available), <strong>response time</strong> (how fast does it respond to requests), <strong>error rate</strong> (what percentage of operations are failing), <strong>ticket volume</strong> (how many support requests per day), and <strong>resolution time</strong> (how long does it take to close a ticket). KPIs (Key Performance Indicators) are just metrics that someone has declared to be especially important to the business.</p>
+        <p>The critical thing to understand about metrics: they are <strong>abstractions</strong>. They summarize reality into numbers, which means they can hide important details. A metric might show that average response time is normal while hiding the fact that 5% of requests are extremely slow. Reading metrics critically — asking what might be hidden by the summary — is part of data literacy in tech.</p>
+      </div>
+      <div class="dp-raw">
+        <div class="dp-raw-label">📊 What a Real Metrics Dashboard Looks Like (Infrastructure Monitoring)</div>
+        <div class="dp-code"><span class="hi">SYSTEM HEALTH — web-01 — Last 24 hours</span>
+<span class="dim">─────────────────────────────────────────────────────</span>
+Uptime:            <span class="hi">99.94%</span>     (target: 99.9%)     ✅
+Avg Response Time: <span class="hi">91ms</span>       (target: &lt;150ms)     ✅
+95th Percentile:   <span class="err">847ms</span>      (target: &lt;500ms)     ❌
+Error Rate:        <span class="hi">0.3%</span>       (target: &lt;1%)        ✅
+Requests/min:      <span class="hi">1,247</span>      (peak: 4,891 @14:30) ✅
+
+<span class="dim">─────────────────────────────────────────────────────</span>
+<span class="dim">TICKET METRICS — Help Desk — Week of Nov 11</span>
+<span class="dim">─────────────────────────────────────────────────────</span>
+Tickets opened:    <span class="hi">312</span>
+Tickets resolved:  <span class="hi">298</span>
+Avg resolution:    <span class="err">6.2 hrs</span>   (target: &lt;4 hrs)     ❌
+First contact res: <span class="hi">71%</span>       (target: &gt;70%)       ✅
+Escalation rate:   <span class="hi">12%</span>       (target: &lt;15%)       ✅</div>
+      </div>
+      <div class="dp-examples">
+        <div class="dp-ex-label">Reading between the lines: what this dashboard is hiding</div>
+        <div class="dp-ex-grid">
+          <div class="dp-ex-item"><strong>The 95th percentile alert</strong>Average response time is fine (91ms). But the 95th percentile is 847ms — meaning 5% of requests take nearly a second. For most users, the system feels fast. For 1 in 20, it's slow. The average metric hides this.</div>
+          <div class="dp-ex-item"><strong>The resolution time miss</strong>Average resolution is 6.2 hours, over the 4-hour target. But was this consistent, or did a few very hard tickets pull the average up? The metric alone can't tell you — you need to look at the distribution.</div>
+          <div class="dp-ex-item"><strong>What metrics don't tell you</strong>None of these numbers explain <em>why</em> something is performing the way it is. For that, you need logs. Metrics tell you there's a problem; logs help you find the cause.</div>
+          <div class="dp-ex-item"><strong>What metrics are good for</strong>Spotting trends over time: if average resolution time was 2 hours six months ago and is 6 hours now, something changed. Metrics surface that pattern; investigation explains it.</div>
+        </div>
+      </div>
+      <div class="dp-ai">
+        <div class="dp-ai-icon">🤖</div>
+        <div class="dp-ai-body"><strong>How AI uses metrics:</strong> AI tools learn what "normal" metric ranges look like for a given system and flag deviations — not just when a threshold is crossed, but when a trend is developing before it crosses a threshold. This is called anomaly detection on time-series data. It's more powerful than static threshold alerts because it adapts to normal variation (traffic is always higher on Mondays) rather than firing every time a number moves.</div>
+      </div>
+    </div>
+
+    <!-- USER BEHAVIOR -->
+    <div class="dtype-panel" id="dtype2">
+      <div class="dp-header">
+        <div class="dp-icon">🖱️</div>
+        <div class="dp-title">User Behavior Data</div>
+        <div class="dp-def">Records of what users actually do inside a software system — which features they use, how they navigate, where they get stuck, and what they click, skip, or abandon.</div>
+      </div>
+      <div class="dp-body">
+        <p>User behavior data is different from logs and metrics in a specific way: <mark>it's about people, not systems</mark>. Where a server log records that a request was made, user behavior data records that a specific user, on a specific device, navigated from screen A to screen B, spent 47 seconds on screen B, clicked the "help" button, then abandoned the workflow and left the app. That's a story about a human experience — not a system event.</p>
+        <p>This data is captured by analytics tools embedded in software products (tools like Mixpanel, Amplitude, or Google Analytics for web products). Every action a user takes — a click, a scroll, a form submission, a video pause, a feature activation — can be recorded as an event. Over thousands of users and millions of events, patterns emerge: most users get stuck at step 3 of onboarding, the "export" feature is almost never discovered, the mobile app is abandoned at a much higher rate than the desktop version.</p>
+        <p>User behavior data has the highest sensitivity from a privacy perspective. It contains records of individual people's actions, often linked to their identities. This means it is subject to privacy regulations (GDPR, CCPA) and requires careful handling. A tech worker who has access to user behavior data is responsible for treating it appropriately — and understanding what they are and aren't allowed to do with it.</p>
+      </div>
+      <div class="dp-raw">
+        <div class="dp-raw-label">🖱️ What Raw User Behavior Event Data Looks Like</div>
+        <div class="dp-code"><span class="dim">// Each row = one user action, captured automatically</span>
+<span class="dim">timestamp            user_id   session   event              properties</span>
+<span class="dim">─────────────────────────────────────────────────────────────────────</span>
+2024-11-14 09:14:02  usr_8821  s_4471  app_opened         {device: "mobile", os: "iOS 17"}
+2024-11-14 09:14:05  usr_8821  s_4471  screen_view        {screen: "dashboard"}
+2024-11-14 09:14:09  usr_8821  s_4471  button_click       {button: "new_ticket", screen: "dashboard"}
+2024-11-14 09:14:11  usr_8821  s_4471  screen_view        {screen: "ticket_form"}
+2024-11-14 09:14:38  usr_8821  s_4471  form_abandoned     {screen: "ticket_form", time_on_screen: 27s}
+2024-11-14 09:14:40  usr_8821  s_4471  app_backgrounded   {}
+<span class="dim">// 27 seconds on the ticket form before abandoning — why?</span>
+<span class="dim">// This pattern repeated 847 times in the last 30 days.</span></div>
+      </div>
+      <div class="dp-examples">
+        <div class="dp-ex-label">What user behavior data can and can't tell you</div>
+        <div class="dp-ex-grid">
+          <div class="dp-ex-item"><strong>It CAN tell you</strong>What users do: which features they use, where they drop off, how long they spend on each screen, which paths they take through an application.</div>
+          <div class="dp-ex-item"><strong>It CANNOT tell you</strong>Why users do it: the data shows that 847 users abandoned the ticket form after 27 seconds — it doesn't tell you whether they were confused, distracted, or decided the form was too long. Answering "why" requires additional research.</div>
+          <div class="dp-ex-item"><strong>In help desk / support roles</strong>Usage data can show which features generate the most support tickets — helping you anticipate what kinds of help requests are coming before they arrive.</div>
+          <div class="dp-ex-item"><strong>Privacy responsibility</strong>Every time you access user behavior data, you're accessing records of real people's actions. Limit access to what's needed for the task, don't share identifiable records unnecessarily, and follow your organization's data privacy policy.</div>
+        </div>
+      </div>
+      <div class="dp-ai">
+        <div class="dp-ai-icon">🤖</div>
+        <div class="dp-ai-body"><strong>How AI uses user behavior data:</strong> AI tools analyze behavioral patterns to personalize experiences (showing users features they're likely to find relevant), predict churn (identifying users whose behavior patterns match those of users who have cancelled in the past), and surface UX problems (clustering abandonment events to find which flows are causing the most friction). The AI can process millions of user events and find patterns no human analyst could spot manually — but the interpretation and the decision about what to do still requires human judgment.</div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="dtype-panel" id="dtype3">
+      <div class="dp-header">
+        <div class="dp-icon">📄</div>
+        <div class="dp-title">Reports</div>
+        <div class="dp-def">Summarized, interpreted presentations of data, designed to help a specific audience make decisions. Reports are the output of analysis — not the raw data itself.</div>
+      </div>
+      <div class="dp-body">
+        <p>A report is different from logs, metrics, and user behavior data in a fundamental way: <mark>a report contains someone's judgment</mark>. It's not just data — it's data that has been selected, aggregated, contextualized, and framed. The person who creates a report makes choices about what to include, what to highlight, and what conclusions to draw. Those choices shape what the reader sees and believes.</p>
+        <p>This is why reports are both the most useful and the most dangerous data type in a tech environment. A well-constructed report surfaces the right information for the right decision-maker at the right time. A poorly constructed report — whether due to bad data, bad analysis, or deliberate framing — can lead to wrong decisions with full confidence.</p>
+        <p>Understanding reports critically means always asking: <strong>What data is this based on?</strong> <strong>What time period does it cover?</strong> <strong>What's not included?</strong> <strong>Does this match what I'm seeing in the raw data?</strong> A tech worker who can read a report and recognize when it might be misleading is more valuable than one who accepts every summary at face value.</p>
+      </div>
+      <div class="dp-raw">
+        <div class="dp-raw-label">📄 Same Data — Two Different Reports (Notice the Difference)</div>
+        <div class="dp-code"><span class="hi">REPORT A — For the Executive Team</span>
+<span class="dim">─────────────────────────────────────────────────────</span>
+Help Desk Performance — Q4 2024
+
+Overall ticket volume increased 18% YoY, reflecting
+growth in the customer base. First-contact resolution
+held steady at 71%. <span class="err">Average resolution time increased
+to 6.2 hours</span>, above the 4-hour target, primarily driven
+by a spike in complex integration issues in November.
+The team is investigating root cause and implementing
+additional training for the integration support category.
+
+<span class="hi">REPORT B — For the Help Desk Manager</span>
+<span class="dim">─────────────────────────────────────────────────────</span>
+Nov resolution time breakdown by category:
+  Password/access:   1.1 hrs  ✅ (target 2 hrs)
+  Hardware:          2.8 hrs  ✅ (target 4 hrs)
+  Software/install:  3.4 hrs  ✅ (target 4 hrs)
+  <span class="err">Integration issues: 18.7 hrs ❌ (target 4 hrs)</span>
+  Network:           2.1 hrs  ✅ (target 4 hrs)
+
+<span class="dim">// Integration issues = 8% of volume, 61% of delay impact</span>
+<span class="dim">// 3 technicians handled 71% of integration tickets</span>
+<span class="dim">// Recommend: dedicated integration training track</span></div>
+      </div>
+      <div class="dp-examples">
+        <div class="dp-ex-label">What makes a report trustworthy vs. risky</div>
+        <div class="dp-ex-grid">
+          <div class="dp-ex-item"><strong>Trustworthy reports cite sources</strong>A good report states what data it was based on, what time period it covers, and what methodology was used. If you can't trace the numbers back to a source, treat the report with caution.</div>
+          <div class="dp-ex-item"><strong>Risky reports hide distribution</strong>Averages are the most common way reports obscure reality. "Average resolution time: 6.2 hours" looks manageable. "One category averaging 18.7 hours" tells a very different story. Always ask about the distribution behind any average.</div>
+          <div class="dp-ex-item"><strong>AI-generated reports</strong>Automated report generation tools (including AI) can produce wrong reports from correct data — by aggregating incorrectly, choosing the wrong time window, or miscategorizing records. Always validate auto-generated reports against the underlying data before distributing them.</div>
+          <div class="dp-ex-item"><strong>The "summary trap"</strong>Reports are designed to be easy to read — which means they're easy to accept without scrutiny. The more consequential the decision the report is driving, the more important it is to trace the numbers back to raw data and verify they're correct.</div>
+        </div>
+      </div>
+      <div class="dp-ai">
+        <div class="dp-ai-icon">🤖</div>
+        <div class="dp-ai-body"><strong>How AI uses and generates reports:</strong> AI tools increasingly auto-generate reports — summarizing metrics, surfacing trends, and highlighting anomalies without a human manually pulling data. This is powerful for speed but requires validation: an AI report generated from dirty data, or one that aggregated records incorrectly, will look clean and professional while being wrong. Your job when reviewing an AI-generated report is to ask: does this match what I know from the raw data? Are there any numbers here that seem implausible?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How the Four Types Relate to Each Other</h2>
+    <p>These four data types aren't independent — they form a hierarchy. Raw events generate logs. Logs get summarized into metrics. Metrics and other data sources get analyzed and presented as reports. Each step up the hierarchy is more readable, but also further from the raw truth.</p>
+    <table class="compare-table">
+      <thead><tr><th>Data Type</th><th>Created by</th><th>Volume</th><th>Answers</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr><td>Logs</td><td>Systems automatically</td><td>Extremely high (millions/day)</td><td>"What happened, exactly, when?"</td><td>Too granular to read without tools</td></tr>
+        <tr><td>Metrics</td><td>Aggregated from logs/events</td><td>Low (dozens of numbers)</td><td>"How much / how fast / how often?"</td><td>Averages hide distribution problems</td></tr>
+        <tr><td>User Behavior</td><td>Analytics tracking in apps</td><td>High (events per user action)</td><td>"What did users actually do?"</td><td>Shows what, not why; privacy-sensitive</td></tr>
+        <tr><td>Reports</td><td>Humans or AI summarizing data</td><td>Very low (pages of summary)</td><td>"What should we know / decide?"</td><td>Contains human judgment; can mislead</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section fade-in">
+    <div class="sim">
+      <div class="sim-label">🎯 Scenario Practice</div>
+      <div class="sim-title">Which data type should you reach for?</div>
+      <div class="sim-sub">Read each scenario and choose which data type would best answer the question.</div>
+
+      <div class="sim-scenario">
+        <div class="sim-scenario-label">🔥 Scenario</div>
+        <div class="sim-scenario-body">Users are reporting that the company's internal IT portal "keeps crashing." Your manager asks you to find out what's happening. You need to understand exactly what error is occurring, when it started, and whether it's happening for all users or just some. What do you reach for first?</div>
+      </div>
+      <div class="sim-q">What data type best answers this question?</div>
+      <div class="sim-opts" id="s1opts">
+        <button class="sim-opt" onclick="doSim('s1',0,false)">The weekly performance report — it will show if response times have changed</button>
+        <button class="sim-opt" onclick="doSim('s1',1,true)">The application error logs — they'll show the exact error messages, timestamps, and affected user accounts, giving you the evidence needed to diagnose the cause</button>
+        <button class="sim-opt" onclick="doSim('s1',2,false)">The user behavior data — it will show which screens users are visiting before the crash</button>
+        <button class="sim-opt" onclick="doSim('s1',3,false)">The system uptime metric — it will tell you how much the system has been down</button>
+      </div>
+      <div class="sim-fb" id="s1fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A manager receives an AI-generated weekly report showing that average ticket resolution time improved from 6.2 hours to 3.9 hours — now below the 4-hour target. She sends a congratulatory message to the team. A technician reviews the underlying data and notices that 40 tickets were automatically closed by the system last week after sitting in the queue for 90 days without resolution. Those 40 closures pulled down the average significantly. What does this scenario illustrate?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The AI report generation tool is broken and needs to be fixed</button>
+        <button class="qopt" onclick="cq(this,false)">The team genuinely improved their performance and the technician is wrong</button>
+        <button class="qopt" onclick="cq(this,true)">Reports summarize data in ways that can obscure important context. The report is technically accurate — average resolution time did drop — but it's misleading because the data included ticket closures that weren't actual resolutions. This is exactly the risk of trusting report summaries without tracing them back to the underlying data. An AI-generated report is only as accurate as the data and aggregation logic it's built on.</button>
+        <button class="qopt" onclick="cq(this,false)">The 90-day auto-closure policy is the real problem and should be changed</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Logs are raw event records — automatically written, extremely granular, high volume. They answer "what happened exactly?" and are the go-to source when you need to investigate a specific problem. Too voluminous to read manually at scale, which is why AI monitoring tools exist.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Metrics summarize events into trackable numbers — uptime, error rate, resolution time. They're useful for spotting trends over time but always abstract reality into a single number, which can hide distribution problems. "Average response time is fine" can coexist with "5% of requests are very slow."</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejobs="round"/></svg></div><p>User behavior data records what people actually do inside software — clicks, navigation paths, feature usage, abandonment. It's the most privacy-sensitive data type and shows what users do without explaining why. AI uses it to personalize experiences and predict churn.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Reports contain someone's judgment — they are summaries and interpretations, not raw data. Always ask what data a report is based on, what time period it covers, and what might be hidden by the aggregation. AI-generated reports can be confidently wrong if the underlying data has problems — validating them against source data is part of responsible tech work.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function showType(i,btn){
+  document.querySelectorAll(".dtype-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".dtype-panel").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("dtype"+i).classList.add("active");
+}
+
+function doSim(id,idx,correct){
+  const opts=document.getElementById(id+"opts");
+  if(opts.querySelector(".right,.wrong"))return;
+  opts.querySelectorAll(".sim-opt")[idx].classList.add(correct?"right":"wrong");
+  if(!correct)opts.querySelectorAll(".sim-opt").forEach((o,i)=>{if(i===1)o.classList.add("reveal");});
+  const fb=document.getElementById(id+"fb");
+  if(correct){fb.className="sim-fb show good";fb.textContent="✅ Correct. When users report crashes, logs are the first place to look — they contain the exact error messages, the timestamps of each failure, and which user accounts were affected. A report would tell you that performance declined; metrics would show error rate is elevated; user behavior data might show the screen where crashes happen — but only the raw error logs tell you what the error actually is, which is what you need to diagnose and fix it.";}
+  else{fb.className="sim-fb show bad";fb.textContent="❌ Reports, uptime metrics, and user behavior data can all tell you that something is wrong — but not what the error is or why it's happening. For diagnosis, you need logs: the raw, timestamped record of exactly what the system did and what went wrong. Logs are the evidence; the other data types are summaries. When you're investigating a specific failure, always go to the most granular source available.";}
+}
+
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is a textbook example of the 'summary trap': the report is accurate in a narrow technical sense — the average did improve — but the summary obscures the cause. Real performance improvement and system-generated closures of stale tickets produce the same metric movement, but they mean completely different things. This is why reports require validation against underlying data, and why AI-generated reports are not self-certifying. The technician who looked at the raw data did exactly the right thing.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("obscure"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The report tool isn't broken — it's doing exactly what it was designed to do. The auto-closure policy might be worth reviewing — but that's a separate conversation. The core issue is that a report summary can be technically accurate while being misleading about what actually happened. Understanding this is fundamental to working with reports in a tech environment: always ask whether the numbers tell the complete story, especially when they're better than expected.";}
+}
+</script>
+</body>
+</html>
