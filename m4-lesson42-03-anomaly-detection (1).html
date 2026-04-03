@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is Anomaly Detection? How AI Flags the Unusual — and Why Humans Still Have to Investigate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Anomaly visualization */
+.anomaly-viz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.av-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.av-controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.av-btn{border:2px solid var(--purple-mid);border-radius:9px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;color:var(--gray-muted);}
+.av-btn:hover{border-color:var(--purple);color:var(--purple-dark);}
+.av-btn.active{background:var(--purple);color:var(--white);border-color:var(--purple);}
+.av-description{background:var(--white);border-radius:12px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:1.65;color:var(--gray-text);display:none;}
+.av-description.show{display:block;}
+.av-good{border-left:3px solid var(--green);}
+.av-fp{border-left:3px solid var(--orange);}
+.av-real{border-left:3px solid var(--red);}
+
+/* How it works steps */
+.how-steps{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.hs-item{display:flex;gap:0;}
+.hs-left{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.hs-dot{width:38px;height:38px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700;flex-shrink:0;}
+.hs-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.hs-item:last-child .hs-line{display:none;}
+.hs-body{flex:1;padding:0 0 20px 14px;padding-top:4px;}
+.hs-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.hs-desc{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.hs-example{background:var(--gray-soft);border-radius:8px;padding:8px 12px;margin-top:7px;font-size:12px;line-height:1.6;color:var(--gray-muted);font-style:italic;}
+
+/* Alert investigation sim */
+.alert-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.as-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.as-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.as-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.alert-card{background:var(--white);border:2px solid var(--red);border-radius:16px;padding:18px 20px;margin-bottom:16px;}
+.alert-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.alert-badge{background:var(--red);color:white;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:.06em;}
+.alert-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--red);}
+.alert-details{font-family:"Courier New",monospace;font-size:12px;line-height:1.75;color:var(--gray-text);background:var(--gray-soft);border-radius:8px;padding:10px 12px;}
+.investigate-steps{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.inv-step{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .2s;}
+.inv-step:hover{border-color:var(--purple);background:var(--purple-pale);}
+.inv-step.revealed{cursor:default;}
+.inv-step.real{background:var(--red-pale);border-color:var(--red);}
+.inv-step.fp{background:var(--orange-pale);border-color:var(--orange);}
+.inv-step.normal{background:var(--green-pale);border-color:var(--green);}
+.inv-step-q{font-size:13px;font-weight:600;color:var(--purple-dark);margin-bottom:4px;}
+.inv-step-a{font-size:13px;line-height:1.6;color:var(--gray-text);display:none;}
+.inv-step.revealed .inv-step-a{display:block;}
+.inv-step-btn{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;}
+.inv-step.revealed .inv-step-btn{display:none;}
+
+/* Why humans cards */
+.why-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.wc{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.wc-icon{font-size:24px;margin-bottom:8px;}
+.wc-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.wc-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.2 — Pattern Recognition & Insights</div>
+  <h1>What Is Anomaly Detection? How AI Flags the Unusual — and Why Humans Still Have to Investigate</h1>
+  <p class="hero-sub">The Datadog case study in the video was excellent but compressed. This article unpacks the full mechanism: what anomaly detection actually does, what "unusual" means statistically, why false positives happen, and what the human's job is after an AI alert fires.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Core Idea — Without the Math</h2>
+    <p>Anomaly detection is the process of identifying data points or patterns that don't fit expected behavior. In a tech context, it answers the question: <em>is this data point unusual enough to warrant investigation?</em></p>
+    <p>The challenge is defining "unusual" in a way that's useful. <mark>Too sensitive, and the system fires alerts for normal variation — drowning your team in false positives. Too lenient, and real problems slip through undetected.</mark> Getting this calibration right is an ongoing human responsibility, not a one-time configuration.</p>
+    <p>AI tools like Datadog's Watchdog perform anomaly detection continuously across thousands of metrics simultaneously — a scale no human team could match manually. But the AI produces alerts. It doesn't produce conclusions. Every alert still requires a human to investigate, contextualize, and decide what to do.</p>
+    <div class="pull-quote">
+      <p>AI anomaly detection is a smoke detector, not a fire department. It tells you something triggered. It doesn't tell you whether there's a real fire, where it is, or what to do about it. That's the investigation.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How AI Anomaly Detection Actually Works — Step by Step</h2>
+    <div class="how-steps">
+      <div class="hs-item">
+        <div class="hs-left"><div class="hs-dot">1</div><div class="hs-line"></div></div>
+        <div class="hs-body">
+          <div class="hs-title">Learn the baseline</div>
+          <div class="hs-desc">The system observes a metric over time and builds a statistical model of what "normal" looks like. It learns not just a single average, but a dynamic range that accounts for time-of-day patterns (higher traffic at 9am than 3am), day-of-week patterns (Mondays are busier), and seasonal trends. This learning period typically takes 1–2 weeks of data.</div>
+          <div class="hs-example">Example: CPU usage on web-prod-01 is normally 30–45% on weekday mornings and 15–25% on weekends. The model learns both ranges and applies the appropriate one based on when a data point arrives.</div>
+        </div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-left"><div class="hs-dot">2</div><div class="hs-line"></div></div>
+        <div class="hs-body">
+          <div class="hs-title">Define the expected band</div>
+          <div class="hs-desc">The model draws an upper and lower boundary around the learned baseline — called a confidence band or expected range. Values inside this band are considered normal. The width of the band is configurable: a narrow band catches more anomalies (more alerts, more false positives) and a wide band catches fewer (fewer alerts, potentially misses real problems). This sensitivity setting is a business judgment call that the AI cannot make.</div>
+          <div class="hs-example">Example: The expected band for weekday morning CPU is 25–55% — wide enough to accommodate normal variation without triggering alerts, narrow enough to catch a genuine spike to 85%.</div>
+        </div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-left"><div class="hs-dot">3</div><div class="hs-line"></div></div>
+        <div class="hs-body">
+          <div class="hs-title">Flag values outside the band</div>
+          <div class="hs-desc">When a metric falls outside the expected band, the system generates an anomaly alert. Most systems require a metric to be anomalous for a sustained period (e.g., 5 minutes) before alerting — to avoid firing on transient single-sample spikes that immediately resolve. The duration threshold is configurable and affects how quickly the system responds vs. how many false positives it generates.</div>
+          <div class="hs-example">Example: CPU reaches 82% at 10:47am and stays there. At 10:52am (5 minutes sustained), Watchdog fires: "Anomaly detected: CPU usage above expected range on web-prod-01."</div>
+        </div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-left"><div class="hs-dot">4</div><div class="hs-line"></div></div>
+        <div class="hs-body">
+          <div class="hs-title">Correlate with other metrics</div>
+          <div class="hs-desc">Advanced anomaly detection systems don't just flag individual metrics — they look for correlated anomalies across multiple metrics. A CPU spike accompanied by a latency spike and an error rate increase is a much stronger signal than a CPU spike alone. This multi-metric correlation reduces false positives significantly because coincidental single-metric variations are common; coincidental simultaneous anomalies across multiple correlated metrics are rare.</div>
+          <div class="hs-example">Example: CPU anomaly on web-prod-01 at the same time as: memory anomaly on web-prod-01, latency anomaly on the API gateway, and error rate anomaly on the database layer. The system fires a high-severity correlated incident rather than four separate low-severity alerts.</div>
+        </div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-left"><div class="hs-dot">5</div><div class="hs-line"></div></div>
+        <div class="hs-body">
+          <div class="hs-title">Human investigates</div>
+          <div class="hs-desc">The alert reaches a human. This is where anomaly detection ends and incident response begins. The human's job: verify the alert is real (not a false positive), determine the cause, assess the impact, and decide the appropriate response. The AI has done its job — flagging the unusual. Everything that comes next is human work.</div>
+          <div class="hs-example">Example: The on-call engineer receives the correlated incident alert. They open the Datadog dashboard, review the correlated metrics, check recent deployments in the change log, identify a deployment from 40 minutes ago that modified the database query layer, and escalate to the dev team.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What "Unusual" Actually Means — And Why False Positives Happen</h2>
+    <p>Anomaly detection flags statistical outliers — data points that fall outside the expected range. But statistical outliers and real problems are not the same thing. A data point can be statistically unusual for completely benign reasons, and a real problem can produce data points that look statistically normal until it's too late.</p>
+
+    <div class="anomaly-viz">
+      <div class="av-label">📊 Anomaly Types — Click Each to Understand It</div>
+      <div class="av-controls">
+        <button class="av-btn active" onclick="showAV('true',this)">✅ True Positive — Real Anomaly</button>
+        <button class="av-btn" onclick="showAV('fp',this)">🟡 False Positive — Not a Real Problem</button>
+        <button class="av-btn" onclick="showAV('fn',this)">🔴 False Negative — Missed Problem</button>
+      </div>
+      <svg viewBox="0 0 680 160" id="avChart" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;"></svg>
+      <div class="av-description av-good show" id="av-true">
+        <strong style="color:var(--green)">True Positive:</strong> The anomaly detection correctly flagged a real problem. Response time spiked well above the expected range after a faulty deployment, stayed elevated, and was correctly identified as an incident. Human investigation confirmed a database query regression. This is anomaly detection working as designed.
+      </div>
+      <div class="av-description av-fp" id="av-fp">
+        <strong style="color:var(--orange)">False Positive:</strong> The system flagged something outside the expected range — but investigation revealed it was a legitimate marketing email campaign driving a traffic surge. The spike was real but not a problem. False positives happen when something unusual (but benign) occurs outside the model's training distribution. Cost: wasted investigation time. This is why human judgment is required before escalating every alert.
+      </div>
+      <div class="av-description" id="av-fn" style="border-left:3px solid var(--red);">
+        <strong style="color:var(--red)">False Negative (Missed Anomaly):</strong> A gradual memory leak slowly degrades performance over 10 days — each day's value is only slightly above the previous day, staying within the expected band until the server crashes. The anomaly detection didn't fire because no single data point was anomalous. Humans reviewing trend data would have caught this — gradual drift is hard for threshold-based systems to catch. This is the blind spot of baseline comparison.
+      </div>
+    </div>
+    <p>Understanding all three outcomes is essential for working with anomaly detection in practice. True positives validate the system. False positives require investigation and recalibration. False negatives — the missed problems — are the hardest to catch because you don't know what you don't know. <mark>Humans who periodically review trend data, not just respond to alerts, catch the false negatives that anomaly detection misses.</mark></p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Walk Through an Investigation: Is This Alert Real?</h2>
+    <div class="alert-sim">
+      <div class="as-label">🔔 Simulated Alert Investigation</div>
+      <div class="as-title">Datadog fires an anomaly alert. Walk through the investigation.</div>
+      <div class="as-sub">Click each investigation step to reveal what you'd find. By the end, you'll know whether this is a real incident or a false positive.</div>
+
+      <div class="alert-card">
+        <div class="alert-header">
+          <div class="alert-badge">⚠ Anomaly Detected</div>
+          <div class="alert-title">API error rate — above expected range</div>
+        </div>
+        <div class="alert-details">Service:     api-gateway-prod
+Metric:      error_rate (5xx responses)
+Expected:    0.05% – 0.3%
+Current:     2.8%  (sustained 8 minutes)
+Anomaly:     9.3x above expected upper bound
+Time:        Tuesday 14:37 UTC
+Correlated:  database query latency +340%</div>
+      </div>
+
+      <div class="investigate-steps">
+        <div class="inv-step" id="is1" onclick="revealStep('is1','real')">
+          <div class="inv-step-q">Step 1: Check the correlated metric — what does +340% database query latency mean?</div>
+          <div class="inv-step-a">Database query latency jumping 340% while error rate spikes strongly suggests the errors are caused by database timeouts — the API is waiting for the database, hitting a timeout, and returning 500 errors to users. This is a database problem, not an API problem. The API is the victim; the database is the cause.</div>
+          <div class="inv-step-btn">→ Investigate this step</div>
+        </div>
+        <div class="inv-step" id="is2" onclick="revealStep('is2','real')">
+          <div class="inv-step-q">Step 2: Check the deployment log — did anything change in the past 2 hours?</div>
+          <div class="inv-step-a">A deployment to the database query optimizer ran at 14:29 — 8 minutes before the anomaly was detected. This is the most likely causal event: the deployment introduced a query performance regression that causes queries to time out under normal load conditions. The timing correlation is strong.</div>
+          <div class="inv-step-btn">→ Investigate this step</div>
+        </div>
+        <div class="inv-step" id="is3" onclick="revealStep('is3','real')">
+          <div class="inv-step-q">Step 3: Check current user impact — are users experiencing errors?</div>
+          <div class="inv-step-a">The error rate of 2.8% means approximately 28 out of every 1,000 API requests are failing with a 500 error. At current traffic volume, that's ~140 failed requests per minute. Users attempting transactions during this window are getting error messages. This is an active customer-impacting incident.</div>
+          <div class="inv-step-btn">→ Investigate this step</div>
+        </div>
+        <div class="inv-step" id="is4" onclick="revealStep('is4','normal')">
+          <div class="inv-step-q">Step 4: Assess whether this could be a false positive — any known events that explain this?</div>
+          <div class="inv-step-a">No known events. No marketing campaigns, no scheduled jobs, no external traffic sources. The anomaly onset 8 minutes after a deployment, sustained for 8+ minutes with a correlated database latency spike, rules out coincidental variation. This is a confirmed real incident. Escalation is appropriate.</div>
+          <div class="inv-step-btn">→ Investigate this step</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why Human Investigation Is Always Required</h2>
+    <div class="why-cards">
+      <div class="wc"><div class="wc-icon">🧠</div><div class="wc-title">AI doesn't know why</div><div class="wc-body">An anomaly detection system can flag that error rate is 9× above expected. It cannot tell you that the cause is a database query regression from a deployment 8 minutes ago. Root cause analysis requires knowledge of the system's architecture and change history — context the AI doesn't have.</div></div>
+      <div class="wc"><div class="wc-icon">📅</div><div class="wc-title">AI doesn't know what changed</div><div class="wc-body">The AI's model is built from historical patterns. It doesn't know about the deployment that just happened, the configuration change that went out this morning, or the new feature that launched yesterday. Correlating anomaly timing with change events is the human's essential contribution to every investigation.</div></div>
+      <div class="wc"><div class="wc-icon">⚖️</div><div class="wc-title">AI doesn't know the business impact</div><div class="wc-body">An error rate of 2.8% is statistically anomalous. Whether it requires immediate action, a P1 incident declaration, and customer communication — or whether it can wait 30 minutes — depends on who is affected, what the SLA says, and what the business consequences are. That's a judgment call.</div></div>
+      <div class="wc"><div class="wc-icon">🔍</div><div class="wc-title">AI doesn't validate its own results</div><div class="wc-body">Every alert needs a quick false-positive check before escalation. Is there a known event that explains this? Did a scheduled job run at this time? Was there a deployment? Is there a day-of-week pattern the model might not have learned fully? Automatic escalation of every alert without this check generates unnecessary incidents and wastes everyone's time.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An anomaly detection system has been running for 3 months. A team member proposes narrowing the expected range (making the system more sensitive) to catch more potential problems earlier. A senior engineer pushes back. What tradeoff is the senior engineer most likely concerned about, and why does it matter?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">A narrower range would make the system slower to detect real anomalies</button>
+        <button class="qopt" onclick="cq(this,true)">A narrower expected range means more values will fall outside it — including many values that are statistically unusual but perfectly fine. The result is more alerts, including more false positives. If the team receives too many false-positive alerts, they begin to ignore them — which is alert fatigue. A genuine critical incident during an alert fatigue period can be missed precisely because the team has been conditioned to deprioritize alerts. The senior engineer is protecting the team's ability to take alerts seriously by keeping the false positive rate manageable.</button>
+        <button class="qopt" onclick="cq(this,false)">A narrower range requires more computing resources to calculate</button>
+        <button class="qopt" onclick="cq(this,false)">The system has already learned the correct range and shouldn't be changed</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Anomaly detection works in four stages: learn the baseline (what normal looks like across time-of-day and day-of-week patterns), define the expected band, flag values outside it (usually requiring a sustained duration, not just a single data point), and correlate with other metrics to reduce false positives. Multi-metric correlation dramatically improves signal quality.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Three outcomes exist: true positives (real problems correctly flagged), false positives (benign events that look anomalous — cost: wasted investigation time), and false negatives (gradual problems that never trigger an alert because no single data point is anomalous — only caught by humans reviewing trends). All three require understanding to work effectively with these systems.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Human investigation is always required after an alert because the AI doesn't know why an anomaly occurred, what changed recently, what the business impact is, or whether the alert is a false positive. The AI produces the flag. The human produces the conclusion. Alert sensitivity is a business judgment that determines how many false positives the team can handle before developing alert fatigue.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function drawChart(type){
+  const svg=document.getElementById("avChart");
+  const W=680,H=160;
+  const pts_base=[30,65,62,68,60,64,67,61,63,66,62,65,63,64,62,66,61,64];
+  const xs=pts_base.map((_,i)=>30+i*((W-60)/(pts_base.length-1)));
+  let line_pts,anomaly_info="";
+  if(type==="true"){
+    line_pts=[65,64,62,66,63,64,65,62,64,63,48,32,28,30,29,31,30,29];
+    anomaly_info="real";
+  } else if(type==="fp"){
+    line_pts=[65,64,62,66,63,64,65,62,64,63,44,38,36,38,37,35,38,64];
+    anomaly_info="fp";
+  } else {
+    line_pts=[65,63,61,60,59,58,56,54,52,50,48,46,44,42,40,38,36,30];
+    anomaly_info="fn";
+  }
+  const upper_band=pts_base.map(v=>v-20);
+  const lower_band=pts_base.map(v=>v+20);
+  const upper_str=upper_band.map((y,i)=>`${xs[i]},${y}`).join(" ");
+  const lower_str=lower_band.map((y,i)=>`${xs[i]},${y}`).join(" ");
+  const band_poly=upper_band.map((y,i)=>`${xs[i]},${y}`).join(" ")+" "+lower_band.map((y,i)=>`${xs[lower_band.length-1-i]},${lower_band[lower_band.length-1-i]}`).join(" ");
+  const line_str=line_pts.map((y,i)=>`${xs[i]},${y}`).join(" ");
+  const anomaly_color=type==="true"?"#DC2626":type==="fp"?"#D97706":"#7B2FBE";
+  const outside_indices=line_pts.reduce((acc,y,i)=>{if(y<upper_band[i]||y>lower_band[i])acc.push(i);return acc;},[]);
+  svg.innerHTML=`
+    <polygon points="${band_poly}" fill="#F3EAFF" opacity=".6"/>
+    <polyline points="${upper_str}" stroke="#C4B5FD" stroke-width="1" fill="none" stroke-dasharray="3,3"/>
+    <polyline points="${lower_str}" stroke="#C4B5FD" stroke-width="1" fill="none" stroke-dasharray="3,3"/>
+    <polyline points="${line_str}" stroke="${anomaly_color}" stroke-width="2.5" fill="none"/>
+    ${outside_indices.map(i=>`<circle cx="${xs[i]}" cy="${line_pts[i]}" r="4" fill="${anomaly_color}" opacity=".7"/>`).join("")}
+    <text x="34" y="18" font-size="10" fill="#8B7FA0" font-family="sans-serif">Metric value</text>
+    <text x="${W-100}" y="${upper_band[upper_band.length-1]+14}" font-size="9" fill="#9580C8" font-family="monospace">Expected band</text>
+    ${type==="fn"?`<text x="${xs[10]}" y="${line_pts[10]-8}" font-size="9" fill="#7B2FBE" font-family="sans-serif">gradual drift — never triggers alert</text>`:""}
+    ${type!=="fn"&&outside_indices.length?`<rect x="${xs[outside_indices[0]]-4}" y="${Math.min(...outside_indices.map(i=>line_pts[i]))-8}" width="${xs[outside_indices[outside_indices.length-1]]-xs[outside_indices[0]]+8}" height="50" fill="${anomaly_color}" opacity=".08" rx="4"/>`:``}
+    <line x1="30" y1="${H-10}" x2="${W-10}" y2="${H-10}" stroke="#E8D5FF" stroke-width="1"/>
+  `;
+}
+let currentAV="true";
+function showAV(type,btn){
+  currentAV=type;
+  document.querySelectorAll(".av-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".av-description").forEach(d=>d.classList.remove("show"));
+  document.getElementById("av-"+type).classList.add("show");
+  drawChart(type);
+}
+drawChart("true");
+
+function revealStep(id,cls){
+  const el=document.getElementById(id);
+  if(el.classList.contains("revealed"))return;
+  el.classList.add("revealed",cls);
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Making anomaly detection more sensitive catches more real problems — but it also catches more normal variation that happens to fall outside a narrow band. The result is more alerts, more false positives, and eventually alert fatigue: the state where engineers have been exposed to so many non-critical alerts that they begin to treat all alerts with lower urgency. During alert fatigue, genuine P1 incidents can be missed or delayed because the team's response to alerts has degraded. The sensitivity setting is fundamentally a tradeoff between catching problems early and maintaining the team's ability to respond seriously to every alert.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("false positives"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ A narrower range makes the system more sensitive, not slower — it fires earlier, not later. Computing resources are not the concern. And learned baselines should be adjusted when system behavior changes (after deployments, for example). The real concern is false positives leading to alert fatigue — a well-documented problem in operations teams where too many alerts cause engineers to start ignoring them, which is exactly when a real incident gets missed.";}
+}
+</script>
+</body>
+</html>

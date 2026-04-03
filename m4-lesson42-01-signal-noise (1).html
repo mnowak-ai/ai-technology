@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal vs. Noise: How to Tell What Your Data Is Actually Telling You</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Log sim */
+.log-sim{background:#1a1025;border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:20px 0;}
+.ls-header{background:#2a1a3a;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.ls-title{font-size:12px;font-weight:700;color:#C4B5FD;text-transform:uppercase;letter-spacing:.1em;}
+.ls-controls{display:flex;gap:8px;}
+.ls-btn{background:none;border:1.5px solid #6B5EA8;color:#C4B5FD;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s;}
+.ls-btn:hover{background:#3a2a5a;}
+.ls-btn.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.ls-feed{padding:14px 20px;font-family:"Courier New",monospace;font-size:11.5px;line-height:1.85;max-height:260px;overflow-y:auto;}
+.log-line{display:flex;gap:10px;margin-bottom:2px;}
+.log-ts{color:#6B5EA8;flex-shrink:0;width:80px;}
+.log-lv{width:50px;flex-shrink:0;font-weight:700;}
+.log-lv.info{color:#86EFAC;}
+.log-lv.warn{color:#FCD34D;}
+.log-lv.error{color:#F87171;}
+.log-msg{color:#E2D9F3;flex:1;}
+.log-line.signal .log-msg{color:#FCA5A5;background:rgba(248,113,113,.08);border-radius:3px;padding:0 5px;}
+.log-line.noise .log-msg{color:#7C6FA8;}
+.ls-legend{background:#2a1a3a;padding:10px 20px;display:flex;gap:16px;border-top:1px solid #3a2a5a;}
+.ls-leg{display:flex;align-items:center;gap:6px;font-size:11px;color:#9580C8;}
+.ls-leg-dot{width:8px;height:8px;border-radius:50%;}
+
+/* Signal/noise split */
+.sn-split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.sn-col{padding:22px 24px;}
+.sn-col.sig{background:var(--purple-pale);border-right:1px solid var(--purple-mid);}
+.sn-col.noi{background:var(--gray-soft);}
+.sn-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.sn-col.sig .sn-label{color:var(--purple);}
+.sn-col.noi .sn-label{color:var(--gray-muted);}
+.sn-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;margin-bottom:8px;color:var(--purple-dark);}
+.sn-def{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:10px;}
+.sn-ex{font-size:12px;line-height:1.6;color:var(--gray-text);padding-left:14px;position:relative;margin-bottom:4px;}
+.sn-ex::before{content:"→";position:absolute;left:0;font-weight:700;}
+.sn-col.sig .sn-ex::before{color:var(--purple);}
+.sn-col.noi .sn-ex::before{color:var(--gray-muted);}
+
+/* Context cards */
+.ctx-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.ctx-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.ctx-role{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:6px;}
+.ctx-title{font-family:"Fraunces",serif;font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.ctx-signal{background:var(--purple-pale);border-radius:8px;padding:9px 12px;margin-bottom:6px;}
+.ctx-noise{background:var(--gray-soft);border-radius:8px;padding:9px 12px;}
+.ctx-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.ctx-signal .ctx-lbl{color:var(--purple);}
+.ctx-noise .ctx-lbl{color:var(--gray-muted);}
+.ctx-body{font-size:12px;line-height:1.6;color:var(--gray-text);}
+
+/* Classify sim */
+.classify-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.cs-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.cs-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.cs-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.cs-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px 20px;margin-bottom:14px;}
+.cs-item:last-child{margin-bottom:0;}
+.cs-ctx{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:8px;}
+.cs-event{font-family:"Courier New",monospace;font-size:12px;line-height:1.75;background:var(--gray-soft);border-radius:8px;padding:10px 12px;margin-bottom:10px;color:var(--gray-text);}
+.cs-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.cs-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.cs-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:8px 16px;font-size:13px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.cs-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.cs-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.cs-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.cs-fb{font-size:13px;line-height:1.65;padding:10px 14px;border-radius:10px;margin-top:10px;display:none;}
+.cs-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.cs-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Filter cards */
+.filter-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0;}
+.fltr{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.fltr-icon{font-size:24px;margin-bottom:8px;}
+.fltr-title{font-family:"Fraunces",serif;font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.fltr-body{font-size:12px;line-height:1.65;color:var(--gray-text);margin-bottom:8px;}
+.fltr-blind{background:var(--orange-pale);border-radius:7px;padding:7px 10px;font-size:11px;line-height:1.55;color:var(--orange);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.2 — Pattern Recognition & Insights</div>
+  <h1>Signal vs. Noise: How to Tell What Your Data Is Actually Telling You</h1>
+  <p class="hero-sub">The video showed you the graphic. This article makes the distinction practical — with real log data, real workplace scenarios, and a concrete framework for deciding whether something you're seeing is worth acting on.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why "Look at the Data" Isn't Enough</h2>
+    <p>Real tech data streams are relentlessly busy. Hundreds of log lines per minute. Metrics ticking constantly. Alerts firing for a dozen reasons simultaneously. If you treat everything as equally important, you end up chasing false leads — or, just as dangerously, becoming numb to the noise and missing real problems when they appear.</p>
+    <p><mark>Signal vs. noise is the practical skill of knowing which events in your data stream require attention and which don't.</mark> AI tools help by scanning millions of data points to surface patterns humans would miss. But AI can't tell you whether a flagged pattern actually matters for your specific system, recent changes, or business context. That judgment is yours.</p>
+    <div class="pull-quote">
+      <p>The data doesn't speak for itself. Every log line sits in a context — of normal behavior, of recent changes, of what the business cares about — that only a human with knowledge of that context can supply.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Signal and Noise in a Real Log — See the Difference</h2>
+    <p>Filter the log below to see signals and noise side by side. Notice how most of the traffic is completely unremarkable — and how the signals cluster and compound once the database connection starts failing.</p>
+    <div class="log-sim">
+      <div class="ls-header">
+        <div class="ls-title">🖥 api-server-prod-01 — Live Feed</div>
+        <div class="ls-controls">
+          <button class="ls-btn active" onclick="filterLog('all',this)">All Lines</button>
+          <button class="ls-btn" onclick="filterLog('signal',this)">🔴 Signals Only</button>
+          <button class="ls-btn" onclick="filterLog('noise',this)">⚪ Noise Only</button>
+        </div>
+      </div>
+      <div class="ls-feed" id="logFeed"></div>
+      <div class="ls-legend">
+        <div class="ls-leg"><div class="ls-leg-dot" style="background:#FCA5A5"></div>Signal — warrants investigation</div>
+        <div class="ls-leg"><div class="ls-leg-dot" style="background:#7C6FA8"></div>Noise — normal system activity</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Definitions</h2>
+    <div class="sn-split">
+      <div class="sn-col sig">
+        <div class="sn-label">📡 Signal</div>
+        <div class="sn-title">Data that tells you something real has changed or needs attention</div>
+        <div class="sn-def">A signal carries informational content beyond the background activity of a normally operating system. It may or may not require immediate action — but it always warrants awareness and evaluation.</div>
+        <div class="sn-ex">Error rate climbs from 0.1% to 4.7% in 10 minutes</div>
+        <div class="sn-ex">Same new error message appears 8× in 3 minutes</div>
+        <div class="sn-ex">Response time triples immediately after a deployment</div>
+        <div class="sn-ex">One account logs in from two countries 20 minutes apart</div>
+        <div class="sn-ex">Ticket volume for one category spikes 300% with no known cause</div>
+      </div>
+      <div class="sn-col noi">
+        <div class="sn-label">📻 Noise</div>
+        <div class="sn-title">Normal system variation that carries no actionable information</div>
+        <div class="sn-def">Noise is the natural variability of a running system. It's not a problem — it's expected behavior. Treating noise as signal wastes investigation time and contributes to alert fatigue.</div>
+        <div class="sn-ex">Response time fluctuating 87ms–112ms — normal for this API</div>
+        <div class="sn-ex">One timeout in 10,000 requests — within normal error budget</div>
+        <div class="sn-ex">CPU peaks to 78% at 9am every weekday — expected morning traffic</div>
+        <div class="sn-ex">Scheduled job completing 30 seconds later than usual — within tolerance</div>
+        <div class="sn-ex">Ticket volume slightly higher on Mondays — expected weekly pattern</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Critical Insight: Context Makes the Classification</h2>
+    <p>The same data point can be signal in one context and noise in another. <mark>The event itself doesn't determine its classification — the context around it does.</mark> A response time of 850ms is noise if your normal range is 700–900ms. It's a signal if your system normally responds in 80ms.</p>
+    <div class="ctx-cards">
+      <div class="ctx-card">
+        <div class="ctx-role">IT Operations</div>
+        <div class="ctx-title">CPU usage at 85%</div>
+        <div class="ctx-signal"><div class="ctx-lbl">🔴 Signal when:</div><div class="ctx-body">Normal baseline is 30–40%, the spike happened suddenly mid-afternoon with no deployment, and it's been sustained for 20+ minutes with no obvious cause</div></div>
+        <div class="ctx-noise"><div class="ctx-lbl">⚪ Noise when:</div><div class="ctx-body">It's 9am Monday and CPU always peaks 80–90% during morning traffic, returning to baseline within the hour as it always does</div></div>
+      </div>
+      <div class="ctx-card">
+        <div class="ctx-role">IT Support</div>
+        <div class="ctx-title">12 password reset tickets this morning</div>
+        <div class="ctx-signal"><div class="ctx-lbl">🔴 Signal when:</div><div class="ctx-body">Normal daily average is 2–3 resets, the jump is unexplained, and all tickets come from the same department or same time window</div></div>
+        <div class="ctx-noise"><div class="ctx-lbl">⚪ Noise when:</div><div class="ctx-body">The company just enforced a mandatory password rotation policy yesterday and you expected exactly this wave of resets this morning</div></div>
+      </div>
+      <div class="ctx-card">
+        <div class="ctx-role">Security / IT</div>
+        <div class="ctx-title">15 failed logins in one hour</div>
+        <div class="ctx-signal"><div class="ctx-lbl">🔴 Signal when:</div><div class="ctx-body">All 15 failures target the same admin account from unusual IP geographies, consistent with a credential stuffing pattern</div></div>
+        <div class="ctx-noise"><div class="ctx-lbl">⚪ Noise when:</div><div class="ctx-body">They're distributed across 15 different users at the office on Monday morning when people routinely mistype passwords after the weekend</div></div>
+      </div>
+      <div class="ctx-card">
+        <div class="ctx-role">Analytics</div>
+        <div class="ctx-title">App engagement down 18% this week</div>
+        <div class="ctx-signal"><div class="ctx-lbl">🔴 Signal when:</div><div class="ctx-body">Third consecutive week of decline, drop appears across all user segments, no marketing or seasonal explanation</div></div>
+        <div class="ctx-noise"><div class="ctx-lbl">⚪ Noise when:</div><div class="ctx-body">It's the week between Christmas and New Year's and the app is used primarily by enterprise employees on vacation</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practice: Signal or Noise?</h2>
+    <div class="classify-sim">
+      <div class="cs-label">🎯 Practice — Apply the Context</div>
+      <div class="cs-title">Signal or noise? You decide.</div>
+      <div class="cs-sub">Read the data observation and context, then classify it.</div>
+
+      <div class="cs-item">
+        <div class="cs-ctx">Scenario 1 — Server monitoring</div>
+        <div class="cs-event">14:47:02  ERROR  Database connection timeout (1 occurrence)
+Normal error rate today: 0.021%  |  30-day average: 0.020%
+No other errors in surrounding 10-minute window.</div>
+        <div class="cs-q">One isolated database timeout within normal error rate bounds — signal or noise?</div>
+        <div class="cs-opts" id="s1o">
+          <button class="cs-opt" onclick="doCS('s1',true,this,'✅ Correct. One timeout at a rate statistically indistinguishable from the normal baseline is noise. If you investigated every isolated error within normal variation, you\'d spend all your time chasing non-problems. Signals emerge from patterns: repeated errors, rate changes, clustering with other anomalies.')">⚪ Noise — isolated event within normal variation</button>
+          <button class="cs-opt" onclick="doCS('s1',false,this,'❌ Not a signal here. A single timeout at 0.021% vs. 0.020% baseline is statistical noise — the kind of transient variation every production system generates constantly. Signal would look like: the same timeout appearing 15 times in 3 minutes, the error rate jumping to 2%, or this error appearing alongside latency spikes.')">🔴 Signal — database errors always need investigation</button>
+        </div>
+        <div class="cs-fb" id="s1f"></div>
+      </div>
+
+      <div class="cs-item">
+        <div class="cs-ctx">Scenario 2 — Help desk</div>
+        <div class="cs-event">VPN_ACCESS ticket volume this Monday: 34 tickets
+4-week Monday average: 8 tickets
+Time window: all 34 arrived between 8:00–8:45am
+Descriptions: all say "authentication failed"</div>
+        <div class="cs-q">34 VPN tickets in 45 minutes — signal or noise?</div>
+        <div class="cs-opts" id="s2o">
+          <button class="cs-opt" onclick="doCS('s2',false,this,'❌ Monday mornings are always higher — but not 4× higher in a 45-minute burst, all with the same error. Normal Monday variation looks like 8 tickets spread across a morning. This looks like a VPN authentication outage. The clustering (45-min window) and shared error message are the key signal indicators here, not the raw volume alone.')">⚪ Noise — Monday mornings always have more VPN tickets</button>
+          <button class="cs-opt" onclick="doCS('s2',true,this,'✅ Correct. Three signal indicators converge: (1) volume is 4× the Monday average, not marginally elevated; (2) all 34 tickets landed in a 45-minute window — clustering is inconsistent with normal distributed demand; (3) identical error message across all tickets points to a systemic cause. This is a VPN authentication outage, not 34 individual problems.')">🔴 Signal — volume spike + clustering + shared error = systemic failure</button>
+        </div>
+        <div class="cs-fb" id="s2f"></div>
+      </div>
+
+      <div class="cs-item">
+        <div class="cs-ctx">Scenario 3 — Infrastructure</div>
+        <div class="cs-event">web-prod-03 memory usage trend (7 days):
+Mon 62% → Tue 64% → Wed 67% → Thu 69% → Fri 72% → Mon 74% → Tue 77%
+No restarts. No deployments. No traffic change. Rising ~2%/day.</div>
+        <div class="cs-q">Gradually rising memory — signal or noise?</div>
+        <div class="cs-opts" id="s3o">
+          <button class="cs-opt" onclick="doCS('s3',false,this,'❌ 77% is within range right now — but the trend is the signal, not the current value. Steady 2% daily growth with no explanation is a textbook memory leak signature. At this rate, the server exhausts memory in about 10 days. Signals aren\'t always about current state. Often they\'re about the trajectory the data is on — and catching this trajectory now is far cheaper than responding to an unplanned outage.')">⚪ Noise — 77% memory is within acceptable range</button>
+          <button class="cs-opt" onclick="doCS('s3',true,this,'✅ Correct. The current value is fine — but the trend is a strong signal. Steady, unexplained upward drift with no deployment or traffic change is a classic memory leak pattern. At 2%/day this server crashes in ~10 days. Act now: investigate the leak, schedule a restart, plan a patch. This is exactly the kind of trend pattern AI monitoring tools are designed to catch before the crash happens.')">🔴 Signal — steady unexplained upward trend is a memory leak</button>
+        </div>
+        <div class="cs-fb" id="s3f"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Three Ways AI Filters Noise — and One Thing It Can't Do</h2>
+    <div class="filter-cards">
+      <div class="fltr">
+        <div class="fltr-icon">📏</div>
+        <div class="fltr-title">Threshold Filtering</div>
+        <div class="fltr-body">Alert when a value crosses a fixed boundary: "fire if error rate exceeds 2%." Simple, transparent, easy to configure.</div>
+        <div class="fltr-blind">⚠️ Blind spot: Fires during expected peaks (Monday mornings, end-of-month processing) exactly as readily as during real problems.</div>
+      </div>
+      <div class="fltr">
+        <div class="fltr-icon">📉</div>
+        <div class="fltr-title">Baseline Comparison</div>
+        <div class="fltr-body">Learn what "normal" looks like for each metric and flag deviations from it. Adapts automatically to time-of-day and day-of-week patterns.</div>
+        <div class="fltr-blind">⚠️ Blind spot: If the baseline itself drifts (like a gradual memory leak), AI may not flag it — the new level becomes the new "normal."</div>
+      </div>
+      <div class="fltr">
+        <div class="fltr-icon">🔗</div>
+        <div class="fltr-title">Correlation Detection</div>
+        <div class="fltr-body">Look for multiple metrics changing simultaneously — error spike + latency jump + CPU surge together is stronger than any one metric alone.</div>
+        <div class="fltr-blind">⚠️ Blind spot: Correlation ≠ causation. Human knowledge of system architecture is required to evaluate whether a multi-metric cluster actually makes sense.</div>
+      </div>
+    </div>
+    <p>What AI cannot supply in any of these approaches: knowledge of what changed recently (a deployment, a policy update), the business context that makes a pattern meaningful (it's the last day of the fiscal quarter), or the causal explanation that connects individual data points into a coherent story. That context — and the judgment to apply it — is yours.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An AI monitoring tool uses baseline comparison. It learned "normal" CPU behavior from the past 90 days. The team then deployed a compute-heavy new feature. For the first week after deployment, CPU runs at 65% — stable but above the pre-deployment baseline of 40%. The AI fires hourly "CPU above baseline" alerts all week. What is happening, and what's the right response?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The server is overloaded — add capacity immediately</button>
+        <button class="qopt" onclick="cq(this,false)">The AI monitoring tool has a bug — baseline comparison should handle deployments automatically</button>
+        <button class="qopt" onclick="cq(this,true)">The AI is correctly detecting a deviation from its learned baseline — but it doesn't know the deployment happened and changed the expected baseline. The alerts are technically accurate but they're noise in context: 65% is the new normal for this feature, not a problem. The right response is to update monitoring thresholds to reflect the post-deployment expected range. This is a classic example of why AI context-blindness requires human management of monitoring systems after significant changes.</button>
+        <button class="qopt" onclick="cq(this,false)">65% CPU should never trigger an alert — the threshold is misconfigured</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Signal is data that carries meaningful information — something has changed, is changing, or needs to change. Noise is normal system variation. The same data point can be either, depending on context: baseline, trend, clustering, and business knowledge all determine the classification.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI filters noise through threshold comparison, baseline comparison, and correlation detection — each powerful, each with predictable blind spots. The strongest signals are statistically unusual AND contextually meaningful. AI provides the statistics. You provide the context.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Trends matter as much as current values. A metric at 77% rising 2% daily is a stronger signal than a stable metric at 90%. Catching developing trends before they reach critical thresholds — which is what AI monitoring tools do well — requires a human who understands the rate of change and what it implies.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+const logLines=[
+  {ts:"14:41:02",lv:"info",msg:"GET /api/tickets/8819 200 OK (41ms)",type:"noise"},
+  {ts:"14:41:03",lv:"info",msg:"GET /api/tickets/8820 200 OK (38ms)",type:"noise"},
+  {ts:"14:41:04",lv:"info",msg:"POST /api/auth/login — user_4471 — success",type:"noise"},
+  {ts:"14:41:05",lv:"info",msg:"GET /api/dashboard 200 OK (87ms)",type:"noise"},
+  {ts:"14:41:07",lv:"error",msg:"ERROR [db-pool] Connection timeout 5000ms — attempt 1/3",type:"signal"},
+  {ts:"14:41:07",lv:"error",msg:"ERROR [db-pool] Connection timeout 5000ms — attempt 2/3",type:"signal"},
+  {ts:"14:41:08",lv:"warn", msg:"WARN  [cache] Miss ratio elevated: 34% (threshold: 20%)",type:"signal"},
+  {ts:"14:41:09",lv:"error",msg:"ERROR [db-pool] Connection timeout 5000ms — attempt 3/3 FAILED",type:"signal"},
+  {ts:"14:41:09",lv:"info",msg:"GET /api/tickets/8821 200 OK (44ms)",type:"noise"},
+  {ts:"14:41:10",lv:"error",msg:"ERROR [api] 503 Service Unavailable — /api/tickets (db unavailable)",type:"signal"},
+  {ts:"14:41:11",lv:"error",msg:"ERROR [api] 503 Service Unavailable — /api/dashboard (db unavailable)",type:"signal"},
+  {ts:"14:41:11",lv:"info",msg:"Scheduled health check: web-01 PASS",type:"noise"},
+  {ts:"14:41:12",lv:"error",msg:"ERROR [api] 503 Service Unavailable — /api/users (db unavailable)",type:"signal"},
+  {ts:"14:41:13",lv:"info",msg:"GET /api/status 200 OK (12ms)",type:"noise"},
+  {ts:"14:41:14",lv:"warn", msg:"WARN  [rate-limit] user_8802 approaching limit (87/100 req/min)",type:"signal"},
+  {ts:"14:41:15",lv:"info",msg:"POST /api/auth/logout — user_3301 — success",type:"noise"},
+];
+let currentFilter="all";
+function renderLog(){
+  const filtered=currentFilter==="all"?logLines:logLines.filter(l=>l.type===currentFilter);
+  document.getElementById("logFeed").innerHTML=filtered.map(l=>`<div class="log-line ${l.type}"><span class="log-ts">${l.ts}</span><span class="log-lv ${l.lv}">${l.lv.toUpperCase()}</span><span class="log-msg">${l.msg}</span></div>`).join("");
+}
+function filterLog(f,btn){
+  currentFilter=f;
+  document.querySelectorAll(".ls-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderLog();
+}
+renderLog();
+function doCS(id,correct,btn,msg){
+  const opts=document.getElementById(id+"o");
+  if(opts.querySelector(".right,.wrong"))return;
+  btn.classList.add(correct?"right":"wrong");
+  const fb=document.getElementById(id+"f");
+  fb.className="cs-fb show "+(correct?"good":"bad");
+  fb.textContent=msg;
+}
+function cq(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is the deployment baseline reset problem — one of the most common signal vs. noise management tasks after a significant change. AI monitoring is context-blind: it doesn't know a deployment happened, so it flags the new CPU level as a deviation from the old baseline. The right response is human intervention: update the baseline thresholds to reflect the new expected operating range. Until then, the AI generates technically accurate but misleading noise that wastes investigation cycles.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("doesn't know the deployment"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ 65% CPU after a compute-heavy deployment isn't necessarily a problem — the current value and its stability are what matter. This isn't a tool bug (baseline comparison doesn't automatically know about deployments), and it's not a capacity emergency (the metric is stable, not rising). The core issue is that the AI's historical baseline no longer matches the system's new normal state. Human intervention to update monitoring thresholds is the correct response.";}
+}
+</script>
+</body>
+</html>

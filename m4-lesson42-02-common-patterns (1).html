@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Common Patterns Every Tech Worker Should Know How to Spot: Errors, Spikes, Dips, and Bottlenecks</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+.pattern-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;}
+.pt{flex:1;min-width:110px;padding:12px 10px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.pt:hover{color:var(--purple-dark);}
+.pt.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.pattern-panel{display:none;}
+.pattern-panel.active{display:block;}
+.pp-header{padding:22px 0 0;}
+.pp-icon{font-size:36px;margin-bottom:10px;}
+.pp-title{font-family:"Fraunces",serif;font-size:24px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.pp-def{font-size:16px;line-height:1.7;color:var(--gray-muted);}
+.chart-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;margin:16px 0;}
+.chart-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.pp-body p{font-size:16px;line-height:1.8;margin-bottom:14px;margin-top:16px;}
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.ctx-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:16px;}
+.ctx-role{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:5px;}
+.ctx-title{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;line-height:1.4;}
+.ctx-body{font-size:12px;line-height:1.65;color:var(--gray-text);}
+.ctx-ai{background:var(--purple-pale);border-radius:7px;padding:7px 10px;margin-top:7px;font-size:11px;line-height:1.5;color:var(--purple-dark);}
+.action-box{background:var(--green-pale);border:1.5px solid #B5D5C0;border-radius:14px;padding:16px 18px;margin:14px 0;}
+.action-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:8px;}
+.action-item{font-size:13px;line-height:1.6;color:var(--gray-text);margin-bottom:4px;padding-left:14px;position:relative;}
+.action-item::before{content:"•";position:absolute;left:0;color:var(--green);}
+.match-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.ms-lbl{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.ms-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.ms-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.ms-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;margin-bottom:14px;}
+.ms-item:last-child{margin-bottom:0;}
+.ms-ctx{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-muted);margin-bottom:6px;}
+.ms-data{font-family:"Courier New",monospace;font-size:12px;line-height:1.75;background:var(--gray-soft);border-radius:8px;padding:10px 12px;margin-bottom:12px;}
+.ms-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.ms-opts{display:flex;flex-wrap:wrap;gap:8px;}
+.ms-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.ms-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.ms-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.ms-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.ms-fb{font-size:13px;line-height:1.65;padding:10px 14px;border-radius:10px;margin-top:10px;display:none;}
+.ms-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.ms-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.2 — Pattern Recognition &amp; Insights</div>
+  <h1>Common Patterns Every Tech Worker Should Know How to Spot: Errors, Spikes, Dips, and Bottlenecks</h1>
+  <p class="hero-sub">The video listed four patterns on one slide. Each one is a learnable shape in data — with a recognizable signature, a set of likely causes, and a different appropriate response. This article gives each pattern its full treatment.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Why Patterns Are the Language of Tech Data</h2>
+    <p>Experienced tech workers develop a kind of data fluency — they look at a chart or log stream and immediately recognize shapes they've seen before. Not because they memorized rules, but because they've encountered these patterns enough times to have intuitions about what they mean and what usually comes next.</p>
+    <p><mark>Each of the four patterns below has a recognizable shape, a set of common causes, and appropriate responses.</mark> Learning to distinguish them — rather than seeing all data events as generically "something happened" — is the core skill of pattern recognition in tech.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Patterns — Explore Each One</h2>
+    <div class="pattern-tabs">
+      <button class="pt active" onclick="showP(0,this)">⚠️ Repeated Errors</button>
+      <button class="pt" onclick="showP(1,this)">📈 Spikes</button>
+      <button class="pt" onclick="showP(2,this)">📉 Dips</button>
+      <button class="pt" onclick="showP(3,this)">🚧 Bottlenecks</button>
+    </div>
+
+    <div class="pattern-panel active" id="pp0">
+      <div class="pp-header"><div class="pp-icon">⚠️</div><div class="pp-title">Repeated Errors</div><div class="pp-def">The same error appearing multiple times in a short window — especially when it hasn't appeared before or is occurring at a higher rate than usual.</div></div>
+      <div class="chart-box">
+        <div class="chart-lbl">Error rate over time — notice the sudden onset and sustained elevation</div>
+        <svg viewBox="0 0 680 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DC2626" stop-opacity=".3"/><stop offset="100%" stop-color="#DC2626" stop-opacity="0"/></linearGradient></defs>
+          <rect x="30" y="110" width="640" height="18" fill="#F0FFF4" rx="2"/>
+          <text x="34" y="123" font-size="9" fill="#276749" font-family="monospace">Normal range (&lt;0.2%)</text>
+          <line x1="30" y1="128" x2="670" y2="128" stroke="#E8D5FF" stroke-width="1"/>
+          <polyline points="30,120 100,119 180,121 260,120" stroke="#86EFAC" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+          <polyline points="260,120 270,105 282,80 300,52 330,48 370,50 410,47 450,50 490,48 530,51 570,49 610,52 650,50" stroke="#DC2626" stroke-width="2.5" fill="none"/>
+          <polygon points="260,120 270,105 282,80 300,52 330,48 370,50 410,47 450,50 490,48 530,51 570,49 610,52 650,50 650,128 260,128" fill="url(#eg)"/>
+          <line x1="262" y1="35" x2="262" y2="115" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="175" y="18" width="170" height="20" rx="5" fill="#FFF1F1" stroke="#DC2626" stroke-width="1"/>
+          <text x="183" y="32" font-size="10" fill="#DC2626" font-family="sans-serif" font-weight="700">Deployment at 14:32 →</text>
+          <text x="34" y="14" font-size="10" fill="#DC2626" font-family="sans-serif" font-weight="700">Error Rate</text>
+          <text x="16" y="51" font-size="8" fill="#8B7FA0" font-family="monospace">5%</text>
+          <text x="10" y="122" font-size="8" fill="#276749" font-family="monospace">0.1%</text>
+        </svg>
+      </div>
+      <div class="pp-body">
+        <p>A repeated error pattern has a distinct shape: a stable baseline period, followed by sudden onset of the same error appearing repeatedly. Key diagnostic questions: <strong>when did it start?</strong> (correlate with deployments or config changes), <strong>is it one error or multiple?</strong> (same message = systemic cause), <strong>is the rate stable or growing?</strong> (growing = situation still developing). In a ticket queue, this pattern looks like the same problem arriving in a burst from multiple users — treat the systemic cause first, not the individual tickets.</p>
+        <div class="ctx-grid">
+          <div class="ctx-card"><div class="ctx-role">IT Operations</div><div class="ctx-title">"NullPointerException in UserController" appears 0 times for 3 months, then 47 times in 2 hours after a deployment</div><div class="ctx-body">A deployment-introduced bug. The sudden onset correlation with a specific deployment points directly to a code regression.</div><div class="ctx-ai">🤖 AI detects the onset correlation with the deployment timestamp and escalates the error rate automatically.</div></div>
+          <div class="ctx-card"><div class="ctx-role">IT Support</div><div class="ctx-title">3 "can't access email" tickets arrive within 10 minutes — the daily average for this category is 1</div><div class="ctx-body">Three identical complaints in 10 minutes is a repeated error pattern in ticket form. Check the email server before routing individual tickets.</div><div class="ctx-ai">🤖 AI ticket anomaly detection flags when a category receives 3x its normal rate in a short window — before the queue fills with duplicates.</div></div>
+        </div>
+        <div class="action-box"><div class="action-lbl">✅ Response</div>
+          <div class="action-item">Check for a deployment, config change, or dependency failure correlating with the onset time</div>
+          <div class="action-item">Determine whether the rate is stable or accelerating — accelerating requires faster escalation</div>
+          <div class="action-item">If systemic, address the root cause first — don't process 34 individual VPN tickets before checking if the VPN itself is down</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-panel" id="pp1">
+      <div class="pp-header"><div class="pp-icon">📈</div><div class="pp-title">Spikes</div><div class="pp-def">A sharp, sudden increase in a metric — traffic, CPU, ticket volume, error rate — that rises quickly, peaks, and either returns to baseline or stays elevated.</div></div>
+      <div class="chart-box">
+        <div class="chart-lbl">Two spikes with very different shapes and meanings</div>
+        <svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <defs>
+            <linearGradient id="sg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7B2FBE" stop-opacity=".25"/><stop offset="100%" stop-color="#7B2FBE" stop-opacity="0"/></linearGradient>
+            <linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DC2626" stop-opacity=".3"/><stop offset="100%" stop-color="#DC2626" stop-opacity="0"/></linearGradient>
+          </defs>
+          <line x1="30" y1="128" x2="670" y2="128" stroke="#E8D5FF" stroke-width="1"/>
+          <polyline points="30,100 90,98 150,101 190,99" stroke="#C4B5FD" stroke-width="1.5" fill="none" stroke-dasharray="3,3"/>
+          <polyline points="190,99 200,85 210,62 220,45 230,50 240,70 252,90 264,99 290,100 320,100" stroke="#7B2FBE" stroke-width="2.5" fill="none"/>
+          <polygon points="190,99 200,85 210,62 220,45 230,50 240,70 252,90 264,99 290,100 320,100 320,128 190,128" fill="url(#sg1)"/>
+          <rect x="192" y="22" width="140" height="20" rx="5" fill="#F3EAFF" stroke="#7B2FBE" stroke-width="1"/>
+          <text x="200" y="36" font-size="10" fill="#4A1580" font-family="sans-serif" font-weight="700">Normal spike — returns ✅</text>
+          <polyline points="400,100 410,82 420,55 435,30 450,26 480,24 520,27 560,25 600,28 640,26" stroke="#DC2626" stroke-width="2.5" fill="none"/>
+          <polygon points="400,100 410,82 420,55 435,30 450,26 480,24 520,27 560,25 600,28 640,26 640,128 400,128" fill="url(#sg2)"/>
+          <rect x="430" y="8" width="170" height="20" rx="5" fill="#FFF1F1" stroke="#DC2626" stroke-width="1"/>
+          <text x="438" y="22" font-size="10" fill="#DC2626" font-family="sans-serif" font-weight="700">Sustained spike — investigate ⚠️</text>
+          <text x="34" y="14" font-size="10" fill="#8B7FA0" font-family="sans-serif">Volume / Rate</text>
+        </svg>
+      </div>
+      <div class="pp-body">
+        <p>Spikes are the most common pattern in tech data — and the most misinterpreted. Key distinctions: an <strong>expected spike</strong> (known cause, returns to baseline — scheduled jobs, marketing campaigns), a <strong>sustained spike</strong> (doesn't return — capacity or configuration problem), and an <strong>unexplained spike</strong> (requires investigation). The metric that's spiking determines the severity: a traffic spike with flat error rate is often fine. The same traffic spike with a simultaneous error spike means the system is saturating.</p>
+        <div class="ctx-grid">
+          <div class="ctx-card"><div class="ctx-role">IT Operations</div><div class="ctx-title">CPU spikes to 95% for 4 minutes, then returns to 42%</div><div class="ctx-body">Check whether it correlates with a scheduled job. If it always produces this spike at this time, it's noise. If it started causing request timeouts, it's a capacity signal.</div><div class="ctx-ai">🤖 AI distinguishes between spikes correlating with known scheduled events vs. unexpected spikes through time-series pattern matching.</div></div>
+          <div class="ctx-card"><div class="ctx-role">IT Support</div><div class="ctx-title">Help desk ticket volume spikes 400% in one afternoon</div><div class="ctx-body">Always ask: what happened right before the spike? A product update, system outage, or company announcement. Spikes without obvious causes need investigation before routing decisions are made.</div><div class="ctx-ai">🤖 AI can compare spike onset time against deployment logs and calendar events to help correlate cause and effect faster.</div></div>
+        </div>
+        <div class="action-box"><div class="action-lbl">✅ Response</div>
+          <div class="action-item">First: is this spike expected? Check against scheduled jobs, known traffic patterns, recent events</div>
+          <div class="action-item">Second: is it returning to baseline? A spike that doesn't return is a different problem than one that does</div>
+          <div class="action-item">Check correlated metrics — a traffic spike without error rate change is usually fine; same spike WITH error rate change means saturation</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-panel" id="pp2">
+      <div class="pp-header"><div class="pp-icon">📉</div><div class="pp-title">Dips</div><div class="pp-def">A sudden drop in a metric that should be continuously active — traffic, successful request rate, user activity — often indicating a system has stopped working or stopped being reachable.</div></div>
+      <div class="chart-box">
+        <div class="chart-lbl">Login success rate — a dip to zero is the most alarming pattern in tech monitoring</div>
+        <svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <line x1="30" y1="128" x2="670" y2="128" stroke="#E8D5FF" stroke-width="1"/>
+          <polyline points="30,45 70,42 110,48 150,40 190,44 230,46 270,41 300,43" stroke="#86EFAC" stroke-width="2.5" fill="none"/>
+          <polyline points="300,43 310,65 318,105 322,126 325,127 390,127 410,127" stroke="#DC2626" stroke-width="2.5" fill="none"/>
+          <polyline points="410,127 418,100 425,68 435,45 460,42 510,40 560,44 610,41 660,43" stroke="#86EFAC" stroke-width="2.5" fill="none" stroke-dasharray="5,3"/>
+          <rect x="318" y="40" width="92" height="88" fill="#FFF1F1" opacity=".45"/>
+          <line x1="318" y1="34" x2="318" y2="128" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="410" y1="34" x2="410" y2="128" stroke="#276749" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="322" y="32" font-size="10" fill="#DC2626" font-family="sans-serif" font-weight="700">Outage begins</text>
+          <text x="413" y="32" font-size="10" fill="#276749" font-family="sans-serif" font-weight="700">Restored</text>
+          <rect x="326" y="82" width="76" height="18" rx="5" fill="#FFF1F1" stroke="#DC2626" stroke-width="1"/>
+          <text x="331" y="94" font-size="10" fill="#DC2626" font-family="sans-serif" font-weight="700">OUTAGE WINDOW</text>
+          <text x="34" y="18" font-size="10" fill="#8B7FA0" font-family="sans-serif">Success rate (%)</text>
+          <text x="14" y="45" font-size="8" fill="#276749" font-family="monospace">100%</text>
+          <text x="20" y="128" font-size="8" fill="#DC2626" font-family="monospace">0%</text>
+        </svg>
+      </div>
+      <div class="pp-body">
+        <p>Dips are often more alarming than spikes — especially when a metric that should always be non-zero drops toward zero. A successful request rate dropping to zero means something stopped working entirely. The critical distinction: <strong>expected vs. unexpected</strong>. A dip at 3am during scheduled maintenance is expected. The same shape at 10:30am Tuesday is an outage. Context determines everything.</p>
+        <div class="ctx-grid">
+          <div class="ctx-card"><div class="ctx-role">IT Operations</div><div class="ctx-title">Server health check success rate drops from 100% to 0% suddenly</div><div class="ctx-body">The server is unreachable, overloaded, or crashed. P1 incident — the service is down. Response time is measured in minutes, not hours.</div><div class="ctx-ai">🤖 AI monitoring detects the transition to zero within seconds and fires an immediate high-priority alert — far faster than any human scanning a dashboard.</div></div>
+          <div class="ctx-card"><div class="ctx-role">Analytics</div><div class="ctx-title">App daily active users drops 90% week-over-week</div><div class="ctx-body">This magnitude almost never reflects real user behavior. It usually means a tracking failure — the analytics code stopped firing. Investigate the measurement system before drawing business conclusions.</div><div class="ctx-ai">🤖 AI flags statistically impossible drops — a 90% single-week DAU decline is outside any normal variation and warrants immediate data quality investigation.</div></div>
+        </div>
+        <div class="action-box"><div class="action-lbl">✅ Response</div>
+          <div class="action-item">First, rule out measurement failure — the thing being measured may have broken, or the measurement itself may have broken</div>
+          <div class="action-item">For business-hours dips in operational metrics, escalate immediately — a 10am traffic dip to zero is almost certainly an outage</div>
+          <div class="action-item">Document start time precisely — outage duration has SLA and customer communication implications</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-panel" id="pp3">
+      <div class="pp-header"><div class="pp-icon">🚧</div><div class="pp-title">Bottlenecks</div><div class="pp-def">A point in a workflow where one step is slower than everything before and after it — causing a queue to build upstream and stalling downstream work.</div></div>
+      <div class="chart-box">
+        <div class="chart-lbl">IT support workflow — identifying the bottleneck step by average processing time per stage</div>
+        <svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <defs><marker id="arr" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#C4B5FD"/></marker></defs>
+          <rect x="10" y="60" width="80" height="55" rx="7" fill="#F3EAFF" stroke="#7B2FBE" stroke-width="1.5"/>
+          <text x="50" y="83" font-size="10" fill="#4A1580" text-anchor="middle" font-family="sans-serif" font-weight="700">Intake</text>
+          <text x="50" y="97" font-size="9" fill="#7B2FBE" text-anchor="middle" font-family="monospace">0.3 hrs</text>
+          <line x1="90" y1="87" x2="118" y2="87" stroke="#C4B5FD" stroke-width="1.5" marker-end="url(#arr)"/>
+          <rect x="118" y="60" width="80" height="55" rx="7" fill="#F3EAFF" stroke="#7B2FBE" stroke-width="1.5"/>
+          <text x="158" y="83" font-size="10" fill="#4A1580" text-anchor="middle" font-family="sans-serif" font-weight="700">Triage</text>
+          <text x="158" y="97" font-size="9" fill="#7B2FBE" text-anchor="middle" font-family="monospace">0.5 hrs</text>
+          <line x1="198" y1="87" x2="226" y2="87" stroke="#C4B5FD" stroke-width="1.5" marker-end="url(#arr)"/>
+          <rect x="226" y="38" width="105" height="100" rx="7" fill="#FFF1F1" stroke="#DC2626" stroke-width="2.5"/>
+          <text x="278" y="70" font-size="10" fill="#DC2626" text-anchor="middle" font-family="sans-serif" font-weight="700">Integration</text>
+          <text x="278" y="83" font-size="10" fill="#DC2626" text-anchor="middle" font-family="sans-serif" font-weight="700">Support</text>
+          <text x="278" y="100" font-size="9" fill="#DC2626" text-anchor="middle" font-family="monospace">18.7 hrs</text>
+          <rect x="230" y="112" width="98" height="16" rx="4" fill="#DC2626"/>
+          <text x="279" y="123" font-size="9" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="700">⚠ BOTTLENECK</text>
+          <line x1="331" y1="87" x2="359" y2="87" stroke="#C4B5FD" stroke-width="1.5" marker-end="url(#arr)"/>
+          <rect x="359" y="60" width="80" height="55" rx="7" fill="#F3EAFF" stroke="#7B2FBE" stroke-width="1.5"/>
+          <text x="399" y="83" font-size="10" fill="#4A1580" text-anchor="middle" font-family="sans-serif" font-weight="700">Resolution</text>
+          <text x="399" y="97" font-size="9" fill="#7B2FBE" text-anchor="middle" font-family="monospace">0.8 hrs</text>
+          <line x1="439" y1="87" x2="467" y2="87" stroke="#C4B5FD" stroke-width="1.5" marker-end="url(#arr)"/>
+          <rect x="467" y="60" width="80" height="55" rx="7" fill="#F0FFF4" stroke="#276749" stroke-width="1.5"/>
+          <text x="507" y="83" font-size="10" fill="#276749" text-anchor="middle" font-family="sans-serif" font-weight="700">Closed</text>
+          <text x="507" y="97" font-size="9" fill="#276749" text-anchor="middle" font-family="monospace">0.1 hrs</text>
+          <path d="M 228 62 Q 210 28 175 22" stroke="#DC2626" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+          <rect x="40" y="10" width="140" height="16" rx="4" fill="none"/>
+          <text x="44" y="22" font-size="10" fill="#DC2626" font-family="sans-serif">47 tickets queued here →</text>
+        </svg>
+      </div>
+      <div class="pp-body">
+        <p>A bottleneck is different from the other three patterns — it's not an error state. <mark>It's a structural problem: one step that processes slower than everything surrounding it, causing a queue to form in front of it and everything downstream to wait.</mark> In the diagram above, Integration Support takes 18.7 hours while every other step takes under 1 hour. Adding capacity to any other step in this workflow won't help — work will still pile up in front of Integration Support. The only fix is addressing the constraint itself.</p>
+        <p>Bottlenecks appear in IT support queues (one team always backlogged), deployment pipelines (one test step taking 45 minutes while others take 2), data pipelines (one transformation can't keep pace), and approval workflows (one decision-maker is a dependency for many processes).</p>
+        <div class="ctx-grid">
+          <div class="ctx-card"><div class="ctx-role">IT Support</div><div class="ctx-title">Integration tickets average 18.7 hrs; everything else averages under 4 hrs</div><div class="ctx-body">The fix isn't routing faster or adding general capacity — it's specifically addressing Integration Support capacity or skill. The bottleneck must be named and addressed at its root.</div><div class="ctx-ai">🤖 AI-assisted workflow analytics can automatically identify the bottleneck step by comparing average processing time per stage — something very hard to see in raw ticket data.</div></div>
+          <div class="ctx-card"><div class="ctx-role">DevOps / Platform</div><div class="ctx-title">CI/CD pipeline: tests take 42 min; every other step takes under 3 min</div><div class="ctx-body">Developers wait 45+ minutes per deployment because one step dominates. This directly affects release velocity and the ability to ship fixes quickly. Parallelizing tests directly addresses the constraint.</div><div class="ctx-ai">🤖 Pipeline analytics can show per-step timing trends over time — revealing when a 15-minute test suite has grown to 42 minutes as coverage expanded.</div></div>
+        </div>
+        <div class="action-box"><div class="action-lbl">✅ Response</div>
+          <div class="action-item">Identify the specific constraint step — don't optimize the whole workflow; optimize the bottleneck</div>
+          <div class="action-item">Measure the queue in front of it: how many items waiting, how long is the wait? This quantifies the impact</div>
+          <div class="action-item">Diagnose the cause: is the step slow because it's understaffed, technically inefficient, or handling work it wasn't designed for?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="match-sim">
+      <div class="ms-lbl">🎯 Pattern Recognition Practice</div>
+      <div class="ms-title">Name the pattern</div>
+      <div class="ms-sub">Read each data description and identify which pattern it most closely matches.</div>
+
+      <div class="ms-item">
+        <div class="ms-ctx">Scenario 1 — Infrastructure</div>
+        <div class="ms-data">API response time weekly averages:
+Wk1: 95ms | Wk2: 97ms | Wk3: 102ms | Wk4: 108ms | Wk5: 117ms
+No deployments. Traffic flat. Rising ~5ms/week.</div>
+        <div class="ms-q">What pattern is this?</div>
+        <div class="ms-opts" id="m1o">
+          <button class="ms-opt" onclick="doMS('m1',false,this,'❌ Not a spike — spikes are sudden, not gradual weekly creep.')">📈 Spike</button>
+          <button class="ms-opt" onclick="doMS('m1',false,this,'❌ Not a dip — response times are rising, not falling.')">📉 Dip</button>
+          <button class="ms-opt" onclick="doMS('m1',true,this,'✅ Correct. Gradual, unexplained degradation over time is the precursor to many failure modes — memory leaks, database index fragmentation, connection pool saturation. The current value (117ms) may still be acceptable, but the trajectory predicts a problem. This is a trend signal, not a current-state alert — exactly what AI monitoring tools are built to surface.')">⚠️ Gradual degradation trend</button>
+          <button class="ms-opt" onclick="doMS('m1',false,this,'❌ A bottleneck is a structural workflow problem, not a response time trend.')">🚧 Bottleneck</button>
+        </div>
+        <div class="ms-fb" id="m1f"></div>
+      </div>
+
+      <div class="ms-item">
+        <div class="ms-ctx">Scenario 2 — Help desk workflow</div>
+        <div class="ms-data">Avg time per step:
+Submission: 0.1h | Auto-triage: 0.2h | L1 Support: 0.9h
+Escalation to L2: 14.3h | L2 Resolution: 1.1h | Closure: 0.1h
+Total avg: 16.7h — SLA target: 4 hours.</div>
+        <div class="ms-q">What pattern is this?</div>
+        <div class="ms-opts" id="m2o">
+          <button class="ms-opt" onclick="doMS('m2',false,this,'❌ Repeated errors are about frequency of failures, not a slow workflow step.')">⚠️ Repeated errors</button>
+          <button class="ms-opt" onclick="doMS('m2',false,this,'❌ A spike is a sudden metric increase, not a structural timing problem.')">📈 Spike</button>
+          <button class="ms-opt" onclick="doMS('m2',false,this,'❌ A dip is a metric dropping toward zero — this is a sustained delay, not a drop.')">📉 Dip</button>
+          <button class="ms-opt" onclick="doMS('m2',true,this,'✅ Correct. The L2 escalation step (14.3h) dominates total workflow time while every other step is fast. This is a textbook bottleneck — one step is 14x slower than the others. Adding resources to any other step won\'t improve total resolution time. The constraint must be addressed at L2 specifically.')">🚧 Bottleneck — L2 escalation dominates</button>
+        </div>
+        <div class="ms-fb" id="m2f"></div>
+      </div>
+
+      <div class="ms-item">
+        <div class="ms-ctx">Scenario 3 — Application monitoring</div>
+        <div class="ms-data">Login success rate:
+09:00: 99.2% | 09:15: 99.4% | 09:30: 99.1%
+09:45: 67.3% | 10:00: 12.1% | 10:15: 0.4% | 10:20: 0.2%</div>
+        <div class="ms-q">What pattern is this?</div>
+        <div class="ms-opts" id="m3o">
+          <button class="ms-opt" onclick="doMS('m3',false,this,'❌ Repeated errors describe an error rate going up — this is a success rate going to zero, which is an outage/dip pattern.')">⚠️ Repeated errors</button>
+          <button class="ms-opt" onclick="doMS('m3',false,this,'❌ A spike goes UP beyond normal. Login success going from 99% toward zero is the opposite.')">📈 Spike</button>
+          <button class="ms-opt" onclick="doMS('m3',true,this,'✅ Correct. A metric that should be consistently high dropping toward zero is a dip — specifically an outage. Login success going from 99% to 0.2% in 45 minutes is the authentication system failing. The gradual decline (rather than instant drop) suggests progressive failure — likely the auth service degrading under load or a cascading dependency failure.')">📉 Dip — authentication system failing toward zero</button>
+          <button class="ms-opt" onclick="doMS('m3',false,this,'❌ A bottleneck is about workflow step timing, not a metric failing to zero.')">🚧 Bottleneck</button>
+        </div>
+        <div class="ms-fb" id="m3f"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A manager reports that average ticket resolution time improved dramatically from 14 hours to 3.5 hours this month after deploying a new AI auto-routing tool. A technician points out the tool is automatically closing tickets it can't categorize rather than routing them to a human. What pattern problem does this reveal, and why is the reported improvement misleading?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">A spike — resolution time spiked briefly before the tool corrected it</button>
+        <button class="qopt" onclick="cq(this,false)">A bottleneck — uncategorized tickets were the bottleneck step</button>
+        <button class="qopt" onclick="cq(this,true)">A data quality / measurement problem — the metric improved because uncategorized tickets are being closed (counted as "resolved in 0 hours") rather than routed to a human. The AI is hiding the hardest tickets, which inflates the resolution time improvement. The underlying problem — unresolved hard tickets — is now invisible in the metrics. This is a measurement distortion masquerading as a performance improvement.</button>
+        <button class="qopt" onclick="cq(this,false)">A repeated error — the AI tool is making the same routing mistake repeatedly</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Repeated errors have a sudden onset after a stable baseline and often correlate with a specific cause. In ticket queues, they appear as multiple tickets with the same symptom arriving in a burst — treat the systemic cause first, not the individual tickets.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Spikes require context: expected vs. unexpected, returning vs. sustained. Always check the spiking metric AND correlated metrics — a traffic spike without an error rate change is usually fine; the same traffic spike with an error rate spike means the system is saturating.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Dips in metrics that should be continuously non-zero are the most alarming pattern — always rule out measurement failure first. Bottlenecks are structural: one step slowing everything else. They require targeted intervention at the constraint, not optimization of the surrounding workflow.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showP(i,btn){document.querySelectorAll(".pt").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".pattern-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById("pp"+i).classList.add("active");}
+function doMS(id,correct,btn,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;btn.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="ms-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. When a metric improves dramatically after a new automated tool is deployed, always verify that the automation isn't changing what gets counted. The tool here is functionally dropping hard tickets by closing them, which removes them from the resolution time calculation and makes the average look better while the underlying problem — those hard tickets are unresolved — is invisible to management.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("measurement distortion"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The core issue is a measurement distortion created by the automation. The resolution time metric appears to improve because the tool is closing uncategorized tickets, removing them from the calculation. Recognizing this requires checking not just the metric but how the denominator changed — a key data quality skill.";}
+}
+</script>
+</body>
+</html>
