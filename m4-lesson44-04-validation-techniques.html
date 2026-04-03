@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validation Techniques for Automated Workflows: Cross-Checking, Simulating, Confirming, and Documenting</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Technique tabs */
+.tech-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;}
+.tt2{flex:1;min-width:120px;padding:12px 10px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.tt2:hover{color:var(--purple-dark);}
+.tt2.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.tech-panel{display:none;padding-top:24px;}
+.tech-panel.active{display:block;}
+.tp-icon{font-size:36px;margin-bottom:10px;}
+.tp-title{font-family:"Fraunces",serif;font-size:24px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.tp-def{font-size:16px;line-height:1.7;color:var(--gray-muted);margin-bottom:0;}
+.tp-body p{font-size:16px;line-height:1.8;margin-bottom:14px;margin-top:16px;}
+.tp-worked{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px 22px;margin:16px 0;}
+.tp-worked-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:12px;}
+.tp-worked-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.tp-step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
+.tp-step-num{width:24px;height:24px;border-radius:50%;background:var(--purple);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.tp-step-text{font-size:13px;line-height:1.65;color:var(--gray-text);flex:1;}
+.tp-step-code{font-family:"Courier New",monospace;background:#1a1025;border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.75;color:#C4B5FD;margin-top:6px;}
+.tp-catches{background:var(--green-pale);border-radius:10px;padding:12px 14px;margin:10px 0;}
+.tp-catches-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:6px;}
+.tp-catches-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.tp-misses{background:var(--orange-pale);border-radius:10px;padding:12px 14px;margin:6px 0;}
+.tp-misses-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:6px;}
+.tp-misses-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.tp-when{background:var(--purple-pale);border-radius:10px;padding:12px 14px;margin:10px 0;}
+.tp-when-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:6px;}
+.tp-when-body{font-size:13px;line-height:1.6;color:var(--purple-dark);}
+
+/* Apply sim */
+.apply-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.as2-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.as2-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.as2-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.as2-items{display:flex;flex-direction:column;gap:14px;}
+.as2-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.as2-situation{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:12px;}
+.as2-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.as2-opts{display:flex;flex-wrap:wrap;gap:8px;}
+.as2-opt{border:2px solid var(--purple-mid);border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.as2-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.as2-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.as2-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.as2-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.as2-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.as2-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.4 — Responsible Automation</div>
+  <h1>Validation Techniques for Automated Workflows: Cross-Checking, Simulating, Confirming, and Documenting</h1>
+  <p class="hero-sub">The video's "Validation Techniques" slide listed four methods. This article makes each one concrete — showing exactly what cross-checking looks like in a ticket triage system, what simulating scenarios means for a report workflow, and how confirming and documenting turn individual checks into lasting institutional reliability.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Techniques, Not Just Principles</h2>
+    <p>"Validate your outputs" is a principle. "Here's how to run a cross-check on a ticket triage automation" is a technique. Principles are easy to agree with and easy to skip. Techniques are specific enough that you either did them or didn't — there's no ambiguity about whether validation happened.</p>
+    <p><mark>This article teaches four techniques, not four concepts. Each one has a concrete method, a worked example in a real tech role context, and a clear description of what it catches and what it misses.</mark> The goal is to make validation something you can do on Monday morning — not something that sounds good in a presentation.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Validation Techniques</h2>
+    <div class="tech-tabs">
+      <button class="tt2 active" onclick="showTech(0,this)">🔄 Cross-Checking</button>
+      <button class="tt2" onclick="showTech(1,this)">🧪 Simulating</button>
+      <button class="tt2" onclick="showTech(2,this)">✅ Confirming</button>
+      <button class="tt2" onclick="showTech(3,this)">📋 Documenting</button>
+    </div>
+
+    <!-- CROSS-CHECKING -->
+    <div class="tech-panel active" id="tp0">
+      <div class="tp-icon">🔄</div>
+      <div class="tp-title">Cross-Checking</div>
+      <div class="tp-def">Comparing the automation's output against an independent data source or calculation to verify consistency — catching errors that the automation can't detect internally.</div>
+      <div class="tp-body">
+        <p>Cross-checking works by asking: if the automation's output is correct, what else should be true? Then checking that thing independently. A ticket routing report should roughly match the volume that appears in each team's queue. A provisioned user account should be findable in Active Directory. A closed invoice should have a matching payment record. If the independent check doesn't match — the automation has a problem.</p>
+        <p>The key principle of cross-checking: <strong>the independent source must be genuinely independent.</strong> If the automation writes to System A and your cross-check reads from System A, you'll get perfect agreement even when the automation is wrong. True cross-checking uses a different data source, a different calculation path, or a manual spot-check.</p>
+      </div>
+      <div class="tp-worked">
+        <div class="tp-worked-label">📋 Worked Example — Ticket Triage Cross-Check</div>
+        <div class="tp-worked-title">Verifying that AI routing classifications match what teams are actually receiving</div>
+        <div class="tp-step"><div class="tp-step-num">1</div><div class="tp-step-text">Pull the automation's routing log for the past week: categories assigned, teams routed to, and confidence scores. This is what the automation thinks it did.</div></div>
+        <div class="tp-step"><div class="tp-step-num">2</div><div class="tp-step-text">Pull each team's queue from the ticketing system directly: count of tickets received this week, broken down by the category label on each ticket. This is what actually arrived in each queue.</div></div>
+        <div class="tp-step"><div class="tp-step-num">3</div><div class="tp-step-text">Compare: do the routing log totals match the queue receipt totals? If the routing log says "47 tickets routed to Infrastructure," does the Infrastructure queue show 47 new tickets this week?
+          <div class="tp-step-code">Routing log → Infrastructure: 47 tickets
+Queue audit → Infrastructure new: 44 tickets
+Gap: 3 tickets unaccounted for
+→ Investigate: did 3 tickets fail to deliver? Were they rerouted?</div>
+        </div></div>
+        <div class="tp-step"><div class="tp-step-num">4</div><div class="tp-step-text">For a deeper check: randomly sample 10 routed tickets and manually verify that each one belongs in the category it was assigned. A 90%+ accuracy on your sample is generally healthy; below 85% warrants investigation.</div></div>
+      </div>
+      <div class="tp-catches"><div class="tp-catches-label">✅ What this catches</div><div class="tp-catches-body">Routing failures (tickets classified but not delivered), systematic misclassifications (a category consistently over- or under-represented), and silent data gaps (tickets that entered the system but never appeared in any queue).</div></div>
+      <div class="tp-misses"><div class="tp-misses-label">⚠️ What this misses</div><div class="tp-misses-body">Individual wrong classifications that happen to route to the right team (e.g., a "Software" ticket that should be "Network" but both teams can handle it), and problems in the downstream resolution process rather than the routing step.</div></div>
+      <div class="tp-when"><div class="tp-when-label">🗓️ When to run this</div><div class="tp-when-body">Weekly for active triage automations. Immediately after any significant change to the classification rules, training data, or connected ticketing system. As a baseline validation when you deploy a new automation.</div></div>
+    </div>
+
+    <!-- SIMULATING -->
+    <div class="tech-panel" id="tp1">
+      <div class="tp-icon">🧪</div>
+      <div class="tp-title">Simulating Scenarios</div>
+      <div class="tp-def">Running controlled test inputs through the automation before deploying to production — or on a periodic basis after deployment — to verify that specific edge cases and normal cases produce expected outputs.</div>
+      <div class="tp-body">
+        <p>Simulation is the automation equivalent of a fire drill: you run a controlled test to verify the system works before you need it to work for real. Unlike cross-checking (which validates outputs that already happened), simulation is proactive — you create specific inputs and verify the outputs match your expectations.</p>
+        <p>The value of simulation is that you control the inputs. You can test the exact edge cases you're worried about — a ticket that mentions both "password" and "printer," an invoice with a comma-formatted amount, a new employee whose name contains a hyphen. You don't have to wait for those inputs to arrive in production.</p>
+      </div>
+      <div class="tp-worked">
+        <div class="tp-worked-label">📋 Worked Example — Simulating Report Workflow Scenarios</div>
+        <div class="tp-worked-title">Testing an automated weekly report against edge case inputs before they arrive in production</div>
+        <div class="tp-step"><div class="tp-step-num">1</div><div class="tp-step-text">Identify the scenarios you're most worried about. For a weekly metrics report: What happens if ticket volume is 0 (holiday week)? What if resolution time exceeds the chart axis range? What if the database connection times out during the pull? What if a new team was added since the template was built?</div></div>
+        <div class="tp-step"><div class="tp-step-num">2</div><div class="tp-step-text">Create a test dataset that simulates each scenario. Most automation platforms have a "test mode" where you can manually inject specific values instead of pulling from live data.
+          <div class="tp-step-code">Test scenario: Holiday week (0 tickets opened, 0 tickets resolved)
+Expected output: Report shows 0/0, N/A for per-ticket metrics
+Actual output: ← run the test and record what happens
+Pass / Fail: ←</div>
+        </div></div>
+        <div class="tp-step"><div class="tp-step-num">3</div><div class="tp-step-text">Run each scenario and compare actual outputs to expected outputs. Document the result — and if something fails (the report shows a division-by-zero error instead of "N/A"), fix it in the automation before the actual holiday week arrives.</div></div>
+        <div class="tp-step"><div class="tp-step-num">4</div><div class="tp-step-text">Maintain your simulation scenarios as a "test suite" — run it after every significant change to the automation. This is the automation equivalent of a software regression test: it ensures that a fix to one issue didn't break something else.</div></div>
+      </div>
+      <div class="tp-catches"><div class="tp-catches-label">✅ What this catches</div><div class="tp-catches-body">Edge cases (inputs outside the automation's designed range), logic errors (wrong calculations, wrong conditional branches), and format problems (outputs that look correct in normal data but break on unusual inputs like empty fields or special characters).</div></div>
+      <div class="tp-misses"><div class="tp-misses-label">⚠️ What this misses</div><div class="tp-misses-body">Edge cases you didn't think to simulate. Production failures caused by the live environment (authentication issues, rate limits, API changes) that don't appear in test mode. User behavior that differs from how you assumed inputs would be structured.</div></div>
+      <div class="tp-when"><div class="tp-when-label">🗓️ When to run this</div><div class="tp-when-body">Before initial deployment (as part of testing). After any significant change to the automation logic, data sources, or connected systems. Quarterly as part of routine maintenance to catch drift.</div></div>
+    </div>
+
+    <!-- CONFIRMING -->
+    <div class="tech-panel" id="tp2">
+      <div class="tp-icon">✅</div>
+      <div class="tp-title">Confirming Outputs</div>
+      <div class="tp-def">Building explicit verification steps into the automation itself — rather than relying on external human review — so that the system confirms its own outputs before proceeding to the next action.</div>
+      <div class="tp-body">
+        <p>Confirming is different from cross-checking (which compares against an external source) and simulating (which tests before deployment). Confirming means the automation actively verifies its own work — checking that the action it just took actually had the expected effect before proceeding to dependent steps.</p>
+        <p>The most common form: after creating a record, immediately read it back from the destination system and verify it exists with the expected values. If the read-back fails or the values don't match, the automation raises an error instead of silently proceeding to the next action. <mark>Confirming catches problems at the moment they occur — not after downstream actions have compounded the error.</mark></p>
+      </div>
+      <div class="tp-worked">
+        <div class="tp-worked-label">📋 Worked Example — Confirming in an Onboarding Automation</div>
+        <div class="tp-worked-title">Building self-verification into account provisioning to catch silent failures</div>
+        <div class="tp-step"><div class="tp-step-num">1</div><div class="tp-step-text">After creating the Active Directory account: immediately query AD to verify the account exists and has the expected attributes (username, email, group memberships).
+          <div class="tp-step-code">Create AD account for michael.thornton@company.com
+→ Wait 2 seconds (propagation delay)
+→ Query AD: does michael.thornton@company.com exist?
+  IF YES → continue to next step
+  IF NO  → log error, alert IT team, stop flow</div>
+        </div></div>
+        <div class="tp-step"><div class="tp-step-num">2</div><div class="tp-step-text">After sending the welcome email: check whether the email delivery service reports successful delivery or a bounce. If bounce detected — alert the IT team with the specific error (address not found, domain invalid, mailbox full).</div></div>
+        <div class="tp-step"><div class="tp-step-num">3</div><div class="tp-step-text">After completing all account creation steps: generate a confirmation summary — a structured list of what was created, for whom, with timestamps — and deliver it to both the new employee's manager and the IT team for sign-off. This is the human confirmation layer on top of the automated one.</div></div>
+      </div>
+      <div class="tp-catches"><div class="tp-catches-label">✅ What this catches</div><div class="tp-catches-body">Silent failures (actions the automation "ran" but that didn't actually complete), transient errors (the destination system was briefly unavailable), and misconfiguration (the automation created the right thing in the wrong place or with the wrong settings).</div></div>
+      <div class="tp-misses"><div class="tp-misses-label">⚠️ What this misses</div><div class="tp-misses-body">Logical errors where the action completed successfully but the output is wrong — for example, creating an account with the correct username but the wrong security group. The confirmation verifies the action occurred; it doesn't verify the action was appropriate.</div></div>
+      <div class="tp-when"><div class="tp-when-label">🗓️ When to use this</div><div class="tp-when-body">For any automation that performs irreversible or high-stakes actions: account creation, data deletions, financial transactions, external notifications. Confirmation steps are worth the additional complexity for these categories. For low-stakes reversible actions, the overhead may not be justified.</div></div>
+    </div>
+
+    <!-- DOCUMENTING -->
+    <div class="tech-panel" id="tp3">
+      <div class="tp-icon">📋</div>
+      <div class="tp-title">Documenting Decisions</div>
+      <div class="tp-def">Creating a persistent record of what the automation did, when, why, and with what inputs — enabling retrospective investigation, compliance auditing, and knowledge transfer when the automation needs to be maintained or updated.</div>
+      <div class="tp-body">
+        <p>Documentation is the validation technique that works backward — rather than catching errors in real time, it creates the record that allows errors to be investigated after the fact. It's also the technique most commonly skipped, because its value isn't visible until something goes wrong.</p>
+        <p>Good automation documentation serves four distinct purposes: <strong>retrospective debugging</strong> (when something goes wrong, you can trace exactly what happened), <strong>compliance auditing</strong> (regulated processes require records of automated decisions for inspection), <strong>pattern analysis</strong> (documentation over time reveals systematic issues that spot-checking misses), and <strong>knowledge transfer</strong> (when the person who built the automation leaves, the next person can understand what it does and why).</p>
+      </div>
+      <div class="tp-worked">
+        <div class="tp-worked-label">📋 Worked Example — Documenting a Ticket Triage Automation</div>
+        <div class="tp-worked-title">What to log, where to store it, and how long to keep it</div>
+        <div class="tp-step"><div class="tp-step-num">1</div><div class="tp-step-text">For every ticket processed, log: ticket ID, submission timestamp, raw description text (or a hash of it), classification output (category, priority), confidence score, routing destination, processing timestamp, and any override or error that occurred.
+          <div class="tp-step-code">triage_log entry:
+  ticket_id:       TKT-9142
+  submitted:       2024-11-14 14:37:22
+  classification:  {"category":"Software","priority":"Low"}
+  confidence:      0.87
+  routed_to:       software_support_queue
+  processed:       2024-11-14 14:37:24
+  override:        null
+  error:           null</div>
+        </div></div>
+        <div class="tp-step"><div class="tp-step-num">2</div><div class="tp-step-text">Store logs in a queryable format — not just a flat text file. A spreadsheet, database table, or log management system (like Splunk or Datadog) allows you to query: "show me all tickets classified as Hardware this week that were later reclassified by a human" — a powerful retrospective analysis for catching systematic misclassification.</div></div>
+        <div class="tp-step"><div class="tp-step-num">3</div><div class="tp-step-text">Define retention periods. For compliance-relevant automations (anything touching security, access, or financial data), retain logs for the period required by your applicable regulations (often 1–7 years). For operational automations, 90 days of searchable logs is typically sufficient for retrospective investigation.</div></div>
+        <div class="tp-step"><div class="tp-step-num">4</div><div class="tp-step-text">Document the automation's design decisions, not just its outputs: why certain rules were chosen, what the training data covered, which edge cases were tested, and what thresholds were set. This "design documentation" is what allows the next person to maintain and improve the system.</div></div>
+      </div>
+      <div class="tp-catches"><div class="tp-catches-label">✅ What this catches</div><div class="tp-catches-body">Systematic patterns in errors that only become visible in aggregate (individual spot-checks miss them), compliance violations that require audit trails, and failures that occurred in the past and aren't apparent until something downstream surfaces them.</div></div>
+      <div class="tp-misses"><div class="tp-misses-label">⚠️ What this misses</div><div class="tp-misses-body">Problems that are only visible in real time (documentation is retrospective). Documentation doesn't prevent errors — it enables faster investigation and learning after they occur. It must be combined with proactive techniques (cross-checking, simulating, confirming) for complete coverage.</div></div>
+      <div class="tp-when"><div class="tp-when-label">🗓️ When to use this</div><div class="tp-when-body">Every automation should have basic logging. The depth of documentation scales with stakes: critical automations need full audit trails and design documentation; routine automations need execution logs and error records. Review documentation completeness as part of every automation review.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Apply It — Which Technique Fits?</h2>
+    <div class="apply-sim">
+      <div class="as2-label">🎯 Practice — Match Technique to Situation</div>
+      <div class="as2-title">Which validation technique addresses this problem?</div>
+      <div class="as2-sub">Some situations call for a specific technique; others benefit from multiple. Pick the primary one.</div>
+      <div class="as2-items">
+        <div class="as2-item">
+          <div class="as2-situation">An automated report has been running for 6 months. The team suspects the resolution time metric may be inflated because the ticketing system started auto-closing inactive tickets. They want to verify whether the report's numbers match reality.</div>
+          <div class="as2-q">Best technique?</div>
+          <div class="as2-opts" id="a1o">
+            <button class="as2-opt" onclick="doApply('a1','cross',this,'✅ Correct. Cross-checking — comparing the report\'s resolution time averages against a manual query of the same period\'s tickets, filtering out auto-closed ones — directly reveals whether the automation is capturing real resolutions or inflated ones from the policy change. This is a retrospective consistency check against an independent source.')">🔄 Cross-checking</button>
+            <button class="as2-opt" onclick="doApply('a1','sim',false,'Simulating would test future scenarios before they run — but this problem has already happened and needs to be investigated retrospectively. Cross-checking is the right technique for "did the past outputs match reality?"')">🧪 Simulating</button>
+            <button class="as2-opt" onclick="doApply('a1','doc',false,'Documentation would tell you what the automation logged, but it wouldn\'t reveal whether the log matches what actually happened in the ticketing system. Cross-checking is needed here.')">📋 Documenting</button>
+          </div>
+          <div class="as2-fb" id="a1f"></div>
+        </div>
+        <div class="as2-item">
+          <div class="as2-situation">A team is about to deploy a new invoice processing automation. The automation includes a step that divides the invoice total by the quantity to calculate per-unit cost. They're worried about what happens if quantity is 0 (a subscription invoice with no discrete units).</div>
+          <div class="as2-q">Best technique?</div>
+          <div class="as2-opts" id="a2o">
+            <button class="as2-opt" onclick="doApply('a2','cross',false,'Cross-checking validates past outputs — but this automation hasn\'t deployed yet. The right technique is proactive: test the specific edge case before deployment.')">🔄 Cross-checking</button>
+            <button class="as2-opt" onclick="doApply('a2','sim',true,'✅ Correct. Simulating — creating a test invoice with quantity=0 and running it through the automation in test mode before deployment — directly tests whether the division-by-zero case is handled gracefully. This catches the bug before it reaches production, which is exactly what simulation is for.')">🧪 Simulating</button>
+            <button class="as2-opt" onclick="doApply('a2','doc',false,'Documentation helps after the fact. Confirming verifies actions already completed. This situation calls for proactive testing of a known edge case before deployment — that\'s simulation.')">📋 Documenting</button>
+          </div>
+          <div class="as2-fb" id="a2f"></div>
+        </div>
+        <div class="as2-item">
+          <div class="as2-situation">Security team requires an audit trail for all automated access permission changes — showing exactly what permissions were granted, to whom, when, and under what conditions — for a regulatory inspection next quarter.</div>
+          <div class="as2-q">Best technique?</div>
+          <div class="as2-opts" id="a3o">
+            <button class="as2-opt" onclick="doApply('a3','cross',false,'Cross-checking validates current accuracy. The regulatory requirement is specifically for a persistent historical record of decisions — that\'s a documentation requirement.')">🔄 Cross-checking</button>
+            <button class="as2-opt" onclick="doApply('a3','sim',false,'Simulating tests future scenarios. The requirement here is for a historical audit trail of decisions already made — that\'s not what simulation provides.')">🧪 Simulating</button>
+            <button class="as2-opt" onclick="doApply('a3','doc',true,'✅ Correct. The requirement is specifically a compliance audit trail — a persistent record of who was granted what access, when, and with what justification. This is the core use case for documentation as a validation technique. The logs must be queryable and retained for the required period.')">📋 Documenting</button>
+          </div>
+          <div class="as2-fb" id="a3f"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team uses all four validation techniques for their ticket routing automation. After 6 months, they review their validation logs and find: cross-checking shows 93% routing accuracy, simulation passes all defined test cases, confirming shows zero delivery failures, and documentation shows clean audit trails. A new analyst reviews 20 random tickets and finds that 3 of them contain security keywords but were routed to software support. None of the four validation techniques caught this. What does this reveal about the team's validation approach?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The four techniques are insufficient — the team needs a fifth validation method</button>
+        <button class="qopt" onclick="cq(this,true)">The techniques were applied correctly but the simulation didn't include security-keyword edge cases, and the cross-check measured overall accuracy without breaking down performance by category. 7% misclassification on security tickets is hidden inside 93% overall accuracy — security tickets are a small fraction of volume, so they don't move the aggregate metric significantly. The lesson: validation techniques are only as useful as the specific questions they're designed to answer. The team needed category-specific accuracy measurement (not just overall), and simulation scenarios that specifically tested security-keyword tickets. Good technique with inadequate coverage produces a false sense of confidence.</button>
+        <button class="qopt" onclick="cq(this,false)">The analyst's 20-ticket sample is too small to be statistically meaningful</button>
+        <button class="qopt" onclick="cq(this,false)">The automation should be shut down since it's misrouting security tickets</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Cross-checking compares outputs against an independent source — catching delivery failures, systematic misclassifications, and silent data gaps. Run weekly for active automations and immediately after significant system changes. The independent source must be genuinely independent from the automation's output path.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Simulating creates controlled test inputs to verify edge cases before they arrive in production. Build a test suite of scenarios you're worried about, run it before deployment and after changes. Confirming builds self-verification into the automation itself — immediately checking that actions completed successfully before proceeding. Use for irreversible or high-stakes actions.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Documenting creates the audit trail that enables retrospective investigation, compliance auditing, and knowledge transfer. Every automation needs basic execution logging; high-stakes automations need full audit trails and design documentation. Validation techniques are only as useful as the specific questions they're designed to answer — aggregate accuracy metrics hide category-level problems. Always break down performance by the dimensions that matter most for your use case.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showTech(i,btn){document.querySelectorAll(".tt2").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".tech-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById("tp"+i).classList.add("active");}
+function doApply(id,tech,el,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;const correct=typeof el==="object"&&(el.textContent.includes("Cross")&&tech==="cross"||el.textContent.includes("Simul")&&tech==="sim"||el.textContent.includes("Doc")&&tech==="doc");el.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="as2-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This scenario illustrates one of the most important limits of validation: aggregate accuracy metrics hide category-level problems. 93% overall accuracy sounds strong — but if security tickets represent 5% of volume and are misclassified 60% of the time, the aggregate barely moves. The team's cross-checking was valid but insufficiently granular. Simulation didn't cover this case because nobody wrote a test for security-keyword tickets. The fix: add category-specific accuracy measurement to the cross-checking process, and explicitly add security-keyword ticket scenarios to the simulation suite. This is not a failure of the techniques — it's a failure of coverage within those techniques.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("inadequate coverage"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ A fifth technique isn't the answer — the four techniques are genuinely comprehensive when applied with the right questions. The sample size is actually meaningful (3/20 is a 15% error rate — statistically concerning). And shutting down the automation because of a correctable issue throws away significant value. The core problem is that the validation was technically applied but not designed to detect category-specific failures. Better-targeted simulation and category-breakown cross-checking would have caught this without needing new techniques.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Tech Workers Are Legally and Professionally Responsible for When AI Makes a Mistake</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Responsibility spectrum */
+.resp-spectrum{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.rs-header{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.rs-col{padding:16px 18px;}
+.rs-col.builder{background:var(--red-pale);border-right:1px solid var(--purple-mid);}
+.rs-col.approver{background:var(--orange-pale);border-right:1px solid var(--purple-mid);}
+.rs-col.validator{background:var(--green-pale);}
+.rs-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.rs-col.builder .rs-label{color:var(--red);}
+.rs-col.approver .rs-label{color:var(--orange);}
+.rs-col.validator .rs-label{color:var(--green);}
+.rs-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;margin-bottom:8px;color:var(--gray-text);}
+.rs-body{font-size:12px;line-height:1.65;color:var(--gray-text);}
+.rs-examples{border-top:1px solid var(--purple-mid);}
+.rs-ex-row{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.rs-ex-cell{padding:12px 16px;border-right:1px solid var(--purple-mid);font-size:12px;line-height:1.55;color:var(--gray-text);background:var(--white);}
+.rs-ex-cell:last-child{border-right:none;}
+.rs-ex-cell strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;color:var(--gray-muted);}
+
+/* The "AI decided" defense */
+.defense-analysis{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:20px;padding:24px;margin:20px 0;}
+.da-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:14px;}
+.da-claim{background:#1a1025;border-radius:12px;padding:14px 16px;font-family:"Courier New",monospace;font-size:13px;line-height:1.7;color:#E2D9F3;margin-bottom:14px;}
+.da-responses{display:flex;flex-direction:column;gap:10px;}
+.da-response{background:var(--white);border-radius:12px;padding:14px 16px;border-left:4px solid var(--red);}
+.da-response.manager{border-left-color:var(--orange);}
+.da-response.legal{border-left-color:var(--red);}
+.da-response.hr{border-left-color:var(--purple);}
+.da-resp-who{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.da-response.manager .da-resp-who{color:var(--orange);}
+.da-response.legal .da-resp-who{color:var(--red);}
+.da-response.hr .da-resp-who{color:var(--purple);}
+.da-resp-body{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Protection steps */
+.protection-steps{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.ps2{background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;}
+.ps2-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.ps2-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ps2-body{font-size:13px;line-height:1.6;color:var(--gray-text);}
+.ps2-proof{background:var(--green-pale);border-radius:7px;padding:6px 10px;margin-top:6px;font-size:12px;line-height:1.5;color:var(--green);}
+
+/* Scenarios */
+.scenarios{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.scenario{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.sc-situation{font-size:14px;line-height:1.7;color:var(--gray-text);font-style:italic;margin-bottom:12px;}
+.sc-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.sc-opts{display:flex;flex-direction:column;gap:7px;}
+.sc-opt{border:2px solid var(--purple-mid);border-radius:9px;padding:9px 14px;font-size:13px;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:left;line-height:1.5;}
+.sc-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sc-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.sc-opt.wrong{background:var(--red-pale);border-color:var(--red);cursor:default;}
+.sc-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.sc-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.sc-fb.show.bad{display:block;background:var(--red-pale);color:var(--red);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.4 — Responsible Automation</div>
+  <h1>What Tech Workers Are Legally and Professionally Responsible for When AI Makes a Mistake</h1>
+  <p class="hero-sub">When an AI-assisted automation produces a wrong output and someone acts on it, who is accountable? The answer in tech is nuanced but real — and understanding it is the single most important reason to take validation seriously. This article makes that responsibility concrete.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>"The AI Made the Decision" Is Not a Legal Defense</h2>
+    <p>This is the core concept of this article, and it needs to be stated clearly before anything else: in virtually every legal, regulatory, and professional context, the fact that an automated system produced an output does not transfer responsibility for that output from the humans who built, approved, or acted on it to the system itself.</p>
+    <p>AI systems and automation tools are not legal persons. They cannot be sued, disciplined, or held accountable in any meaningful sense. When something goes wrong — when a miscategorized ticket causes a security breach, when a dirty-data report leads to a wrong business decision, when an automated payment triggers an incorrect transaction — <mark>responsibility attaches to the humans in the chain: the person who built the automation, the person who approved its deployment, and the person who acted on its output without verifying it.</mark></p>
+    <div class="pull-quote">
+      <p>Deploying an automation is a professional act with professional consequences. "The algorithm decided" is not an explanation that satisfies a regulator, a compliance team, or an employment tribunal — and it shouldn't.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Who Holds Responsibility — The Three Roles</h2>
+    <div class="resp-spectrum">
+      <div class="rs-header">
+        <div class="rs-col builder">
+          <div class="rs-label">🔴 Role 1</div>
+          <div class="rs-title">The Builder</div>
+          <div class="rs-body">The person who designed and built the automation. Responsible for design choices: which validation steps were included, which were excluded, what the automation does with edge cases, what the error handling looks like, and whether the underlying data and logic were appropriate.</div>
+        </div>
+        <div class="rs-col approver">
+          <div class="rs-label">🟠 Role 2</div>
+          <div class="rs-title">The Approver</div>
+          <div class="rs-body">The manager or team lead who approved the automation's deployment. Responsible for understanding what the automation does, what risks it carries, what validation was performed before deployment, and ensuring the design is appropriate for the risk level of the task.</div>
+        </div>
+        <div class="rs-col validator">
+          <div class="rs-label">🟡 Role 3</div>
+          <div class="rs-title">The Validator</div>
+          <div class="rs-body">The person responsible for ongoing monitoring and validation of the automation's outputs. Responsible for catching errors that make it through the system, ensuring the automation is still appropriate as conditions change, and escalating problems when they're found.</div>
+        </div>
+      </div>
+      <div class="rs-examples">
+        <div class="rs-ex-row">
+          <div class="rs-ex-cell"><strong>When responsible</strong>When the automation's design created the failure condition — inadequate testing, missing edge case handling, wrong validation, or failure to document assumptions that were later violated</div>
+          <div class="rs-ex-cell"><strong>When responsible</strong>When approval was given without adequate understanding of the automation's design — especially when risks were not assessed, validation testing was not required, or deployment was rushed</div>
+          <div class="rs-ex-cell"><strong>When responsible</strong>When outputs that should have been reviewed were acted on without review — or when monitoring was inadequate and a systematic failure ran undetected</div>
+        </div>
+        <div class="rs-ex-row">
+          <div class="rs-ex-cell"><strong>Protecting yourself</strong>Document design decisions, testing performed, known limitations, and the rationale for each validation choice. If you raised concerns that were overridden, document that too.</div>
+          <div class="rs-ex-cell"><strong>Protecting yourself</strong>Document your review of the automation's design and validation before approval. Require testing evidence and a risk assessment as conditions of approval. Don't rubber-stamp deployments.</div>
+          <div class="rs-ex-cell"><strong>Protecting yourself</strong>Document your monitoring activity and the specific outputs you reviewed. If you find an error, report it immediately and document the report. Don't let problems accumulate unaddressed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why "The AI Decided" Doesn't Work as an Explanation</h2>
+    <div class="defense-analysis">
+      <div class="da-label">Scenario: An automated expense approval tool approves a fraudulent $3,200 expense with 91% confidence. The claim: "The AI approved it — I just followed the system."</div>
+      <div class="da-claim">Tech worker: "I didn't approve that expense — the automation did. It showed 91% confidence. I just processed what the system told me."</div>
+      <div class="da-responses">
+        <div class="da-response manager">
+          <div class="da-resp-who">Finance Manager</div>
+          <div class="da-resp-body">"You are the designated reviewer for expenses over $2,000. The automation assists you — it doesn't replace your judgment. When you clicked 'process,' you were making a professional decision. The automation's confidence score is advisory, not authoritative."</div>
+        </div>
+        <div class="da-response legal">
+          <div class="da-resp-who">Legal / Compliance Team</div>
+          <div class="da-resp-body">"The expense policy requires human verification of unusual expenses. $3,200 at a restaurant chain triggers that threshold. There's no policy provision that 'AI confidence ≥ 90%' satisfies the verification requirement. You were required to verify — the AI was a tool to assist that verification, not to replace it."</div>
+        </div>
+        <div class="da-response hr">
+          <div class="da-resp-who">HR (in a performance review context)</div>
+          <div class="da-resp-body">"We understand the AI showed high confidence. Professional judgment means knowing when to look more carefully at a situation even when a tool says it looks fine. A $3,200 restaurant expense is that situation. We need to discuss your verification practices going forward."</div>
+        </div>
+      </div>
+    </div>
+    <p>The pattern across all three responses: the automation is a tool, not an authority. The human who interacts with the tool's output — especially when that interaction involves an action with consequences — retains professional responsibility for that action. AI confidence is an input to your judgment, not a substitute for it.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How to Protect Yourself Professionally</h2>
+    <p>Professional protection in automation contexts comes from being able to demonstrate that you exercised reasonable judgment, followed appropriate procedures, and documented your work. Here's what that looks like concretely:</p>
+    <div class="protection-steps">
+      <div class="ps2"><div class="ps2-icon">📋</div><div><div class="ps2-title">Document your design decisions and their rationale</div><div class="ps2-body">If you build an automation, create a record of: what it does, what testing was performed, what edge cases were identified and how they're handled, what the known limitations are, and any concerns you raised that were accepted or overridden. This record protects you if the automation later fails in a way that could have been caught during design.</div><div class="ps2-proof">✅ Professional protection: "Here is the testing I performed, the edge cases I documented, and the review I requested before deployment."</div></div></div>
+      <div class="ps2"><div class="ps2-icon">✉️</div><div><div class="ps2-title">Escalate concerns in writing</div><div class="ps2-body">If you're asked to deploy an automation that you believe has inadequate validation, or that removes human oversight from a step you believe requires it — raise the concern in writing (email, documented Jira comment, meeting notes). "I flagged this verbally" is far less protective than "I sent this email on this date outlining these specific concerns."</div><div class="ps2-proof">✅ Professional protection: "I identified these risks in writing before deployment. Here is the email I sent to my manager on [date]."</div></div></div>
+      <div class="ps2"><div class="ps2-icon">🔍</div><div><div class="ps2-title">Actually validate the outputs you're responsible for reviewing</div><div class="ps2-body">If your role includes reviewing automated outputs before they're acted on, perform that review genuinely — not as a rubber-stamp. A reviewer who approves everything without reading creates false confidence and inherits liability for every error that slips through. Document your review activity: what you checked, when, what you found, and what you did with it.</div><div class="ps2-proof">✅ Professional protection: "I reviewed these outputs on these dates and flagged these anomalies. Here is the documentation of my review process."</div></div></div>
+      <div class="ps2"><div class="ps2-icon">🚨</div><div><div class="ps2-title">Report errors immediately when you find them</div><div class="ps2-body">If you discover that an automation has been producing wrong outputs, report it immediately — to your manager, to the relevant team, and document the report. Sitting on knowledge of a systematic error and not reporting it creates its own professional exposure. Early reporting enables faster response and demonstrates that you acted responsibly when you had information to act on.</div><div class="ps2-proof">✅ Professional protection: "I discovered this issue on [date] and reported it immediately to [manager]. Here is my email."</div></div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Who's Responsible in These Scenarios?</h2>
+    <div class="scenarios">
+      <div class="scenario">
+        <div class="sc-situation">An IT coordinator built an automated expense approval flow. They designed it with no human review step for expenses below $5,000. Their manager approved the deployment. Two weeks later, a $4,800 fraudulent expense is approved automatically. The coordinator says the manager approved the design; the manager says the coordinator should have included validation.</div>
+        <div class="sc-q">Who bears the primary professional responsibility?</div>
+        <div class="sc-opts" id="s1o">
+          <button class="sc-opt" onclick="doSC('s1','b',this,'The builder made the design choice to exclude human review for expenses under $5,000 — a threshold they set without consulting fraud risk data. But the approver\'s responsibility is also real — approving a financial automation without requiring human validation for amounts up to $5,000 is a governance failure. In practice, both bear responsibility: the builder for the design decision; the approver for insufficient review of that decision. Neither "I followed the design" nor "I approved the overall plan" is a complete defense.')">The builder — they designed the automation without adequate validation</button>
+          <button class="sc-opt" onclick="doSC('s1','a',this,'The approver\'s responsibility is real — but the builder is not absolved by management approval. The builder made specific design choices (no human review below $5K) that created the failure condition. Professional responsibility in automation is distributed: the builder for what they built; the approver for what they allowed. Both carry responsibility here.')">The approver — they approved an inadequately designed automation</button>
+          <button class="sc-opt" onclick="doSC('s1','both',true,'✅ Correct. Both carry responsibility. The builder made the design choice to exclude human review for amounts up to $5,000 — a significant financial threshold that arguably warrants validation regardless of automation confidence. The approver approved a financial automation without requiring evidence of adequate fraud controls. Professional responsibility in automation is often shared across the chain: builder for design decisions, approver for governance decisions. The absence of conflict between them ("the manager approved it") doesn\'t eliminate the builder\'s responsibility for the design choices they made.')">Both — responsibility is shared across the design and approval chain</button>
+        </div>
+        <div class="sc-fb" id="s1f"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An IT analyst has been running a weekly automated security audit for 8 months. The audit produces a clean report every week — no violations found. A new security engineer reviews the audit and realizes the tool has been checking the wrong server group for 8 months; the servers that should have been audited were never included in the scan. The analyst says: "The tool ran fine every week — it's not my fault the configuration was wrong from the start." What's the professional reality?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The analyst is correct — configuration errors are the vendor's responsibility</button>
+        <button class="qopt" onclick="cq(this,true)">The analyst does bear professional responsibility — specifically for the lack of ongoing validation that would have caught the configuration error. Running an automated security audit and never cross-checking its scope against the actual server inventory is a monitoring failure. "The tool ran fine" means the tool did what it was configured to do — it doesn't mean the tool was configured correctly. A professional responsible for a security audit has an obligation to verify that the audit is actually covering what it should cover, not just that it completes without errors. Eight months of reports showing clean results on the wrong servers is not eight months of evidence that the right servers are clean.</button>
+        <button class="qopt" onclick="cq(this,false)">The new security engineer is responsible for finding the error, not the analyst who ran it</button>
+        <button class="qopt" onclick="cq(this,false)">Both the analyst and the vendor share equal responsibility for the misconfiguration</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>"The AI decided" is not a professional defense. AI systems are tools — the humans who build, approve, and validate their outputs retain professional responsibility for those outputs. This isn't a legal technicality — it reflects the reality that automation design choices (what to validate, what oversight to include, what edge cases to handle) are professional judgments made by humans with professional consequences.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Responsibility is distributed across three roles: the builder (responsible for design choices and testing), the approver (responsible for governance and deployment oversight), and the validator (responsible for ongoing monitoring and error detection). In automation failures, responsibility typically attaches to whoever made the key decisions that created the failure condition — which is almost always a human decision, not the automation itself.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Professional protection comes from documentation: record your design decisions and rationale, escalate concerns in writing, document your actual validation activity, and report errors immediately when found. These practices don't prevent automation failures — but they demonstrate that you acted responsibly with the information and authority you had, which is the professional standard you're held to.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doSC(id,opt,btn,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;const correct=opt==="both";btn.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="sc-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The professional responsibility of someone running an automated security audit includes verifying that the audit is configured correctly — not just that it runs without errors. A tool that runs correctly on the wrong configuration produces systematically misleading results. Eight clean reports on the wrong servers is not a validation success; it's a monitoring failure. The professional standard for running a security audit requires verifying scope, not just verifying completion. The analyst's responsibility was to ensure the audit covered what it should — not just to confirm the tool didn't throw errors.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("bears professional responsibility"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The vendor's responsibility is to provide a functioning tool — which they did (the audit ran correctly on its configured scope). The new engineer's responsibility is to improve the process going forward. But neither eliminates the analyst's responsibility to verify that the tool was configured correctly and actually covering the right servers. 'The tool ran fine' is not evidence that the tool was doing the right thing — that's exactly the monitoring responsibility the analyst failed to fulfill.";}
+}
+</script>
+</body>
+</html>

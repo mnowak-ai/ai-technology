@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where to Double-Check AI: A Practical Guide to Knowing When Human Review Is Non-Negotiable</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Four signals */
+.signals-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.signal-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.sig-num{font-family:"Fraunces",serif;font-size:28px;font-weight:900;color:var(--purple);margin-bottom:8px;}
+.sig-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;line-height:1.3;}
+.sig-def{font-size:13px;line-height:1.65;color:var(--gray-text);margin-bottom:10px;}
+.sig-examples{display:flex;flex-direction:column;gap:5px;}
+.sig-ex{font-size:12px;line-height:1.55;color:var(--gray-text);padding-left:12px;position:relative;}
+.sig-ex::before{content:"→";position:absolute;left:0;font-weight:700;color:var(--purple);}
+.sig-never{background:var(--red-pale);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.5;color:var(--red);margin-top:8px;}
+.sig-sometimes{background:var(--orange-pale);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.5;color:var(--orange);margin-top:8px;}
+
+/* Decision matrix */
+.decision-matrix{border:1.5px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin:20px 0;}
+.dm-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;background:var(--purple-pale);}
+.dm-header div{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple-dark);}
+.dm-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;border-top:1px solid var(--purple-mid);}
+.dm-row:nth-child(even) .dm-cell{background:var(--gray-soft);}
+.dm-cell{padding:11px 14px;font-size:13px;color:var(--gray-text);}
+.dm-cell:first-child{font-weight:600;color:var(--purple-dark);}
+.dm-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;}
+.dm-badge.always{background:var(--red-pale);color:var(--red);}
+.dm-badge.often{background:var(--orange-pale);color:var(--orange);}
+.dm-badge.rarely{background:var(--green-pale);color:var(--green);}
+
+/* The checklist */
+.review-checklist{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.rc-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.rc-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.rc-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.rc-questions{display:flex;flex-direction:column;gap:10px;}
+.rc-q{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:all .2s;}
+.rc-q:hover{border-color:var(--purple);}
+.rc-q.checked{border-color:var(--green);background:var(--green-pale);}
+.rc-q.red-flag{border-color:var(--red);background:var(--red-pale);}
+.rc-checkbox{width:22px;height:22px;border-radius:50%;border:2px solid var(--purple-mid);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s;}
+.rc-q.checked .rc-checkbox{background:var(--green);border-color:var(--green);color:white;}
+.rc-q.red-flag .rc-checkbox{background:var(--red);border-color:var(--red);color:white;}
+.rc-q-text{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:3px;}
+.rc-q-why{font-size:12px;line-height:1.6;color:var(--gray-muted);}
+.rc-result{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:14px 16px;margin-top:14px;display:none;}
+.rc-result.show{display:block;}
+
+/* Practice sim */
+.practice-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.ps-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.ps-title{font-family:"Fraunces",serif;font-size:20px;color:var(--purple-dark);font-weight:700;margin-bottom:6px;}
+.ps-sub{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.ps-items{display:flex;flex-direction:column;gap:14px;}
+.ps-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.ps-scenario{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:12px;}
+.ps-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;}
+.ps-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.ps-opt{border:2px solid var(--purple-mid);border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);font-family:"DM Sans",sans-serif;transition:all .2s;}
+.ps-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.ps-opt.right{background:var(--green-pale);border-color:var(--green);cursor:default;}
+.ps-opt.wrong{background:var(--orange-pale);border-color:var(--orange);cursor:default;}
+.ps-fb{font-size:13px;line-height:1.65;padding:9px 13px;border-radius:9px;margin-top:9px;display:none;}
+.ps-fb.show.good{display:block;background:var(--green-pale);color:var(--green);}
+.ps-fb.show.bad{display:block;background:var(--orange-pale);color:var(--orange);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 4.4 — Responsible Automation</div>
+  <h1>Where to Double-Check AI: A Practical Guide to Knowing When Human Review Is Non-Negotiable</h1>
+  <p class="hero-sub">The video introduced the concept of double-checking in critical decisions, data-sensitive steps, and high-impact actions. This article makes that framework actionable — a checklist you can apply to any workflow step to determine whether human eyes are required before it proceeds.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Problem With "Just Check the Important Stuff"</h2>
+    <p>The instinct to validate AI outputs is correct. The challenge is operationalizing it — knowing which outputs to check, when, and with what level of rigor. "Check the important stuff" as a policy produces inconsistent behavior: different team members have different intuitions about what's important, and those intuitions don't survive role transitions, busy periods, or situations where checking feels slow and the output looks fine.</p>
+    <p><mark>A good double-check framework is specific enough that two different people would make the same decision about whether a given step requires human review.</mark> This article provides that framework — four signals that indicate review is needed, a decision matrix by output type, and a checklist you can apply to any workflow step.</p>
+    <div class="pull-quote">
+      <p>The question is never "is this automation good enough?" It's "what happens if this specific output is wrong?" When that answer includes real harm to real people, review isn't optional — it's the job.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Signals That Indicate Human Review Is Needed</h2>
+    <div class="signals-grid">
+      <div class="signal-card">
+        <div class="sig-num">01</div>
+        <div class="sig-title">High Stakes if Wrong</div>
+        <div class="sig-def">The output drives a decision or action where being wrong has meaningful consequences — financial, legal, operational, or personal. The magnitude of potential harm, not the probability of error, is the primary signal here.</div>
+        <div class="sig-examples">
+          <div class="sig-ex">Ticket classified as low priority — but it's a security incident</div>
+          <div class="sig-ex">Report sent to leadership — based on metrics that include dirty data</div>
+          <div class="sig-ex">Access provisioned — but to the wrong role or system</div>
+          <div class="sig-ex">Payment triggered — but the document was a quote, not an invoice</div>
+        </div>
+        <div class="sig-never">🔴 Always review when: the output triggers an irreversible action (payment, account deletion, access grant) or reaches external stakeholders (customers, regulators, senior leadership)</div>
+      </div>
+      <div class="signal-card">
+        <div class="sig-num">02</div>
+        <div class="sig-title">Low Confidence Score</div>
+        <div class="sig-def">The AI system reports low confidence in its output — indicating the input doesn't closely match the training distribution and the classification or recommendation is uncertain. Low confidence is the AI's way of saying "I'm not sure about this one."</div>
+        <div class="sig-examples">
+          <div class="sig-ex">Triage AI classifies ticket with 62% confidence (your threshold: 80%)</div>
+          <div class="sig-ex">Document processor returns "uncertain" on invoice field extraction</div>
+          <div class="sig-ex">Sentiment analysis returns 51% positive (near-random confidence)</div>
+        </div>
+        <div class="sig-sometimes">🟡 Usually review when: confidence falls below your defined threshold. The right threshold depends on stakes — higher stakes require higher confidence thresholds before auto-proceeding.</div>
+      </div>
+      <div class="signal-card">
+        <div class="sig-num">03</div>
+        <div class="sig-title">Unusual or Surprising Output</div>
+        <div class="sig-def">The output is significantly different from what's normal — either much better than expected, much worse than expected, or structurally different from typical outputs. Surprising results in either direction are a review signal, not a reason to celebrate or panic without investigation.</div>
+        <div class="sig-examples">
+          <div class="sig-ex">Weekly report shows 100% improvement in resolution time (check data quality)</div>
+          <div class="sig-ex">Automated access audit flags 0 violations (verify the audit ran correctly)</div>
+          <div class="sig-ex">Onboarding flow produces an email address with unusual formatting</div>
+          <div class="sig-ex">Report shows a KPI has held exactly flat for 6 consecutive weeks</div>
+        </div>
+        <div class="sig-sometimes">🟡 Always review when: the output would be surprising if reported manually — dramatic improvements, dramatic degradations, or implausibly consistent results all warrant data quality checks before distribution.</div>
+      </div>
+      <div class="signal-card">
+        <div class="sig-num">04</div>
+        <div class="sig-title">Sensitive Domain or Category</div>
+        <div class="sig-def">The subject matter of the output falls into a domain where errors have disproportionate consequences: security, compliance, health data, financial transactions, or decisions that affect people's employment, access, or rights. Category matters independently of confidence score.</div>
+        <div class="sig-examples">
+          <div class="sig-ex">Any ticket containing security or compliance vocabulary</div>
+          <div class="sig-ex">Any workflow touching PHI, PII, or financial account data</div>
+          <div class="sig-ex">Any automated action affecting employee access or status</div>
+          <div class="sig-ex">Any output that will be presented to regulators or auditors</div>
+        </div>
+        <div class="sig-never">🔴 Always review when: the domain is security, compliance, health, finance, or HR — regardless of AI confidence score. These categories carry consequences that outlast the convenience of skipping review.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Decision Matrix — Review Frequency by Output Type</h2>
+    <p>Use this matrix to determine the baseline review frequency for common automation output types. Adjust based on the four signals above — any signal present increases review frequency one level.</p>
+    <div class="decision-matrix">
+      <div class="dm-header">
+        <div>Output Type</div><div>Review Frequency</div><div>Stakes Level</div><div>Primary Risk</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Security/compliance ticket classification</div>
+        <div class="dm-cell"><span class="dm-badge always">Every run</span></div>
+        <div class="dm-cell">Critical</div>
+        <div class="dm-cell">Missed incident</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Financial payment authorization</div>
+        <div class="dm-cell"><span class="dm-badge always">Every run</span></div>
+        <div class="dm-cell">Critical</div>
+        <div class="dm-cell">Incorrect payment</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Executive/leadership report distribution</div>
+        <div class="dm-cell"><span class="dm-badge always">Every run</span></div>
+        <div class="dm-cell">High</div>
+        <div class="dm-cell">Decision on bad data</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Employee access provisioning</div>
+        <div class="dm-cell"><span class="dm-badge often">Weekly sample</span></div>
+        <div class="dm-cell">High</div>
+        <div class="dm-cell">Over/under provisioning</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Routine ticket routing (non-security)</div>
+        <div class="dm-cell"><span class="dm-badge often">Daily queue scan</span></div>
+        <div class="dm-cell">Medium</div>
+        <div class="dm-cell">Misrouting, delay</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Standard operational metrics report</div>
+        <div class="dm-cell"><span class="dm-badge often">Before distribution</span></div>
+        <div class="dm-cell">Medium</div>
+        <div class="dm-cell">Data quality issues</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Automated notification/confirmation emails</div>
+        <div class="dm-cell"><span class="dm-badge rarely">Monthly spot-check</span></div>
+        <div class="dm-cell">Low</div>
+        <div class="dm-cell">Wrong content, bounces</div>
+      </div>
+      <div class="dm-row">
+        <div class="dm-cell">Scheduled data backup/archive</div>
+        <div class="dm-cell"><span class="dm-badge rarely">Monthly verification</span></div>
+        <div class="dm-cell">Low</div>
+        <div class="dm-cell">Silent backup failure</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Pre-Send Checklist — Apply It to Any Output</h2>
+    <div class="review-checklist">
+      <div class="rc-label">✅ Interactive Checklist</div>
+      <div class="rc-title">Before any automated output is actioned or distributed</div>
+      <div class="rc-sub">Click each question to mark it as checked. When a red-flag question is triggered, it upgrades the output to require immediate human review.</div>
+      <div class="rc-questions">
+        <div class="rc-q" onclick="toggleRCQ(this,'green')">
+          <div class="rc-checkbox"></div>
+          <div><div class="rc-q-text">Does this output trigger an irreversible action?</div><div class="rc-q-why">Payments, account deletions, data overwrites, customer notifications. If yes → human review before execution, every time.</div></div>
+        </div>
+        <div class="rc-q" onclick="toggleRCQ(this,'green')">
+          <div class="rc-checkbox"></div>
+          <div><div class="rc-q-text">Will this output reach external stakeholders or decision-makers?</div><div class="rc-q-why">Reports sent to executives, customers, regulators, or partners. If yes → review the content before distribution.</div></div>
+        </div>
+        <div class="rc-q" onclick="toggleRCQ(this,'red')">
+          <div class="rc-checkbox"></div>
+          <div><div class="rc-q-text">Does this output look dramatically different from last week?</div><div class="rc-q-why">If any key metric changed by more than 25–30%, investigate the cause before accepting the output as valid.</div></div>
+        </div>
+        <div class="rc-q" onclick="toggleRCQ(this,'red')">
+          <div class="rc-checkbox"></div>
+          <div><div class="rc-q-text">Does this involve a security, compliance, financial, or HR domain?</div><div class="rc-q-why">These domains require review regardless of AI confidence score. Category determines review requirement — not just output characteristics.</div></div>
+        </div>
+        <div class="rc-q" onclick="toggleRCQ(this,'green')">
+          <div class="rc-checkbox"></div>
+          <div><div class="rc-q-text">Is any AI confidence score below your defined threshold?</div><div class="rc-q-why">Low-confidence outputs should route to human review — not auto-proceed. Define your threshold before deployment, not when a failure occurs.</div></div>
+        </div>
+        <div class="rc-q" onclick="toggleRCQ(this,'green')">
+          <div class="rc-checkbox"></div>
+          <div><div class="rc-q-text">Has the source data changed format, structure, or definition recently?</div><div class="rc-q-why">If upstream systems were updated, validate that the automation's field mappings still match. Silent format shifts break outputs without error messages.</div></div>
+        </div>
+      </div>
+      <div class="rc-result" id="rcResult"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Apply the Framework — Practice</h2>
+    <div class="practice-sim">
+      <div class="ps-label">🎯 Practice — Review Required?</div>
+      <div class="ps-title">For each automated output, does it require human review before proceeding?</div>
+      <div class="ps-sub">Apply the four signals and decision matrix to each scenario.</div>
+      <div class="ps-items">
+        <div class="ps-item">
+          <div class="ps-scenario">An automated weekly report shows IT ticket volume at 312 this week vs. 307 last week — a 1.6% increase within normal fluctuation range. The report is destined for the IT manager (internal). No security or compliance metrics are included. The AI confidence on all classifications this week averaged 88%.</div>
+          <div class="ps-q">Human review required before sending?</div>
+          <div class="ps-opts" id="p1o">
+            <button class="ps-opt" onclick="doPS('p1',false,this,'⚠️ This report is internal, shows normal variation, has no sensitive domains, and has good AI confidence. While any report benefits from a quick sanity check, this scenario doesn\'t trigger any of the four red-flag signals. The effort of full formal review isn\'t justified here — though the IT manager glancing at the numbers before acting on them is always good practice.')">🔴 Yes — every automated report needs human review</button>
+            <button class="ps-opt" onclick="doPS('p1',true,this,'✅ Correct. None of the four signals are triggered: the output doesn\'t drive an irreversible action, the destination is internal (IT manager, not external stakeholders), the numbers show normal variation (no dramatic change), no sensitive domain is involved, and AI confidence is strong. This is a routine internal report with normal-range metrics — a quick sanity glance is fine, but formal review before every send would eliminate the efficiency benefit of the automation.')">🟢 No — this doesn\'t trigger review signals</button>
+          </div>
+          <div class="ps-fb" id="p1f"></div>
+        </div>
+        <div class="ps-item">
+          <div class="ps-scenario">A ticket triage automation classifies a new ticket as "Software — Low Priority" with 87% confidence. The ticket subject: "Database showing unexpected results after schema update." The body mentions "access denied" errors and "data not matching expected values." The automation has no security keyword override rules.</div>
+          <div class="ps-q">Human review required before routing?</div>
+          <div class="ps-opts" id="p2o">
+            <button class="ps-opt" onclick="doPS('p2',true,this,'✅ Correct. Two signals are triggered: (1) Sensitive domain — "database schema update" + "access denied" + "data not matching" are potential data integrity or security indicators that should trigger mandatory human review regardless of the AI\'s Software classification. (2) Surprise potential — this ticket contains vocabulary that could indicate a serious incident being mislabeled as low-priority software support. The AI\'s 87% confidence in "Software — Low Priority" is exactly the overconfident wrong classification pattern from the previous article. This ticket needs human eyes before routing.')">🔴 Yes — sensitive domain signals require review</button>
+            <button class="ps-opt" onclick="doPS('p2',false,this,'⚠️ 87% confidence seems high — but remember that confidence score measures similarity to training data, not whether the classification is correct. "Database schema" + "access denied" + "data not matching" are potential security/data integrity signals that should trigger mandatory review regardless of confidence. The overconfident wrong classification failure mode specifically warns against using confidence as the only routing criterion for sensitive categories.')">🟢 No — 87% confidence is above threshold</button>
+          </div>
+          <div class="ps-fb" id="p2f"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team implements the four-signal review framework. Six months later, they review their logs and discover that 73% of their workflow steps are flagged as "requires review" — leading to reviewers becoming overwhelmed and starting to approve outputs without actually reading them. What has gone wrong with the framework implementation, and what's the fix?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="cq(this,false)">The framework is too strict — not all four signals should trigger review</button>
+        <button class="qopt" onclick="cq(this,true)">The framework was likely applied too broadly — treating all four signals as equally strong triggers for the same level of review, rather than calibrating review depth to risk level. When 73% of outputs require review and reviewers are overwhelmed, the outcome is worse than no review at all (rubber-stamping is more dangerous than never reviewing, because it creates false confidence). The fix: differentiate review levels. Security/compliance/irreversible actions → mandatory deep review before proceeding. Routine operational outputs → spot-check 10% weekly. Dramatic metric changes → investigate before acting, but not a blocker. The goal is reviewers who take every review seriously — which requires review volume that is manageable and review tasks that are proportionate to the actual risk of each output type.</button>
+        <button class="qopt" onclick="cq(this,false)">Reviewers need more training on how to read AI outputs efficiently</button>
+        <button class="qopt" onclick="cq(this,false)">The automation workflows should be rebuilt with more accurate AI to reduce the number of signals triggered</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Four signals indicate human review is needed: high stakes if wrong (irreversible actions, external distribution), low confidence score (below your defined threshold), unusual or surprising output (dramatic changes in either direction), and sensitive domain (security, compliance, finance, HR — regardless of confidence). Any single signal is sufficient to require review.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Review depth should be proportionate to risk. Every run for security classifications and financial authorizations. Pre-distribution for leadership reports. Weekly sampling for access provisioning and routine routing. Monthly spot-checking for notifications and backups. A framework where 73% of outputs require review creates overwhelm that defeats the purpose — scale review depth to actual risk level.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Confidence score alone is not a sufficient routing criterion for sensitive domains. High confidence means the input resembles training data — not that the output is correct. Security, compliance, and financial categories require human review regardless of AI confidence level. Category-level override rules that bypass confidence thresholds for these domains are the correct design pattern.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+let checkedCount=0;
+function toggleRCQ(el,color){
+  if(el.classList.contains("checked")||el.classList.contains("red-flag"))return;
+  el.classList.add(color==="red"?"red-flag":"checked");
+  el.querySelector(".rc-checkbox").textContent="✓";
+  checkedCount++;
+  if(checkedCount>=3){
+    const res=document.getElementById("rcResult");
+    res.className="rc-result show";
+    const hasRed=document.querySelector(".rc-q.red-flag");
+    if(hasRed){res.innerHTML="<strong style='color:var(--red)'>🔴 Immediate human review required.</strong> One or more red-flag signals are triggered. Do not proceed until a human has reviewed this output. The red-flag questions — dramatic metric changes and sensitive domain involvement — indicate conditions where AI errors carry outsized consequences.";}
+    else{res.innerHTML="<strong style='color:var(--green)'>🟢 Standard review appropriate.</strong> No red-flag signals triggered. Apply the review level from the decision matrix based on output type. Remember: every automated report that reaches decision-makers benefits from a quick human sanity check before distribution, even when no signals are triggered.";}
+  }
+}
+function doPS(id,correct,btn,msg){const opts=document.getElementById(id+"o");if(opts.querySelector(".right,.wrong"))return;btn.classList.add(correct?"right":"wrong");const fb=document.getElementById(id+"f");fb.className="ps-fb show "+(correct?"good":"bad");fb.textContent=msg;}
+function cq(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Rubber-stamp reviewing — where reviewers approve outputs without actually reading them because review volume is overwhelming — creates false confidence that is more dangerous than no review at all. When a reviewer signs off on everything, the organization believes there's oversight when there isn't. The fix is tiered review: make mandatory deep review rare enough that it's always taken seriously. Routine outputs get spot-checking or sampling. Only the genuinely high-stakes outputs — security, irreversible actions, leadership reports — get full review every time. This is sustainable AND safer than uniform-but-overwhelmed reviewing.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("calibrating"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ The framework itself isn't too strict — it's being applied too uniformly. Training reviewers to read faster doesn't solve overwhelm; it speeds up rubber-stamping. Better AI reduces the frequency of signals but doesn't address the structural problem of undifferentiated review requirements. The fix is calibration: different levels of review for different risk levels. This makes the high-stakes reviews sustainable and taken seriously, while routine outputs are spot-checked rather than fully reviewed every time.";}
+}
+</script>
+</body>
+</html>
