@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Tech Professionals Think About Ethics: It's Not Instinct, It's a Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Skill comparison */
+.skill-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.skill-col{border-radius:20px;padding:24px;border:1.5px solid;}
+.skill-col.instinct{background:var(--orange-pale);border-color:var(--orange);}
+.skill-col.practice{background:var(--green-pale);border-color:var(--green);}
+.skill-col-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;}
+.instinct .skill-col-label{color:var(--orange);}
+.practice .skill-col-label{color:var(--green);}
+.skill-item{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.skill-icon{font-size:16px;flex-shrink:0;margin-top:2px;}
+.skill-text{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* The three questions framework */
+.framework-card{background:linear-gradient(135deg,var(--purple-dark) 0%,#7B2FBE 100%);border-radius:20px;padding:32px;margin:20px 0;color:var(--white);}
+.fc-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:12px;}
+.fc-title{font-family:"Fraunces",serif;font-size:24px;font-weight:900;margin-bottom:24px;line-height:1.2;}
+.fc-questions{display:flex;flex-direction:column;gap:14px;}
+.fc-q{background:rgba(255,255,255,.12);border-radius:14px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;}
+.fc-q-num{font-family:"Fraunces",serif;font-size:28px;font-weight:900;color:rgba(255,255,255,.4);flex-shrink:0;line-height:1;}
+.fc-q-title{font-size:16px;font-weight:700;margin-bottom:4px;}
+.fc-q-desc{font-size:13px;color:rgba(255,255,255,.8);line-height:1.6;}
+
+/* Practice levels */
+.practice-levels{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.pl-row{display:flex;gap:0;}
+.pl-left{display:flex;flex-direction:column;align-items:center;width:52px;flex-shrink:0;}
+.pl-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid;}
+.pl-dot.l1{background:var(--blue-pale);border-color:var(--blue);}
+.pl-dot.l2{background:var(--purple-pale);border-color:var(--purple);}
+.pl-dot.l3{background:var(--green-pale);border-color:var(--green);}
+.pl-dot.l4{background:var(--orange-pale);border-color:var(--orange);}
+.pl-dot.l5{background:linear-gradient(135deg,var(--purple-pale),var(--green-pale));border-color:var(--purple);}
+.pl-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.pl-row:last-child .pl-line{display:none;}
+.pl-body{flex:1;padding:0 0 20px 14px;padding-top:4px;}
+.pl-level{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;color:var(--purple);}
+.pl-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.pl-desc{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.pl-example{background:var(--gray-soft);border-radius:9px;padding:9px 12px;margin-top:8px;font-size:12px;line-height:1.65;color:var(--gray-muted);font-style:italic;}
+
+/* Self-assessment */
+.self-assess{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.sa-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.sa-intro{font-size:15px;color:var(--gray-text);margin-bottom:20px;line-height:1.7;}
+.sa-items{display:flex;flex-direction:column;gap:12px;}
+.sa-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.sa-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:10px;line-height:1.5;}
+.sa-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.sa-opt{padding:7px 14px;border-radius:8px;border:1.5px solid var(--purple-mid);background:var(--white);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif;}
+.sa-opt:hover{border-color:var(--purple);background:var(--purple-pale);color:var(--purple);}
+.sa-opt.selected{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.sa-result{display:none;margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.7;}
+.sa-result.show{display:block;background:var(--purple-pale);color:var(--purple-dark);}
+
+/* Habit builder */
+.habit-builder{border:1.5px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin:20px 0;}
+.hb-header{background:var(--purple-pale);padding:20px 24px;border-bottom:1px solid var(--purple-mid);}
+.hb-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);margin-bottom:6px;}
+.hb-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);line-height:1.3;}
+.hb-items{padding:4px 0;}
+.hb-item{padding:16px 24px;border-bottom:1px solid var(--purple-mid);display:flex;align-items:flex-start;gap:14px;cursor:pointer;transition:background .2s;}
+.hb-item:last-child{border-bottom:none;}
+.hb-item:hover{background:var(--purple-pale);}
+.hb-check{width:24px;height:24px;border-radius:6px;border:2px solid var(--purple-mid);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.hb-item.checked .hb-check{background:var(--purple);border-color:var(--purple);}
+.hb-check-inner{display:none;}
+.hb-item.checked .hb-check-inner{display:block;}
+.hb-content{flex:1;}
+.hb-habit{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:3px;}
+.hb-why{font-size:12px;color:var(--gray-muted);line-height:1.5;}
+.hb-counter{padding:14px 24px;background:var(--gray-soft);font-size:13px;color:var(--gray-muted);border-top:1px solid var(--purple-mid);}
+.hb-counter span{font-weight:700;color:var(--purple);}
+
+/* Analogy cards */
+.analogy-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.analogy-card{border-radius:16px;padding:20px;border:1.5px solid var(--purple-mid);background:var(--white);}
+.analogy-icon{font-size:28px;margin-bottom:10px;}
+.analogy-skill{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:6px;}
+.analogy-how{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.analogy-link{font-size:12px;color:var(--gray-muted);margin-top:8px;line-height:1.5;font-style:italic;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Module 5 — AI Ethics, Security & Responsible Use</div>
+  <h1>How Tech Professionals Think About Ethics: It's Not Instinct, It's a Practice</h1>
+  <p class="hero-sub">Most people think ethical behavior is something you either have or you don't — like a personality trait you're born with. But that's not how it works in professional settings. Ethical decision-making in tech is a skill. You can learn it, practice it, and get better at it. This article shows you how.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Biggest Misunderstanding About Ethics</h2>
+    <p>Here's a belief that gets people into trouble: "I'm a good person, so I'll make good ethical decisions when the moment comes."</p>
+    <p>That belief is understandable. But it's also why good, well-meaning people end up making ethical mistakes at work. The problem isn't character — it's that ethical situations at work often look nothing like the clear-cut moral dilemmas we imagine. <mark>They look like small, fast, time-pressured decisions where the wrong choice isn't obviously wrong</mark>.</p>
+    <p>Should you paste this client data into the AI to speed up the report? Should you act on this algorithm's recommendation without checking the methodology? Should you ship this feature before the privacy review is complete because the deadline is tomorrow? In the moment, these feel like ordinary work decisions. They're not. And having good values doesn't automatically tell you which way to go.</p>
+
+    <div class="pull-quote">
+      <p>Ethics at work isn't about your character. It's about your habits. Character tells you what you care about. Habits determine what you actually do under pressure.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Instinct vs. Practice: What's the Difference?</h2>
+    <p>Let's be specific about why relying on instinct alone isn't enough — and what practicing ethics actually looks like instead.</p>
+
+    <div class="skill-compare">
+      <div class="skill-col instinct">
+        <div class="skill-col-label">⚠️ Ethics as Instinct Only</div>
+        <div class="skill-item"><div class="skill-icon">🎲</div><div class="skill-text">You figure it out in the moment — which means under deadline pressure, instinct loses to urgency</div></div>
+        <div class="skill-item"><div class="skill-icon">🌫️</div><div class="skill-text">No framework means different answers each time, even for similar situations</div></div>
+        <div class="skill-item"><div class="skill-icon">😰</div><div class="skill-text">Hard to explain your reasoning to a manager or a client when asked</div></div>
+        <div class="skill-item"><div class="skill-icon">🔁</div><div class="skill-text">Same mistakes happen repeatedly because there's no system to learn from them</div></div>
+        <div class="skill-item"><div class="skill-icon">🤷</div><div class="skill-text">"I felt like it was okay" is not a defense when something goes wrong</div></div>
+      </div>
+      <div class="skill-col practice">
+        <div class="skill-col-label">✅ Ethics as Practice</div>
+        <div class="skill-item"><div class="skill-icon">🗺️</div><div class="skill-text">You have a framework — a set of questions you ask before acting — that works even under pressure</div></div>
+        <div class="skill-item"><div class="skill-icon">🔄</div><div class="skill-text">Consistent answers to similar situations because you're applying the same thinking process</div></div>
+        <div class="skill-item"><div class="skill-icon">💬</div><div class="skill-text">You can explain your reasoning clearly because you followed a process, not a feeling</div></div>
+        <div class="skill-item"><div class="skill-icon">📈</div><div class="skill-text">Gets better over time — each decision builds the habit, and the habit builds the skill</div></div>
+        <div class="skill-item"><div class="skill-icon">🛡️</div><div class="skill-text">"I followed our process and documented it" is a real defense</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Framework: Three Questions That Cut Through Almost Any Ethical Situation</h2>
+    <p>Professional ethicists — people who study this full-time — use frameworks to make decisions. You don't need to become an ethicist. But you do need at least one reliable framework that you can actually use in the middle of a busy workday.</p>
+    <p>The three-question framework below is used — in various forms — by AI ethics teams at major tech companies. It's simple enough to run through in 60 seconds and powerful enough to catch most of the mistakes that cost companies millions.</p>
+
+    <div class="framework-card">
+      <div class="fc-label">🧠 The Three-Question Ethics Framework</div>
+      <div class="fc-title">Before you act on or with an AI tool, ask these three questions.</div>
+      <div class="fc-questions">
+        <div class="fc-q">
+          <div class="fc-q-num">01</div>
+          <div>
+            <div class="fc-q-title">Is this accurate?</div>
+            <div class="fc-q-desc">Has the AI output been verified? Would I stake my professional reputation on this information being correct? If someone asked me to prove it, could I? AI can sound completely confident while being completely wrong — your job is to be the check that catches that before it does harm.</div>
+          </div>
+        </div>
+        <div class="fc-q">
+          <div class="fc-q-num">02</div>
+          <div>
+            <div class="fc-q-title">Is this fair?</div>
+            <div class="fc-q-desc">Does this decision or output treat different people equally? Could it disadvantage a group of people in ways that aren't justified? Is the data behind it representative of everyone it affects? Bias often doesn't announce itself — you have to look for it deliberately.</div>
+          </div>
+        </div>
+        <div class="fc-q">
+          <div class="fc-q-num">03</div>
+          <div>
+            <div class="fc-q-title">Is this safe?</div>
+            <div class="fc-q-desc">Does using this tool this way protect the privacy and security of the people whose data is involved? Does it follow my organization's policy? Would I be comfortable if my manager, a journalist, or a regulator could see exactly what I'm doing and why? If the answer to any of those is no — stop.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p>These three questions come directly from the lesson content in Module 5. When you see them appear in Lessons 5.1, 5.2, 5.3, and 5.4, you'll recognize them — because they're the backbone of all responsible AI use.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Ethics Is a Skill — And Skills Have Levels</h2>
+    <p>Like any professional skill, ethical reasoning develops over time. Here's what that progression looks like in a real tech career. Where do you think you are right now? Where do you want to be by the end of this certification?</p>
+
+    <div class="practice-levels">
+      <div class="pl-row">
+        <div class="pl-left"><div class="pl-dot l1">1</div><div class="pl-line"></div></div>
+        <div class="pl-body">
+          <div class="pl-level">Level 1 — Unaware</div>
+          <div class="pl-title">You don't know what you don't know</div>
+          <div class="pl-desc">At this level, you're using AI tools without thinking about the risks — not because you're careless, but because nobody has explained what those risks are yet. Most people starting their tech careers are here. There's nothing wrong with being here. You just need to move forward.</div>
+          <div class="pl-example">Example: Pasting company data into ChatGPT without knowing that's against policy — not because of bad intentions, but because the policy was never explained.</div>
+        </div>
+      </div>
+      <div class="pl-row">
+        <div class="pl-left"><div class="pl-dot l2">2</div><div class="pl-line"></div></div>
+        <div class="pl-body">
+          <div class="pl-level">Level 2 — Aware</div>
+          <div class="pl-title">You know the risks exist, but you don't always catch them in real time</div>
+          <div class="pl-desc">You've learned the principles, but applying them in fast-moving work situations is still hard. You might remember to verify an AI output when you have time, but forget when you're rushing. You know bias is a thing, but you're still learning to spot it in practice.</div>
+          <div class="pl-example">Example: You know you're supposed to check AI-generated statistics — but on a Friday afternoon with a deadline, you send the report before verifying. Then you remember after the fact.</div>
+        </div>
+      </div>
+      <div class="pl-row">
+        <div class="pl-left"><div class="pl-dot l3">3</div><div class="pl-line"></div></div>
+        <div class="pl-body">
+          <div class="pl-level">Level 3 — Practicing</div>
+          <div class="pl-title">You apply the framework consistently in most situations</div>
+          <div class="pl-desc">The three questions have become a habit. You check before you share. You flag when something feels off. You verify before you act. You might not catch everything — but you're building a track record of responsible decisions that managers notice and trust.</div>
+          <div class="pl-example">Example: An AI tool recommends rejecting a job application. Before acting, you ask: Is this accurate? Is this fair? Is this safe? You notice the algorithm seems to weight a zip code heavily and flag it to your manager before proceeding.</div>
+        </div>
+      </div>
+      <div class="pl-row">
+        <div class="pl-left"><div class="pl-dot l4">4</div><div class="pl-line"></div></div>
+        <div class="pl-body">
+          <div class="pl-level">Level 4 — Proactive</div>
+          <div class="pl-title">You identify ethical issues before they become problems</div>
+          <div class="pl-desc">You're not just reacting to ethical issues — you're anticipating them. You ask questions during project planning: "Who could be harmed by this if the AI is wrong?" "Does our data represent everyone it'll affect?" "What's our process if this produces a biased recommendation?" This level is what gets you invited into important rooms.</div>
+          <div class="pl-example">Example: During a sprint planning meeting, you ask the team what the fallback process is if the AI customer screening tool goes down — and what happens if it produces a false positive. Nobody had thought about it yet. You just prevented two potential incidents.</div>
+        </div>
+      </div>
+      <div class="pl-row">
+        <div class="pl-left"><div class="pl-dot l5">5</div></div>
+        <div class="pl-body">
+          <div class="pl-level">Level 5 — Leader</div>
+          <div class="pl-title">You help others build ethical habits too</div>
+          <div class="pl-desc">At this level, you're not just practicing ethics yourself — you're helping create a culture where the whole team does. You share what you've learned, mentor newer teammates, advocate for better processes, and speak up when organizational pressure is pushing toward a shortcut that creates risk. This is rare. It's also what the industry needs most.</div>
+          <div class="pl-example">Example: You notice your team never reviews AI outputs before they go to clients. You bring it up, propose a lightweight review step, and document a simple checklist. Three months later, that checklist catches a hallucinated data point that would have caused serious embarrassment.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Ethics Is Learned the Same Way Every Other Professional Skill Is</h2>
+    <p>Still not sure that ethics can be practiced like a skill? Let's make it concrete with a few direct comparisons.</p>
+
+    <div class="analogy-grid">
+      <div class="analogy-card">
+        <div class="analogy-icon">💻</div>
+        <div class="analogy-skill">Coding</div>
+        <div class="analogy-how">You don't write perfect code on day one. You learn patterns, make mistakes, read other people's code, get reviews, and slowly build intuition about what clean, safe code looks like.</div>
+        <div class="analogy-link">Ethics works the same way — you learn patterns, get feedback on your decisions, and build intuition about what responsible AI use looks like in your specific environment.</div>
+      </div>
+      <div class="analogy-card">
+        <div class="analogy-icon">🔒</div>
+        <div class="analogy-skill">Cybersecurity</div>
+        <div class="analogy-how">Security thinking isn't instinct — it's trained habits. "Don't click suspicious links" sounds obvious, but it has to be practiced until it's automatic, because hackers count on people skipping that habit when they're tired or distracted.</div>
+        <div class="analogy-link">Ethics is the same — the risks are real, the habits are trainable, and the moment you relax those habits is exactly the moment the damage happens.</div>
+      </div>
+      <div class="analogy-card">
+        <div class="analogy-icon">📋</div>
+        <div class="analogy-skill">Project Management</div>
+        <div class="analogy-how">Good project managers use processes and checklists — not because they're not smart enough to remember everything, but because memory under pressure is unreliable. The checklist catches what your brain misses when you're rushing.</div>
+        <div class="analogy-link">An ethics framework is your checklist. Is this accurate? Is this fair? Is this safe? You run it every time, not just when you feel like you need to.</div>
+      </div>
+      <div class="analogy-card">
+        <div class="analogy-icon">🩺</div>
+        <div class="analogy-skill">Medicine</div>
+        <div class="analogy-how">Doctors follow protocols not because they don't care about patients, but because protocols ensure that caring intentions translate into consistently good outcomes. Good intentions without process lead to preventable mistakes.</div>
+        <div class="analogy-link">In tech, caring about doing the right thing isn't enough if you don't have the processes to make that care consistent. The lessons in Module 5 are your protocols.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Build Your Ethics Habit Checklist</h2>
+    <p>The best time to build a habit is before you need it. Check off the habits below as you learn them throughout Module 5. By the end of this module, every one of these should feel automatic.</p>
+
+    <div class="habit-builder">
+      <div class="hb-header">
+        <div class="hb-label">📋 Your AI Ethics Habit Tracker</div>
+        <div class="hb-title">Click each habit as you learn and commit to it throughout Module 5</div>
+      </div>
+      <div class="hb-items">
+        <div class="hb-item" onclick="toggleHabit(this)" id="h1">
+          <div class="hb-check"><svg class="hb-check-inner" viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="hb-content"><div class="hb-habit">🔍 I verify AI outputs before sharing or acting on them</div><div class="hb-why">AI can be confidently wrong. My job is to be the check before it causes harm — for statistics, facts, recommendations, and anything that affects real people.</div></div>
+        </div>
+        <div class="hb-item" onclick="toggleHabit(this)" id="h2">
+          <div class="hb-check"><svg class="hb-check-inner" viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="hb-content"><div class="hb-habit">🔐 I check the policy before inputting sensitive data into any AI tool</div><div class="hb-why">Company policy, not my personal comfort level, determines what's allowed. If I'm unsure, I check before I act — not after.</div></div>
+        </div>
+        <div class="hb-item" onclick="toggleHabit(this)" id="h3">
+          <div class="hb-check"><svg class="hb-check-inner" viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="hb-content"><div class="hb-habit">⚖️ I ask "is this fair?" when AI makes recommendations about people</div><div class="hb-why">Algorithmic bias is invisible unless you look for it. Asking the fairness question before acting is the simplest form of bias awareness available to any tech worker.</div></div>
+        </div>
+        <div class="hb-item" onclick="toggleHabit(this)" id="h4">
+          <div class="hb-check"><svg class="hb-check-inner" viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="hb-content"><div class="hb-habit">📝 I document my reasoning when I use AI for important decisions</div><div class="hb-why">Documentation is protection. If something goes wrong later, "I followed this process and recorded it" is a real defense. "I felt like it was fine" is not.</div></div>
+        </div>
+        <div class="hb-item" onclick="toggleHabit(this)" id="h5">
+          <div class="hb-check"><svg class="hb-check-inner" viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="hb-content"><div class="hb-habit">🚨 I escalate when something feels wrong — even if I can't fully explain why</div><div class="hb-why">Your instinct that something is off is worth saying out loud. In the cases that become disasters, there was usually someone who noticed but didn't say anything. Don't be that person.</div></div>
+        </div>
+        <div class="hb-item" onclick="toggleHabit(this)" id="h6">
+          <div class="hb-check"><svg class="hb-check-inner" viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="hb-content"><div class="hb-habit">🏁 I remember that AI supports my decisions — it doesn't make them for me</div><div class="hb-why">AI is a tool. I am the professional. The AI recommends; I decide. The AI suggests; I verify. The AI flags; I evaluate. That's not inefficiency — that's accountability.</div></div>
+        </div>
+      </div>
+      <div class="hb-counter">You've committed to <span id="habit-count">0</span> of 6 habits. Check them off as you build them through Module 5.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Where Are You Right Now?</h2>
+    <p>This isn't a graded assessment — it's a starting point. Answer honestly so you know where to focus your attention as you go through the module.</p>
+
+    <div class="self-assess">
+      <div class="sa-label">🪞 Quick Self-Assessment</div>
+      <div class="sa-intro">For each question, pick the answer that best describes where you are today — before you've done any of the Module 5 lessons.</div>
+      <div class="sa-items">
+        <div class="sa-item">
+          <div class="sa-q">When I use an AI tool to help with work tasks, how often do I verify what it tells me before acting on it?</div>
+          <div class="sa-opts">
+            <button class="sa-opt" onclick="saSelect(this,'q1','rarely')">Rarely</button>
+            <button class="sa-opt" onclick="saSelect(this,'q1','sometimes')">Sometimes</button>
+            <button class="sa-opt" onclick="saSelect(this,'q1','usually')">Usually</button>
+            <button class="sa-opt" onclick="saSelect(this,'q1','always')">Always</button>
+          </div>
+        </div>
+        <div class="sa-item">
+          <div class="sa-q">If a coworker asked me to explain what AI bias is and give a real example, I would feel...</div>
+          <div class="sa-opts">
+            <button class="sa-opt" onclick="saSelect(this,'q2','lost')">Lost — I don't know enough yet</button>
+            <button class="sa-opt" onclick="saSelect(this,'q2','basic')">I know the basics but couldn't give an example</button>
+            <button class="sa-opt" onclick="saSelect(this,'q2','confident')">Confident — I could give a clear answer</button>
+          </div>
+        </div>
+        <div class="sa-item">
+          <div class="sa-q">If I noticed something about an AI tool that seemed unfair or wrong, I would know exactly who to tell and how to raise it.</div>
+          <div class="sa-opts">
+            <button class="sa-opt" onclick="saSelect(this,'q3','no')">Not really</button>
+            <button class="sa-opt" onclick="saSelect(this,'q3','maybe')">I think so, but I'm not sure</button>
+            <button class="sa-opt" onclick="saSelect(this,'q3','yes')">Yes, I know the right process</button>
+          </div>
+        </div>
+      </div>
+      <div class="sa-result" id="sa-result"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Your colleague says: "I'm an ethical person — I'll just trust my gut when AI decisions feel wrong." What's the most important thing missing from that approach?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Nothing — gut instinct is actually more reliable than formal frameworks in fast-paced work environments</button>
+        <button class="qopt" onclick="doQ(this,false)">Your colleague needs to read more about AI ethics before they're qualified to make any judgment calls</button>
+        <button class="qopt" onclick="doQ(this,true)">Gut instinct only works when the ethical problem is obvious. Most AI ethics failures look like ordinary work decisions under time pressure — not obvious moral dilemmas. Without a consistent framework, instinct gets overridden by urgency. Having good values is necessary but not sufficient; you also need a reliable process for applying those values in fast-moving situations.</button>
+        <button class="qopt" onclick="doQ(this,false)">Your colleague is right — ethics frameworks are overcomplicated and mostly used by people who don't trust their own judgment</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 What to Remember From This Article</div>
+    <h2>Ethics Is Something You Build, Not Something You Are</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Ethical behavior in tech is a skill, not a personality trait. It can be learned, practiced, and improved over time — just like coding, security awareness, or project management. The fact that you're working through this module means you're already building it.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The three-question framework — Is this accurate? Is this fair? Is this safe? — is your starting point for almost every AI ethics decision you'll face at work. These three questions take 60 seconds to run through and can prevent the types of incidents that end up in the news.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>There are five levels of ethical skill development, from Unaware to Leader. Most people starting their tech careers are at Level 1 or 2. The goal of Module 5 is to move you to Level 3 — where the three questions are a habit — and give you a clear path toward Levels 4 and 5 as your career grows.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The six habits in the tracker above are your Module 5 homework. Check them off not just as things you've read about, but as things you've actually committed to doing. The difference between reading about ethics and practicing it is the difference between knowing the rules and actually being a professional who can be trusted with important work.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+let habitCount = 0;
+function toggleHabit(item) {
+  if(item.classList.contains('checked')) {
+    item.classList.remove('checked');
+    habitCount--;
+  } else {
+    item.classList.add('checked');
+    habitCount++;
+  }
+  document.getElementById('habit-count').textContent = habitCount;
+}
+
+const saAnswers = {};
+function saSelect(btn, q, val) {
+  btn.closest('.sa-item').querySelectorAll('.sa-opt').forEach(o => o.classList.remove('selected'));
+  btn.classList.add('selected');
+  saAnswers[q] = val;
+  if(Object.keys(saAnswers).length === 3) showSAResult();
+}
+
+function showSAResult() {
+  const r = document.getElementById('sa-result');
+  r.className = 'sa-result show';
+  const v = saAnswers.q1, b = saAnswers.q2, e = saAnswers.q3;
+  let msg = '';
+  const score = (v==='always'?3:v==='usually'?2:v==='sometimes'?1:0) + (b==='confident'?2:b==='basic'?1:0) + (e==='yes'?2:e==='maybe'?1:0);
+  if(score >= 6) {
+    msg = '✅ You\'re coming into Module 5 with a solid foundation. Your goal here is to formalize what you already do instinctively, fill in any gaps, and reach the point where these habits are completely automatic — even under pressure. Pay particular attention to the escalation and documentation lessons in 5.3.';
+  } else if(score >= 3) {
+    msg = '📋 You have some awareness but gaps in consistent practice. That\'s exactly where most people are when they start this module — and it\'s exactly what Module 5 is designed to address. Focus on the three-question framework and the habit tracker above. By the end of Lesson 5.2, you should feel noticeably more confident.';
+  } else {
+    msg = '🌱 You\'re starting from the beginning — and that\'s completely okay. That\'s what this module is for. You don\'t need any prior knowledge to get everything out of these lessons. Take your time with each article, do the simulations, and by the end of Module 5 you\'ll have a genuinely strong foundation that many working tech professionals don\'t have.';
+  }
+  r.textContent = msg;
+}
+
+function doQ(btn, correct) {
+  if(document.querySelector('.qopt.correct,.qopt.wrong')) return;
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  const fb = document.getElementById('qfb1');
+  if(correct) {
+    fb.className = 'qfb show cfb';
+    fb.textContent = '✅ Exactly right. Gut instinct is valuable — it\'s often your brain noticing something your conscious mind hasn\'t processed yet. But instinct alone breaks down under time pressure, when the problem looks like a normal work task, or when everyone around you seems fine with the decision. A framework doesn\'t replace good values — it makes sure those values actually show up consistently in your behavior, including on the days when you\'re rushed, tired, or under pressure.';
+  } else {
+    document.querySelectorAll('.qopt').forEach(o => { if(o.textContent.includes('only works when the ethical problem')) o.classList.add('correct'); });
+    fb.className = 'qfb show wfb';
+    fb.textContent = '❌ Not quite. Good values are necessary — but they\'re not sufficient when ethical decisions look like ordinary work tasks under deadline. The AI ethics failures we covered in Module 5\'s positioning articles all involved people with good intentions who didn\'t have a reliable framework to catch the risk before it became a problem.';
+  }
+}
+</script>
+</body>
+</html>

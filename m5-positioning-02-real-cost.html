@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Real Cost of Getting AI Wrong: Stories From the Field</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Case file tabs */
+.case-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;margin-bottom:0;}
+.ctab{flex:1;min-width:120px;padding:12px 10px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.ctab:hover{color:var(--purple-dark);}
+.ctab.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.case-panel{display:none;padding-top:0;}
+.case-panel.active{display:block;}
+.case-file{border:1.5px solid var(--purple-mid);border-top:none;border-radius:0 0 20px 20px;overflow:hidden;}
+.cf-header{padding:24px;display:flex;gap:16px;align-items:flex-start;}
+.cf-header.breach{background:linear-gradient(135deg,#FFF1F1,#FFE4E4);}
+.cf-header.bias{background:linear-gradient(135deg,var(--orange-pale),#FEF3C7);}
+.cf-header.trust{background:linear-gradient(135deg,var(--blue-pale),#DBEAFE);}
+.cf-header.policy{background:linear-gradient(135deg,var(--purple-pale),var(--blue-pale));}
+.cf-icon{font-size:40px;flex-shrink:0;}
+.cf-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;}
+.breach .cf-type{color:var(--red);}
+.bias .cf-type{color:var(--orange);}
+.trust .cf-type{color:var(--blue);}
+.policy .cf-type{color:var(--purple);}
+.cf-title{font-family:"Fraunces",serif;font-size:22px;font-weight:900;color:var(--purple-dark);line-height:1.2;margin-bottom:6px;}
+.cf-company{font-size:13px;color:var(--gray-muted);}
+.cf-body{padding:24px;}
+.cf-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gray-muted);margin-bottom:8px;margin-top:16px;}
+.cf-section-label:first-child{margin-top:0;}
+.cf-text{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:8px;}
+.cf-cost-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0;}
+.cf-cost{border-radius:12px;padding:14px;text-align:center;}
+.breach .cf-cost{background:var(--red-pale);}
+.bias .cf-cost{background:var(--orange-pale);}
+.trust .cf-cost{background:var(--blue-pale);}
+.policy .cf-cost{background:var(--purple-pale);}
+.cf-cost-val{font-family:"Fraunces",serif;font-size:20px;font-weight:900;margin-bottom:4px;}
+.breach .cf-cost-val{color:var(--red);}
+.bias .cf-cost-val{color:var(--orange);}
+.trust .cf-cost-val{color:var(--blue);}
+.policy .cf-cost-val{color:var(--purple);}
+.cf-cost-desc{font-size:11px;color:var(--gray-muted);line-height:1.4;}
+.cf-lesson{background:var(--green-pale);border:1.5px solid var(--green);border-radius:12px;padding:14px 16px;margin-top:16px;}
+.cf-lesson-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:6px;}
+.cf-lesson-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.cf-timeline{display:flex;flex-direction:column;gap:0;margin:12px 0;}
+.cft-row{display:flex;gap:0;}
+.cft-left{display:flex;flex-direction:column;align-items:center;width:40px;flex-shrink:0;}
+.cft-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:2px solid var(--purple-mid);background:var(--purple-pale);}
+.cft-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.cft-row:last-child .cft-line{display:none;}
+.cft-body{flex:1;padding:0 0 14px 12px;padding-top:4px;}
+.cft-time{font-size:10px;font-weight:700;color:var(--gray-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.cft-desc{font-size:13px;line-height:1.6;color:var(--gray-text);}
+
+/* What it cost cards */
+.cost-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.cost-card{border-radius:16px;padding:20px;border:1.5px solid;}
+.cost-card.financial{background:var(--red-pale);border-color:var(--red);}
+.cost-card.reputation{background:var(--orange-pale);border-color:var(--orange);}
+.cost-card.legal{background:var(--blue-pale);border-color:var(--blue);}
+.cost-card.human{background:var(--purple-pale);border-color:var(--purple);}
+.cost-card-icon{font-size:24px;margin-bottom:10px;}
+.cost-card-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.financial .cost-card-title{color:var(--red);}
+.reputation .cost-card-title{color:var(--orange);}
+.legal .cost-card-title{color:var(--blue);}
+.human .cost-card-title{color:var(--purple);}
+.cost-card-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Pattern spotter */
+.pattern-checker{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.pc-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.pc-intro{font-size:15px;color:var(--gray-text);margin-bottom:16px;line-height:1.7;}
+.pc-items{display:flex;flex-direction:column;gap:10px;}
+.pc-item{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.6;transition:all .2s;}
+.pc-item:hover{border-color:var(--purple);background:var(--purple-pale);}
+.pc-item.correct{background:var(--green-pale);border-color:var(--green);}
+.pc-item.incorrect{background:var(--red-pale);border-color:var(--red);}
+.pc-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.pc-fb.show{display:block;background:var(--purple-pale);color:var(--purple-dark);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Module 5 — AI Ethics, Security & Responsible Use</div>
+  <h1>The Real Cost of Getting AI Wrong: Stories From the Field</h1>
+  <p class="hero-sub">It's easy to think AI ethics mistakes are things that happen to other companies — big tech giants making billion-dollar decisions. But the cases in this article show something different: most AI failures start with ordinary workers making ordinary choices, without realizing the consequences. These stories are from the real world. Learn from them.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Stories Matter More Than Rules</h2>
+    <p>You could memorize a list of rules about AI use. "Don't share sensitive data. Verify outputs. Follow policy." But rules without context are easy to forget the moment you're under pressure on a deadline.</p>
+    <p>Stories are different. When you know what actually happened — who was involved, what they did, and what it cost — the risk becomes real. And real risks are the ones you actually remember to avoid.</p>
+    <p>The four cases below cover the four most common ways AI gets people, companies, and communities into serious trouble: <mark>data breaches, algorithmic bias, misplaced trust in AI outputs, and policy violations</mark>. Each one has a lesson you can carry into your first tech job.</p>
+
+    <div class="pull-quote">
+      <p>Every one of these cases started with someone who was just trying to do their job. Not one of them set out to cause harm. That's what makes them so important to understand.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Case Files: What Went Wrong and What It Cost</h2>
+
+    <div class="case-tabs">
+      <button class="ctab active" onclick="showCase('breach', this)">🔴 Data Breach</button>
+      <button class="ctab" onclick="showCase('bias', this)">🟠 AI Bias</button>
+      <button class="ctab" onclick="showCase('trust', this)">🔵 Misplaced Trust</button>
+      <button class="ctab" onclick="showCase('policy', this)">🟣 Policy Violation</button>
+    </div>
+
+    <!-- BREACH -->
+    <div class="case-panel active" id="panel-breach">
+      <div class="case-file">
+        <div class="cf-header breach">
+          <div class="cf-icon">🔐</div>
+          <div>
+            <div class="cf-type">Case File 1 — Data Security Breach</div>
+            <div class="cf-title">The Genetic Data Company That Exposed 6.9 Million People</div>
+            <div class="cf-company">23andMe — 2023</div>
+          </div>
+        </div>
+        <div class="cf-body">
+          <div class="cf-section-label">What Happened</div>
+          <div class="cf-text">23andMe is a company that analyzes your DNA to tell you about your ancestry and health risks. In 2023, hackers broke into thousands of user accounts by using passwords that people had reused from other websites. Once inside those accounts, the attackers used a 23andMe feature called "DNA Relatives" — a tool that shows you genetic matches with other users — to scrape the data of 6.9 million people connected to those accounts. Most of those 6.9 million people had done nothing wrong. Their data was exposed because of other users' weak passwords and the way 23andMe's data-sharing features worked.</div>
+
+          <div class="cf-section-label">How It Unfolded</div>
+          <div class="cf-timeline">
+            <div class="cft-row">
+              <div class="cft-left"><div class="cft-dot">🔓</div><div class="cft-line"></div></div>
+              <div class="cft-body"><div class="cft-time">Initial breach</div><div class="cft-desc">Hackers used a technique called "credential stuffing" — trying passwords stolen from other breaches to log into 23andMe accounts. About 14,000 accounts were compromised this way.</div></div>
+            </div>
+            <div class="cft-row">
+              <div class="cft-left"><div class="cft-dot">🌐</div><div class="cft-line"></div></div>
+              <div class="cft-body"><div class="cft-time">Cascade effect</div><div class="cft-desc">Those 14,000 accounts had access to the DNA Relatives feature. Through that one feature, attackers reached data from 6.9 million connected profiles — family relationships, ethnicity estimates, location data.</div></div>
+            </div>
+            <div class="cft-row">
+              <div class="cft-left"><div class="cft-dot">📢</div><div class="cft-line"></div></div>
+              <div class="cft-body"><div class="cft-time">Public disclosure</div><div class="cft-desc">The stolen data appeared on hacker forums. It was sorted and sold by ethnicity — including specific databases of Ashkenazi Jewish and Chinese users. The breach became national news.</div></div>
+            </div>
+            <div class="cft-row">
+              <div class="cft-left"><div class="cft-dot">⚖️</div></div>
+              <div class="cft-body"><div class="cft-time">Legal consequences</div><div class="cft-desc">23andMe faced over 30 lawsuits. The company eventually agreed to a $30 million settlement. Multiple executives departed. The company's stock dropped significantly.</div></div>
+            </div>
+          </div>
+
+          <div class="cf-section-label">What It Cost</div>
+          <div class="cf-cost-grid breach">
+            <div class="cf-cost"><div class="cf-cost-val">$30M</div><div class="cf-cost-desc">Settlement paid to affected users</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">6.9M</div><div class="cf-cost-desc">People whose genetic data was exposed without consent</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">30+</div><div class="cf-cost-desc">Lawsuits filed against the company</div></div>
+          </div>
+
+          <div class="cf-lesson">
+            <div class="cf-lesson-label">🎓 The Lesson for Tech Workers</div>
+            <div class="cf-lesson-text">Data sharing features are a security risk, not just a convenience feature. When you build, configure, or use AI tools that connect users' data together, you need to think about what happens if access to one account unlocks data from thousands of others. The access control lesson in Module 5 is directly connected to this case. Who can see what — and how much can spread from a single entry point — is a critical design question.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIAS -->
+    <div class="case-panel" id="panel-bias">
+      <div class="case-file">
+        <div class="cf-header bias">
+          <div class="cf-icon">⚖️</div>
+          <div>
+            <div class="cf-type">Case File 2 — Algorithmic Bias</div>
+            <div class="cf-title">The Healthcare Algorithm That Gave White Patients Priority Over Black Patients</div>
+            <div class="cf-company">Optum / United Health — 2019</div>
+          </div>
+        </div>
+        <div class="cf-body">
+          <div class="cf-section-label">What Happened</div>
+          <div class="cf-text">Across the United States, hospitals and insurance companies use AI algorithms to decide which patients need extra care management. These programs cost money to run, so the AI was trained to identify patients who were sick enough to benefit but also likely to generate high healthcare costs — with the idea that cost roughly tracks need.</div>
+          <div class="cf-text">A research study published in the journal <em>Science</em> analyzed one of the most widely used of these algorithms and found a serious problem: <mark>it was systematically recommending less care for Black patients compared to white patients with the same level of illness</mark>. The algorithm wasn't explicitly looking at race — but it used healthcare spending as a proxy for need, and because Black patients had historically been given less access to care (and therefore spent less), the system assumed they were healthier than they actually were.</div>
+
+          <div class="cf-section-label">Why the Bias Happened</div>
+          <div class="cf-text">The algorithm used past healthcare cost data to predict who needed care. But that data reflected decades of unequal healthcare access. Black patients had historically received less care, not because they were healthier, but because of systemic barriers. The AI learned from that history and repeated it — automatically, at scale, across thousands of hospitals, every single day.</div>
+
+          <div class="cf-section-label">What It Cost</div>
+          <div class="cf-cost-grid bias">
+            <div class="cf-cost"><div class="cf-cost-val">~200M</div><div class="cf-cost-desc">People affected by this type of algorithm across the US healthcare system</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">~50%</div><div class="cf-cost-desc">Reduction in bias when the algorithm was corrected</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">$1B+</div><div class="cf-cost-desc">Market cap hit by Optum as the story circulated among investors and policymakers</div></div>
+          </div>
+
+          <div class="cf-lesson">
+            <div class="cf-lesson-label">🎓 The Lesson for Tech Workers</div>
+            <div class="cf-lesson-text">AI learns from historical data. If that history is unfair — and a lot of history is — the AI will repeat the unfairness at scale, automatically, without anyone intending harm. That's why understanding bias isn't just a feel-good exercise. In tech roles, you may be the person who notices that something feels off. The IBM Watson lesson in Module 5 will give you the framework to recognize it and know what to do.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRUST -->
+    <div class="case-panel" id="panel-trust">
+      <div class="case-file">
+        <div class="cf-header trust">
+          <div class="cf-icon">🤖</div>
+          <div>
+            <div class="cf-type">Case File 3 — Misplaced Trust in AI</div>
+            <div class="cf-title">The Air Canada Chatbot That Promised a Discount That Didn't Exist — and Lost in Court</div>
+            <div class="cf-company">Air Canada — 2024</div>
+          </div>
+        </div>
+        <div class="cf-body">
+          <div class="cf-section-label">What Happened</div>
+          <div class="cf-text">Jake Moffatt's grandmother passed away in November 2022. He needed to fly from Vancouver to Toronto for the funeral and checked Air Canada's website before booking. The airline had a "bereavement fare" policy — reduced prices for people traveling due to a family death — but the details were complicated. Moffatt asked Air Canada's AI chatbot about the policy.</div>
+          <div class="cf-text">The chatbot told him he could book a full-price ticket now and apply for the bereavement discount within 90 days of travel. He did exactly that. When he applied for the discount, Air Canada said the chatbot was wrong — the policy didn't work that way, and he wasn't entitled to any refund. Moffatt took them to small claims court.</div>
+          <div class="cf-text">Air Canada's legal team argued that the chatbot was "a separate legal entity" responsible for its own statements. The judge rejected that argument entirely and ruled in Moffatt's favor. <mark>Air Canada was responsible for what its AI said</mark>, period.</div>
+
+          <div class="cf-section-label">How It Unfolded</div>
+          <div class="cf-timeline">
+            <div class="cft-row">
+              <div class="cft-left"><div class="cft-dot">💬</div><div class="cft-line"></div></div>
+              <div class="cft-body"><div class="cft-time">Customer interaction</div><div class="cft-desc">Moffatt asked the chatbot a specific policy question and received a confident, specific, incorrect answer. He screenshotted the conversation.</div></div>
+            </div>
+            <div class="cft-row">
+              <div class="cft-left"><div class="cft-dot">📋</div><div class="cft-line"></div></div>
+              <div class="cft-body"><div class="cft-time">Company refusal</div><div class="cft-desc">Air Canada refused the refund and told Moffatt the chatbot "cannot provide binding information." He had documentation proving what the chatbot said.</div></div>
+            </div>
+            <div class="cft-row">
+              <div class="cft-left"><div class="cft-dot">⚖️</div></div>
+              <div class="cft-body"><div class="cft-time">Court ruling</div><div class="cft-desc">The tribunal ruled that companies cannot disown their AI tools. Air Canada had to pay Moffatt's partial refund plus additional damages.</div></div>
+            </div>
+          </div>
+
+          <div class="cf-section-label">What It Cost</div>
+          <div class="cf-cost-grid trust">
+            <div class="cf-cost"><div class="cf-cost-val">🌍 Global</div><div class="cf-cost-desc">News coverage in 40+ countries about corporate AI accountability</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">Legal Precedent</div><div class="cf-cost-desc">Set the standard: companies own what their AI says, period</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">Brand Damage</div><div class="cf-cost-desc">Air Canada became the global example of how not to deploy a customer-facing AI chatbot</div></div>
+          </div>
+
+          <div class="cf-lesson">
+            <div class="cf-lesson-label">🎓 The Lesson for Tech Workers</div>
+            <div class="cf-lesson-text">AI tools that interact with customers, patients, or anyone external represent your organization. When they say something incorrect — and AI tools regularly do — your organization is responsible for the consequences. "The AI said it, not us" is not a legal defense and has now been rejected in court. This is why reviewing AI outputs before they reach the public, and understanding the limits of what AI tools should be authorized to promise or confirm, is critical professional knowledge.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POLICY -->
+    <div class="case-panel" id="panel-policy">
+      <div class="case-file">
+        <div class="cf-header policy">
+          <div class="cf-icon">📋</div>
+          <div>
+            <div class="cf-type">Case File 4 — Policy Violation</div>
+            <div class="cf-title">The Company That Used AI to Score Employees on "Happiness" — Without Telling Them</div>
+            <div class="cf-company">Teleperformance — 2022–2023</div>
+          </div>
+        </div>
+        <div class="cf-body">
+          <div class="cf-section-label">What Happened</div>
+          <div class="cf-text">Teleperformance is one of the largest call center companies in the world, employing hundreds of thousands of workers. In 2022, investigative journalism revealed that the company was using AI surveillance tools to monitor workers far more extensively than employees knew — including facial expression analysis during video calls to score workers on their "emotional state," monitoring keystrokes and mouse movements, and using AI to evaluate performance in ways that workers had no visibility into or ability to contest.</div>
+          <div class="cf-text">Workers in Colombia — where many of the call centers were located — reported that the AI systems were flagging them for "disengagement" or poor performance based on signals they couldn't see or understand, affecting their employment status. <mark>The workers had signed contracts giving consent to monitoring, but many said the AI's scope went far beyond what those contracts described</mark>. Regulators in Italy eventually blocked some of Teleperformance's data collection practices entirely.</div>
+
+          <div class="cf-section-label">What Made This Particularly Serious</div>
+          <div class="cf-text">This case combines two problems that come up repeatedly in AI ethics: <strong>lack of transparency</strong> (workers didn't know how they were being evaluated) and <strong>lack of meaningful consent</strong> (agreeing to vague monitoring terms doesn't mean you agreed to AI emotional analysis). When AI makes decisions that affect people's livelihoods — hiring, firing, performance reviews — those people have a right to understand how those decisions are made.</div>
+
+          <div class="cf-section-label">What It Cost</div>
+          <div class="cf-cost-grid policy">
+            <div class="cf-cost"><div class="cf-cost-val">Regulatory</div><div class="cf-cost-desc">Italian regulators blocked data collection operations after investigation</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">Congressional</div><div class="cf-cost-desc">US Senate investigation launched into AI workplace surveillance practices</div></div>
+            <div class="cf-cost"><div class="cf-cost-val">Reputational</div><div class="cf-cost-desc">Named in multiple international reports on exploitative AI use in workplaces</div></div>
+          </div>
+
+          <div class="cf-lesson">
+            <div class="cf-lesson-label">🎓 The Lesson for Tech Workers</div>
+            <div class="cf-lesson-text">AI tools that monitor, score, or make decisions about people have to operate transparently and within clear, understood boundaries. "We have consent buried in the contract" is not ethical — and it's increasingly not legal either. As a tech professional, you may be the person building or deploying these systems. The transparency and compliance principles in Module 5 exist precisely because of cases like this one. People have a right to know when AI is affecting their lives.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Types of Cost That Always Appear</h2>
+    <p>Across every AI ethics failure, the consequences tend to fall into the same four categories. They don't always all show up, but understanding each type helps you see why the stakes are so high.</p>
+
+    <div class="cost-breakdown">
+      <div class="cost-card financial">
+        <div class="cost-card-icon">💸</div>
+        <div class="cost-card-title">Financial Cost</div>
+        <div class="cost-card-text">Fines, settlements, lawsuits, and the cost of fixing what went wrong. The 23andMe settlement was $30 million. GDPR violations can cost up to 4% of a company's total global revenue. These numbers get people's attention at the executive level fast.</div>
+      </div>
+      <div class="cost-card reputation">
+        <div class="cost-card-icon">📰</div>
+        <div class="cost-card-title">Reputational Cost</div>
+        <div class="cost-card-text">Trust is hard to earn and easy to lose. When a company's AI does something harmful, the story travels everywhere. Customers leave. Investors get nervous. Future employees hesitate. For individuals, an AI ethics mistake can follow your name in search results for years.</div>
+      </div>
+      <div class="cost-card legal">
+        <div class="cost-card-icon">⚖️</div>
+        <div class="cost-card-title">Legal and Regulatory Cost</div>
+        <div class="cost-card-text">Governments are increasingly writing laws that hold companies responsible for what their AI does. Italy blocked Teleperformance. The EU's AI Act creates serious liability for high-risk AI systems. Breaking these rules isn't a slap on the wrist — it can mean losing the ability to operate in certain markets entirely.</div>
+      </div>
+      <div class="cost-card human">
+        <div class="cost-card-icon">👥</div>
+        <div class="cost-card-title">Human Cost</div>
+        <div class="cost-card-text">This is the one that matters most. Behind every data breach is a real person whose medical history, genetic information, or financial data is now in the hands of strangers. Behind every biased algorithm are real people who didn't get care, jobs, or loans they deserved. AI errors hurt people.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Find the Pattern: What Did These Cases Have in Common?</h2>
+    <p>Before you see the answer, think about it yourself. Read the four case files above and then answer this question:</p>
+
+    <div class="pattern-checker">
+      <div class="pc-label">🔍 Pattern Recognition</div>
+      <div class="pc-intro">Which of these best describes the single most common factor across all four cases?</div>
+      <div class="pc-items">
+        <div class="pc-item" onclick="pcAnswer(this, false, 'Close — malicious intent does appear in the breach case (the hackers were definitely malicious). But in most of these cases, the people inside the organizations were not trying to cause harm. The companies involved weren\'t run by villains. That\'s what makes the pattern harder to spot.')">The organizations were run by people who intentionally wanted to cause harm.</div>
+        <div class="pc-item" onclick="pcAnswer(this, true, 'Exactly right. In every case, someone made a decision — or a series of decisions — without fully thinking through how the AI system could affect other people. The Samsung engineer wanted to debug code faster. 23andMe wanted to build a social feature for users. The healthcare algorithm wanted to efficiently identify high-need patients. None of them stopped to fully ask: who gets hurt if this goes wrong, and how do we prevent that?')">Someone made a decision about AI without fully thinking through how it would affect other people.</div>
+        <div class="pc-item" onclick="pcAnswer(this, false, 'This is partly true — better technology might have caught some of these problems. But the Teleperformance case used very sophisticated technology. The Air Canada chatbot issue was a human policy decision, not a technical failure. Technology alone doesn\'t solve ethics problems.')">The organizations were using outdated technology that simply wasn\'t good enough yet.</div>
+        <div class="pc-item" onclick="pcAnswer(this, false, 'Small companies do face AI ethics risks, but these four cases all involve large, well-resourced organizations with legal teams and compliance departments. Company size is not the differentiating factor.')">These were all small companies without enough resources to do AI right.</div>
+      </div>
+      <div class="pc-fb" id="pc-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Air Canada argued in court that its AI chatbot was "a separate legal entity" responsible for its own statements. What did the court decide, and why does that matter for tech workers?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The court agreed — AI systems are increasingly being treated as separate legal entities with their own responsibilities</button>
+        <button class="qopt" onclick="doQ(this,true)">The court rejected that argument entirely. Companies are responsible for what their AI tools say and do. This means tech workers who build, configure, or deploy AI tools need to understand that the organization — and potentially individuals within it — owns those outcomes.</button>
+        <button class="qopt" onclick="doQ(this,false)">The case was dismissed because the chatbot interaction wasn't legally considered a contract</button>
+        <button class="qopt" onclick="doQ(this,false)">The court ruled in Air Canada's favor, but the case is still being appealed</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 What to Remember From This Article</div>
+    <h2>The Stories Behind the Rules</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Data breaches often start small and cascade fast. The 23andMe breach started with 14,000 compromised accounts and reached 6.9 million people through a single connected feature. Understanding how data flows — and where access control can stop a cascade — is a core tech skill.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI bias is inherited from historical data. The healthcare algorithm didn't set out to discriminate — it learned from decades of unequal care and repeated that inequality automatically, at scale. Bias in AI isn't always intentional; it's often a reflection of an unfair past being carried forward.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Companies are legally responsible for what their AI says. The Air Canada ruling made this official: you cannot blame your AI tool. If your organization deploys an AI system that gives people incorrect information that affects their decisions, the organization — and the people who built or authorized it — is accountable.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Transparency isn't optional when AI affects people's lives. When AI makes decisions about people's employment, health, credit, or access to services, those people have a right to understand how — and that right is increasingly being enforced by law. Designing AI systems that are accountable and explainable isn't just ethical; it's becoming legally required.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function showCase(id, btn) {
+  document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.case-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+function pcAnswer(el, correct, msg) {
+  if(document.querySelector('.pc-item.correct,.pc-item.incorrect')) return;
+  el.classList.add(correct ? 'correct' : 'incorrect');
+  const fb = document.getElementById('pc-fb');
+  fb.className = 'pc-fb show';
+  fb.textContent = (correct ? '✅ ' : '❌ ') + msg;
+  if(!correct) { document.querySelectorAll('.pc-item').forEach(i => { if(i.textContent.includes('without fully thinking')) i.classList.add('correct'); }); }
+}
+
+function doQ(btn, correct) {
+  if(document.querySelector('.qopt.correct,.qopt.wrong')) return;
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  const fb = document.getElementById('qfb1');
+  if(correct) {
+    fb.className = 'qfb show cfb';
+    fb.textContent = '✅ Correct. The tribunal rejected Air Canada\'s argument completely. This ruling is now cited internationally as a landmark in AI accountability law. For tech workers: the tools you build, configure, or deploy represent your organization. When they give incorrect information that affects real people\'s decisions, your organization owns that outcome — legally and ethically.';
+  } else {
+    document.querySelectorAll('.qopt').forEach(o => { if(o.textContent.includes('rejected that argument')) o.classList.add('correct'); });
+    fb.className = 'qfb show wfb';
+    fb.textContent = '❌ Not quite. The court ruled against Air Canada — the company was held responsible for what its chatbot said, period. This case is now used globally to illustrate that AI accountability rests with the organization that deploys the tool, not with the tool itself.';
+  }
+}
+</script>
+</body>
+</html>
