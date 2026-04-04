@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access Control 101: Why Not Everyone Should Have the Same AI Permissions</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Building analogy */
+.building-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.bs-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.bs-intro{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.building{display:flex;flex-direction:column;gap:6px;}
+.floor{border-radius:12px;padding:14px 18px;border:1.5px solid;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.floor:hover{transform:translateX(4px);}
+.floor.exec{background:#FFF7ED;border-color:var(--orange);}
+.floor.manager{background:var(--blue-pale);border-color:var(--blue);}
+.floor.developer{background:var(--purple-pale);border-color:var(--purple);}
+.floor.support{background:var(--green-pale);border-color:var(--green);}
+.floor.lobby{background:var(--gray-soft);border-color:var(--gray-muted);}
+.floor-left{display:flex;align-items:center;gap:12px;}
+.floor-icon{font-size:20px;}
+.floor-name{font-size:14px;font-weight:700;color:var(--purple-dark);}
+.floor-role{font-size:12px;color:var(--gray-muted);}
+.floor-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.exec .floor-badge{background:var(--orange-pale);color:var(--orange);}
+.manager .floor-badge{background:var(--blue-pale);color:var(--blue);}
+.developer .floor-badge{background:var(--purple-pale);color:var(--purple);}
+.support .floor-badge{background:var(--green-pale);color:var(--green);}
+.lobby .floor-badge{background:var(--gray-soft);color:var(--gray-muted);}
+.floor-detail{display:none;margin-top:10px;padding:12px 14px;border-radius:8px;background:rgba(255,255,255,.8);font-size:13px;line-height:1.7;color:var(--gray-text);}
+.floor-detail.open{display:block;}
+.floor-access{margin-top:8px;}
+.access-item{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;}
+.access-yes{color:var(--green);font-weight:600;}
+.access-no{color:var(--red);font-weight:600;}
+
+/* Principle cards */
+.principle-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.principle-card{border-radius:18px;padding:22px;border:1.5px solid;}
+.principle-card.lp{background:var(--purple-pale);border-color:var(--purple);}
+.principle-card.rbac{background:var(--blue-pale);border-color:var(--blue);}
+.principle-card.need{background:var(--green-pale);border-color:var(--green);}
+.principle-card.audit{background:var(--orange-pale);border-color:var(--orange);}
+.pc-icon{font-size:28px;margin-bottom:10px;}
+.pc-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;margin-bottom:6px;}
+.lp .pc-title{color:var(--purple-dark);}
+.rbac .pc-title{color:var(--blue);}
+.need .pc-title{color:var(--green);}
+.audit .pc-title{color:var(--orange);}
+.pc-body{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.pc-example{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;font-style:italic;}
+.lp .pc-example{background:rgba(123,47,190,.08);color:var(--purple-dark);}
+.rbac .pc-example{background:rgba(29,78,216,.08);color:var(--blue);}
+.need .pc-example{background:rgba(39,103,73,.08);color:var(--green);}
+.audit .pc-example{background:rgba(217,119,6,.08);color:var(--orange);}
+
+/* What goes wrong */
+.breach-scenario{border-radius:20px;overflow:hidden;border:1.5px solid var(--red);margin:20px 0;}
+.bs-top{background:var(--red-pale);padding:20px 24px;border-bottom:1px solid var(--red);}
+.bs-top-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--red);margin-bottom:6px;}
+.bs-top-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--red);line-height:1.25;}
+.bs-steps{padding:20px 24px;display:flex;flex-direction:column;gap:12px;}
+.bs-step{display:flex;gap:12px;align-items:flex-start;}
+.bs-num{width:28px;height:28px;border-radius:50%;background:var(--red);color:var(--white);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bs-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.bs-fix{background:var(--green-pale);padding:16px 24px;border-top:1px solid var(--green);}
+.bs-fix-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--green);margin-bottom:6px;}
+.bs-fix-text{font-size:13px;line-height:1.7;color:var(--gray-text);}
+
+/* Permission matrix sim */
+.matrix-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.matrix-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:12px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.matrix-table th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 12px;background:var(--purple-dark);color:var(--white);text-align:left;}
+.matrix-table th:first-child{background:var(--purple-dark);}
+.matrix-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--purple-mid);vertical-align:middle;}
+.matrix-table tr:last-child td{border-bottom:none;}
+.matrix-table td:first-child{font-weight:700;color:var(--purple-dark);font-size:12px;background:var(--gray-soft);}
+.perm-yes{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--green-pale);border-radius:6px;color:var(--green);font-size:14px;}
+.perm-no{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--red-pale);border-radius:6px;color:var(--red);font-size:14px;}
+.perm-read{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--orange-pale);border-radius:6px;color:var(--orange);font-size:14px;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.1 — Security & Privacy Risks</div>
+  <h1>Access Control 101: Why Not Everyone Should Have the Same AI Permissions</h1>
+  <p class="hero-sub">One of the most powerful security tools in any tech environment isn't a piece of software — it's a decision about who is allowed to do what. Access control is the practice of making sure the right people can reach the right information, and nothing more. When AI tools get added to the mix, this becomes even more critical.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Start Here: The Building Analogy</h2>
+    <p>Imagine you work in a 20-story office building. Everyone in the building has a keycard to get through the front door. But does everyone have access to every floor? Of course not. The executive suite on the top floor requires a different clearance. The server room in the basement has its own lock. The accounting department's file room isn't open to marketing.</p>
+    <p>This is access control — and it works exactly the same way in tech. Different people need access to different things. <mark>Giving everyone access to everything isn't generous — it's a security disaster waiting to happen.</mark></p>
+    <p>Click each floor below to see what access looks like for different roles in a company that uses AI tools.</p>
+
+    <div class="building-sim">
+      <div class="bs-label">🏢 Interactive: The AI Access Building</div>
+      <div class="bs-intro">Click any floor to see what AI tools and data that role can access — and why.</div>
+      <div class="building">
+        <div class="floor exec" onclick="toggleFloor('exec')">
+          <div class="floor-left"><div class="floor-icon">👔</div><div><div class="floor-name">Executive Floor</div><div class="floor-role">CEO, CFO, CISO</div></div></div>
+          <div class="floor-badge">Level 5 — Strategic Access</div>
+        </div>
+        <div class="floor-detail" id="detail-exec">
+          <strong>What they can access:</strong> Company-wide AI dashboards, system audit logs, all department data, AI policy approval tools, vendor contracts.
+          <div class="floor-access">
+            <div class="access-item"><span class="access-yes">✓</span> View all AI tool usage logs across the company</div>
+            <div class="access-item"><span class="access-yes">✓</span> Approve or revoke AI tool licenses for any department</div>
+            <div class="access-item"><span class="access-yes">✓</span> Access financial and HR data in AI analytics tools</div>
+            <div class="access-item"><span class="access-no">✗</span> Still cannot access employee personal data outside of formal HR processes — even at this level</div>
+          </div>
+          <em style="font-size:12px;color:var(--gray-muted);">Why: Executives need visibility to govern, but even the highest access level has limits. "Role-based" means appropriate to the role — not unlimited.</em>
+        </div>
+
+        <div class="floor manager" onclick="toggleFloor('manager')">
+          <div class="floor-left"><div class="floor-icon">📊</div><div><div class="floor-name">Manager Floor</div><div class="floor-role">Department Heads, Team Leads</div></div></div>
+          <div class="floor-badge">Level 3 — Team Access</div>
+        </div>
+        <div class="floor-detail" id="detail-manager">
+          <strong>What they can access:</strong> Their team's AI-generated reports, team performance data, approved AI writing and analysis tools, department budget AI tools.
+          <div class="floor-access">
+            <div class="access-item"><span class="access-yes">✓</span> Run AI analysis on their team's project data</div>
+            <div class="access-item"><span class="access-yes">✓</span> See AI usage reports for their direct reports</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot access other departments' confidential data</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot approve new AI tools — must go through IT and CISO</div>
+          </div>
+          <em style="font-size:12px;color:var(--gray-muted);">Why: Managers need enough access to lead their team effectively, but cross-department data access creates unnecessary exposure — and curiosity is not a business need.</em>
+        </div>
+
+        <div class="floor developer" onclick="toggleFloor('developer')">
+          <div class="floor-left"><div class="floor-icon">💻</div><div><div class="floor-name">Developer Floor</div><div class="floor-role">Engineers, Data Analysts</div></div></div>
+          <div class="floor-badge">Level 2 — Technical Access</div>
+        </div>
+        <div class="floor-detail" id="detail-developer">
+          <strong>What they can access:</strong> AI coding assistants (GitHub Copilot, approved coding tools), anonymized test data, development environment AI tools, technical documentation AI.
+          <div class="floor-access">
+            <div class="access-item"><span class="access-yes">✓</span> Use AI tools with anonymized or synthetic test data</div>
+            <div class="access-item"><span class="access-yes">✓</span> Access AI APIs in development environments</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot use real customer data in AI tools without specific approval</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot deploy AI tools to production without security review</div>
+          </div>
+          <em style="font-size:12px;color:var(--gray-muted);">Why: Developers need technical AI access to do their jobs — but real customer data stays out of development environments to prevent exactly the kind of leak that happened at Samsung.</em>
+        </div>
+
+        <div class="floor support" onclick="toggleFloor('support')">
+          <div class="floor-left"><div class="floor-icon">🎧</div><div><div class="floor-name">Support Floor</div><div class="floor-role">Customer Service, Help Desk</div></div></div>
+          <div class="floor-badge">Level 1 — Task Access</div>
+        </div>
+        <div class="floor-detail" id="detail-support">
+          <strong>What they can access:</strong> AI customer service tools (within approved scripts), knowledge base AI, ticket classification AI, approved response suggestion tools.
+          <div class="floor-access">
+            <div class="access-item"><span class="access-yes">✓</span> Use AI to suggest responses to customer tickets</div>
+            <div class="access-item"><span class="access-yes">✓</span> Access AI-powered knowledge base for troubleshooting</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot input full customer account data into external AI tools</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot use AI to make final decisions on account changes — human review required</div>
+          </div>
+          <em style="font-size:12px;color:var(--gray-muted);">Why: Support staff handle high volumes of customer interactions. Limiting what AI can do autonomously protects both customers and the company from errors at scale.</em>
+        </div>
+
+        <div class="floor lobby" onclick="toggleFloor('lobby')">
+          <div class="floor-left"><div class="floor-icon">🚪</div><div><div class="floor-name">Lobby / Vendor Level</div><div class="floor-role">Contractors, New Hires, External Partners</div></div></div>
+          <div class="floor-badge">Level 0 — View Only</div>
+        </div>
+        <div class="floor-detail" id="detail-lobby">
+          <strong>What they can access:</strong> Public-facing AI tools only. No access to internal data, internal AI systems, or any tool connected to company data until formal onboarding is complete.
+          <div class="floor-access">
+            <div class="access-item"><span class="access-yes">✓</span> Use public AI tools for their own personal productivity</div>
+            <div class="access-item"><span class="access-no">✗</span> Zero access to internal AI tools until IT provisioning is complete</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot access any company data through AI tools</div>
+            <div class="access-item"><span class="access-no">✗</span> Cannot request access themselves — must go through a sponsor and IT</div>
+          </div>
+          <em style="font-size:12px;color:var(--gray-muted);">Why: External parties — even friendly ones — are a major security risk. Trust is earned and verified, not assumed. Access gets provisioned after verification, not before.</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Principles Behind Every Good Access Control System</h2>
+    <p>Access control isn't arbitrary. It's built on a set of principles that security professionals have developed over decades. Understanding these principles helps you make sense of why your company has the policies it does — and helps you recognize when something seems off.</p>
+
+    <div class="principle-grid">
+      <div class="principle-card lp">
+        <div class="pc-icon">🔒</div>
+        <div class="pc-title">Least Privilege</div>
+        <div class="pc-body">Every person and every system should have the minimum access needed to do their job — and nothing more. This is probably the most important principle in all of security. If you only need to read a file, you shouldn't be able to delete it. If you only need one AI tool for your job, you shouldn't have access to five.</div>
+        <div class="pc-example">A customer service rep needs to look up order history. They should be able to read it — not edit, not delete, not export to an external AI tool.</div>
+      </div>
+      <div class="principle-card rbac">
+        <div class="pc-icon">👥</div>
+        <div class="pc-title">Role-Based Access Control (RBAC)</div>
+        <div class="pc-body">Access is granted based on what your job requires, not who you are personally. All developers get developer-level access. All managers get manager-level access. This makes it easier to manage, audit, and revoke access consistently — and prevents the "special favors" problem where one person quietly accumulates more access than they should have.</div>
+        <div class="pc-example">When someone gets promoted from analyst to manager, their access profile changes automatically — they gain some things and lose others based on the new role's actual needs.</div>
+      </div>
+      <div class="principle-card need">
+        <div class="pc-icon">🎯</div>
+        <div class="pc-title">Need-to-Know</div>
+        <div class="pc-body">Even within the same role, access to specific sensitive data should only be granted when there's a specific, documented reason to need it. Curiosity doesn't count. "It might be useful someday" doesn't count. A legitimate business task with a clear connection to that data counts.</div>
+        <div class="pc-example">A developer building a new payment feature may need temporary access to anonymized payment data. They request it, document why, it gets approved for the project timeline, then it expires.</div>
+      </div>
+      <div class="principle-card audit">
+        <div class="pc-icon">📋</div>
+        <div class="pc-title">Audit Trails</div>
+        <div class="pc-body">Every time someone accesses data, uses an AI tool, or makes a change to a system, that action is logged. This isn't about spying on employees — it's about being able to trace what happened when something goes wrong. Good audit trails mean you can find the source of a problem, fix it, and prove what occurred.</div>
+        <div class="pc-example">When 23andMe was breached, audit logs were essential for figuring out which accounts had been compromised, what data was accessed, and who the affected users were.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Happens When Access Control Fails</h2>
+    <p>Here's a real-world scenario — not a famous breach, but the kind of thing that happens quietly inside companies every week. This is how insufficient access control leads to an AI security incident.</p>
+
+    <div class="breach-scenario">
+      <div class="bs-top">
+        <div class="bs-top-label">⚠️ Scenario: How a Small Permission Gap Becomes a Big Problem</div>
+        <div class="bs-top-title">The junior analyst who had access she didn't need</div>
+      </div>
+      <div class="bs-steps">
+        <div class="bs-step"><div class="bs-num">1</div><div class="bs-text">A junior marketing analyst is hired. IT gives her the standard "marketing team" access profile. Nobody notices that the previous person in her role had been granted temporary access to the customer database six months ago for a one-time project — and that access was never revoked.</div></div>
+        <div class="bs-step"><div class="bs-num">2</div><div class="bs-text">She's working on a competitive analysis report and decides to use an AI tool to help summarize trends. She pulls a full customer export — which she can access, because the permissions are still there — and pastes it into the AI tool to help identify patterns.</div></div>
+        <div class="bs-step"><div class="bs-num">3</div><div class="bs-text">The AI tool she used wasn't on the company's approved list. It stores all inputs for model improvement. 50,000 customer records — names, emails, purchase histories — are now in an external AI system's training pipeline. She had no idea this was happening.</div></div>
+        <div class="bs-step"><div class="bs-num">4</div><div class="bs-text">Three months later, there's a data incident at the AI tool provider. The company's legal team discovers the customer data exposure. The company has to notify 50,000 customers, hire a breach response firm, and face potential regulatory fines. Nobody was trying to cause harm — the harm happened because of two failures: lingering permissions and no approved-tools enforcement.</div></div>
+      </div>
+      <div class="bs-fix">
+        <div class="bs-fix-label">✅ How access control would have prevented this</div>
+        <div class="bs-fix-text">If the previous analyst's temporary database access had been automatically revoked after the project ended (least privilege + time-limited access), the junior analyst would never have been able to pull the customer export in the first place. The entire incident chain would have stopped at step 2. Access control isn't just about locking things down — it's about making sure permissions expire when the reason for them does.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The AI Permission Matrix: What Different Roles Can Do</h2>
+    <p>When your company deploys AI tools, IT and security teams have to decide which roles get access to which capabilities. Here's what a typical AI permission matrix looks like — and why each cell is set the way it is.</p>
+
+    <div class="matrix-sim">
+      <div class="bs-label">📊 Sample AI Tool Permission Matrix</div>
+      <div class="bs-intro">✅ = Full access &nbsp; 👁️ = Read/view only &nbsp; ❌ = No access</div>
+      <table class="matrix-table">
+        <tr>
+          <th>AI Capability</th>
+          <th>Support Staff</th>
+          <th>Developer</th>
+          <th>Manager</th>
+          <th>IT/Security</th>
+        </tr>
+        <tr>
+          <td>AI writing assistant (no data)</td>
+          <td><div class="perm-yes">✅</div></td>
+          <td><div class="perm-yes">✅</div></td>
+          <td><div class="perm-yes">✅</div></td>
+          <td><div class="perm-yes">✅</div></td>
+        </tr>
+        <tr>
+          <td>AI with customer data input</td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-read">👁️</div></td>
+          <td><div class="perm-yes">✅</div></td>
+        </tr>
+        <tr>
+          <td>AI code assistant</td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-yes">✅</div></td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-yes">✅</div></td>
+        </tr>
+        <tr>
+          <td>AI analytics dashboard</td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-read">👁️</div></td>
+          <td><div class="perm-yes">✅</div></td>
+        </tr>
+        <tr>
+          <td>AI tool approval / installation</td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-yes">✅</div></td>
+        </tr>
+        <tr>
+          <td>AI audit log review</td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-no">❌</div></td>
+          <td><div class="perm-read">👁️</div></td>
+          <td><div class="perm-yes">✅</div></td>
+        </tr>
+      </table>
+      <p style="font-size:13px;color:var(--gray-muted);margin:8px 0 0;line-height:1.6;">Notice: Nobody except IT/Security can approve or install new AI tools. This single rule prevents "shadow AI" — employees quietly using unapproved tools that the company has no visibility into or control over.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What This Means for You as a Tech Worker</h2>
+    <p>You might be thinking: "I'm not the person who sets permissions — that's IT's job." That's partly true. But access control is everyone's responsibility in three important ways.</p>
+    <p><strong>First: Don't use access you don't actually need.</strong> Just because you can access something doesn't mean you should. If you find yourself with access to data or tools that seem beyond your role, flag it to your manager rather than quietly using it. That lingering access might be a mistake — and if something goes wrong, you'll be in the logs.</p>
+    <p><strong>Second: Never share your credentials.</strong> Your access is yours. If a coworker asks to use your login to access something they don't have access to, the answer is no — always. Credential sharing bypasses every access control system the company has built and makes audit trails meaningless.</p>
+    <p><strong>Third: Report access that seems wrong.</strong> If you're given access to something that doesn't seem right for your role, or if you notice a colleague has access they probably shouldn't, <mark>saying something is part of your job</mark>. Access control failures are most often caught by employees who notice something feels off — not by automated systems.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A new coworker asks to borrow your login to access an AI analytics dashboard while she waits for IT to set up her own account. She says it'll just be for an hour. What should you do?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Let her use it — she's going to get access anyway, and being helpful is part of good teamwork</button>
+        <button class="qopt" onclick="doQ(this,true)">Decline and help her contact IT to expedite her own access setup. Credential sharing bypasses every access control system the company has in place and makes audit logs meaningless — if something happened during that hour, the logs would show your account, not hers.</button>
+        <button class="qopt" onclick="doQ(this,false)">Let her use it but watch what she does to make sure nothing goes wrong</button>
+        <button class="qopt" onclick="doQ(this,false)">Ask your manager if it's okay first, and if your manager says yes, share the login</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 What to Remember</div>
+    <h2>Access Control Is How Security Becomes Real</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The least privilege principle — give people only the access they actually need — is the single most powerful tool for preventing AI security incidents. Most breaches involve data people could access but shouldn't have been able to.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Role-based access control means your permissions follow your job, not your personality. When your role changes, your access should change too — and old permissions that no longer apply should be revoked, not left sitting around waiting to cause problems.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Never share credentials, never use access you don't actually need for your job, and always flag when something seems off. Access control only works when humans respect it — the systems are only as strong as the people using them.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function toggleFloor(id){const d=document.getElementById('detail-'+id);d.classList.toggle('open');}
+function doQ(btn,correct){if(document.querySelector('.qopt.correct,.qopt.wrong'))return;btn.classList.add(correct?'correct':'wrong');const fb=document.getElementById('qfb1');if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. This situation — while it feels harmless — is exactly how access control breaks down. Your account appears in every audit log during that hour. If the coworker accidentally deleted something, accessed something restricted, or triggered a security alert, the logs point to you. The right answer is always to help the person get their own legitimate access faster, not to bypass the system for convenience.';}else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes('Decline and help'))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ Credential sharing is never okay — even with good intentions, even briefly, even with a manager\'s verbal approval. Audit logs record actions by account, not by who was physically at the keyboard. If anything goes wrong during that time, your account is implicated. Help the person get their own access instead.';}}
+</script>
+</body>
+</html>

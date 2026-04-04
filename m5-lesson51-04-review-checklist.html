@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reviewing AI Outputs Before You Share Them: A Professional Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Interactive checklist */
+.checklist-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;overflow:hidden;margin:24px 0;}
+.cl-header{background:var(--purple-dark);padding:22px 28px;color:var(--white);}
+.cl-header-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:6px;}
+.cl-header-title{font-family:"Fraunces",serif;font-size:20px;font-weight:900;line-height:1.2;}
+.cl-progress-bar{height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:14px;}
+.cl-progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s ease;width:0%;}
+.cl-progress-text{font-size:11px;color:rgba(255,255,255,.6);margin-top:6px;}
+.cl-section{padding:0;}
+.cl-section-header{padding:14px 28px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;border-bottom:1px solid var(--purple-mid);}
+.cl-section-header.accuracy{color:var(--blue);}
+.cl-section-header.privacy{color:var(--red);}
+.cl-section-header.confidentiality{color:var(--orange);}
+.cl-section-header.logic{color:var(--purple);}
+.cl-item{padding:14px 28px;border-bottom:1px solid var(--purple-mid);display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:background .2s;}
+.cl-item:hover{background:var(--white);}
+.cl-item.checked{background:rgba(39,103,73,.04);}
+.cl-item:last-child{border-bottom:none;}
+.cl-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--purple-mid);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .2s;}
+.cl-item.checked .cl-check{background:var(--green);border-color:var(--green);}
+.cl-check-mark{display:none;color:var(--white);font-size:12px;font-weight:700;}
+.cl-item.checked .cl-check-mark{display:block;}
+.cl-content{flex:1;}
+.cl-q{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:3px;line-height:1.5;}
+.cl-why{font-size:12px;color:var(--gray-muted);line-height:1.55;}
+.cl-item.checked .cl-q{color:var(--green);}
+.cl-footer{padding:18px 28px;background:var(--white);border-top:1px solid var(--purple-mid);}
+.cl-score{font-size:14px;font-weight:700;color:var(--purple-dark);}
+.cl-score span{color:var(--purple);}
+.cl-action{display:inline-block;margin-top:8px;font-size:13px;color:var(--gray-muted);line-height:1.6;}
+
+/* Before/after example */
+.ba-container{margin:24px 0;}
+.ba-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);}
+.ba-tab{flex:1;padding:12px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.ba-tab.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.ba-panel{display:none;border:1.5px solid var(--purple-mid);border-top:none;border-radius:0 0 16px 16px;overflow:hidden;}
+.ba-panel.active{display:block;}
+.ba-content{padding:20px 22px;}
+.ba-output{background:var(--gray-soft);border-radius:10px;padding:16px;font-size:13px;line-height:1.8;color:var(--gray-text);margin:12px 0;font-family:monospace;}
+.ba-flag{display:flex;gap:10px;align-items:flex-start;margin:8px 0;}
+.ba-flag-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.ba-flag-text{font-size:12px;line-height:1.65;color:var(--gray-text);}
+.ba-flag.red-flag .ba-flag-text{color:var(--red);}
+.ba-flag.green-flag .ba-flag-text{color:var(--green);}
+
+/* Common failures gallery */
+.failures-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.fail-card{border-radius:16px;padding:18px;border:1.5px solid;}
+.fail-card.hallucination{background:var(--red-pale);border-color:var(--red);}
+.fail-card.privacy{background:var(--orange-pale);border-color:var(--orange);}
+.fail-card.outdated{background:var(--blue-pale);border-color:var(--blue);}
+.fail-card.tone{background:var(--purple-pale);border-color:var(--purple);}
+.fc-icon{font-size:24px;margin-bottom:8px;}
+.fc-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.hallucination .fc-type{color:var(--red);}
+.privacy .fc-type{color:var(--orange);}
+.outdated .fc-type{color:var(--blue);}
+.tone .fc-type{color:var(--purple);}
+.fc-title{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;}
+.fc-what{font-size:12px;line-height:1.65;color:var(--gray-text);margin-bottom:8px;}
+.fc-example{font-size:11px;padding:8px 10px;border-radius:8px;font-style:italic;line-height:1.5;}
+.hallucination .fc-example{background:rgba(220,38,38,.08);color:var(--red);}
+.privacy .fc-example{background:rgba(217,119,6,.08);color:var(--orange);}
+.outdated .fc-example{background:rgba(29,78,216,.08);color:var(--blue);}
+.tone .fc-example{background:rgba(123,47,190,.08);color:var(--purple);}
+
+/* Spot the problem sim */
+.spot-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.ss-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.ss-intro{font-size:14px;color:var(--gray-text);margin-bottom:16px;line-height:1.7;}
+.ai-output-block{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;margin:12px 0;font-size:14px;line-height:1.8;color:var(--gray-text);}
+.ai-output-block .ai-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:8px;}
+.problem-spots{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.problem-spot{background:var(--white);border:2px solid var(--purple-mid);border-radius:10px;padding:12px 14px;cursor:pointer;font-size:13px;transition:all .2s;}
+.problem-spot:hover{border-color:var(--purple);background:var(--purple-pale);}
+.problem-spot.found{background:var(--red-pale);border-color:var(--red);}
+.problem-spot.notproblem{background:var(--green-pale);border-color:var(--green);}
+.spot-fb{font-size:13px;line-height:1.7;padding:10px 14px;border-radius:8px;margin-top:6px;display:none;}
+.spot-fb.show{display:block;}
+.spot-fb.issue{background:var(--red-pale);color:var(--red);}
+.spot-fb.fine{background:var(--green-pale);color:var(--green);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.1 — Security & Privacy Risks</div>
+  <h1>Reviewing AI Outputs Before You Share Them: A Professional Checklist</h1>
+  <p class="hero-sub">AI can produce a polished, confident-sounding response in seconds. But polished and confident doesn't mean accurate, appropriate, or safe to share. This article gives you a practical review process — one you can run through in under two minutes — that catches the problems that have gotten tech workers into serious trouble.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why "It Looked Good to Me" Isn't Enough</h2>
+    <p>Here's the core problem with AI outputs: <mark>AI doesn't know when it's wrong</mark>. A made-up statistic looks exactly like a real one. A hallucinated court case sounds exactly like a real case. A paragraph that includes a client's personal information reads just like a paragraph that doesn't.</p>
+    <p>The AI has no embarrassment, no uncertainty signals, and no professional liability. It generates the best-looking answer it can and presents it with complete confidence, regardless of whether it's accurate, appropriate, or safe.</p>
+    <p>You have all three of those things. Which is why the review step — before you share, forward, submit, or publish anything an AI helped create — is not optional. It's the whole point of keeping a human in the loop.</p>
+
+    <div class="pull-quote">
+      <p>AI does the drafting. You do the reviewing. That's not a weakness in the system — it's the entire design. The review step is where your professional value lives.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Professional Output Review Checklist</h2>
+    <p>Use this checklist every time you're about to share, send, or submit something that AI helped create. Check off each item as you confirm it. You'll know you're ready to share when every box is checked.</p>
+
+    <div class="checklist-box">
+      <div class="cl-header">
+        <div class="cl-header-label">📋 Pre-Share AI Output Review</div>
+        <div class="cl-header-title">Check every item before this leaves your desk</div>
+        <div class="cl-progress-bar"><div class="cl-progress-fill" id="cl-fill"></div></div>
+        <div class="cl-progress-text" id="cl-progress-text">0 of 12 checks completed</div>
+      </div>
+
+      <div class="cl-section">
+        <div class="cl-section-header accuracy">🎯 Section 1: Accuracy & Factual Integrity</div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Have I verified every specific statistic, number, or percentage the AI included?</div><div class="cl-why">AI frequently generates plausible-sounding but fabricated numbers. "73% of companies..." "Research shows that..." — these require a source you can point to. If you can't find the source, remove the number.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Have I confirmed that any named organizations, products, people, or events actually exist and are accurately described?</div><div class="cl-why">AI hallucinates company names, product features, executive names, and historical events. Every proper noun in an AI output is worth a 10-second verification.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Is the information current? Could anything have changed since the AI's training cutoff?</div><div class="cl-why">AI knowledge has a cutoff date. Laws change, prices change, companies get acquired, products get discontinued. Anything time-sensitive needs to be verified against a current source.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Does the AI's conclusion actually follow from the information it presents?</div><div class="cl-why">AI can confidently assert a conclusion that doesn't logically follow from its own supporting points. Read the argument as if you're evaluating someone else's work, not approving your own.</div></div>
+        </div>
+      </div>
+
+      <div class="cl-section">
+        <div class="cl-section-header privacy">🔐 Section 2: Privacy & Data Safety</div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Does this output contain any personal information about real people that wasn't supposed to be included?</div><div class="cl-why">If you gave the AI data about real people, check whether any names, emails, account numbers, addresses, or identifying details made it into the output — even if you didn't ask for them.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Is any customer, patient, employee, or client data present in this output that shouldn't be shared externally?</div><div class="cl-why">This is about what's going out, not what went in. Even if you appropriately used enterprise AI tools with internal data, the output might summarize or expose that data in ways that shouldn't leave the organization.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Is the recipient of this content authorized to see everything in it?</div><div class="cl-why">Who you're sending to matters as much as what you're sending. An AI summary that's appropriate to share with your manager may not be appropriate to share with a client, a vendor, or a colleague in a different department.</div></div>
+        </div>
+      </div>
+
+      <div class="cl-section">
+        <div class="cl-section-header confidentiality">⚠️ Section 3: Confidentiality & Proprietary Information</div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Does this output reveal anything about internal systems, architecture, processes, or strategies that is confidential?</div><div class="cl-why">AI outputs built from internal information can inadvertently expose that information. A summary document might name internal system names, describe proprietary workflows, or reveal organizational details that shouldn't be in an external-facing document.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">If this output were seen by a competitor, journalist, or regulator — would any of it be a problem?</div><div class="cl-why">This is the "headline test" applied to outputs. Imagine the worst-case reader. Is there anything in here that, if publicly disclosed, would be embarrassing, damaging, or legally problematic for your organization?</div></div>
+        </div>
+      </div>
+
+      <div class="cl-section">
+        <div class="cl-section-header logic">🧠 Section 4: Professional Quality & Appropriateness</div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Does the tone match the situation — the audience, the stakes, and the professional context?</div><div class="cl-why">AI defaults to certain tones that aren't always appropriate. An AI-drafted email to a grieving client might sound too businesslike. A technical response might use jargon inappropriate for the reader. Always read the tone, not just the content.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Would I be comfortable putting my name on this and owning everything it says?</div><div class="cl-why">This is the final and most important question. You're not distributing "AI's work" — you're distributing your work that AI helped with. If any part of this output makes you uncomfortable to own, that part needs to be fixed or removed before it goes anywhere.</div></div>
+        </div>
+        <div class="cl-item" onclick="clCheck(this)">
+          <div class="cl-check"><span class="cl-check-mark">✓</span></div>
+          <div class="cl-content"><div class="cl-q">Have I read this output fully — not just skimmed it — at least once before sharing?</div><div class="cl-why">The most embarrassing AI output problems are in the parts people don't read carefully. AI often saves the problematic content for the middle of a long response, not the beginning. Read the whole thing, every time.</div></div>
+        </div>
+      </div>
+
+      <div class="cl-footer">
+        <div class="cl-score">Review score: <span id="cl-score-text">0/12 items confirmed</span></div>
+        <div class="cl-action" id="cl-action-text">Work through each section above before sharing this output.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Most Common Problems the Checklist Catches</h2>
+    <p>These are the issues that come up most frequently when tech workers review AI outputs carefully. Each one is easy to miss on a quick read — which is exactly why the checklist matters.</p>
+
+    <div class="failures-grid">
+      <div class="fail-card hallucination">
+        <div class="fc-icon">🎭</div>
+        <div class="fc-type">Failure Type 1</div>
+        <div class="fc-title">Hallucinated Facts That Sound Real</div>
+        <div class="fc-what">AI generates statistics, citations, and specific facts that don't exist. The writing flows naturally, the number sounds reasonable, the source sounds credible — and none of it is real. This is the most common and most damaging type of AI output failure.</div>
+        <div class="fc-example">❌ "According to a 2023 Gartner report, 68% of enterprises plan to expand AI investment by Q3." — This specific statistic may not exist. Always find and link the actual source.</div>
+      </div>
+      <div class="fail-card privacy">
+        <div class="fc-icon">🔍</div>
+        <div class="fc-type">Failure Type 2</div>
+        <div class="fc-title">Personal Information Surfacing in Output</div>
+        <div class="fc-what">When you give AI data to work with — customer lists, employee records, support tickets — it sometimes surfaces identifying details in its output even when you didn't ask for them. The names and emails you fed in might appear in a summary meant for a broader audience.</div>
+        <div class="fc-example">❌ "Top complaint themes from your customer data: issues reported by users in the 90210 zip code, most notably from john.doe@company.com, center around..." — Personal data appearing in a general analysis report.</div>
+      </div>
+      <div class="fail-card outdated">
+        <div class="fc-icon">📅</div>
+        <div class="fc-type">Failure Type 3</div>
+        <div class="fc-title">Outdated Information Presented as Current</div>
+        <div class="fc-what">AI has a training cutoff. It can't know what changed after that date. Leadership teams change, laws get updated, products get discontinued, companies get acquired, prices shift. AI presents all of its knowledge with the same confidence regardless of whether it's current.</div>
+        <div class="fc-example">❌ "The current CTO of [Company] is [Name]" — presented confidently, but the executive may have changed since the AI's training data was collected. Always verify current roles, prices, laws, and recent events.</div>
+      </div>
+      <div class="fail-card tone">
+        <div class="fc-icon">🎯</div>
+        <div class="fc-type">Failure Type 4</div>
+        <div class="fc-title">Tone That Doesn't Match the Situation</div>
+        <div class="fc-what">AI writes for a general audience. It doesn't know the specific person you're writing to, the history of your relationship, or the sensitivity of the situation. It can produce something technically correct but completely wrong for the actual human context — too formal, too casual, or missing an empathetic note that the situation required.</div>
+        <div class="fc-example">❌ An AI-drafted response to a client complaint that says "Thank you for your feedback. We have logged this issue for review." — Technically accurate, but reads as cold and dismissive in a high-stakes relationship.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practice: Spot the Problem in This AI Output</h2>
+    <p>Let's put the checklist to work. Read the AI output below carefully and identify every problem you can find before you share it. Click each potential issue to see if you're right.</p>
+
+    <div class="spot-sim">
+      <div class="ss-label">🔎 Output Review Exercise</div>
+      <div class="ss-intro">Imagine you asked an AI to help you draft a client-facing market analysis summary. Here's what it produced. Find every problem before it goes out.</div>
+
+      <div class="ai-output-block">
+        <div class="ai-label">🤖 AI-Generated Output (Unreviewed)</div>
+        The digital transformation market is growing rapidly. According to a 2024 IDC Global Survey, organizations that invest in AI-driven automation see an average ROI of 340% within 18 months (IDC, 2024). This aligns with data from your recent customer survey — particularly feedback from clients like Michael Torres (mtorres@horizoncorp.com) and the Apex Solutions account, which flagged concerns about implementation timelines. Based on this data, we recommend accelerating your Q2 rollout. Note that current EU AI Act compliance requirements mandate third-party auditing for all Tier 1 AI deployments, effective March 2024. Our analysis suggests this market is positioned for 47% growth through 2026 according to internal projections shared by your VP of Product at your last meeting.
+      </div>
+
+      <div class="problem-spots">
+        <div class="problem-spot" onclick="spotAnswer(this,'found','🔴 Real problem: The "340% ROI" statistic from IDC needs to be verified before this goes anywhere. Statistics this specific and this favorable are frequently hallucinated by AI. Find the actual IDC report, confirm the exact figure and methodology, and either cite it properly or remove it. Right now it cannot be shared.')">
+          The "340% ROI" statistic and the IDC citation
+        </div>
+        <div class="spot-fb" id="spot-0"></div>
+
+        <div class="problem-spot" onclick="spotAnswer(this,'found','🔴 Serious privacy violation: Michael Torres\'s full name and email address appear in a client-facing document. This is personally identifiable information from your customer survey — it should never appear in external-facing communications, summaries, or analysis documents. This must be removed before this document goes anywhere.')">
+          Michael Torres's name and email address appearing in the output
+        </div>
+        <div class="spot-fb" id="spot-1"></div>
+
+        <div class="problem-spot" onclick="spotAnswer(this,'found','🔴 Confidentiality issue: Internal projections shared by your VP of Product are proprietary company information. Including them in a client-facing document — even as supporting data for a recommendation — likely violates confidentiality expectations and possibly NDA terms. Internal projections stay internal unless explicitly approved for external use.')">
+          "Internal projections shared by your VP of Product"
+        </div>
+        <div class="spot-fb" id="spot-2"></div>
+
+        <div class="problem-spot" onclick="spotAnswer(this,'found','🔴 Regulatory accuracy issue: The EU AI Act compliance details need verification. The effective dates, which categories of systems require auditing, and what "Tier 1" means under the Act are specific regulatory claims. Getting these wrong in a client document creates legal and reputational risk. Verify the exact current requirements before including them.')">
+          The EU AI Act compliance requirements and "Tier 1" classification claim
+        </div>
+        <div class="spot-fb" id="spot-3"></div>
+
+        <div class="problem-spot" onclick="spotAnswer(this,'notproblem','✅ This one is fine. Recommending an accelerated Q2 rollout is a business recommendation — not a factual claim, a statistical assertion, or a privacy issue. As long as the data supporting that recommendation is accurate (which you\'re checking with the other items), the recommendation itself is appropriate to include. Recommendations based on accurate analysis are exactly what this document is for.')">
+          The recommendation to accelerate the Q2 rollout
+        </div>
+        <div class="spot-fb" id="spot-4"></div>
+
+        <div class="problem-spot" onclick="spotAnswer(this,'found','🔴 Unverified market projection: The 47% growth figure needs a source. "According to internal projections" refers to internal data (already flagged above), but more importantly: a specific percentage growth projection in a client document needs to be traceable to a credible, current, external source. This number as written is unsupported and should not go out.')">
+          "47% growth through 2026"
+        </div>
+        <div class="spot-fb" id="spot-5"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">You're reviewing an AI-written report and everything looks accurate based on your quick read. You're about to send it when you remember the checklist. What's the most important final question to ask yourself?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Did the AI generate this in under 30 seconds? If so, it might be lower quality than a slower response.</button>
+        <button class="qopt" onclick="doQ(this,true)">Would I be comfortable putting my name on everything this document says and owning it completely? If any part of the output makes you hesitate — that part needs another look before it goes out.</button>
+        <button class="qopt" onclick="doQ(this,false)">Is this longer than 500 words? Longer outputs are statistically more likely to contain hallucinations.</button>
+        <button class="qopt" onclick="doQ(this,false)">Did I check whether the AI used any sources from the last 6 months?</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 What to Remember</div>
+    <h2>The Review Step Is Where Your Judgment Lives</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The 12-item checklist covers four categories every AI output needs before it leaves your desk: accuracy and factual integrity, privacy and data safety, confidentiality of proprietary information, and professional appropriateness. Every category has caught real incidents in real workplaces.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The four most common output failures — hallucinated facts, personal information surfacing, outdated data presented as current, and wrong tone — share one thing in common: they're easy to miss on a quick read and obvious in hindsight. The checklist forces a slow enough look to catch them.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The ownership question — "Would I be comfortable putting my name on everything this says?" — is the most important question on the checklist. It forces you to engage with the output as your work, not as the AI's work. Because legally, professionally, and ethically, it is your work. The AI helped you create it; you're responsible for what it contains.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+let clCount=0;const clTotal=12;
+function clCheck(item){
+  item.classList.toggle('checked');
+  clCount+=item.classList.contains('checked')?1:-1;
+  const pct=(clCount/clTotal)*100;
+  document.getElementById('cl-fill').style.width=pct+'%';
+  document.getElementById('cl-progress-text').textContent=clCount+' of '+clTotal+' checks completed';
+  document.getElementById('cl-score-text').textContent=clCount+'/'+clTotal+' items confirmed';
+  const action=document.getElementById('cl-action-text');
+  if(clCount===clTotal){action.textContent='✅ All items confirmed — this output is cleared for sharing.';}
+  else if(clCount>=8){action.textContent='Almost there. Complete the remaining checks before sharing.';}
+  else{action.textContent='Work through each section above before sharing this output.';}
+}
+function spotAnswer(el,type,msg){
+  if(el.classList.contains('found')||el.classList.contains('notproblem'))return;
+  el.classList.add(type);el.style.pointerEvents='none';
+  const idx=Array.from(el.parentElement.querySelectorAll('.problem-spot')).indexOf(el);
+  const fb=document.getElementById('spot-'+idx);
+  fb.className='spot-fb show '+(type==='found'?'issue':'fine');fb.textContent=msg;
+}
+function doQ(btn,correct){if(document.querySelector('.qopt.correct,.qopt.wrong'))return;btn.classList.add(correct?'correct':'wrong');const fb=document.getElementById('qfb1');if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. This question reorients you from passive reviewer to active owner. It\'s easy to read an AI output looking for obvious errors. It\'s harder — and more important — to read it asking whether you would stake your professional reputation on every word. That shift in mindset is what separates a quick skim from a real review.';}else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes('comfortable putting my name'))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ Response length and generation speed are not reliable quality indicators. The most important final check is the ownership question — whether you\'re fully comfortable being accountable for everything the output says. That question forces you to engage with the document as yours, which changes what you notice.';}}
+</script>
+</body>
+</html>

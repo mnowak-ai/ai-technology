@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real-World Spotlight: The Samsung AI Data Leak and What Every Tech Worker Should Learn From It</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Alert banner */
+.alert-banner{background:linear-gradient(135deg,var(--red) 0%,#B91C1C 100%);border-radius:20px;padding:28px;margin:24px 0;color:var(--white);}
+.ab-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:8px;}
+.ab-title{font-family:"Fraunces",serif;font-size:22px;font-weight:900;margin-bottom:12px;line-height:1.2;}
+.ab-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.ab-stat{background:rgba(255,255,255,.12);border-radius:10px;padding:14px;text-align:center;}
+.ab-val{font-family:"Fraunces",serif;font-size:22px;font-weight:900;margin-bottom:4px;}
+.ab-desc{font-size:11px;color:rgba(255,255,255,.75);line-height:1.5;}
+
+/* Timeline */
+.case-timeline{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.ct-row{display:flex;gap:0;}
+.ct-left{display:flex;flex-direction:column;align-items:center;width:52px;flex-shrink:0;}
+.ct-dot{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:2px solid;}
+.ct-dot.incident{background:var(--red-pale);border-color:var(--red);}
+.ct-dot.discovery{background:var(--orange-pale);border-color:var(--orange);}
+.ct-dot.response{background:var(--blue-pale);border-color:var(--blue);}
+.ct-dot.outcome{background:var(--purple-pale);border-color:var(--purple);}
+.ct-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.ct-row:last-child .ct-line{display:none;}
+.ct-body{flex:1;padding:0 0 20px 16px;padding-top:6px;}
+.ct-when{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);margin-bottom:3px;}
+.ct-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.ct-desc{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.ct-quote{background:var(--gray-soft);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;line-height:1.65;color:var(--gray-muted);font-style:italic;}
+
+/* Incident breakdown */
+.incident-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.inc-card{border-radius:16px;padding:18px;border:1.5px solid;}
+.inc-card.one{background:#FFF0EB;border-color:#FF4A00;}
+.inc-card.two{background:var(--orange-pale);border-color:var(--orange);}
+.inc-card.three{background:var(--red-pale);border-color:var(--red);}
+.inc-num{font-family:"Fraunces",serif;font-size:32px;font-weight:900;margin-bottom:6px;}
+.inc-card.one .inc-num{color:#FF4A00;}
+.inc-card.two .inc-num{color:var(--orange);}
+.inc-card.three .inc-num{color:var(--red);}
+.inc-title{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--purple-dark);}
+.inc-desc{font-size:12px;line-height:1.65;color:var(--gray-text);}
+
+/* Decision replay */
+.decision-replay{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.dr-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.dr-intro{font-size:14px;color:var(--gray-text);margin-bottom:16px;line-height:1.7;}
+.dr-scenario{font-family:"Fraunces",serif;font-size:18px;color:var(--purple-dark);margin-bottom:6px;font-weight:700;line-height:1.35;}
+.dr-context{font-size:14px;color:var(--gray-muted);margin-bottom:16px;line-height:1.6;}
+.dr-opts{display:flex;flex-direction:column;gap:10px;}
+.dr-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.dr-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.dr-opt.safe{background:var(--green-pale);border-color:var(--green);}
+.dr-opt.risky{background:var(--red-pale);border-color:var(--red);}
+.dr-opt.okay{background:var(--orange-pale);border-color:var(--orange);}
+.dr-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.dr-fb.show{display:block;}
+.dr-fb.good{background:var(--green-pale);color:var(--green);}
+.dr-fb.bad{background:var(--red-pale);color:var(--red);}
+.dr-fb.warn{background:var(--orange-pale);color:var(--orange);}
+
+/* What Samsung did after */
+.response-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.rg-card{border-radius:16px;padding:18px;border:1.5px solid;}
+.rg-card.policy{background:var(--blue-pale);border-color:var(--blue);}
+.rg-card.tech{background:var(--purple-pale);border-color:var(--purple);}
+.rg-card.training{background:var(--green-pale);border-color:var(--green);}
+.rg-card.tools{background:var(--orange-pale);border-color:var(--orange);}
+.rg-icon{font-size:22px;margin-bottom:8px;}
+.rg-title{font-size:13px;font-weight:700;margin-bottom:5px;}
+.policy .rg-title{color:var(--blue);}
+.tech .rg-title{color:var(--purple-dark);}
+.training .rg-title{color:var(--green);}
+.tools .rg-title{color:var(--orange);}
+.rg-body{font-size:12px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.1 — Security & Privacy Risks · Real-World Spotlight</div>
+  <h1>The Samsung AI Data Leak and What Every Tech Worker Should Learn From It</h1>
+  <p class="hero-sub">In April 2023, Samsung made news for all the wrong reasons. Three separate incidents — all involving employees using ChatGPT with sensitive work data — set off a global conversation about AI security in the workplace. Here's the complete story, broken down so you never make the same mistake.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why This Case Matters for You</h2>
+    <p>The Samsung AI leak isn't the story of criminals or corporate espionage. It's the story of three engineers trying to do their jobs faster, using a tool that was freely available and genuinely helpful — without realizing what happened to their data when they did.</p>
+    <p>That's what makes it important. <mark>Most AI security incidents don't involve bad actors inside the company. They involve good people with good intentions who didn't understand the risk.</mark> If you've ever been tempted to paste work-related content into a consumer AI tool to get help faster, this story is directly relevant to you.</p>
+
+    <div class="alert-banner">
+      <div class="ab-label">📋 Case Overview — Samsung Electronics, April 2023</div>
+      <div class="ab-title">Three incidents. Three employees. All trying to be more productive.</div>
+      <div class="ab-stats">
+        <div class="ab-stat"><div class="ab-val">3</div><div class="ab-desc">Separate AI data leak incidents within weeks of each other</div></div>
+        <div class="ab-stat"><div class="ab-val">1 month</div><div class="ab-desc">After Samsung had allowed employee use of ChatGPT</div></div>
+        <div class="ab-stat"><div class="ab-val">Ban</div><div class="ab-desc">Samsung's response: ban all generative AI tools on company devices</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Actually Happened: The Three Incidents</h2>
+
+    <div class="incident-cards">
+      <div class="inc-card one">
+        <div class="inc-num">01</div>
+        <div class="inc-title">The Buggy Database Code</div>
+        <div class="inc-desc">An engineer was working on semiconductor equipment and had source code that wasn't working correctly. They copied the code — which contained proprietary logic related to Samsung's chip manufacturing process — and pasted it into ChatGPT to ask for debugging help. The AI helped fix the bug. The source code was now in OpenAI's systems.</div>
+      </div>
+      <div class="inc-card two">
+        <div class="inc-num">02</div>
+        <div class="inc-title">The Test Sequence Optimization</div>
+        <div class="inc-desc">A second employee was working on optimizing code used for testing semiconductor equipment. They shared code related to Samsung's proprietary testing procedures with ChatGPT and asked for optimization suggestions. Again — useful result, significant exposure. Internal testing procedures describe how Samsung's equipment works at a technical level.</div>
+      </div>
+      <div class="inc-card three">
+        <div class="inc-num">03</div>
+        <div class="inc-title">The Meeting Recording Summary</div>
+        <div class="inc-desc">A third employee recorded a confidential internal meeting and used ChatGPT to generate a summary. The transcript of that meeting — which contained internal strategy discussions, personnel discussions, and confidential business information — was now on an external platform.</div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <p>None of these employees were trying to steal from Samsung. They were trying to work smarter. That distinction matters — because it means the same thing could happen to almost anyone.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Full Timeline: From First Use to Company-Wide Ban</h2>
+
+    <div class="case-timeline">
+      <div class="ct-row">
+        <div class="ct-left"><div class="ct-dot incident">📅</div><div class="ct-line"></div></div>
+        <div class="ct-body">
+          <div class="ct-when">Early 2023</div>
+          <div class="ct-title">Samsung allows employee ChatGPT use</div>
+          <div class="ct-desc">Samsung, like many large companies at the time, decides to allow employees to use ChatGPT for productivity purposes. No formal policy about what can and cannot be shared with the tool is yet in place. Employees begin experimenting with AI assistance for their work.</div>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-left"><div class="ct-dot incident">💻</div><div class="ct-line"></div></div>
+        <div class="ct-body">
+          <div class="ct-when">March–April 2023 (approximately)</div>
+          <div class="ct-title">Three incidents occur within weeks</div>
+          <div class="ct-desc">Within roughly one month of allowing ChatGPT access, three separate employees share sensitive proprietary information with the AI tool. Each incident happens independently — the employees aren't colluding or even aware of each other's actions. Each one is simply trying to be more productive with a tool their company has approved them to use.</div>
+          <div class="ct-quote">At this point, Samsung's proprietary semiconductor source code and internal meeting transcripts are already in OpenAI's systems. There is no way to retrieve them.</div>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-left"><div class="ct-dot discovery">🔍</div><div class="ct-line"></div></div>
+        <div class="ct-body">
+          <div class="ct-when">April 2023</div>
+          <div class="ct-title">Samsung discovers the incidents internally</div>
+          <div class="ct-desc">Samsung's security team identifies what happened. The incidents are reported internally. Samsung reaches out to OpenAI to understand what happens to data submitted to ChatGPT and what can be done about the information already shared. OpenAI's terms at the time indicated that data could be used to improve its models — though enterprise customers had different protections that Samsung's employees weren't using.</div>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-left"><div class="ct-dot response">🚫</div><div class="ct-line"></div></div>
+        <div class="ct-body">
+          <div class="ct-when">May 2023</div>
+          <div class="ct-title">Samsung bans generative AI tools company-wide</div>
+          <div class="ct-desc">Samsung issues a temporary ban on the use of generative AI tools on company-owned devices and internal networks. Employees are told not to use ChatGPT, Google Bard, Bing AI, or similar tools for work purposes while the company develops a proper AI governance framework. The ban affects tens of thousands of employees globally.</div>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-left"><div class="ct-dot outcome">🏗️</div></div>
+        <div class="ct-body">
+          <div class="ct-when">2023–2024</div>
+          <div class="ct-title">Samsung builds its own internal AI</div>
+          <div class="ct-desc">Rather than rely on external AI tools, Samsung invests in developing its own internal AI system — one that operates entirely within Samsung's infrastructure, where data never leaves the company's control. This is a solution available to very large companies with significant resources, but it illustrates just how seriously Samsung took the risk once they understood what they were dealing with.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Decision Replay: What Would You Have Done?</h2>
+    <p>Let's put you in the engineer's position — before the incident happened. Understanding where the decision point was is the key to not repeating it.</p>
+
+    <div class="decision-replay">
+      <div class="dr-label">🔄 Decision Replay Simulation</div>
+      <div class="dr-scenario">It's Tuesday afternoon. You've been debugging the same function for two hours. You can't find the problem.</div>
+      <div class="dr-context">You know ChatGPT is amazing at spotting bugs in code. Your company recently said employees can use it. You have the code right here. It would take 30 seconds to paste it in and probably get an answer. The code contains Samsung's proprietary chip testing logic. What do you do?</div>
+      <div class="dr-opts" id="dr1-opts">
+        <div class="dr-opt" onclick="drAnswer('dr1','risky',this,'🚨 This is exactly what happened. The code is now in OpenAI\'s systems. Even if it helped you fix the bug in 30 seconds, you\'ve just shared Samsung\'s proprietary testing logic with an external platform — potentially entering it into a training pipeline. The 30-second time savings cost Samsung control of intellectual property they spent years and millions developing. This is the decision that led to the company-wide ban.')">Paste the code in. ChatGPT is approved, and it\'ll fix this in seconds. The company said we can use it.</div>
+        <div class="dr-opt" onclick="drAnswer('dr1','safe',this,'✅ This is the right call — and it only takes a slightly different type of help-seeking. You can describe the problem in general terms without sharing the proprietary code itself: the type of bug, the behavior you\'re seeing, the logic flow. ChatGPT can help you think through debugging approaches without ever seeing Samsung\'s actual code. The rule: describe the problem, don\'t share the asset.')">Ask ChatGPT for help debugging this type of error in general — describe what it\'s doing wrong without pasting the actual proprietary code.</div>
+        <div class="dr-opt" onclick="drAnswer('dr1','safe',this,'✅ Also correct. Asking a colleague removes the external exposure entirely. Yes, it takes longer than pasting into ChatGPT. But "it\'s faster" is not a good enough reason to share proprietary code with an external platform. The time-saving convenience that AI tools offer is real — but that convenience should never override data security. A colleague review is slower and safer.')">Take a break and ask a colleague to review the code with fresh eyes.</div>
+        <div class="dr-opt" onclick="drAnswer('dr1','okay',this,'⚠️ Checking the policy first is the right instinct — and much better than just pasting and hoping. But here\'s the key: even if your company says "ChatGPT is approved for use," that doesn\'t automatically mean all data is appropriate to share with it. Most AI policies distinguish between using AI for general tasks versus sharing proprietary code, customer data, or confidential information. Look specifically for guidance on what types of content are allowed — not just whether the tool is allowed.')">Check the company AI policy document before doing anything with the code.</div>
+      </div>
+      <div class="dr-fb" id="dr1-fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Samsung Did After — And What You Can Learn From Their Response</h2>
+    <p>Samsung's response to the incidents is itself a lesson in how organizations handle AI security failures. Notice that their response wasn't just "ban the tools and move on" — they took a comprehensive approach.</p>
+
+    <div class="response-grid">
+      <div class="rg-card policy">
+        <div class="rg-icon">📋</div>
+        <div class="rg-title">New AI Use Policy</div>
+        <div class="rg-body">Samsung developed explicit policies distinguishing between acceptable AI use (general productivity tasks, no proprietary data) and prohibited AI use (sharing code, internal documents, customer data, meeting content). Policy came before tools were reinstated.</div>
+      </div>
+      <div class="rg-card tech">
+        <div class="rg-icon">🔒</div>
+        <div class="rg-title">Technical Controls</div>
+        <div class="rg-body">Samsung implemented technical restrictions on which AI tools employees could access on company devices — blocking unapproved AI platforms at the network level so that policy was enforced by the system, not just by employee judgment.</div>
+      </div>
+      <div class="rg-card training">
+        <div class="rg-icon">🎓</div>
+        <div class="rg-title">Employee Training</div>
+        <div class="rg-body">Widespread education about what types of information can and cannot be shared with AI tools. The focus wasn't punishment — it was making sure every employee understood why the rules existed and what the risks were.</div>
+      </div>
+      <div class="rg-card tools">
+        <div class="rg-icon">🏗️</div>
+        <div class="rg-title">Internal AI Development</div>
+        <div class="rg-body">Samsung began building its own AI tools that operate within Samsung's infrastructure, so engineers can get AI assistance without any data leaving Samsung's control. This is the longest-term and most expensive response — but it addresses the root problem.</div>
+      </div>
+    </div>
+
+    <p>Notice the order: policy, then technical controls, then training, then new tools. This sequence is important. Samsung didn't just tell people to be more careful — they built systems that made the right thing easier to do and the wrong thing harder.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Rules This Case Creates for Every Tech Worker</h2>
+    <p>You don't have to work at Samsung for this case to apply to you. Here are three rules that every tech worker should carry from this story into every workday that involves AI tools.</p>
+    <p><strong>Rule 1: "Approved tool" doesn't mean "anything goes."</strong> Samsung employees were told they could use ChatGPT. That authorization covered general productivity tasks — it didn't grant permission to share proprietary source code. The approval of a tool and the approval of a specific type of input are two separate questions. Always ask: "Is this type of content allowed in this tool?" — not just "Is this tool allowed?"</p>
+    <p><strong>Rule 2: There is no "undo" button.</strong> Once you hit send, the information has been transmitted, processed, and potentially stored or trained on. You cannot retrieve it. The time-saving you get from using AI must always be weighed against the permanence of the exposure you create. For irreplaceable proprietary information, that calculation almost never favors sharing it with an external tool.</p>
+    <p><strong>Rule 3: Describe the problem, don't share the asset.</strong> This is the practical alternative to pasting sensitive data into AI tools. Instead of pasting code: describe what the code is doing wrong, what type of function it is, and what output you're seeing. Instead of pasting a contract: describe the type of clause you're trying to draft and the business context. AI can help you solve problems without seeing your organization's most sensitive information — but you have to prompt it that way deliberately.</p>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">One of the Samsung engineers deleted their ChatGPT conversation history after realizing what they'd done. Did this fix the security problem? Why or why not?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Yes — deleting the conversation removes the data from OpenAI's systems, so the exposure is resolved</button>
+        <button class="qopt" onclick="doQ(this,true)">No. Deleting your conversation history only removes it from what you can see. By the time the deletion happens, the data has already been transmitted to and processed on OpenAI's servers, potentially reviewed by human contractors, stored in backups, and in some cases used to inform model training. "Delete" in consumer AI tools almost never means "removed from every server that ever touched this data." The exposure had already occurred before deletion was even possible.</button>
+        <button class="qopt" onclick="doQ(this,false)">It depends — if the deletion happened within 24 hours, the data likely hadn't been stored yet</button>
+        <button class="qopt" onclick="doQ(this,false)">Yes, as long as no one else had seen the conversation in the meantime</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 What to Remember</div>
+    <h2>The Lesson That Cost Samsung Millions to Learn</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Tool approval is not the same as content approval. Samsung employees were allowed to use ChatGPT — but that approval didn't extend to sharing proprietary source code and meeting transcripts. Always ask two questions: "Is this tool approved?" AND "Is this type of content allowed in this tool?"</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Once information is submitted to an external AI tool, you cannot get it back. There is no undo. Deletion removes your view of it — not the exposure itself. For sensitive proprietary information, the only safe decision is made before you hit send.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Describe the problem; don't share the asset. AI tools can help you solve almost any problem if you describe it clearly — you don't have to paste the actual code, document, or data. Learning to prompt AI tools in a way that gets help without exposing sensitive information is one of the most valuable professional skills you can build.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+let dr1done=false;
+function drAnswer(id,type,el,msg){if(dr1done)return;dr1done=true;el.classList.add(type==='safe'?'safe':type==='risky'?'risky':'okay');document.getElementById(id+'-opts').querySelectorAll('.dr-opt').forEach(o=>o.style.pointerEvents='none');const fb=document.getElementById(id+'-fb');fb.className='dr-fb show '+(type==='safe'?'good':type==='risky'?'bad':'warn');fb.textContent=msg;}
+function doQ(btn,correct){if(document.querySelector('.qopt.correct,.qopt.wrong'))return;btn.classList.add(correct?'correct':'wrong');const fb=document.getElementById('qfb1');if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. This is one of the most important things to understand about AI data exposure. "Delete" in a consumer AI context almost never means what most people think it means. The data traveled to external servers the moment send was pressed. From that point forward, what you see in your conversation history is just your view — the underlying data exposure is a separate matter entirely handled by the platform\'s data policies.';}else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes('Deleting your conversation'))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ Deletion doesn\'t reverse the exposure. The transmission, processing, and potential storage of the data happened the moment send was pressed — before deletion was even an option. Understanding that "delete from history" ≠ "delete from servers" is critical for anyone using AI tools with sensitive information.';}}
+</script>
+</body>
+</html>

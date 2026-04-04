@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How AI Tools Store, Process, and Sometimes Leak Your Conversations</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Journey pipeline */
+.pipeline{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.pipe-step{display:flex;gap:0;}
+.pipe-left{display:flex;flex-direction:column;align-items:center;width:56px;flex-shrink:0;}
+.pipe-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:2px solid;}
+.pipe-icon.you{background:var(--blue-pale);border-color:var(--blue);}
+.pipe-icon.send{background:var(--purple-pale);border-color:var(--purple);}
+.pipe-icon.process{background:var(--orange-pale);border-color:var(--orange);}
+.pipe-icon.store{background:var(--red-pale);border-color:var(--red);}
+.pipe-icon.train{background:#FEF3C7;border-color:#D97706;}
+.pipe-icon.return{background:var(--green-pale);border-color:var(--green);}
+.pipe-line{flex:1;width:2px;background:var(--purple-mid);margin:3px 0;}
+.pipe-step:last-child .pipe-line{display:none;}
+.pipe-body{flex:1;padding:0 0 20px 16px;padding-top:6px;}
+.pipe-stage{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+.you .pipe-stage+*,.send .pipe-stage+*{color:var(--blue);}
+.pipe-title{font-size:15px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.pipe-desc{font-size:13px;line-height:1.7;color:var(--gray-text);}
+.pipe-risk{font-size:12px;padding:7px 10px;border-radius:8px;margin-top:8px;}
+.pipe-risk.warn{background:var(--orange-pale);color:var(--orange);}
+.pipe-risk.danger{background:var(--red-pale);color:var(--red);}
+.pipe-risk.safe{background:var(--green-pale);color:var(--green);}
+
+/* Mode compare */
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.mode-card{border-radius:18px;padding:20px;border:1.5px solid;}
+.mode-card.enterprise{background:var(--green-pale);border-color:var(--green);}
+.mode-card.private{background:var(--blue-pale);border-color:var(--blue);}
+.mode-card.default{background:var(--orange-pale);border-color:var(--orange);}
+.mc-icon{font-size:26px;margin-bottom:10px;}
+.mc-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.enterprise .mc-title{color:var(--green);}
+.private .mc-title{color:var(--blue);}
+.default .mc-title{color:var(--orange);}
+.mc-who{font-size:11px;color:var(--gray-muted);margin-bottom:10px;}
+.mc-item{font-size:12px;line-height:1.6;margin-bottom:5px;display:flex;gap:6px;}
+.mc-check{font-size:11px;font-weight:700;flex-shrink:0;}
+.enterprise .mc-check.yes{color:var(--green);}
+.private .mc-check.yes{color:var(--blue);}
+.default .mc-check.yes{color:var(--orange);}
+.mc-check.no{color:var(--red);}
+.mc-warning{font-size:11px;padding:7px 10px;border-radius:7px;margin-top:8px;font-style:italic;line-height:1.5;}
+.enterprise .mc-warning{background:rgba(39,103,73,.08);color:var(--green);}
+.private .mc-warning{background:rgba(29,78,216,.08);color:var(--blue);}
+.default .mc-warning{background:rgba(217,119,6,.1);color:var(--orange);}
+
+/* Policy decoder */
+.policy-decoder{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.pd-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.pd-intro{font-size:14px;color:var(--gray-text);margin-bottom:16px;line-height:1.7;}
+.pd-items{display:flex;flex-direction:column;gap:10px;}
+.pd-item{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;overflow:hidden;}
+.pd-legalese{padding:14px 16px;font-size:13px;line-height:1.6;color:var(--gray-muted);font-style:italic;cursor:pointer;border-bottom:1px solid var(--purple-mid);}
+.pd-plain{padding:14px 16px;font-size:13px;line-height:1.7;color:var(--gray-text);background:var(--purple-pale);display:none;}
+.pd-plain.show{display:block;}
+.pd-toggle{font-size:11px;font-weight:700;color:var(--purple);cursor:pointer;display:inline-block;margin-top:6px;}
+
+/* Risk detector sim */
+.risk-sim{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.rs-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.rs-intro{font-size:14px;color:var(--gray-text);margin-bottom:16px;line-height:1.7;}
+.rs-prompts{display:flex;flex-direction:column;gap:10px;}
+.rs-prompt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;font-family:"DM Sans",sans-serif;}
+.rs-prompt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.rs-prompt.safe{background:var(--green-pale);border-color:var(--green);}
+.rs-prompt.risky{background:var(--red-pale);border-color:var(--red);}
+.rs-prompt.moderate{background:var(--orange-pale);border-color:var(--orange);}
+.rs-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:4px;display:none;}
+.rs-fb.show{display:block;}
+.rs-fb.good{background:var(--green-pale);color:var(--green);}
+.rs-fb.bad{background:var(--red-pale);color:var(--red);}
+.rs-fb.warn{background:var(--orange-pale);color:var(--orange);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.1 — Security & Privacy Risks</div>
+  <h1>How AI Tools Store, Process, and Sometimes Leak Your Conversations</h1>
+  <p class="hero-sub">When you type something into an AI tool, you might imagine your words being processed and then disappearing. That's not what actually happens. Understanding what AI platforms do with your inputs — where they go, how long they stay, and who can see them — is one of the most important security concepts in this entire module.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What Actually Happens When You Hit Send</h2>
+    <p>Most people think of using an AI tool like having a conversation that vanishes when they close the tab. In reality, your prompt goes on a much longer journey. Understanding that journey is the first step to using AI tools safely at work.</p>
+
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-icon you">⌨️</div><div class="pipe-line"></div></div>
+        <div class="pipe-body">
+          <div class="pipe-stage" style="color:var(--blue);">Stage 1 — You</div>
+          <div class="pipe-title">You type your prompt</div>
+          <div class="pipe-desc">You write something into the AI tool — a question, a draft, a chunk of data you want analyzed. At this point, the information is still entirely under your control. This is the last moment you have complete control over where it goes.</div>
+          <div class="pipe-risk safe">⬆️ This is your decision point. What you type determines everything that follows.</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-icon send">📤</div><div class="pipe-line"></div></div>
+        <div class="pipe-body">
+          <div class="pipe-stage" style="color:var(--purple);">Stage 2 — Transmission</div>
+          <div class="pipe-title">Your prompt leaves your device</div>
+          <div class="pipe-desc">The moment you press send, your text travels over the internet to the AI company's servers. Most reputable AI tools encrypt this transmission (the lock icon in your browser), which means it's hard to intercept in transit. But encryption during transmission is only one piece of the puzzle.</div>
+          <div class="pipe-risk safe">🔒 Usually secure during transit — but that only covers the trip there, not what happens after arrival.</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-icon process">⚙️</div><div class="pipe-line"></div></div>
+        <div class="pipe-body">
+          <div class="pipe-stage" style="color:var(--orange);">Stage 3 — Processing</div>
+          <div class="pipe-title">The AI model reads and processes your input</div>
+          <div class="pipe-desc">Your prompt is fed into the AI model running on the company's servers. The model processes it, generates a response, and sends that response back to you. During this stage, your input is being read — by software, and potentially reviewed by human contractors as part of quality and safety processes, depending on the platform's policies.</div>
+          <div class="pipe-risk warn">⚠️ Human review: Many AI platforms use human reviewers to check flagged conversations for safety. Your input may be read by a person.</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-icon store">💾</div><div class="pipe-line"></div></div>
+        <div class="pipe-body">
+          <div class="pipe-stage" style="color:var(--red);">Stage 4 — Storage</div>
+          <div class="pipe-title">Your conversation gets stored (usually)</div>
+          <div class="pipe-desc">By default, most consumer AI tools store your conversation history on their servers. This serves multiple purposes: it lets you access past conversations, it helps the company improve their products, and it may be used to personalize your experience. How long conversations are stored, and whether you can delete them, varies by platform and account type.</div>
+          <div class="pipe-risk danger">🗄️ Storage is where most enterprise security policies focus. Data sitting on external servers is data outside your organization's control.</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-icon train">🧠</div><div class="pipe-line"></div></div>
+        <div class="pipe-body">
+          <div class="pipe-stage" style="color:var(--orange);">Stage 5 — Training (sometimes)</div>
+          <div class="pipe-title">Your input may be used to improve the model</div>
+          <div class="pipe-desc">This is the stage that surprises most people. On many free or consumer AI platforms, your conversations may be used as training data to make future versions of the AI better. This means information you shared — even if you deleted the conversation later — could have influenced how the model responds to future users. Enterprise tiers typically opt out of this. Free tiers often don't.</div>
+          <div class="pipe-risk danger">🚨 This is exactly what happened at Samsung. The proprietary code pasted into ChatGPT potentially entered the training pipeline. Deletion doesn't undo training.</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-icon return">↩️</div></div>
+        <div class="pipe-body">
+          <div class="pipe-stage" style="color:var(--green);">Stage 6 — Response</div>
+          <div class="pipe-title">The answer comes back to you</div>
+          <div class="pipe-desc">The AI's response travels back to your device. This is the only part of the process most users ever think about. But by now, your original input has already been transmitted, processed, potentially reviewed, stored, and possibly flagged for training — all before you read the first word of the response.</div>
+          <div class="pipe-risk safe">💡 The response is the end of the visible process — but stages 3–5 already happened regardless of what you read here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>"Private Mode" — What It Actually Means (And What It Doesn't)</h2>
+    <p>Many AI tools offer a "private" or "temporary" mode that makes it sound like your conversation disappears. This is partly true — but people often misunderstand what these modes actually protect.</p>
+
+    <div class="mode-grid">
+      <div class="mode-card enterprise">
+        <div class="mc-icon">🏢</div>
+        <div class="mc-title">Enterprise / Business Tier</div>
+        <div class="mc-who">What most companies pay for when they deploy AI tools for employees</div>
+        <div class="mc-item"><span class="mc-check yes">✓</span><span>Data is NOT used for model training</span></div>
+        <div class="mc-item"><span class="mc-check yes">✓</span><span>Stronger data retention controls</span></div>
+        <div class="mc-item"><span class="mc-check yes">✓</span><span>Admin visibility into usage</span></div>
+        <div class="mc-item"><span class="mc-check yes">✓</span><span>Data stays within defined regions</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>Still processed on vendor servers</span></div>
+        <div class="mc-warning">Best choice for work use with company data — but only if IT has provisioned it properly.</div>
+      </div>
+      <div class="mode-card private">
+        <div class="mc-icon">🕵️</div>
+        <div class="mc-title">Temporary / Private Chat Mode</div>
+        <div class="mc-who">Available in many free AI tools — often called "temporary chat"</div>
+        <div class="mc-item"><span class="mc-check yes">✓</span><span>Conversation not saved to your history</span></div>
+        <div class="mc-item"><span class="mc-check yes">✓</span><span>You can't see it again after closing</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>Still processed on vendor servers</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>May still be used for safety review</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>Training opt-out varies by platform</span></div>
+        <div class="mc-warning">⚠️ "Not saved in your history" ≠ "the company never saw it." Don't share sensitive work data here.</div>
+      </div>
+      <div class="mode-card default">
+        <div class="mc-icon">💬</div>
+        <div class="mc-title">Default Consumer Mode</div>
+        <div class="mc-who">The standard free tier most people use personally</div>
+        <div class="mc-item"><span class="mc-check yes">✓</span><span>Conversations saved to history</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>Data often used for model training</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>Human review possible</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>No enterprise data protections</span></div>
+        <div class="mc-item"><span class="mc-check no">✗</span><span>Deletion may not remove from training</span></div>
+        <div class="mc-warning">🚨 Never use this mode for work data, client information, internal code, or anything your employer wouldn't want on an external server.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Decoding the Privacy Policy: What They're Really Saying</h2>
+    <p>AI platform privacy policies are written by lawyers for lawyers. But buried in those documents are facts you genuinely need to know before you use these tools at work. Click each excerpt below to see a plain-English translation.</p>
+
+    <div class="policy-decoder">
+      <div class="pd-label">📄 Policy Decoder — Click to translate</div>
+      <div class="pd-intro">These are paraphrased versions of real language that commonly appears in AI platform terms of service. Click each one to find out what it actually means for you.</div>
+      <div class="pd-items">
+        <div class="pd-item">
+          <div class="pd-legalese" onclick="togglePolicy(this)">"We may use content you submit to improve our services, including by training our models, unless you opt out through your account settings or are subscribed to a qualifying enterprise plan." <span class="pd-toggle">▼ Translate this</span></div>
+          <div class="pd-plain">🔍 Plain English: What you type into this tool may be used to train future versions of the AI. If you're on a free account, you might need to actively turn off a setting to prevent this. If your company has an enterprise plan, it may already be disabled. But if you're using a personal free account at work — this is almost certainly on by default.</div>
+        </div>
+        <div class="pd-item">
+          <div class="pd-legalese" onclick="togglePolicy(this)">"We retain conversation data for a period of up to 30 days for safety purposes, after which it is deleted from our active systems. Backup copies may be retained for a longer period consistent with our data retention schedule." <span class="pd-toggle">▼ Translate this</span></div>
+          <div class="pd-plain">🔍 Plain English: Even if you delete a conversation, it may still exist in their backup systems for months. When the policy says "deleted," it usually means deleted from what you can see — not necessarily from every server that's ever touched your data. For sensitive work information, assume that once it's been sent, it could exist somewhere for a long time.</div>
+        </div>
+        <div class="pd-item">
+          <div class="pd-legalese" onclick="togglePolicy(this)">"Authorized personnel may review conversations for safety, quality assurance, or policy compliance purposes. We use technical and administrative measures to limit such access." <span class="pd-toggle">▼ Translate this</span></div>
+          <div class="pd-plain">🔍 Plain English: Actual human employees at the AI company may read your conversations. They have systems in place to limit who can do this and why, but it happens. This is usually for legitimate reasons — checking that the AI isn't saying harmful things, reviewing flagged content, improving the system. But your inputs are not guaranteed to be private from the people who run the platform.</div>
+        </div>
+        <div class="pd-item">
+          <div class="pd-legalese" onclick="togglePolicy(this)">"If you are accessing our services through an employer-provided account, your employer may have the ability to access, monitor, review, and export your conversations in accordance with their organizational policies." <span class="pd-toggle">▼ Translate this</span></div>
+          <div class="pd-plain">🔍 Plain English: If your company pays for your AI tool access, your employer can read your conversations. This is often used for compliance, security audits, and investigating incidents. Even if you feel like you're having a private conversation with an AI at work, your employer-provided tools may be monitored. Use them accordingly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Input Risk Detector: Safe or Not?</h2>
+    <p>Before you paste something into an AI tool, it takes about five seconds to ask: "Is this safe to put here?" The exercise below builds that muscle. For each example prompt, decide whether it's safe to enter into a standard consumer AI tool at work.</p>
+
+    <div class="risk-sim">
+      <div class="rs-label">🎮 Simulation — Safe or Risky?</div>
+      <div class="rs-intro">Click each prompt to reveal whether it's safe, risky, or somewhere in between — and why.</div>
+      <div class="rs-prompts">
+        <div class="rs-prompt" onclick="rsAnswer(this,'safe','✅ Safe. This contains no company-specific information, no customer data, no proprietary details. Generic writing help is exactly what consumer AI tools are designed for. You could paste this into any AI tool without any security concern.')">
+          "Can you help me rewrite this paragraph to sound more professional? 'Our team worked hard last quarter and achieved good results.'"
+        </div>
+        <div class="rs-fb" id="rs-fb-0"></div>
+
+        <div class="rs-prompt" onclick="rsAnswer(this,'risky','🚨 Risky. Customer names, email addresses, and account numbers are personally identifiable information (PII). Pasting this into a consumer AI tool likely violates your company\'s data policy, privacy laws like GDPR or CCPA, and potentially your employment contract. Even if you anonymize the name, the email and account number are still identifying. Use your company\'s approved, enterprise-tier AI tool — or do this analysis manually.')">
+          "Here is a list of customer complaints: John Smith (john@email.com, Account #48291) says he never received his order. Sarah Lee (sarah@email.com, Account #39182) says the product was damaged. Can you find patterns in these complaints?"
+        </div>
+        <div class="rs-fb" id="rs-fb-1"></div>
+
+        <div class="rs-prompt" onclick="rsAnswer(this,'moderate','⚠️ This one depends on context. The code itself might be fine if it\'s generic logic with no proprietary algorithms, trade secrets, or internal system references. But if the function name, variable names, or comments reveal anything about your company\'s internal architecture or business logic, it could be sensitive. Rule of thumb: if this code could help a competitor understand how your product works, it shouldn\'t go into a consumer AI tool.')">
+          "Can you review this Python function and suggest optimizations? [pastes internal company code]"
+        </div>
+        <div class="rs-fb" id="rs-fb-2"></div>
+
+        <div class="rs-prompt" onclick="rsAnswer(this,'risky','🚨 Risky. Salary information is highly sensitive employee data. Even if you remove names, salary data combined with job titles, departments, or project info can be re-identifying. This likely violates HR data privacy policies at most companies. If you need AI help with compensation analysis, work with HR to get access to properly anonymized data through an enterprise tool — don\'t bring raw salary data to a consumer AI.')">
+          "I'm preparing for a salary review. Here are the current salaries for my team: [lists names, roles, and salaries]. Can you help me see if there are any pay equity issues?"
+        </div>
+        <div class="rs-fb" id="rs-fb-3"></div>
+
+        <div class="rs-prompt" onclick="rsAnswer(this,'safe','✅ Safe. You\'re sharing a concept, not company data. Explaining that you\'re building a feature for a healthcare app gives the AI useful context without revealing anything proprietary. This is a good example of how to use AI tools for work in a way that\'s genuinely helpful without creating security exposure. The details that matter — the actual code, the internal architecture, the client details — stay off the AI platform.')">
+          "I'm building a feature for a healthcare appointment scheduling app. What are the best UX patterns for date and time selection on mobile? We need to handle time zones."
+        </div>
+        <div class="rs-fb" id="rs-fb-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A coworker tells you she uses "temporary chat" mode in a consumer AI tool for all her work tasks, so she's not worried about data privacy — "the conversations disappear." What's wrong with her assumption?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Nothing — temporary chat mode means the AI company never sees or stores the conversation</button>
+        <button class="qopt" onclick="doQ(this,true)">Temporary chat mode only means the conversation isn't saved to her visible history. The conversation was still transmitted to and processed on the AI company's servers, may have been reviewed by human contractors, and may still be used for training or stored in backups — depending on the platform's policies. "Not in my history" is not the same as "the company never saw it."</button>
+        <button class="qopt" onclick="doQ(this,false)">She's right if she's using a well-known AI tool — those companies have strong enough security that temporary mode is fully private</button>
+        <button class="qopt" onclick="doQ(this,false)">The risk depends on how sensitive the data is — temporary mode is fine for moderately sensitive information</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 What to Remember</div>
+    <h2>Your Prompt Goes Somewhere — Know Where</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When you type into an AI tool, your input is transmitted to external servers, processed by the model, potentially reviewed by humans, stored for varying periods, and in many cases used to train future AI models. Understanding this six-stage journey changes how you think about what belongs in a prompt.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>"Private mode" means your conversation isn't saved in your history — it doesn't mean the AI company never saw it. For actual data protection at work, you need an enterprise-tier tool that your IT department has properly configured, with data training opted out and retention controls in place.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The five-second rule: before pasting anything into an AI tool, ask yourself "would I be comfortable if my IT department, my manager, or the AI company's trust and safety team could see exactly what I'm submitting?" If the answer is no — don't submit it.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function togglePolicy(el){el.nextElementSibling.classList.toggle('show');}
+const rsAnswered=new Set();
+function rsAnswer(el,type,msg){
+  const idx=Array.from(el.parentElement.querySelectorAll('.rs-prompt')).indexOf(el);
+  if(rsAnswered.has(idx))return;rsAnswered.add(idx);
+  el.classList.add(type==='safe'?'safe':type==='risky'?'risky':'moderate');
+  el.style.pointerEvents='none';
+  const fb=document.getElementById('rs-fb-'+idx);
+  fb.className='rs-fb show '+(type==='safe'?'good':type==='risky'?'bad':'warn');
+  fb.textContent=msg;
+}
+function doQ(btn,correct){if(document.querySelector('.qopt.correct,.qopt.wrong'))return;btn.classList.add(correct?'correct':'wrong');const fb=document.getElementById('qfb1');if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. This is one of the most common misconceptions about AI tool privacy. "Temporary" refers to your conversation history — the log you can see and access later. It says nothing about what happens on the server side during and after processing. The distinction matters enormously for anyone handling sensitive work data.';}else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes('only means the conversation'))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ "Temporary chat" is a misleading label. It only refers to what gets saved to the user\'s visible chat history. The conversation still travels to the company\'s servers, gets processed, and may be stored or reviewed — regardless of whether the user can see it afterward.';}}
+</script>
+</body>
+</html>
