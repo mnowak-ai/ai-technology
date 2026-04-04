@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When AI Hallucinations Go to Work: Real Examples of AI Confidently Getting It Wrong</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Case study cards */
+.case-card{border-radius:20px;padding:26px;margin:16px 0;border:1.5px solid var(--red);background:var(--red-pale);}
+.cc-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:100px;margin-bottom:12px;background:var(--red);color:var(--white);}
+.cc-company{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--red);margin-bottom:6px;}
+.cc-what{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:12px;}
+.cc-consequence{background:rgba(220,38,38,.12);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:600;color:var(--red);}
+.cc-lesson{background:var(--white);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.65;color:var(--gray-text);margin-top:10px;}
+.cc-lesson-label{font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+
+/* Why hallucinations happen explainer */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.wg-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.wg-icon{font-size:24px;margin-bottom:8px;}
+.wg-title{font-weight:700;color:var(--purple-dark);font-size:15px;margin-bottom:6px;}
+.wg-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Red flags for hallucinations */
+.redflag-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.rf-item{display:flex;gap:12px;align-items:flex-start;background:var(--orange-pale);border:1.5px solid var(--orange);border-radius:14px;padding:16px 18px;}
+.rf-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.rf-body{flex:1;}
+.rf-title{font-weight:700;color:var(--orange);font-size:14px;margin-bottom:4px;}
+.rf-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Catch-it challenge */
+.catch-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.cb-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.cb-prompt{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;margin-bottom:16px;font-size:14px;line-height:1.7;color:var(--gray-text);}
+.cb-prompt-label{font-size:11px;font-weight:700;color:var(--gray-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.cb-question{font-family:"Fraunces",serif;font-size:18px;color:var(--purple-dark);margin-bottom:16px;font-weight:700;line-height:1.35;}
+.cb-opts{display:flex;flex-direction:column;gap:10px;}
+.cb-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.cb-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.cb-opt.right{background:var(--green-pale);border-color:var(--green);}
+.cb-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.cb-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.cb-fb.show{display:block;}
+.cb-fb.good{background:var(--green-pale);color:var(--green);}
+.cb-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Verification checklist */
+.verify-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.vl-item{display:flex;gap:12px;align-items:flex-start;background:var(--green-pale);border:1.5px solid var(--green);border-radius:14px;padding:16px 18px;}
+.vl-num{width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.vl-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.vl-text strong{color:var(--green);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.2 — Bias &amp; AI Limitations</div>
+  <h1>When AI Hallucinations Go to Work: Real Examples of AI Confidently Getting It Wrong</h1>
+  <p class="hero-sub">An AI hallucination isn't a glitch or a crash. It's the AI giving you a confident, well-written, completely false answer — and expecting you to catch it. This article explains why it happens and how to protect yourself at work.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What "Hallucination" Actually Means</h2>
+    <p>The word <strong>hallucination</strong> is used in AI to describe when a model generates information that sounds accurate but is entirely made up. The AI doesn't know it's wrong. It's not lying. It's doing exactly what it was designed to do — generate the most statistically likely next words given the input — and in this case, those statistically likely words happen to be false.</p>
+    <p>Here's what makes hallucinations so dangerous at work: <mark>the AI writes fabricated information with the same confident, professional tone as accurate information</mark>. There are no warning labels. No hedging. No footnote that says "I made this up." The fake fact arrives with the same polish and certainty as the real one sitting right next to it.</p>
+
+    <div class="pull-quote">
+      <p>The AI doesn't know the difference between something it learned from a real source and something it generated by pattern-matching. Both come out sounding exactly the same.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why Hallucinations Happen: The Four Causes</h2>
+
+    <div class="why-grid">
+      <div class="wg-card">
+        <div class="wg-icon">📚</div>
+        <div class="wg-title">Training data gaps</div>
+        <div class="wg-text">When the AI doesn't have reliable information about a topic, it doesn't say "I don't know." Instead, it generates plausible-sounding content by combining patterns from related topics — which can produce confident nonsense.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">📅</div>
+        <div class="wg-title">Knowledge cutoff</div>
+        <div class="wg-text">AI models are trained on data up to a certain date. For anything that happened after that date — a new law, a product update, a company acquisition — the model has no real information and may fill the gap with something plausible but wrong.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">🔢</div>
+        <div class="wg-title">Overconfidence with numbers</div>
+        <div class="wg-text">Statistics, dates, citations, and prices are especially hallucination-prone. The model knows these details matter and tries to provide them — but if it doesn't have accurate data, it generates figures that sound right without being right.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">🧩</div>
+        <div class="wg-title">Pattern completion pressure</div>
+        <div class="wg-text">The AI is designed to complete patterns. If you ask "What did researcher X find in their 2019 study?", the model may generate a study that sounds exactly like what researcher X might publish — because that's what pattern completion produces — even if that study never existed.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Three Real Cases Where Hallucinations Caused Damage</h2>
+
+    <div class="case-card">
+      <div class="cc-badge">⚖️ Legal — 2023</div>
+      <div class="cc-company">The Lawyers Who Submitted Fake Court Cases</div>
+      <div class="cc-what">Two New York attorneys used ChatGPT to research legal precedents for a personal injury case. The AI generated citations for six court cases — complete with case names, docket numbers, judges' names, and realistic-sounding rulings. The lawyers included these citations in their court filing without verifying them. When the opposing counsel tried to find the cases, they didn't exist. None of them. ChatGPT had invented all six, in precise legal citation format, with complete confidence. The lawyers faced sanctions and significant professional consequences.</div>
+      <div class="cc-consequence">⚠️ Real consequence: Federal sanctions, required legal education courses, and significant damage to professional reputation</div>
+      <div class="cc-lesson">
+        <div class="cc-lesson-label">💡 The lesson for tech workers</div>
+        Any time an AI gives you a specific citation, source, statistic, case name, or reference — treat it as unverified until you've independently confirmed it exists. Specificity does not equal accuracy. The more specific the hallucination, the more convincing it looks.
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="cc-badge">💊 Healthcare — Ongoing Risk</div>
+      <div class="cc-company">AI Medication Dosing Errors in Research Summaries</div>
+      <div class="cc-what">Multiple medical researchers and clinicians have reported cases where AI tools — used to summarize research or assist with documentation — generated incorrect drug dosages, drug interaction warnings, and treatment protocols. In one documented scenario, a clinician using an AI assistant received a suggested dosage that was ten times the correct amount for a pediatric patient. The AI presented this with the same clinical confidence as all other information. The clinician caught it — but only because they happened to already know the correct dosage.</div>
+      <div class="cc-consequence">⚠️ Real risk: An unchecked medication error from an AI summary could reach a patient — the consequences of which are irreversible</div>
+      <div class="cc-lesson">
+        <div class="cc-lesson-label">💡 The lesson for tech workers</div>
+        In high-stakes domains — healthcare, legal, financial, safety-critical systems — AI outputs must be verified against authoritative sources before acting on them. "The AI said so" is not sufficient justification for a decision that can't be undone.
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="cc-badge">💻 Tech — Common Occurrence</div>
+      <div class="cc-company">Hallucinated Libraries in AI-Generated Code</div>
+      <div class="cc-what">A well-documented pattern in software development: AI coding assistants sometimes generate code that imports from libraries that don't exist. The library names follow real naming conventions, the import syntax is correct, the functions called on the library look plausible — but the library itself was invented by the AI. Developers who copy-paste this code without testing it discover the error only when the code fails to run. Security researchers have also shown that attackers can publish real packages with the hallucinated names, creating an attack vector called "package hallucination exploitation."</div>
+      <div class="cc-consequence">⚠️ Real consequence: Broken deployments, wasted debugging time, and in adversarial scenarios, potential supply chain attacks</div>
+      <div class="cc-lesson">
+        <div class="cc-lesson-label">💡 The lesson for tech workers</div>
+        Always verify that libraries, packages, and APIs referenced in AI-generated code actually exist before using them. Check the official registry (npm, PyPI, etc.) directly. Never assume an AI's import statement refers to a real, verified package.
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Red Flags: How to Spot a Hallucination Before It Leaves Your Desk</h2>
+    <p>You won't always be able to spot a hallucination just by reading the output. But these warning signs should trigger extra verification before you share, publish, or act on an AI response:</p>
+
+    <div class="redflag-list">
+      <div class="rf-item">
+        <div class="rf-icon">📊</div>
+        <div class="rf-body">
+          <div class="rf-title">Specific numbers, statistics, and percentages</div>
+          <div class="rf-text">Numbers feel authoritative — and the AI knows that. "74% of companies reported..." or "the study found a 2.3x improvement..." are exactly the kind of specific details that hallucinate easily. If you can't find the original source, treat the number as unverified.</div>
+        </div>
+      </div>
+      <div class="rf-item">
+        <div class="rf-icon">📖</div>
+        <div class="rf-body">
+          <div class="rf-title">Named citations, papers, and sources</div>
+          <div class="rf-text">If an AI cites a study, book, article, or court case by name — look it up before you use it. AI models are especially prone to generating plausible-sounding research citations that don't exist, complete with fake author names, publication dates, and journal titles.</div>
+        </div>
+      </div>
+      <div class="rf-item">
+        <div class="rf-icon">🧑</div>
+        <div class="rf-body">
+          <div class="rf-title">Claims about specific people and their actions</div>
+          <div class="rf-text">Statements like "CEO Jane Smith announced in 2022 that..." or "Engineer Raj Patel wrote the original algorithm..." are high-risk. The AI may have the person right but the quote or action wrong — or may have combined details from different people.</div>
+        </div>
+      </div>
+      <div class="rf-item">
+        <div class="rf-icon">⚖️</div>
+        <div class="rf-body">
+          <div class="rf-title">Legal, regulatory, and compliance details</div>
+          <div class="rf-text">Specific law numbers, regulatory thresholds, compliance requirements, and legal deadlines are hallucination-prone — and the stakes for getting them wrong are extremely high. Always verify these against the original regulation or an attorney.</div>
+        </div>
+      </div>
+      <div class="rf-item">
+        <div class="rf-icon">🔌</div>
+        <div class="rf-body">
+          <div class="rf-title">Library names, API endpoints, and version numbers in code</div>
+          <div class="rf-text">Any time AI-generated code imports an external library or calls an external API, confirm that library exists at that version before deploying. Check the registry directly — don't just run the code and assume it will fail safely.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practice: Catch the Hallucination</h2>
+
+    <div class="catch-box">
+      <div class="cb-label">🎮 Hallucination Catch Challenge</div>
+      <p style="font-size:14px;color:var(--gray-muted);margin-bottom:16px;">Below is a sample AI response to a research question. Read it carefully and answer the question below.</p>
+      <div class="cb-prompt">
+        <div class="cb-prompt-label">🤖 AI Response to: "What are some key statistics about AI adoption in enterprise software?"</div>
+        According to a 2023 McKinsey Global Survey on AI, approximately 55% of organizations reported using AI in at least one business function, up from 50% the previous year. A separate study by Gartner Research found that enterprise AI adoption grew by 270% over the past four years. The International AI Standards Board (IASB) reported in their Q3 2023 quarterly bulletin that organizations using AI tools saw an average productivity gain of 34.7% within 18 months of deployment. Additionally, research published in the Harvard Business Technology Review by Dr. Anika Sharma and Dr. James Okonkwo found that cross-functional AI implementation reduced operational costs by $2.3M annually for mid-market companies.
+      </div>
+      <div class="cb-question">Which part of this response should raise the biggest red flag — and why?</div>
+      <div class="cb-opts" id="cbopts">
+        <div class="cb-opt" onclick="doCatch(this,false,'❌ The McKinsey survey is a real, regularly published report — and the general figure about AI adoption (in the 50-55% range) is consistent with what that survey has reported. While you should still verify the exact number, this isn\'t the biggest red flag here.')">The McKinsey statistic about 55% of organizations — McKinsey surveys can\'t be trusted</div>
+        <div class="cb-opt" onclick="doCatch(this,true,'✅ Correct. The "International AI Standards Board (IASB)" does not exist as a real organization. The AI generated a plausible-sounding regulatory body complete with a realistic acronym and a specific quarterly bulletin — but this organization is entirely fabricated. This is a textbook hallucination: a non-existent authoritative source, cited with enough specificity to look real. The 34.7% figure and Q3 2023 bulletin are fictional. Always search for an organization before trusting it as a source.')">The "International AI Standards Board (IASB)" and its 34.7% statistic — this organization doesn\'t appear to exist</div>
+        <div class="cb-opt" onclick="doCatch(this,false,'❌ The Gartner 270% growth figure is worth verifying — Gartner does publish AI research and that figure has been cited in various forms. It\'s a red flag that deserves checking, but it\'s not the most obvious fabrication in this response. Look more carefully at the sources.')">The Gartner 270% growth statistic — Gartner doesn\'t research AI adoption</div>
+        <div class="cb-opt" onclick="doCatch(this,false,'❌ The researchers could be real — you\'d need to search to find out. The publication name ("Harvard Business Technology Review") is slightly off from real publications and worth investigating. But there\'s a more obvious red flag earlier in the response involving an organization that simply doesn\'t exist.')">The Harvard study by Dr. Sharma and Dr. Okonkwo — Harvard doesn\'t publish this kind of research</div>
+      </div>
+      <div class="cb-fb" id="cbfb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Your Verification Playbook</h2>
+    <p>The answer to hallucinations isn't to stop using AI tools. It's to build a habit of verification for anything that goes beyond your desk. Here's the sequence:</p>
+
+    <div class="verify-list">
+      <div class="vl-item">
+        <div class="vl-num">1</div>
+        <div class="vl-text"><strong>Flag anything specific before sharing.</strong> Numbers, citations, names, organizations, law references, and code libraries — these all need verification before they go into a deliverable, a report, a client email, or a code commit.</div>
+      </div>
+      <div class="vl-item">
+        <div class="vl-num">2</div>
+        <div class="vl-text"><strong>Search for sources independently, not through the AI.</strong> If the AI says "per a 2022 Stanford study," search for that study yourself in a search engine or academic database. Don't ask the AI to confirm its own citation — it will confidently confirm a hallucinated source.</div>
+      </div>
+      <div class="vl-item">
+        <div class="vl-num">3</div>
+        <div class="vl-text"><strong>Check packages and libraries before running AI-generated code.</strong> Open the official registry for the language you're using and search for every external package the AI included. If it's not there, don't use it.</div>
+      </div>
+      <div class="vl-item">
+        <div class="vl-num">4</div>
+        <div class="vl-text"><strong>For high-stakes domains, verify against the primary source.</strong> Legal claims → check the actual statute. Drug dosages → check an approved clinical reference. Compliance requirements → read the regulation itself. "The AI said so" is not a defensible source in any professional setting.</div>
+      </div>
+      <div class="vl-item">
+        <div class="vl-num">5</div>
+        <div class="vl-text"><strong>Build the habit of asking: "How would I know if this were wrong?"</strong> If the answer is "I wouldn't" — that's when verification matters most. The AI's confident tone is not a substitute for your professional judgment.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An AI tool gives you a well-written summary of a competitor's product with several specific feature comparisons and one industry analyst quote. You plan to use this in a client presentation tomorrow. What's the right next step?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Use it as-is — the summary looks professional and well-researched</button>
+        <button class="qopt" onclick="doQ(this,false)">Just add "according to AI research" as a disclaimer in the presentation</button>
+        <button class="qopt" onclick="doQ(this,true)">Verify every specific claim before the presentation — confirm the feature comparisons against the competitor's actual documentation and search for the analyst quote to confirm it was really said</button>
+        <button class="qopt" onclick="doQ(this,false)">Ask the AI if it's confident in the summary — if it says yes, proceed</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Hallucinations happen when AI generates plausible-but-false information — complete with professional tone, specific numbers, and realistic-sounding citations. The AI doesn't know it's wrong, and it doesn't sound different from when it's right.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The highest-risk outputs are specific ones: statistics, citation names, people's quotes, regulatory details, and code library names. Specificity makes hallucinations look more credible — not less. More detail doesn't mean more accuracy.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Real cases show the stakes: lawyers submitting fake court citations, potential healthcare dosing errors, and software engineers deploying code that imports nonexistent libraries. In each case, the AI's output looked perfectly professional until someone checked.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The verification habit is simple: before any AI-generated fact, citation, statistic, or code library leaves your workspace, independently confirm it exists. Don't ask the AI to verify itself — it will confidently confirm its own hallucinations.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doCatch(btn,correct,msg){
+  const opts=document.getElementById('cbopts');
+  if(opts.querySelector('.right,.wrong'))return;
+  btn.classList.add(correct?'right':'wrong');
+  const fb=document.getElementById('cbfb');
+  fb.className='cb-fb show '+(correct?'good':'bad');
+  fb.textContent=msg;
+}
+function doQ(btn,correct){
+  if(document.querySelector('.qopt.correct,.qopt.wrong'))return;
+  btn.classList.add(correct?'correct':'wrong');
+  const fb=document.getElementById('qfb1');
+  if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. This is exactly when verification matters most — before a deliverable goes to a client. Feature comparisons are factual claims that should be checked against the competitor\'s actual product documentation. The analyst quote needs a source you can point to if a client asks. "The AI said so" won\'t hold up in a client meeting. Take the time to verify; the professional credibility is worth it.';}
+  else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes('competitor\'s actual documentation'))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ Not quite. Professional tone and polished writing are not indicators of accuracy — they\'re features of how AI outputs are designed to look. Asking the AI to confirm itself is circular; it will validate its own hallucinations. A disclaimer doesn\'t protect you or your client from acting on bad information. The only safe path before a client presentation is independent verification of specific claims.';}
+}
+</script>
+</body>
+</html>

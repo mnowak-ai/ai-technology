@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is AI Bias, Really? A Concrete Guide for Tech Professionals</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Bias type cards */
+.bias-card{border-radius:20px;padding:28px;margin:16px 0;border:1.5px solid;}
+.bias-card.selection{background:var(--blue-pale);border-color:var(--blue);}
+.bias-card.confirmation{background:var(--orange-pale);border-color:var(--orange);}
+.bias-card.historical{background:var(--red-pale);border-color:var(--red);}
+.bc-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:100px;margin-bottom:14px;}
+.selection .bc-badge{background:var(--blue);color:var(--white);}
+.confirmation .bc-badge{background:var(--orange);color:var(--white);}
+.historical .bc-badge{background:var(--red);color:var(--white);}
+.bc-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;margin-bottom:8px;}
+.selection .bc-title{color:var(--blue);}
+.confirmation .bc-title{color:var(--orange);}
+.historical .bc-title{color:var(--red);}
+.bc-def{font-size:15px;line-height:1.75;color:var(--gray-text);margin-bottom:14px;}
+.bc-example{background:rgba(255,255,255,.7);border-radius:12px;padding:14px 18px;}
+.bc-example-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.selection .bc-example-label{color:var(--blue);}
+.confirmation .bc-example-label{color:var(--orange);}
+.historical .bc-example-label{color:var(--red);}
+.bc-example-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.bc-consequence{margin-top:10px;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;}
+.selection .bc-consequence{background:rgba(29,78,216,.1);color:var(--blue);}
+.confirmation .bc-consequence{background:rgba(217,119,6,.1);color:var(--orange);}
+.historical .bc-consequence{background:rgba(220,38,38,.1);color:var(--red);}
+
+/* "Spot the bias" interactive */
+.spot-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.spot-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.spot-title{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:6px;font-weight:700;line-height:1.35;}
+.spot-context{font-size:14px;color:var(--gray-muted);margin-bottom:20px;line-height:1.6;}
+.spot-opts{display:flex;flex-direction:column;gap:10px;}
+.spot-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.spot-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.spot-opt.right{background:var(--green-pale);border-color:var(--green);}
+.spot-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.spot-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.spot-fb.show{display:block;}
+.spot-fb.good{background:var(--green-pale);color:var(--green);}
+.spot-fb.bad{background:var(--red-pale);color:var(--red);}
+.spot-next{margin-top:12px;background:var(--purple);color:var(--white);border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;display:none;}
+.spot-progress{font-size:12px;color:var(--gray-muted);margin-bottom:16px;}
+
+/* Why it matters banner */
+.why-banner{background:linear-gradient(135deg,var(--purple-dark),#7B2FBE);border-radius:20px;padding:28px 32px;margin:20px 0;color:var(--white);}
+.wb-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;}
+.wb-title{font-family:"Fraunces",serif;font-size:22px;font-weight:900;margin-bottom:16px;}
+.wb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.wb-card{background:rgba(255,255,255,.1);border-radius:12px;padding:16px;text-align:center;}
+.wb-icon{font-size:26px;margin-bottom:8px;}
+.wb-stat{font-family:"Fraunces",serif;font-size:20px;font-weight:900;margin-bottom:4px;}
+.wb-desc{font-size:12px;color:rgba(255,255,255,.75);line-height:1.5;}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.2 — Bias &amp; AI Limitations</div>
+  <h1>What Is AI Bias, Really? A Concrete Guide for Tech Professionals</h1>
+  <p class="hero-sub">AI bias isn't a vague concept for researchers to worry about. It's a real pattern in real tools you'll use on the job — and understanding exactly how it works is what lets you catch it before it causes a problem.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Let's Start With What Bias Actually Means</h2>
+    <p>When most people hear "AI bias," they picture an obviously broken system — one that says something offensive or unfair. That's one form of it, but it's the least common. The more dangerous kind of AI bias is subtle. It looks like a reasonable answer. It sounds confident. It just happens to be consistently wrong in a particular direction.</p>
+    <p>Here's the most important thing to understand: <mark>AI models don't think or have opinions</mark>. They can't be "biased" the way a person is biased, with feelings behind the preference. Instead, AI models learn patterns from data — and if that data has gaps, errors, or reflects the assumptions of the past, the model's outputs will too. The bias lives in the data, and the model faithfully reproduces it.</p>
+
+    <div class="pull-quote">
+      <p>An AI doesn't make biased decisions because it's broken. It makes biased decisions because it learned from a world that was already biased — and nobody told it to correct for that.</p>
+    </div>
+
+    <p>There are three main types of bias that show up in AI tools used in professional settings. Every tech worker should be able to recognize all three.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Types of AI Bias</h2>
+
+    <div class="bias-card selection">
+      <div class="bc-badge">📊 Type 1</div>
+      <div class="bc-title">Selection Bias</div>
+      <div class="bc-def"><strong>Selection bias</strong> happens when the data used to train an AI doesn't represent the full picture of reality — because certain people, situations, or outcomes were left out or underrepresented. The model learns from an incomplete slice of the world and applies those incomplete lessons to everyone.</div>
+      <div class="bc-example">
+        <div class="bc-example-label">🔬 Real Example</div>
+        <div class="bc-example-text">Early AI medical diagnosis tools were trained mostly on data from male patients. When those tools were applied to female patients, they performed worse — because the model had seen far fewer examples of how certain diseases present differently in women. The training data wasn't intentionally exclusionary. There were just fewer women in those historical datasets. The AI learned from what it was given.</div>
+      </div>
+      <div class="bc-consequence">⚠️ In tech roles: If you build or use a tool trained on non-representative data, it will perform worse on the groups that were left out — even if you never intended that outcome.</div>
+    </div>
+
+    <div class="bias-card confirmation">
+      <div class="bc-badge">🔄 Type 2</div>
+      <div class="bc-title">Confirmation Bias</div>
+      <div class="bc-def"><strong>Confirmation bias</strong> in AI happens when a model reinforces existing patterns rather than challenging them — because those patterns are heavily represented in the training data. The model doesn't evaluate whether the pattern is fair or accurate. It just keeps repeating what it saw most often.</div>
+      <div class="bc-example">
+        <div class="bc-example-label">🔬 Real Example</div>
+        <div class="bc-example-text">Image-generation AI tools, when asked to generate images of "a software engineer" or "a CEO," often produce images of white men — not because the AI was programmed to do that, but because the training data (images from the internet and stock photo libraries) contained far more images of white men in those roles. The AI learned the correlation and repeated it. It confirmed the pattern it saw, rather than reflecting the actual diversity of the profession.</div>
+      </div>
+      <div class="bc-consequence">⚠️ In tech roles: When AI tools are used to generate visuals, write descriptions of roles, or make inferences about people, they can silently reinforce stereotypes — even in products you're building for others.</div>
+    </div>
+
+    <div class="bias-card historical">
+      <div class="bc-badge">📜 Type 3</div>
+      <div class="bc-title">Historical Bias</div>
+      <div class="bc-def"><strong>Historical bias</strong> happens when an AI is trained on data from the past — and that past data reflects discrimination, inequality, or unfair conditions that no longer reflect current values or laws. The model learns those old patterns and applies them to new decisions, essentially importing the past into the present.</div>
+      <div class="bc-example">
+        <div class="bc-example-label">🔬 Real Example</div>
+        <div class="bc-example-text">Amazon built an AI hiring tool in the mid-2010s to help screen resumes faster. The model was trained on 10 years of historical hiring data — resumes of people Amazon had hired over the past decade. Because the tech industry was historically male-dominated, most of those successful resumes belonged to men. The AI learned to favor male-coded language and penalize things associated with women, like attending an all-women's college. It wasn't programmed to do this — it learned it from history. Amazon scrapped the tool in 2018.</div>
+      </div>
+      <div class="bc-consequence">⚠️ In tech roles: Any AI system trained on historical data carries the assumptions of that era. In hiring, lending, healthcare, and law — all domains where tech workers build systems — those historical patterns can translate into discriminatory outcomes today.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why This Matters More in Tech Than in Most Fields</h2>
+
+    <div class="why-banner">
+      <div class="wb-label">📊 The Stakes for Tech Workers</div>
+      <div class="wb-title">Tech workers don't just use AI — they build with it.</div>
+      <div class="wb-grid">
+        <div class="wb-card">
+          <div class="wb-icon">⚖️</div>
+          <div class="wb-stat">Scale</div>
+          <div class="wb-desc">A biased algorithm deployed at a large company can affect millions of people at once — not just one decision at a time</div>
+        </div>
+        <div class="wb-card">
+          <div class="wb-icon">🔍</div>
+          <div class="wb-stat">Invisibility</div>
+          <div class="wb-desc">Unlike a biased human decision, an AI's bias is invisible by default — it doesn't show its reasoning, so the pattern can persist undetected for years</div>
+        </div>
+        <div class="wb-card">
+          <div class="wb-icon">📋</div>
+          <div class="wb-stat">Accountability</div>
+          <div class="wb-desc">When an AI tool causes harm, the people who built, deployed, and approved it are held responsible — not the AI itself</div>
+        </div>
+      </div>
+    </div>
+
+    <p>This is why understanding bias is a core professional skill for anyone in tech — not just for researchers or ethics teams. If you use AI tools to make or support decisions that affect real people, you need to know where the bias might be hiding.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Spot the Bias Type</h2>
+    <p>Test what you've just learned. For each scenario below, identify which type of bias is most likely at work:</p>
+
+    <div class="spot-box">
+      <div class="spot-label">🎮 Practice — Bias Type Identification</div>
+      <div class="spot-progress" id="sp-prog">Scenario 1 of 3</div>
+
+      <div id="sp1">
+        <div class="spot-title">A loan approval AI trained on 20 years of bank data consistently approves fewer loans in zip codes with mostly minority residents — even when controlling for income and credit score.</div>
+        <div class="spot-context">The bank has been using this model for 3 years. No individual loan officer is involved in the decision. The model just runs the numbers.</div>
+        <div class="spot-opts" id="sp1-opts">
+          <div class="spot-opt" onclick="doSpot('sp1','sel',this,'❌ Selection bias would mean the model was trained without enough data from minority applicants. That may also be true here — but the strongest signal is that the model learned from decades of historical loan decisions, many of which occurred during periods when discriminatory lending practices (like redlining) were common or even legal. The model is applying those historical patterns to new decisions today.')">Selection Bias — the model wasn't trained on enough data from these zip codes</div>
+          <div class="spot-opt" onclick="doSpot('sp1','con',this,'❌ Confirmation bias would mean the model keeps reinforcing the pattern because most applicants it sees in those zip codes were denied before. That\'s plausible as a secondary effect — but the root cause here is that the model was trained on historical data that reflects decades of discriminatory lending patterns. That\'s the primary driver.')">Confirmation Bias — the model keeps repeating the same denial pattern it learned</div>
+          <div class="spot-opt" onclick="doSpot('sp1','his',this,'✅ Correct. This is a textbook example of historical bias. The model was trained on 20 years of loan decisions — which included decisions made during eras when discriminatory lending (like redlining, which denied loans to minority neighborhoods) was widespread. The AI learned those patterns and applied them to new applicants, even after those practices became illegal. This is one of the most documented harms of AI in financial services.',true)">Historical Bias — the model learned from decades of lending decisions that reflected past discrimination</div>
+        </div>
+        <div class="spot-fb" id="sp1-fb"></div>
+        <button class="spot-next" id="sp1-next" onclick="nextSpot(2)">Next Scenario →</button>
+      </div>
+
+      <div id="sp2" style="display:none;">
+        <div class="spot-title">An AI image generator is asked to create "stock photos of nurses." 94% of the generated images show women. The actual nursing workforce is about 87% female.</div>
+        <div class="spot-context">The AI was trained on millions of internet images, stock photo libraries, and licensed image datasets collected over many years.</div>
+        <div class="spot-opts" id="sp2-opts">
+          <div class="spot-opt" onclick="doSpot('sp2','sel',this,'⚠️ Partially correct — selection bias may have played a role if the training datasets underrepresented male nurses. But the more specific mechanism here is that the model is reproducing the pattern it saw most — nurses being female — and amplifying it (94% vs. actual 87%). That amplification of existing patterns is confirmation bias.')">Selection Bias — the training data didn\'t include enough images of male nurses</div>
+          <div class="spot-opt" onclick="doSpot('sp2','con',this,'✅ Correct. This is confirmation bias. The model saw nurses depicted as women in the vast majority of training images and learned that correlation so strongly that it over-applies it — generating 94% female images even when reality is 87%. The model isn\'t wrong that nurses are often depicted as female. It\'s just reinforcing and amplifying that pattern rather than reflecting actual proportions. This kind of output can invisibly reinforce occupational stereotypes in products and content.',true)">Confirmation Bias — the model keeps reproducing the female-nurse pattern it saw most in training</div>
+          <div class="spot-opt" onclick="doSpot('sp2','his',this,'⚠️ Historical bias is related here — the historical underrepresentation of men in nursing images is part of why the training data looked this way. But the active mechanism is the model confirming and amplifying the pattern it saw most frequently. Historical bias explains why the pattern exists; confirmation bias explains how the model reproduces and strengthens it.')">Historical Bias — historical images showed nurses as mostly women, so the model learned that</div>
+        </div>
+        <div class="spot-fb" id="sp2-fb"></div>
+        <button class="spot-next" id="sp2-next" onclick="nextSpot(3)">Next Scenario →</button>
+      </div>
+
+      <div id="sp3" style="display:none;">
+        <div class="spot-title">A customer support AI for a US-based software company performs significantly worse at understanding requests written in African American Vernacular English (AAVE) than it does with standard American English.</div>
+        <div class="spot-context">The model was trained on customer support tickets, online forums, and product documentation — most of which was written in standard American English.</div>
+        <div class="spot-opts" id="sp3-opts">
+          <div class="spot-opt" onclick="doSpot('sp3','sel',this,'✅ Correct. This is selection bias. The training data did not adequately represent the linguistic diversity of the user population — specifically, text written in AAVE was underrepresented in the training corpus. Because the model saw very few examples of AAVE, it performs poorly when encountering it. The model isn\'t worse at understanding certain users because anyone intended that — it\'s worse because the training data didn\'t include enough of those users\' language patterns.',true)">Selection Bias — the training data underrepresented AAVE speakers, so the model performs worse for those users</div>
+          <div class="spot-opt" onclick="doSpot('sp3','con',this,'❌ Confirmation bias would mean the model keeps reinforcing a pattern it already learned strongly. But the issue here is the opposite — the model doesn\'t have enough training examples of AAVE to perform well, not that it\'s over-applying a pattern. The root cause is who was left out of the training data, not which pattern was over-learned.')">Confirmation Bias — the model keeps reinforcing standard English patterns it saw most</div>
+          <div class="spot-opt" onclick="doSpot('sp3','his',this,'❌ Historical bias involves the model inheriting unfair outcomes from past decisions. This scenario is about a gap in training coverage — the data simply didn\'t include enough linguistic variety. That\'s a selection problem: certain users were underrepresented in who the model learned from, not a case of the model reproducing historically discriminatory decisions.')">Historical Bias — past data reflected who used tech products historically, not who uses them today</div>
+        </div>
+        <div class="spot-fb" id="sp3-fb"></div>
+        <button class="spot-next" id="sp3-next" style="background:var(--green);" onclick="this.textContent='✓ Complete';this.disabled=true;">Finish ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A coworker says: "AI can't be biased — it's just math. It doesn't have feelings or opinions." What's wrong with that reasoning?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Nothing — AI is just math, so bias is technically impossible</button>
+        <button class="qopt" onclick="doQ(this,true)">The reasoning confuses the source of bias. AI bias doesn't come from feelings — it comes from the data. If the data reflects historical inequality, underrepresents certain groups, or reinforces existing patterns, the model's outputs will reflect those flaws — regardless of whether any "feelings" are involved.</button>
+        <button class="qopt" onclick="doQ(this,false)">AI can be biased, but only when it's been specifically programmed to discriminate</button>
+        <button class="qopt" onclick="doQ(this,false)">The coworker is right that the math is neutral, but the interface can introduce bias</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI bias doesn't come from feelings or intent. It comes from data. When training data is incomplete, reflects historical inequity, or over-represents certain patterns, the model's outputs will faithfully reproduce those flaws.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The three types to recognize: Selection bias (who was left out of training data), Confirmation bias (the model over-applies the patterns it saw most), and Historical bias (the model learned from a past that was less fair than the present).</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Tech workers carry more responsibility here than most — because they build systems that can apply biased AI at enormous scale, often invisibly. A single biased algorithm deployed company-wide affects far more people than any individual biased decision.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Bias is not always obvious. The most dangerous form is a confident-sounding output that's consistently wrong in a particular direction — often for users who had less representation in the training data.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function doSpot(id,type,btn,msg,correct){
+  const opts=document.getElementById(id+'-opts');
+  if(opts.querySelector('.right,.wrong'))return;
+  btn.classList.add(correct?'right':'wrong');
+  const fb=document.getElementById(id+'-fb');
+  fb.className='spot-fb show '+(correct?'good':'bad');
+  fb.textContent=msg;
+  document.getElementById(id+'-next').style.display='inline-block';
+}
+function nextSpot(n){
+  document.getElementById('sp'+(n-1)).style.display='none';
+  document.getElementById('sp'+n).style.display='block';
+  document.getElementById('sp-prog').textContent='Scenario '+n+' of 3';
+}
+function doQ(btn,correct){
+  if(document.querySelector('.qopt.correct,.qopt.wrong'))return;
+  btn.classList.add(correct?'correct':'wrong');
+  const fb=document.getElementById('qfb1');
+  if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. "It\'s just math" is true — but it misses where bias actually enters the picture. The math itself is neutral; the problem is what the math is trained on. When an AI model learns from data that reflects historical discrimination, underrepresents certain groups, or repeats the same patterns over and over, the model\'s outputs carry those patterns forward. No feelings required — bias in, bias out.';}
+  else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes("source of bias"))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ Not quite. The coworker is right that AI has no feelings — but that doesn\'t mean bias is impossible. Bias enters through the training data, not through the model\'s "opinions." A model trained on historically biased data will produce biased outputs consistently and confidently, with no awareness that anything is wrong.';}
+}
+</script>
+</body>
+</html>

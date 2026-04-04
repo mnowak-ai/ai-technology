@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biased by Design: How Training Data Shapes What AI Believes</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Historical timeline */
+.hist-timeline{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.ht-item{display:flex;gap:16px;position:relative;padding-bottom:0;}
+.ht-item:not(:last-child)::after{content:"";position:absolute;left:23px;top:48px;width:2px;height:100%;background:var(--purple-mid);}
+.ht-era{width:48px;height:48px;border-radius:50%;background:var(--purple-pale);border:2px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--purple-dark);flex-shrink:0;z-index:1;text-align:center;line-height:1.2;}
+.ht-body{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px 20px;margin-bottom:16px;flex:1;}
+.ht-title{font-weight:700;color:var(--purple-dark);font-size:15px;margin-bottom:6px;}
+.ht-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.ht-impact{margin-top:8px;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;background:var(--red-pale);color:var(--red);}
+.ht-modern{margin-top:8px;font-size:13px;padding:8px 12px;border-radius:8px;background:var(--orange-pale);color:var(--orange);}
+
+/* Three problems framework */
+.three-prob{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.tp-item{display:grid;grid-template-columns:auto 1fr;gap:16px;background:var(--white);border:1.5px solid var(--purple-mid);border-radius:18px;padding:20px;align-items:flex-start;}
+.tp-num{width:44px;height:44px;border-radius:14px;background:var(--purple);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:20px;font-weight:900;flex-shrink:0;}
+.tp-content{}
+.tp-title{font-weight:700;color:var(--purple-dark);font-size:16px;margin-bottom:6px;}
+.tp-body{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.tp-example{margin-top:8px;font-size:13px;padding:8px 12px;border-radius:8px;background:var(--purple-pale);color:var(--purple-dark);}
+
+/* Consequence map */
+.consequence-map{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.cm-card{border-radius:16px;padding:20px;border:1.5px solid;}
+.cm-card.healthcare{background:var(--red-pale);border-color:var(--red);}
+.cm-card.hiring{background:var(--orange-pale);border-color:var(--orange);}
+.cm-card.criminal{background:var(--blue-pale);border-color:var(--blue);}
+.cm-card.language{background:var(--purple-pale);border-color:var(--purple);}
+.cm-sector{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.healthcare .cm-sector{color:var(--red);}
+.hiring .cm-sector{color:var(--orange);}
+.criminal .cm-sector{color:var(--blue);}
+.language .cm-sector{color:var(--purple);}
+.cm-title{font-weight:700;font-size:15px;margin-bottom:6px;color:var(--gray-text);}
+.cm-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.2 — Bias &amp; AI Limitations</div>
+  <h1>Biased by Design: How Training Data Shapes What AI Believes</h1>
+  <p class="hero-sub">AI models don't form opinions on their own. They learn from data — and data is a record of the past. Understanding what that means for today's systems is one of the most important things a tech professional can know.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Simplest Way to Understand This</h2>
+    <p>Imagine you wanted to teach a child what a "typical family" looks like. You give them 10,000 photographs of families from American TV shows between 1950 and 1980. They study every image carefully. Then you ask them to draw a "typical family."</p>
+    <p>The child draws a white family with two parents, a house, a car, and a dog. They're not wrong — that's what 90% of the images showed. But <mark>the dataset was not a picture of reality</mark>. It was a picture of what TV producers in that era chose to show. And the child learned from that picture, not from the actual world.</p>
+    <p>This is exactly what happens with AI. The model learns from whatever data it's given — and that data was created by people, at a specific time in history, with all of the gaps, assumptions, and blind spots that come with that. The model doesn't know what was left out. It only knows what it saw.</p>
+
+    <div class="pull-quote">
+      <p>Data is not a mirror of reality. It's a mirror of what was recorded, by whom, about whom, and when. AI learns from that recording — not from reality itself.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Three Problems With Training Data — Every One of Them Creates Bias</h2>
+
+    <div class="three-prob">
+      <div class="tp-item">
+        <div class="tp-num">1</div>
+        <div class="tp-content">
+          <div class="tp-title">The data is incomplete</div>
+          <div class="tp-body">No dataset covers everything equally. Some people, languages, regions, and situations are heavily represented — and others barely appear at all. The AI performs best on what it saw most and worst on what it saw least. This isn't a flaw in the AI's logic. It's a direct consequence of what was included in the training set.</div>
+          <div class="tp-example">📌 Real consequence: AI speech recognition systems were shown to have higher error rates for women and people with accents — because the original voice training datasets included far more recordings of American men speaking in standard accents.</div>
+        </div>
+      </div>
+      <div class="tp-item">
+        <div class="tp-num">2</div>
+        <div class="tp-content">
+          <div class="tp-title">The data reflects past assumptions</div>
+          <div class="tp-body">Data from the past carries the assumptions, values, and norms of the time it was created. In many domains, those past assumptions included formal or informal discrimination — who got loans, who got hired, who was diagnosed with certain conditions, who was seen as creditworthy. When AI learns from this data, it inherits those assumptions and applies them to new decisions as if they were neutral facts.</div>
+          <div class="tp-example">📌 Real consequence: Recidivism prediction tools (AI used to predict the likelihood of someone reoffending after prison) were found to be significantly more likely to flag Black defendants as high risk than white defendants with similar criminal histories — because the tools were trained on historical criminal justice data that itself reflected racial disparities in policing and prosecution.</div>
+        </div>
+      </div>
+      <div class="tp-item">
+        <div class="tp-num">3</div>
+        <div class="tp-content">
+          <div class="tp-title">Some groups are underrepresented</div>
+          <div class="tp-body">Even when no one intends to exclude anyone, certain groups end up with less representation in training data — because they had less access to the internet, less participation in the systems that generated the data, or were systematically overlooked by the people who built those systems. Less representation means less accurate performance for those users — and in critical applications, that can mean real harm.</div>
+          <div class="tp-example">📌 Real consequence: Early facial recognition systems had error rates close to zero for white male faces — and error rates as high as 34% for darker-skinned women's faces. The difference wasn't in the algorithm's design. It was in who was in the training data.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Where This Shows Up in the Real World Today</h2>
+    <p>Training data bias isn't theoretical. It produces documented, measurable harm in the systems that tech workers build and use right now:</p>
+
+    <div class="consequence-map">
+      <div class="cm-card healthcare">
+        <div class="cm-sector">🏥 Healthcare</div>
+        <div class="cm-title">Diagnostic AI trained on incomplete patient populations</div>
+        <div class="cm-text">Algorithms trained primarily on data from white patients have shown lower accuracy when applied to patients of other backgrounds. Skin condition detection AI, trained mostly on lighter skin tones, performs significantly worse on darker skin — affecting diagnosis quality for millions of patients.</div>
+      </div>
+      <div class="cm-card hiring">
+        <div class="cm-sector">💼 Hiring</div>
+        <div class="cm-title">Résumé screening tools that learned from biased history</div>
+        <div class="cm-text">Amazon's AI hiring tool (see Article 5.2.5) is the most documented case — but it's not isolated. Multiple studies have found that AI screening tools trained on historical hiring data tend to replicate the demographic patterns of who was historically hired, regardless of actual qualifications.</div>
+      </div>
+      <div class="cm-card criminal">
+        <div class="cm-sector">⚖️ Criminal Justice</div>
+        <div class="cm-title">Risk assessment tools with racially disparate outcomes</div>
+        <div class="cm-text">COMPAS and similar risk-scoring tools — used in some US courts to inform bail and sentencing — have been shown by researchers to produce significantly different error rates by race. The tools weren't programmed to be biased; they learned from a criminal justice system that already had documented disparities.</div>
+      </div>
+      <div class="cm-card language">
+        <div class="cm-sector">🌐 Language & Translation</div>
+        <div class="cm-title">NLP models that underperform for non-Western languages</div>
+        <div class="cm-text">Large language models are trained overwhelmingly on English-language internet content. Languages with smaller digital footprints — including most African languages, indigenous languages, and many regional Asian languages — are dramatically underrepresented, leading to significantly worse AI performance for those speakers.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>A Brief History: How We Got Here</h2>
+    <p>The data bias problem didn't happen because of bad intentions. It happened because of the conditions under which data was collected — and understanding the history helps explain why these patterns are so persistent:</p>
+
+    <div class="hist-timeline">
+      <div class="ht-item">
+        <div class="ht-era">1950s–<br>1980s</div>
+        <div class="ht-body">
+          <div class="ht-title">The foundation data is created</div>
+          <div class="ht-text">The records that would eventually become AI training data — medical studies, employment records, financial data, census data, criminal records — are collected during this era. Access to record-keeping systems, clinical trials, financial services, and public institutions was not equal. Women were often excluded from medical research studies as recently as the 1980s. Minority communities faced documented discrimination in lending, housing, and criminal justice.</div>
+          <div class="ht-impact">⚠️ Historical impact: The gaps, disparities, and inequities of this era get encoded into the data that will later be used to train AI systems</div>
+        </div>
+      </div>
+      <div class="ht-item">
+        <div class="ht-era">1990s–<br>2000s</div>
+        <div class="ht-body">
+          <div class="ht-title">The internet creates a new kind of dataset</div>
+          <div class="ht-text">The rise of the internet creates massive new data sources — text, images, forum posts, news articles, and more. This becomes a primary training source for AI models. But internet access in these early decades was not evenly distributed. Users were disproportionately English-speaking, Western, educated, and male. The resulting dataset reflects those demographics heavily.</div>
+          <div class="ht-modern">📅 Modern consequence: Large language models trained heavily on this internet data tend to reflect Western, English-speaking assumptions as a default</div>
+        </div>
+      </div>
+      <div class="ht-item">
+        <div class="ht-era">2010s</div>
+        <div class="ht-body">
+          <div class="ht-title">AI systems go live with the old data inside them</div>
+          <div class="ht-text">Commercial AI systems begin making real decisions that affect real people — in hiring, lending, criminal justice, healthcare, and more. The bias in the training data becomes visible as researchers and journalists begin documenting systematic disparities in how these systems perform for different groups.</div>
+          <div class="ht-impact">⚠️ Turning point: Studies like the MIT Media Lab's "Gender Shades" research (2018) publicly demonstrate large performance gaps in commercial facial recognition across gender and skin tone</div>
+        </div>
+      </div>
+      <div class="ht-item">
+        <div class="ht-era">Now</div>
+        <div class="ht-body">
+          <div class="ht-title">The field knows the problem — and is working on it, slowly</div>
+          <div class="ht-text">AI teams at major companies and research institutions are actively working on methods to detect, measure, and reduce bias in training data and model outputs. But progress is uneven. Many commercial systems still carry the biases of their original training data. And new systems trained on AI-generated content risk compounding the problem — inheriting the biases of previous models.</div>
+          <div class="ht-modern">📌 Your role: As a tech professional, understanding this history is what lets you ask the right questions when you're building, evaluating, or deploying AI systems</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A startup builds a credit scoring AI trained on 15 years of loan approval data from a regional bank. The tool is technically accurate — it predicts default rates well overall. But researchers find it consistently assigns lower scores to applicants from certain zip codes. What most likely explains this?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">The AI was programmed to discriminate against those zip codes</button>
+        <button class="qopt" onclick="doQ(this,true)">The 15 years of training data likely reflects the bank's past lending patterns — which may have included discriminatory practices like redlining or biased underwriting that systematically disadvantaged those zip codes. The AI learned to replicate those patterns because they were strongly represented in the data, even though they reflect historical discrimination rather than actual creditworthiness.</button>
+        <button class="qopt" onclick="doQ(this,false)">The zip code data shouldn't have been included at all — that's the only problem</button>
+        <button class="qopt" onclick="doQ(this,false)">The AI must be malfunctioning — accurate models can't produce discriminatory outputs</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Training data is not a neutral record of reality. It reflects who collected it, who was included in it, and what assumptions were embedded in the systems that generated it. AI faithfully learns from that record — including the parts that were unfair.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The three structural problems: incomplete coverage (some groups are barely represented), past assumptions baked in (historical discrimination encoded in historical data), and systematic underrepresentation of marginalized communities in the systems that generated the data.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Accuracy overall does not mean fairness for everyone. A model can have high accuracy on average while performing significantly worse for underrepresented groups — which is exactly when the harm is hardest to detect.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Tech workers who understand this history are equipped to ask the right questions: Who was in the training data? How was it collected? Does this model perform equally well across demographic groups? Asking these questions before deployment is what separates responsible AI use from a problem waiting to happen.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){
+  if(document.querySelector('.qopt.correct,.qopt.wrong'))return;
+  btn.classList.add(correct?'correct':'wrong');
+  const fb=document.getElementById('qfb1');
+  if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. This is a classic case of historical bias. Fifteen years of lending data from a regional bank almost certainly includes periods when discriminatory practices — formal or informal — shaped who received loans and who didn\'t. The AI learned those patterns as if they were predictive signals for creditworthiness, when in fact they were signals of past discrimination. A model can be "accurate" at predicting the outcomes of a biased system while being deeply unfair. This is why evaluating AI by accuracy alone is insufficient in high-stakes decisions.';}
+  else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes('discriminatory practices'))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ Not quite. A well-documented challenge in AI fairness is that a model can produce discriminatory outcomes without being explicitly programmed to discriminate — and without being "broken." The bias lives in the training data, not in the model\'s code. Removing a single variable (like zip code) often doesn\'t fix the problem either, because the bias is distributed across many correlated features in the data.';}
+}
+</script>
+</body>
+</html>

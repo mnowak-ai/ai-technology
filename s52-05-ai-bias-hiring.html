@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Bias in Hiring: What Tech Workers Need to Know About Automated Recruitment Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Amazon case study deep dive */
+.amazon-case{background:var(--red-pale);border:1.5px solid var(--red);border-radius:24px;padding:28px;margin:20px 0;}
+.ac-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.ac-icon{font-size:36px;}
+.ac-title-group{}
+.ac-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:var(--red);color:var(--white);padding:3px 9px;border-radius:100px;display:inline-block;margin-bottom:6px;}
+.ac-title{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--red);line-height:1.2;}
+.ac-timeline{display:flex;flex-direction:column;gap:12px;margin:16px 0;}
+.act-item{background:var(--white);border-radius:12px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;}
+.act-year{font-weight:700;color:var(--red);font-size:14px;min-width:50px;flex-shrink:0;padding-top:2px;}
+.act-text{font-size:14px;line-height:1.65;color:var(--gray-text);}
+.ac-lesson{background:rgba(220,38,38,.08);border-radius:12px;padding:14px 18px;margin-top:14px;font-size:14px;line-height:1.7;color:var(--gray-text);}
+.ac-lesson-title{font-weight:700;color:var(--red);margin-bottom:4px;}
+
+/* How the bias spread */
+.spread-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.sg-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.sg-icon{font-size:24px;margin-bottom:8px;}
+.sg-title{font-weight:700;color:var(--purple-dark);font-size:15px;margin-bottom:6px;}
+.sg-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Two perspectives */
+.two-views{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.tv-card{border-radius:18px;padding:22px;border:1.5px solid;}
+.tv-card.candidate{background:var(--blue-pale);border-color:var(--blue);}
+.tv-card.builder{background:var(--purple-pale);border-color:var(--purple);}
+.tv-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.candidate .tv-label{color:var(--blue);}
+.builder .tv-label{color:var(--purple);}
+.tv-title{font-weight:700;font-size:15px;margin-bottom:10px;}
+.candidate .tv-title{color:var(--blue);}
+.builder .tv-title{color:var(--purple);}
+.tv-point{font-size:13px;line-height:1.65;color:var(--gray-text);padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.tv-point:last-child{border-bottom:none;}
+.tv-point::before{content:"→ ";font-weight:700;}
+.candidate .tv-point::before{color:var(--blue);}
+.builder .tv-point::before{color:var(--purple);}
+
+/* What to ask checklist */
+.ask-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.ask-item{display:flex;gap:12px;align-items:flex-start;background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.ask-q{width:28px;height:28px;border-radius:50%;background:var(--purple);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ask-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.ask-text strong{color:var(--purple-dark);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height;26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.2 — Bias &amp; AI Limitations</div>
+  <h1>AI Bias in Hiring: What Tech Workers Need to Know About Automated Recruitment Tools</h1>
+  <p class="hero-sub">This isn't an abstract concern. AI hiring tools affect who gets interviews, who gets offers, and who gets filtered out before a human ever sees their résumé. You need to understand this — as someone who might be screened by one, and as someone who might build or use one.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Hiring Is Where AI Bias Causes the Most Visible Harm</h2>
+    <p>Hiring decisions have enormous stakes. They determine who gets access to economic opportunity, career advancement, and financial security. A bad hire is expensive for a company. But a biased automated screening process — one that filters out qualified candidates at scale based on flawed patterns — can affect thousands of applicants before anyone realizes something is wrong.</p>
+    <p>What makes AI bias in hiring especially serious is the combination of three factors: <mark>it operates at scale, it's largely invisible to the people it affects, and the decisions it influences are legally regulated</mark>. Employment discrimination law in most countries prohibits screening candidates differently based on race, gender, age, disability, religion, and other protected characteristics — even when the discrimination is unintentional and automated.</p>
+    <p>"The algorithm did it" is not a legal defense. The company that deployed the algorithm is responsible for what it does.</p>
+
+    <div class="pull-quote">
+      <p>A biased human recruiter can affect hundreds of candidates over a career. A biased AI screening tool, running on autopilot, can affect hundreds of thousands in a single year — without a single person noticing.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Amazon Case: A Deep Dive</h2>
+    <p>The most documented and studied case of AI hiring bias comes from Amazon — one of the world's most sophisticated technology companies. This case is important to understand in detail, because it illustrates how the problem develops even when smart, well-intentioned engineers are involved.</p>
+
+    <div class="amazon-case">
+      <div class="ac-header">
+        <div class="ac-icon">📦</div>
+        <div class="ac-title-group">
+          <div class="ac-badge">🔴 Case Study</div>
+          <div class="ac-title">Amazon's AI Hiring Tool — Built in 2014. Scrapped in 2018.</div>
+        </div>
+      </div>
+
+      <div class="ac-timeline">
+        <div class="act-item">
+          <div class="act-year">2014</div>
+          <div class="act-text"><strong>The project begins.</strong> Amazon's team builds an AI résumé screening tool designed to rate job applicants on a 1–5 star scale. The goal: speed up hiring by having the AI do initial screening, then pass the top candidates to human recruiters. The model is trained on 10 years of résumés submitted to Amazon and on the records of who was actually hired from those submissions.</div>
+        </div>
+        <div class="act-item">
+          <div class="act-year">2015</div>
+          <div class="act-text"><strong>Engineers notice a problem.</strong> The tool is not rating candidates in a gender-neutral way. It consistently penalizes résumés that include the word "women's" — as in "women's chess club" or "women's college." It also downrates résumés from all-women's colleges. The model had learned that successful Amazon hires in tech roles were predominantly male — because Amazon's past hires were predominantly male. The AI learned to replicate that pattern.</div>
+        </div>
+        <div class="act-item">
+          <div class="act-year">2016–17</div>
+          <div class="act-text"><strong>Attempts to fix it fail to solve the root problem.</strong> Amazon's team edits the model to remove explicit gender signals — but the model quickly finds other correlated proxies. Certain verbs, school names, and extracurricular activities had become associated with female applicants through the training data. Removing obvious signals didn't fix the underlying learned pattern. New proxies kept appearing.</div>
+        </div>
+        <div class="act-item">
+          <div class="act-year">2018</div>
+          <div class="act-text"><strong>Amazon discontinues the tool.</strong> After being unable to ensure the tool was not making gender-biased recommendations, Amazon scraps the project entirely. The tool is never used to formally evaluate candidates. The engineers who built it weren't trying to discriminate — they built a technically impressive system that faithfully reproduced the historical biases in their training data.</div>
+        </div>
+      </div>
+
+      <div class="ac-lesson">
+        <div class="ac-lesson-title">💡 The core lesson this case teaches</div>
+        The model wasn't told to prefer male candidates. It inferred that preference from historical data. When you train an AI on "who did we hire in the past?" in an industry with historical gender imbalance, the model learns to replicate that imbalance — and presents it as an objective score. The bias is structural, not intentional. And structural bias is harder to fix than intentional bias, because it hides in the model's learned associations.
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How the Bias Spreads: Four Mechanisms</h2>
+    <p>The Amazon case is the most famous, but it's not unique. AI hiring bias shows up through the same mechanisms across many tools and companies:</p>
+
+    <div class="spread-grid">
+      <div class="sg-card">
+        <div class="sg-icon">📚</div>
+        <div class="sg-title">Training on historically biased hiring data</div>
+        <div class="sg-text">If the company historically hired mostly from certain schools, demographics, or backgrounds — the model learns those as success signals, regardless of whether they actually predict job performance. Historical patterns become future filters.</div>
+      </div>
+      <div class="sg-card">
+        <div class="sg-icon">🔗</div>
+        <div class="sg-title">Proxy variables for protected characteristics</div>
+        <div class="sg-text">Even after removing explicit gender or race markers, AI models find correlated proxies — school names, certain sports or activities, zip codes, word choices. These become stand-ins for the protected characteristic the model originally learned to filter on.</div>
+      </div>
+      <div class="sg-card">
+        <div class="sg-icon">🌐</div>
+        <div class="sg-title">Language and culture encoding</div>
+        <div class="sg-text">Some screening tools score the "fit" of cover letter language. But language patterns vary significantly across cultures, educational backgrounds, and native languages. Tools trained on dominant-culture language patterns may systematically disadvantage applicants who write differently — not worse, just differently.</div>
+      </div>
+      <div class="sg-card">
+        <div class="sg-icon">📹</div>
+        <div class="sg-title">Video interview AI and physical signals</div>
+        <div class="sg-text">Some AI interview tools analyze facial expressions, voice patterns, and word choice during video interviews. Research has shown these tools can disadvantage people with different accents, cultural communication styles, or disabilities — based on criteria that have nothing to do with job performance.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Two Perspectives You Need to Hold at Once</h2>
+    <p>As a tech professional, you need to think about AI hiring bias from both sides — because you'll likely encounter it from both directions in your career:</p>
+
+    <div class="two-views">
+      <div class="tv-card candidate">
+        <div class="tv-label">👤 As a Job Candidate</div>
+        <div class="tv-title">How this may affect you directly</div>
+        <div class="tv-point">Your résumé may be screened by an AI before any human reads it — even if the job posting doesn't mention this</div>
+        <div class="tv-point">Gaps in employment, non-traditional career paths, or schools outside a tool's training set may score you lower regardless of your actual qualifications</div>
+        <div class="tv-point">The language you use in cover letters may be evaluated by a model trained on a narrow set of "good" language patterns</div>
+        <div class="tv-point">You have the right to ask a company how AI is used in their hiring process — and in some jurisdictions, they're required to tell you</div>
+        <div class="tv-point">If you're rejected and suspect bias, employment discrimination law may apply — speaking to a lawyer about your options is worth considering</div>
+      </div>
+      <div class="tv-card builder">
+        <div class="tv-label">🛠️ As a Tech Professional</div>
+        <div class="tv-title">Your responsibility if you build or use these tools</div>
+        <div class="tv-point">Any AI tool used in hiring decisions must be evaluated for disparate impact — meaning it should perform equivalently across demographic groups</div>
+        <div class="tv-point">Training on historical hiring data without bias auditing is a known path to discriminatory outputs</div>
+        <div class="tv-point">Removing explicit demographic variables (name, gender) doesn't fix the problem if the model still learns proxies for those characteristics</div>
+        <div class="tv-point">You have both an ethical obligation and a legal one — employment discrimination law applies to automated tools, not just human decisions</div>
+        <div class="tv-point">If you're asked to build or deploy a hiring tool, ask about bias testing before it goes live</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Questions to Ask Before Any AI Hiring Tool Goes Live</h2>
+    <p>If you're ever involved in evaluating, building, or recommending an AI recruiting tool at your company, these are the questions that responsible tech workers ask:</p>
+
+    <div class="ask-list">
+      <div class="ask-item">
+        <div class="ask-q">?</div>
+        <div class="ask-text"><strong>What was the tool trained on?</strong> If it was trained on historical hiring data, whose history? What demographic patterns exist in that data? Was it audited for bias before or after training?</div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-q">?</div>
+        <div class="ask-text"><strong>Has it been tested for disparate impact?</strong> Disparate impact means the tool produces different outcomes for different demographic groups — even unintentionally. Has the vendor tested for this? Can they share the results?</div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-q">?</div>
+        <div class="ask-text"><strong>Is there human review before any rejection decision?</strong> No AI tool should have the final word on rejecting a candidate without human review. The AI should support the decision — not make it unilaterally.</div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-q">?</div>
+        <div class="ask-text"><strong>What signals is the model using to score candidates?</strong> If you can't get a clear answer about what features the model is actually scoring, that's a significant red flag. Unexplainable models are much harder to audit for bias.</div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-q">?</div>
+        <div class="ask-text"><strong>Is the tool compliant with relevant employment law?</strong> Different jurisdictions have different rules. New York City, for example, requires bias audits for AI hiring tools. Illinois has rules around AI video interview analysis. Know what applies in your context.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Amazon's AI hiring tool was retrained to remove explicit gender markers like the word "women's." The bias persisted anyway. What does this tell us about fixing AI hiring bias?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">It means the tool was fundamentally broken and no AI should be used in hiring</button>
+        <button class="qopt" onclick="doQ(this,false)">It means the engineers made a mistake in how they retrained the model</button>
+        <button class="qopt" onclick="doQ(this,true)">It shows that AI models learn proxy variables — correlated features that encode the same bias in a different form. Removing explicit signals doesn't fix the underlying learned pattern, because the model finds other ways to express the associations it built from biased training data.</button>
+        <button class="qopt" onclick="doQ(this,false)">It suggests bias in AI hiring tools can only be fixed by adding more data</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI hiring tools can produce discriminatory outcomes even when no one programmed them to discriminate. When trained on historically biased hiring data, the model learns those patterns as success signals — and replicates them at scale, invisibly, across thousands of applications.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Amazon's case is the most documented example, but the mechanism is not unique. The bias spread through proxy variables — the model found other correlated signals after explicit gender markers were removed, because the underlying learned association persisted in the model's weights.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>As a candidate, you may be screened by AI before any human sees your résumé. You have the right to ask how AI is used. As a builder or evaluator of these tools, you have both an ethical and a legal obligation to test for disparate impact before deployment.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>"The algorithm did it" is not a legal defense. Employment discrimination law applies to automated systems. The company that deploys the tool is responsible for what it does — which means tech workers who build and evaluate these tools carry real professional and legal responsibility.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){
+  if(document.querySelector('.qopt.correct,.qopt.wrong'))return;
+  btn.classList.add(correct?'correct':'wrong');
+  const fb=document.getElementById('qfb1');
+  if(correct){fb.className='qfb show cfb';fb.textContent='✅ Correct. This is one of the most important lessons from the Amazon case. The bias wasn\'t stored in explicit variables — it was distributed across hundreds of learned associations in the model\'s weights. Removing the most obvious signal (the word "women\'s") didn\'t touch the underlying pattern, because the model had learned many other correlated proxies: certain school names, certain verbs, certain extracurricular categories. This is why addressing AI hiring bias requires more than simple variable removal — it requires auditing the model\'s actual outputs across demographic groups and often retraining from scratch with better-curated data.';}
+  else{document.querySelectorAll('.qopt').forEach(o=>{if(o.textContent.includes('proxy variables'))o.classList.add('correct');});fb.className='qfb show wfb';fb.textContent='❌ Not quite. The persistence of bias after removing explicit gender signals is not a mistake in retraining — it\'s a demonstration of how deeply bias can be encoded in a model\'s learned associations. The engineers understood what they were doing; the problem was that the model had built hundreds of proxy connections to gender through the training data. Removing the obvious ones left all the subtle ones intact.';}
+}
+</script>
+</body>
+</html>
