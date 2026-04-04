@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Approved vs. Unapproved AI Tools: Why the Difference Matters More Than You Think</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Side by side comparison */
+.compare-header{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 0;}
+.ch-card{border-radius:16px 16px 0 0;padding:20px 22px;text-align:center;}
+.ch-card.approved{background:var(--green);color:var(--white);}
+.ch-card.shadow{background:var(--red);color:var(--white);}
+.ch-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;margin-bottom:4px;}
+.ch-sub{font-size:12px;color:rgba(255,255,255,.8);}
+.compare-rows{border:1.5px solid var(--purple-mid);border-radius:0 0 16px 16px;overflow:hidden;}
+.cr-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--purple-mid);}
+.cr-row:last-child{border-bottom:none;}
+.cr-cell{padding:14px 18px;font-size:13px;line-height:1.65;}
+.cr-cell:first-child{background:var(--green-pale);border-right:1px solid var(--purple-mid);}
+.cr-cell:last-child{background:var(--red-pale);}
+.cr-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.cr-cell:first-child .cr-label{color:var(--green);}
+.cr-cell:last-child .cr-label{color:var(--red);}
+
+/* What makes a tool approved */
+.approval-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.ag-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.ag-icon{font-size:24px;margin-bottom:8px;}
+.ag-title{font-weight:700;color:var(--purple-dark);font-size:15px;margin-bottom:6px;}
+.ag-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Shadow AI risks */
+.risk-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.risk-item{display:flex;gap:12px;background:var(--red-pale);border:1.5px solid var(--red);border-radius:14px;padding:16px 18px;}
+.risk-badge{background:var(--red);color:var(--white);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;white-space:nowrap;height:fit-content;flex-shrink:0;}
+.risk-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+
+/* What to do when unsure */
+.action-steps{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.as-item{display:flex;gap:12px;align-items:flex-start;background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;}
+.as-num{width:28px;height:28px;border-radius:50%;background:var(--purple);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.as-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.as-text strong{color:var(--purple-dark);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.1 — Security &amp; Privacy Risks</div>
+  <h1>Approved vs. Unapproved AI Tools: Why the Difference Matters More Than You Think</h1>
+  <p class="hero-sub">Not all AI tools are created equal — and at work, that difference can be the line between staying safe and creating a serious problem. This article explains what makes a tool enterprise-approved, what "shadow AI" means, and exactly what to do when you're not sure.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Same Tool. Two Very Different Situations.</h2>
+    <p>Let's say your company uses Microsoft Copilot — the AI assistant built into Microsoft 365. And let's say you also use ChatGPT's free version on your personal browser at work.</p>
+    <p>To you, they might feel like the same thing. Both answer questions. Both help write code. Both summarize documents. But from a security and legal standpoint, <mark>they are completely different products with completely different data rules</mark>.</p>
+    <p>Microsoft Copilot in your company's M365 environment operates under a contract your company negotiated. Your data stays inside your company's Microsoft tenant. It doesn't train the AI model. It's covered by your company's compliance agreements. ChatGPT's free version has none of those guarantees — and using it for work tasks means your company's data is traveling to an external server under a consumer agreement your employer never signed.</p>
+
+    <div class="pull-quote">
+      <p>An approved tool is one your company has reviewed, vetted, and signed a contract with. An unapproved tool is one your company knows nothing about — and can't protect you from.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Approved vs. Unapproved: Side by Side</h2>
+    <p>Here's how the two types of tools differ across every dimension that matters at work:</p>
+
+    <div class="compare-header">
+      <div class="ch-card approved">
+        <div class="ch-title">✅ Enterprise-Approved Tool</div>
+        <div class="ch-sub">Reviewed and contracted by your company</div>
+      </div>
+      <div class="ch-card shadow">
+        <div class="ch-title">❌ Unapproved / Consumer Tool</div>
+        <div class="ch-sub">Used without company review or contract</div>
+      </div>
+    </div>
+    <div class="compare-rows">
+      <div class="cr-row">
+        <div class="cr-cell"><div class="cr-label">Data Usage</div>Your prompts are NOT used to train the AI model</div>
+        <div class="cr-cell"><div class="cr-label">Data Usage</div>Your prompts MAY be used for model training by default</div>
+      </div>
+      <div class="cr-row">
+        <div class="cr-cell"><div class="cr-label">Data Storage</div>Data stays within your company's secure environment</div>
+        <div class="cr-cell"><div class="cr-label">Data Storage</div>Data lives on the AI company's servers — outside your control</div>
+      </div>
+      <div class="cr-row">
+        <div class="cr-cell"><div class="cr-label">Legal Coverage</div>Covered by your company's compliance agreements (HIPAA, SOC 2, etc.)</div>
+        <div class="cr-cell"><div class="cr-label">Legal Coverage</div>Not covered by any agreement your company made — you're on your own</div>
+      </div>
+      <div class="cr-row">
+        <div class="cr-cell"><div class="cr-label">Audit Logs</div>Your company can see how the tool is being used</div>
+        <div class="cr-cell"><div class="cr-label">Audit Logs</div>Your company has no visibility into usage</div>
+      </div>
+      <div class="cr-row">
+        <div class="cr-cell"><div class="cr-label">Security Standards</div>Meets your company's security requirements (verified)</div>
+        <div class="cr-cell"><div class="cr-label">Security Standards</div>Unknown — never reviewed by your security team</div>
+      </div>
+      <div class="cr-row">
+        <div class="cr-cell"><div class="cr-label">If Something Goes Wrong</div>Your company is aware of the risk and has a plan</div>
+        <div class="cr-cell"><div class="cr-label">If Something Goes Wrong</div>Your company discovers the problem after the fact — often in the worst way</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Makes a Tool "Enterprise-Approved"?</h2>
+    <p>Getting a tool onto a company's approved list isn't simple. It usually involves a formal review process. Here's what companies check:</p>
+
+    <div class="approval-grid">
+      <div class="ag-card">
+        <div class="ag-icon">📝</div>
+        <div class="ag-title">Data Processing Agreement (DPA)</div>
+        <div class="ag-text">A legal contract that specifies exactly how the AI company can use, store, and delete your organization's data. Without a DPA, your company has no legal guarantee about what happens to your inputs.</div>
+      </div>
+      <div class="ag-card">
+        <div class="ag-icon">🔒</div>
+        <div class="ag-title">Security Certifications</div>
+        <div class="ag-text">Certifications like SOC 2 Type II (a security audit standard) confirm that the vendor has real security practices in place. Your IT team verifies these before approving any tool.</div>
+      </div>
+      <div class="ag-card">
+        <div class="ag-icon">⚖️</div>
+        <div class="ag-title">Compliance Compatibility</div>
+        <div class="ag-text">If your company handles health data (HIPAA), financial data (SOX), or personal data from Europe (GDPR), the AI tool must support those regulatory requirements. Not all do.</div>
+      </div>
+      <div class="ag-card">
+        <div class="ag-icon">🏗️</div>
+        <div class="ag-title">Data Isolation</div>
+        <div class="ag-text">Enterprise versions of tools are configured so that your company's data is isolated — other organizations' data can't mix with yours, and your inputs don't influence model behavior for other users.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Is "Shadow AI" — and Why Is It a Problem?</h2>
+    <p><strong>Shadow AI</strong> (also called shadow IT) refers to AI tools that employees use at work without the knowledge or approval of the IT or security team. It's not necessarily malicious — most people using shadow AI are just trying to be more productive.</p>
+    <p>But the risks are significant:</p>
+
+    <div class="risk-list">
+      <div class="risk-item">
+        <div class="risk-badge">DATA RISK</div>
+        <div class="risk-text">Company data — code, customer information, internal documents — leaves the company's secure environment and enters systems the security team has never reviewed. If those systems are breached, your company's data is exposed too.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-badge">LEGAL RISK</div>
+        <div class="risk-text">In regulated industries, using an unapproved tool to handle protected data can trigger regulatory violations — even if nothing goes wrong. The violation is the act of sharing the data, not just the outcome.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-badge">CONTRACT RISK</div>
+        <div class="risk-text">Most employment contracts and NDAs include clauses about not sharing proprietary information with third parties. An unapproved AI tool is a third party your company never authorized. You could be personally liable.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-badge">BLIND SPOT RISK</div>
+        <div class="risk-text">Your IT team can only protect what they know about. Shadow AI creates gaps in the security picture that make it harder to detect and respond to incidents — because nobody knew there was data in that system to begin with.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What to Do When You're Not Sure</h2>
+    <p>You discover a new AI tool that looks genuinely useful for your work. You're not sure if it's approved. Here's the right sequence of steps:</p>
+
+    <div class="action-steps">
+      <div class="as-item">
+        <div class="as-num">1</div>
+        <div class="as-text"><strong>Check your company's approved tools list first.</strong> Most companies maintain an internal list of approved software. It might live on an internal wiki, in the IT portal, or in an employee handbook. Start there — the answer might already be available.</div>
+      </div>
+      <div class="as-item">
+        <div class="as-num">2</div>
+        <div class="as-text"><strong>Ask your manager or IT team before using it for real work.</strong> A quick message — "Hey, is [tool name] approved for use with work data?" — takes 30 seconds. Getting called into a meeting about an unauthorized data transfer takes much longer.</div>
+      </div>
+      <div class="as-item">
+        <div class="as-num">3</div>
+        <div class="as-text"><strong>If you want to try it, use only public or non-sensitive information.</strong> While you wait for an approval answer, you can experiment with a tool using information that's already publicly available — not internal documents, client data, or proprietary code.</div>
+      </div>
+      <div class="as-item">
+        <div class="as-num">4</div>
+        <div class="as-text"><strong>If you think a tool should be added to the approved list, say so.</strong> Many companies have a process for employees to request new tools. You're not just protecting yourself by following this process — you're helping your whole team get access to good tools safely.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A developer starts using a free AI coding assistant they found online because it gives better code suggestions than the company-approved tool. They only use it for internal code — nothing with customer data. Is this okay?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Yes — as long as there's no customer data, internal code is fine to share</button>
+        <button class="qopt" onclick="doQ(this,false)">Yes — if the tool is free, the company has no interest in regulating its use</button>
+        <button class="qopt" onclick="doQ(this,true)">No — internal code is proprietary intellectual property covered by the developer's employment contract. Using an unapproved tool with it is a violation of company policy regardless of whether customer data is involved.</button>
+        <button class="qopt" onclick="doQ(this,false)">It depends on whether the tool explicitly promises not to store data</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>An enterprise-approved tool has been reviewed by your company's security and legal team, signed a data agreement, meets compliance requirements, and keeps your data inside a protected environment. A consumer tool has none of these guarantees.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Shadow AI — using unapproved tools at work — creates data, legal, and contract risks even when nothing goes wrong. The act of sharing proprietary information with an unauthorized third party is itself a violation in many contexts.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When you're unsure about a tool, check the approved list, ask your manager or IT team, and don't use work data until you have a clear answer. That 30-second question protects you, your team, and your company.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Internal code is proprietary — not just customer data. Using an unapproved AI tool with your company's source code violates most employment contracts, regardless of whether any customer information is involved.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Proprietary source code is protected intellectual property — the fact that it doesn't contain customer data doesn't make it okay to share with unapproved tools. Employment contracts typically include non-disclosure clauses that cover all company proprietary information, including internal code. Using an unapproved tool with it creates legal and security risk regardless of the data type.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("employment contract"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Sensitive data at work includes more than customer records — it also includes proprietary code, internal systems, and confidential business logic. Using any unapproved tool with company code is a violation of most employment agreements. Whether the tool is free or paid doesn't change the legal exposure.";}
+}
+</script>
+</body>
+</html>

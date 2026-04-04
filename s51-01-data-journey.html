@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Happens to Your Data When You Use an AI Tool? A Plain-Language Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;transition:width .1s;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Data journey flow */
+.journey{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.journey-step{display:flex;gap:16px;align-items:flex-start;position:relative;padding-bottom:0;}
+.journey-step:not(:last-child)::after{content:"";position:absolute;left:19px;top:44px;width:2px;height:calc(100% + 0px);background:var(--purple-mid);}
+.j-num{width:40px;height:40px;border-radius:50%;background:var(--purple);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;z-index:1;}
+.j-body{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px 20px;margin-bottom:16px;flex:1;}
+.j-title{font-weight:700;color:var(--purple-dark);font-size:15px;margin-bottom:6px;}
+.j-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.j-risk{font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;display:inline-block;margin-top:8px;}
+.j-risk.high{background:var(--red-pale);color:var(--red);}
+.j-risk.med{background:var(--orange-pale);color:var(--orange);}
+.j-risk.low{background:var(--green-pale);color:var(--green);}
+
+/* Three-column comparison */
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.tcol{border-radius:18px;padding:20px;border:1.5px solid;}
+.tcol.free{background:var(--orange-pale);border-color:var(--orange);}
+.tcol.enterprise{background:var(--green-pale);border-color:var(--green);}
+.tcol.unknown{background:var(--red-pale);border-color:var(--red);}
+.tcol-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.free .tcol-label{color:var(--orange);}
+.enterprise .tcol-label{color:var(--green);}
+.unknown .tcol-label{color:var(--red);}
+.tcol-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;margin-bottom:10px;}
+.free .tcol-title{color:var(--orange);}
+.enterprise .tcol-title{color:var(--green);}
+.unknown .tcol-title{color:var(--red);}
+.tcol-point{font-size:13px;line-height:1.65;color:var(--gray-text);padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.tcol-point:last-child{border-bottom:none;}
+.tcol-point::before{margin-right:6px;}
+.free .tcol-point::before{content:"⚠️";}
+.enterprise .tcol-point::before{content:"✅";}
+.unknown .tcol-point::before{content:"❌";}
+
+/* Terms glossary */
+.term-box{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px 24px;margin:16px 0;}
+.term-word{font-weight:700;color:var(--purple-dark);font-size:15px;margin-bottom:4px;}
+.term-def{font-size:14px;line-height:1.7;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.1 — Security &amp; Privacy Risks</div>
+  <h1>What Happens to Your Data When You Use an AI Tool? A Plain-Language Guide</h1>
+  <p class="hero-sub">Every time you type something into an AI tool at work, something happens to that information. Most workers have no idea what. This article explains exactly where your data goes — and why it matters for your job.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Let's Start With a Simple Question</h2>
+    <p>Imagine you type this into ChatGPT: <mark>"Here's our client's account number and recent purchases. Can you write a summary email for their sales rep?"</mark></p>
+    <p>What just happened? Where did that information go? Is it gone now? Will someone see it? Will it show up somewhere else later?</p>
+    <p>Most people don't think about this. They're focused on the task — write the email, fix the code, summarize the document. The AI tool feels like a private workspace, like a word processor where only you can see what you're typing. But it's not. Not even close.</p>
+
+    <div class="pull-quote">
+      <p>An AI tool is not a blank sheet of paper. It's more like a conversation you're having in a room where the walls might be recording — and you don't always know who's listening.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Journey Your Data Takes (Step by Step)</h2>
+    <p>Here's what actually happens from the moment you hit "send" to an AI tool:</p>
+
+    <div class="journey">
+      <div class="journey-step">
+        <div class="j-num">1</div>
+        <div class="j-body">
+          <div class="j-title">You type something and press Enter</div>
+          <div class="j-text">Your input — called a <strong>prompt</strong> — leaves your device immediately. It travels over the internet to the AI company's servers. Those servers are usually located in a data center far away from you, sometimes in another country.</div>
+          <span class="j-risk med">⚠️ Risk: Data leaves your control the second you press send</span>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="j-num">2</div>
+        <div class="j-body">
+          <div class="j-title">The AI company receives your prompt</div>
+          <div class="j-text">The company's servers get your text. Depending on the tool and your account settings, the company may <strong>log your prompt</strong> — meaning they save a record of exactly what you typed. They may use this for safety reviews, bug fixes, or model improvement.</div>
+          <span class="j-risk high">🔴 Risk: Your input may be stored permanently on their servers</span>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="j-num">3</div>
+        <div class="j-body">
+          <div class="j-title">The AI processes your request and responds</div>
+          <div class="j-text">The AI model reads your prompt and generates a reply. During this step, your words are actively used by the model. In some cases — especially with free consumer tools — your inputs may be used to help <strong>train future versions of the AI</strong>.</div>
+          <span class="j-risk high">🔴 Risk: Your words could become part of the AI's training data</span>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="j-num">4</div>
+        <div class="j-body">
+          <div class="j-title">Your conversation history is saved</div>
+          <div class="j-text">Most AI tools save your conversation history so you can come back to it later. That history lives on the company's servers. If there's ever a <strong>data breach</strong> (a security hack), those saved conversations could be exposed to people who shouldn't see them.</div>
+          <span class="j-risk med">⚠️ Risk: Old conversations could be accessed in a breach</span>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="j-num">5</div>
+        <div class="j-body">
+          <div class="j-title">The data stays in their system — sometimes forever</div>
+          <div class="j-text">Unless you delete your conversation history and the company actually purges its records (which varies by platform), your prompts may live on their servers indefinitely. Many companies' data retention policies allow them to keep data for years.</div>
+          <span class="j-risk low">✅ Tip: Check the privacy settings on every tool you use</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Key Terms You Need to Know</h2>
+
+    <div class="term-box">
+      <div class="term-word">Prompt</div>
+      <div class="term-def">The text you type into an AI tool. This is the input you send. It could be a question, a task, a document you paste in, or a mix of all three. Everything in your prompt leaves your device when you press send.</div>
+    </div>
+    <div class="term-box">
+      <div class="term-word">Data Retention Policy</div>
+      <div class="term-def">The rules a company follows for how long they keep your data. Some companies delete your data quickly. Others keep it for years. You can usually find this in a tool's "Terms of Service" or "Privacy Policy" — though it's rarely easy reading.</div>
+    </div>
+    <div class="term-box">
+      <div class="term-word">Training Data</div>
+      <div class="term-def">Information used to teach an AI model how to respond. Some companies use your prompts and the AI's replies as training data to make their model better. If your input becomes training data, parts of what you typed could theoretically influence the AI's future responses — including for other users.</div>
+    </div>
+    <div class="term-box">
+      <div class="term-word">Data Breach</div>
+      <div class="term-def">When someone gains unauthorized access to a company's stored data. If an AI company gets hacked, all the conversations they've stored could be stolen. This is why putting sensitive information into any cloud-based tool carries real risk.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Not All AI Tools Handle Data the Same Way</h2>
+    <p>This is one of the most important things to understand: different AI tools have very different data policies. Using a free consumer version of a tool is not the same as using a company-approved enterprise version.</p>
+
+    <div class="three-col">
+      <div class="tcol free">
+        <div class="tcol-label">⚠️ Free Consumer Tools</div>
+        <div class="tcol-title">ChatGPT Free, Claude.ai (free plan)</div>
+        <div class="tcol-point">Your prompts may be used for model training by default</div>
+        <div class="tcol-point">Conversation history is stored on their servers</div>
+        <div class="tcol-point">You can opt out of training — but it's usually buried in settings</div>
+        <div class="tcol-point">No special protections for business data</div>
+      </div>
+      <div class="tcol enterprise">
+        <div class="tcol-label">✅ Enterprise / Approved Tools</div>
+        <div class="tcol-title">Company-licensed versions (e.g., Microsoft Copilot for M365)</div>
+        <div class="tcol-point">Your data is NOT used to train the AI model</div>
+        <div class="tcol-point">Stronger encryption and access controls</div>
+        <div class="tcol-point">Data stored within your company's secure environment</div>
+        <div class="tcol-point">Covered by your company's compliance agreements</div>
+      </div>
+      <div class="tcol unknown">
+        <div class="tcol-label">❌ Unknown / Unapproved Tools</div>
+        <div class="tcol-title">Random AI tools found online</div>
+        <div class="tcol-point">No way to verify how data is stored or used</div>
+        <div class="tcol-point">May sell data to third parties</div>
+        <div class="tcol-point">May have weak or no security</div>
+        <div class="tcol-point">Could expose your company to serious legal liability</div>
+      </div>
+    </div>
+
+    <p>The takeaway: <mark>where you use AI matters just as much as how you use it</mark>. An approved enterprise tool with your company's data agreement in place is a completely different environment than the free version of the same tool.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why Tech Workers Specifically Need to Understand This</h2>
+    <p>In a tech role, your prompts often contain things that are extremely sensitive — code with business logic baked in, server configurations, API keys, database queries, internal system designs. These aren't just personal details. They're proprietary assets.</p>
+    <p>If you paste a block of code into a free AI tool to debug it, you may have just shared the inner workings of your company's product with a third party. Even if that company never misuses it, your employment contract almost certainly has a clause that says you can't share that information externally.</p>
+
+    <div class="pull-quote">
+      <p>The AI tool felt private. But "private" and "secure" are not the same thing. Private means nobody's watching. Secure means your data can't be accessed without permission. AI tools are rarely both.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A coworker says, "I deleted my chat history, so my prompts are gone." Is that accurate?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Yes — deleting chat history removes all records of what you typed</button>
+        <button class="qopt" onclick="doQ(this,true)">Not necessarily — deleting your visible history may not delete the company's server-side logs or any training data they've already collected from your prompts</button>
+        <button class="qopt" onclick="doQ(this,false)">Yes — companies are legally required to delete all data when you delete your history</button>
+        <button class="qopt" onclick="doQ(this,false)">It depends on whether you used the mobile or desktop app</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every prompt you send to an AI tool travels over the internet and lands on someone else's server. It does not stay on your device. The moment you press send, the data is out of your direct control.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Free consumer AI tools may use your prompts as training data and store your conversations indefinitely. Enterprise-approved tools have much stronger protections — including a guarantee that your inputs won't be used to train the AI.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Deleting your conversation history may not delete the company's server-side records. True data deletion depends on the company's data retention policy — which you should check for every tool you use at work.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>In tech roles, the stakes are especially high. Code, system details, API credentials, and internal architecture details are proprietary assets — and pasting them into an unapproved AI tool is often a violation of your employment contract, not just a security risk.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Deleting your chat history removes what you can see — but the AI company may still have server-side logs, backup copies, or training data already extracted from your prompts. Whether that data is truly deleted depends entirely on the company's data retention policy. 'Delete' in your interface doesn't always mean 'delete' from their servers.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("server-side logs"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Deleting visible chat history only removes what you can see. The AI company may still hold server-side logs, backup records, or training data derived from your prompts. True deletion depends on the company's data retention policy — and most policies allow data to be kept for much longer than your visible history.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Anatomy of a Data Breach: How AI Tools Become Security Liabilities</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Timeline story */
+.timeline{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.tl-item{display:flex;gap:16px;position:relative;padding-bottom:0;}
+.tl-item:not(:last-child)::after{content:"";position:absolute;left:19px;top:44px;width:2px;height:100%;background:var(--red);opacity:.3;}
+.tl-dot{width:40px;height:40px;border-radius:50%;background:var(--red);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;z-index:1;}
+.tl-body{background:var(--red-pale);border:1.5px solid var(--red);border-radius:16px;padding:18px 20px;margin-bottom:16px;flex:1;}
+.tl-time{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.tl-title{font-weight:700;color:var(--red);font-size:16px;margin-bottom:8px;}
+.tl-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.tl-thought{font-size:13px;font-style:italic;color:var(--gray-muted);margin-top:8px;padding:8px 12px;background:rgba(255,255,255,.6);border-radius:8px;}
+
+/* Damage cards */
+.damage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.dmg-card{border-radius:16px;padding:20px;border:1.5px solid var(--red);background:var(--red-pale);}
+.dmg-icon{font-size:28px;margin-bottom:8px;}
+.dmg-title{font-weight:700;color:var(--red);font-size:15px;margin-bottom:6px;}
+.dmg-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Prevention steps */
+.prevent-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.prevent-item{display:flex;gap:12px;align-items:flex-start;background:var(--green-pale);border:1.5px solid var(--green);border-radius:14px;padding:16px 18px;}
+.prevent-num{width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.prevent-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.prevent-text strong{color:var(--green);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.1 — Security &amp; Privacy Risks</div>
+  <h1>The Anatomy of a Data Breach: How AI Tools Become Security Liabilities</h1>
+  <p class="hero-sub">Data breaches don't usually start with a hacker in a hoodie. They start with a normal person, trying to do their job faster, making one small decision they didn't think twice about. Here's how it happens — step by step.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Meet Jordan. Jordan Is Good at Their Job.</h2>
+    <p>Jordan is a junior software developer at a healthcare technology company. They write code for a patient records system — the software hospitals use to track medications, appointments, and test results. Jordan is hardworking, detail-oriented, and genuinely wants to do good work.</p>
+    <p>It's a Wednesday afternoon. Jordan has a deadline at 5 PM. There's a bug in a function that processes patient insurance data, and Jordan can't figure out why it keeps throwing an error. Their senior engineer is in meetings until 4:30. The clock is ticking.</p>
+    <p>Jordan opens a browser tab and goes to a free AI coding assistant they've used before. <mark>It always gives great suggestions.</mark> Jordan copies the broken function — including real variable names, a few sample data structures, and a comment that says "patient_record_id" — and pastes it in. The AI spots the bug in seconds. Jordan fixes it, submits the code, meets the deadline.</p>
+    <p>Jordan goes home feeling relieved. They had no idea they just caused a data breach.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Breach — Minute by Minute</h2>
+    <p>Let's slow this down and look at exactly what happened and why it became a problem:</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot">⌨️</div>
+        <div class="tl-body">
+          <div class="tl-time">3:47 PM — The Paste</div>
+          <div class="tl-title">Jordan copies the code into the AI tool</div>
+          <div class="tl-text">The pasted code contains references to real internal database table names, column names that match the actual patient records schema, and a sample data structure with a "patient_record_id" field. None of this is individual patient data — but it's the <strong>blueprint</strong> of how patient data is stored.</div>
+          <div class="tl-thought">💭 Jordan thinks: "It's just code. There's no actual patient data in here."</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">☁️</div>
+        <div class="tl-body">
+          <div class="tl-time">3:47 PM — The Transfer</div>
+          <div class="tl-title">That code travels to a third-party server</div>
+          <div class="tl-text">The AI tool Jordan used is a free consumer product. Jordan's company has no data agreement with this company. The pasted code is now stored on servers Jordan's company has no visibility into, no contract with, and no right to audit. The code has left the building — permanently.</div>
+          <div class="tl-thought">💭 Jordan thinks: "It's encrypted or something, right? They can't see individual files."</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">📋</div>
+        <div class="tl-body">
+          <div class="tl-time">That night — The Log</div>
+          <div class="tl-title">The AI company logs Jordan's prompt</div>
+          <div class="tl-text">Per their terms of service — which Jordan never read — the free AI tool logs conversations and may use them for model training and quality review. Human reviewers at the company may see flagged or sample prompts. The schema of a patient records system is now potentially visible to people outside Jordan's company.</div>
+          <div class="tl-thought">💭 Jordan thinks: nothing. They're asleep.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">🏥</div>
+        <div class="tl-body">
+          <div class="tl-time">Two weeks later — The Audit</div>
+          <div class="tl-title">Jordan's company undergoes a HIPAA compliance audit</div>
+          <div class="tl-text">A healthcare auditor reviews data handling practices. They ask: "Can you verify that no protected health information — including data architecture — has been shared with any third party without a Business Associate Agreement?" Jordan's company cannot verify this, because Jordan's action was never logged internally. The auditor flags a potential HIPAA violation.</div>
+          <div class="tl-thought">💭 Jordan thinks: "What HIPAA audit? I haven't gotten any emails about this..."</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">🚨</div>
+        <div class="tl-body">
+          <div class="tl-time">One month later — The Meeting</div>
+          <div class="tl-title">IT security reviews developer activity logs</div>
+          <div class="tl-text">A security review traces outbound data transfers. Jordan's browser history shows the AI tool visit and the timing matches code repository access logs. Jordan is called into a meeting with their manager and an HR representative. The conversation does not go well.</div>
+          <div class="tl-thought">💭 Jordan thinks: "I was just trying to fix a bug. I didn't know."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <p>"I didn't know" is not a defense. Not in a legal review. Not in an employment termination meeting. Not in a regulatory fine. The only defense is knowing the rules before you break them.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Made This a Breach — Even Without Stolen Names</h2>
+    <p>Jordan's situation confuses a lot of people because no patient names or social security numbers were shared. So how is it a breach?</p>
+    <p>A <strong>data breach</strong> isn't just about individual records. In healthcare — and in many regulated industries — it includes any unauthorized disclosure of protected information. This includes:</p>
+
+    <div class="damage-grid">
+      <div class="dmg-card">
+        <div class="dmg-icon">🏗️</div>
+        <div class="dmg-title">System Architecture</div>
+        <div class="dmg-text">The structure of how patient data is stored — table names, field names, data types — is protected information. It reveals how to attack the system.</div>
+      </div>
+      <div class="dmg-card">
+        <div class="dmg-icon">🔑</div>
+        <div class="dmg-title">Internal Logic</div>
+        <div class="dmg-text">Code that handles patient records reveals business rules, security assumptions, and vulnerabilities — even without containing actual patient data.</div>
+      </div>
+      <div class="dmg-card">
+        <div class="dmg-icon">📄</div>
+        <div class="dmg-title">Regulatory Violations</div>
+        <div class="dmg-text">HIPAA requires that any vendor handling health system data sign a Business Associate Agreement (BAA). The AI tool had no BAA. That's a violation by itself.</div>
+      </div>
+      <div class="dmg-card">
+        <div class="dmg-icon">💸</div>
+        <div class="dmg-title">Financial Exposure</div>
+        <div class="dmg-text">HIPAA violations can result in fines from $100 to $50,000 per violation, depending on intent. A single incident like Jordan's can cost a company hundreds of thousands of dollars.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four Habits That Would Have Prevented This</h2>
+    <p>Jordan's situation wasn't inevitable. Four simple habits would have stopped the breach before it started:</p>
+
+    <div class="prevent-list">
+      <div class="prevent-item">
+        <div class="prevent-num">1</div>
+        <div class="prevent-text"><strong>Check the approved tools list first.</strong> Most companies maintain a list of AI tools that have been reviewed and approved for work use. Jordan should have asked: "Is this tool on our approved list?" before using it for work code.</div>
+      </div>
+      <div class="prevent-item">
+        <div class="prevent-num">2</div>
+        <div class="prevent-text"><strong>Ask yourself what's in the paste.</strong> Before copying anything into an AI tool, spend 10 seconds asking: "Does this contain any information my company wouldn't want shared externally?" If the answer is yes or maybe — don't paste it.</div>
+      </div>
+      <div class="prevent-item">
+        <div class="prevent-num">3</div>
+        <div class="prevent-text"><strong>Sanitize code before sharing it.</strong> If you need AI help debugging, you can often remove or replace the sensitive parts. Use fake table names, generic variable names, and dummy data — then share just the logic that's broken. The AI doesn't need the real names to help you.</div>
+      </div>
+      <div class="prevent-item">
+        <div class="prevent-num">4</div>
+        <div class="prevent-text"><strong>When in doubt, ask your manager.</strong> "Hey, can I use [tool name] to help with this code?" takes 30 seconds. Getting called into an HR meeting takes a lot longer — and ends worse.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">Jordan shared code that contained internal database field names but no actual patient records. Why did this still count as a potential HIPAA violation?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">It didn't — HIPAA only applies when real patient records are shared, not code</button>
+        <button class="qopt" onclick="doQ(this,false)">Because the AI tool Jordan used was based in another country</button>
+        <button class="qopt" onclick="doQ(this,true)">Because HIPAA requires any vendor handling protected health information systems to sign a Business Associate Agreement — and the AI tool had none. The code's architecture is part of the protected system, even without individual patient data.</button>
+        <button class="qopt" onclick="doQ(this,false)">Because Jordan should have asked permission before fixing any bug</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Most data breaches caused by AI tools aren't acts of malice — they're acts of convenience. Someone needed help fast, reached for a familiar tool, and didn't stop to think about what was in the paste. That moment of not thinking is where breaches begin.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>A breach doesn't require actual names and records. System architecture, internal logic, field names, and data schemas are all forms of protected information — especially in regulated industries like healthcare, finance, and law.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>"I didn't know" doesn't protect you legally or professionally. The responsibility for understanding your company's data policies belongs to you — not your manager, not IT, not the AI company.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>You can almost always get AI help without sharing sensitive details. Strip out proprietary names, use dummy data, and share just the logic that needs fixing. The AI doesn't need the real thing to help you debug it.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. HIPAA doesn't just protect individual patient records — it protects the systems that handle them. Any company that has access to those systems, even just the code architecture, must have a signed Business Associate Agreement (BAA). The free AI tool had no such agreement, which is itself a regulatory violation — separate from whether any actual patient data was exposed.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Business Associate Agreement"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. HIPAA's scope is broader than just individual patient records. It covers the systems, architecture, and handling of protected health information — which means that even sharing the code structure of a patient records system with an unapproved third party (no BAA) is a potential violation.";}
+}
+</script>
+</body>
+</html>
