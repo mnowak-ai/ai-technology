@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Tech Professionals Audit AI for Bias: Tools, Techniques, and Mindsets</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Technique cards with tabs */
+.tech-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;margin-bottom:0;}
+.ttab{flex:1;min-width:110px;padding:11px 10px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.ttab.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.tpanel{display:none;padding:20px 0 0;}
+.tpanel.active{display:block;}
+.technique-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:18px;padding:24px;}
+.tc-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.tc-what{font-size:15px;line-height:1.75;color:var(--gray-text);margin-bottom:14px;}
+.tc-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.tc-step{display:flex;gap:10px;align-items:flex-start;background:var(--white);border:1px solid var(--purple-mid);border-radius:10px;padding:10px 14px;}
+.tc-step-num{width:22px;height:22px;border-radius:50%;background:var(--purple);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.tc-step-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.tc-example{background:var(--purple-pale);border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;color:var(--gray-text);}
+.tc-example-label{font-weight:700;color:var(--purple-dark);margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* Mindset shifts */
+.mindset-list{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.ms-item{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:16px;overflow:hidden;border:1.5px solid var(--purple-mid);}
+.ms-before{background:var(--orange-pale);padding:16px 18px;border-right:1px solid var(--purple-mid);}
+.ms-after{background:var(--green-pale);padding:16px 18px;}
+.ms-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.ms-before .ms-label{color:var(--orange);}
+.ms-after .ms-label{color:var(--green);}
+.ms-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.2 — Bias &amp; AI Limitations</div>
+  <h1>How Tech Professionals Audit AI for Bias: Tools, Techniques, and Mindsets</h1>
+  <p class="hero-sub">Understanding bias is the first step. Knowing how to actively look for it is the professional skill. This article gives you the concrete methods that real AI teams use — and that you can start applying immediately.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Auditing Is Not Optional — It's Professional Practice</h2>
+    <p>You wouldn't ship code without testing it. You wouldn't deploy a database without checking its queries. Auditing an AI system for bias is the equivalent step for any tool that makes decisions affecting real people — and like testing, it's something you build into the process, not something you do as an afterthought.</p>
+    <p>The good news: bias auditing doesn't require a PhD in machine learning. Many of the most effective techniques are conceptually simple. They require <mark>structured thinking, deliberate testing, and a willingness to look for problems before someone else finds them</mark>.</p>
+    <div class="pull-quote">
+      <p>The goal of a bias audit isn't to prove the system is unbiased. It's to find out where it isn't — before those gaps affect real people.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Five Core Techniques</h2>
+    <p>Select a technique to explore in detail:</p>
+
+    <div class="tech-tabs">
+      <button class="ttab active" onclick="showTab('t1',this)">📊 Disaggregated Testing</button>
+      <button class="ttab" onclick="showTab('t2',this)">🔴 Red-Teaming</button>
+      <button class="ttab" onclick="showTab('t3',this)">🔄 Cross-Checking</button>
+      <button class="ttab" onclick="showTab('t4',this)">📋 Dataset Review</button>
+      <button class="ttab" onclick="showTab('t5',this)">👥 Stakeholder Testing</button>
+    </div>
+
+    <div id="t1" class="tpanel active">
+      <div class="technique-card">
+        <div class="tc-title">Disaggregated Testing</div>
+        <div class="tc-what">This is the single most important bias-detection technique. Instead of measuring a model's overall accuracy, you break down performance by demographic subgroup and compare the numbers. A model that's 93% accurate overall might be 97% accurate for one group and 82% accurate for another. Disaggregated testing reveals that gap.</div>
+        <div class="tc-steps">
+          <div class="tc-step"><div class="tc-step-num">1</div><div class="tc-step-text">Identify the relevant subgroups for your use case (by gender, age range, race/ethnicity, language, geographic region, disability status — whatever is relevant to potential harm)</div></div>
+          <div class="tc-step"><div class="tc-step-num">2</div><div class="tc-step-text">Build or obtain a test dataset that includes enough examples from each subgroup to get statistically meaningful results</div></div>
+          <div class="tc-step"><div class="tc-step-num">3</div><div class="tc-step-text">Run the model separately on each subgroup and record performance metrics (accuracy, false positive rate, false negative rate) for each</div></div>
+          <div class="tc-step"><div class="tc-step-num">4</div><div class="tc-step-text">Compare the numbers across groups. Significant disparities are the finding. Document what you find and flag it before deployment.</div></div>
+        </div>
+        <div class="tc-example">
+          <div class="tc-example-label">📌 Real-world application</div>
+          A content moderation AI is flagging 8% of posts from one user demographic as violating policy — and 23% from another. Overall accuracy looks fine. Disaggregated testing reveals the model is applying different standards by demographic group. This is a bias finding that demands investigation before the system goes live.
+        </div>
+      </div>
+    </div>
+
+    <div id="t2" class="tpanel">
+      <div class="technique-card">
+        <div class="tc-title">Red-Teaming</div>
+        <div class="tc-what">Red-teaming comes from cybersecurity — it means actively trying to break the system before adversaries do. In AI bias auditing, red-teaming means deliberately constructing test cases designed to expose bias, rather than waiting to find it accidentally in production. You're trying to make the model fail in a controlled environment.</div>
+        <div class="tc-steps">
+          <div class="tc-step"><div class="tc-step-num">1</div><div class="tc-step-text">Assemble a diverse group of testers — ideally including people from groups that might be affected by the model's decisions</div></div>
+          <div class="tc-step"><div class="tc-step-num">2</div><div class="tc-step-text">Create test inputs specifically designed to probe for bias: identical scenarios with different demographic signals, edge cases for underrepresented groups, adversarial examples</div></div>
+          <div class="tc-step"><div class="tc-step-num">3</div><div class="tc-step-text">Test systematically: swap names, locations, languages, and demographic identifiers in otherwise-identical inputs. Does the model respond differently?</div></div>
+          <div class="tc-step"><div class="tc-step-num">4</div><div class="tc-step-text">Document every finding, even small ones. A pattern of small inconsistencies is often as important as a single glaring failure.</div></div>
+        </div>
+        <div class="tc-example">
+          <div class="tc-example-label">📌 Real-world application</div>
+          A hiring AI is tested with identical résumés — one with the name "Emily Johnson," one with "Aisha Mohammed." If the model scores them differently, you've found a red-team finding. The test takes minutes. The finding may prevent years of discriminatory outcomes.
+        </div>
+      </div>
+    </div>
+
+    <div id="t3" class="tpanel">
+      <div class="technique-card">
+        <div class="tc-title">Cross-Checking Against Known Standards</div>
+        <div class="tc-what">Cross-checking means comparing the AI's outputs against an external reference — established guidelines, expert consensus, legal standards, or validated benchmarks. If the AI's recommendations systematically diverge from the accepted standard in ways that correlate with user demographics, that divergence is a bias signal.</div>
+        <div class="tc-steps">
+          <div class="tc-step"><div class="tc-step-num">1</div><div class="tc-step-text">Identify the authoritative external standard for your domain (clinical guidelines, regulatory requirements, industry benchmarks, legal precedent)</div></div>
+          <div class="tc-step"><div class="tc-step-num">2</div><div class="tc-step-text">Run a sample of the AI's outputs through comparison against that standard</div></div>
+          <div class="tc-step"><div class="tc-step-num">3</div><div class="tc-step-text">Look for systematic divergences — especially divergences that cluster around particular input types, user demographics, or scenarios</div></div>
+          <div class="tc-step"><div class="tc-step-num">4</div><div class="tc-step-text">Investigate divergences before deployment. Some may reflect appropriate variation; others signal a bias problem.</div></div>
+        </div>
+        <div class="tc-example">
+          <div class="tc-example-label">📌 Real-world application</div>
+          This is exactly the technique that exposed IBM Watson for Oncology's problems. Oncologists cross-checked Watson's recommendations against standard clinical guidelines and found systematic divergences — particularly for patient profiles that differed from the hypothetical training cases.
+        </div>
+      </div>
+    </div>
+
+    <div id="t4" class="tpanel">
+      <div class="technique-card">
+        <div class="tc-title">Diverse Dataset Review</div>
+        <div class="tc-what">Before the model is trained or deployed, a structured review of the training dataset can catch bias before it's baked in. This isn't just "look at the data" — it's a systematic process of examining who is represented, who isn't, and what assumptions are embedded in how the data was collected and labeled.</div>
+        <div class="tc-steps">
+          <div class="tc-step"><div class="tc-step-num">1</div><div class="tc-step-text">Profile the training dataset by demographic characteristics — what groups are represented? At what proportions? Are there groups that appear rarely or not at all?</div></div>
+          <div class="tc-step"><div class="tc-step-num">2</div><div class="tc-step-text">Examine the labeling process — who labeled the data? What criteria were used? What biases might the labelers have introduced?</div></div>
+          <div class="tc-step"><div class="tc-step-num">3</div><div class="tc-step-text">Look for proxy variables — fields that could encode demographic information indirectly (zip code, school name, language style)</div></div>
+          <div class="tc-step"><div class="tc-step-num">4</div><div class="tc-step-text">Document gaps and risks before training begins — it's much easier to address data quality issues before a model is trained than after</div></div>
+        </div>
+        <div class="tc-example">
+          <div class="tc-example-label">📌 Real-world application</div>
+          A dataset review of a facial recognition training set reveals that 78% of the images are of lighter-skinned individuals. This finding, before training, gives the team the opportunity to collect more diverse data — rather than discovering the accuracy disparity after deployment when the tool is already affecting real people.
+        </div>
+      </div>
+    </div>
+
+    <div id="t5" class="tpanel">
+      <div class="technique-card">
+        <div class="tc-title">Stakeholder and Community Testing</div>
+        <div class="tc-what">No matter how thorough your technical testing is, there are things that only affected communities will catch. Stakeholder testing means involving representatives of the groups most affected by an AI system in the evaluation process — before the system goes live. This isn't just an ethics practice. It reliably surfaces bias signals that purely technical testing misses.</div>
+        <div class="tc-steps">
+          <div class="tc-step"><div class="tc-step-num">1</div><div class="tc-step-text">Identify which communities will be most affected by the system's decisions — especially those historically underrepresented in tech development</div></div>
+          <div class="tc-step"><div class="tc-step-num">2</div><div class="tc-step-text">Create a structured pilot or review process that allows those stakeholders to use the system and report their observations</div></div>
+          <div class="tc-step"><div class="tc-step-num">3</div><div class="tc-step-text">Create genuine feedback channels — not performative ones. Stakeholders need to be able to flag concerns without fear of being dismissed</div></div>
+          <div class="tc-step"><div class="tc-step-num">4</div><div class="tc-step-text">Act on findings. Stakeholder input that doesn't influence the system is theater, not process.</div></div>
+        </div>
+        <div class="tc-example">
+          <div class="tc-example-label">📌 Real-world application</div>
+          A city testing an AI tool for allocating social services includes community members from the neighborhoods most likely to be affected. Those stakeholders identify that the tool's interface assumes English fluency and internet access — cutting out exactly the residents most in need of services. A technical audit alone would not have caught this.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Mindset Shifts That Make Auditing Work</h2>
+    <p>Techniques only work if the team using them genuinely wants to find problems. These mindset shifts are what separates teams that catch bias before it causes harm from teams that perform auditing theater:</p>
+
+    <div class="mindset-list">
+      <div class="ms-item">
+        <div class="ms-before"><div class="ms-label">❌ Before</div><div class="ms-text">"Let's test to confirm the system works."</div></div>
+        <div class="ms-after"><div class="ms-label">✅ After</div><div class="ms-text">"Let's test to find out where the system fails — especially for users who aren't like us."</div></div>
+      </div>
+      <div class="ms-item">
+        <div class="ms-before"><div class="ms-label">❌ Before</div><div class="ms-text">"Our overall accuracy is 94%, so we're good."</div></div>
+        <div class="ms-after"><div class="ms-label">✅ After</div><div class="ms-text">"What's our accuracy for each user group? Who is the 6% error rate concentrated on?"</div></div>
+      </div>
+      <div class="ms-item">
+        <div class="ms-before"><div class="ms-label">❌ Before</div><div class="ms-text">"We removed the demographic variables, so there's no bias."</div></div>
+        <div class="ms-after"><div class="ms-label">✅ After</div><div class="ms-text">"What proxy variables might still be encoding demographic information? Let's test for disparate outcomes, not just disparate inputs."</div></div>
+      </div>
+      <div class="ms-item">
+        <div class="ms-before"><div class="ms-label">❌ Before</div><div class="ms-text">"We'll fix any bias issues after launch if they come up."</div></div>
+        <div class="ms-after"><div class="ms-label">✅ After</div><div class="ms-text">"Bias found before launch is a quality improvement. Bias found after launch is a harm already done. We find it first."</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A team auditing a loan approval AI finds that its overall accuracy rate is 91% — which is better than the previous manual process. They consider the audit complete. What's the problem with this conclusion?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">91% accuracy is too low — they should aim for 99% before concluding</button>
+        <button class="qopt" onclick="doQ(this,true)">Overall accuracy doesn't reveal how the model performs for different subgroups. A 91% overall rate could mask dramatically lower accuracy for specific demographic groups — exactly the kind of disparate impact that constitutes bias and legal risk. The audit is incomplete without disaggregated analysis.</button>
+        <button class="qopt" onclick="doQ(this,false)">The comparison to the manual process is irrelevant — AI should be evaluated on its own merits</button>
+        <button class="qopt" onclick="doQ(this,false)">The audit is complete — accuracy is the standard measure for model performance</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Bias auditing is a professional standard, not an optional add-on. The five core techniques — disaggregated testing, red-teaming, cross-checking, dataset review, and stakeholder testing — each catch different types of bias that the others can miss.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Overall accuracy is not a sufficient measure of fairness. Disaggregating performance by subgroup is the most important single technique — it reveals whether good average performance is masking bad outcomes for specific groups of users.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Red-teaming is proactive problem-finding. Deliberately constructing test cases designed to expose bias — swapping names, demographics, and contexts in otherwise-identical inputs — surfaces issues that passive testing misses.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The mindset matters as much as the technique. Teams that audit to confirm the system works tend to miss the bias. Teams that audit to find where the system fails — and fix it before launch — build systems that are actually more reliable and fair.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showTab(id,btn){document.querySelectorAll(".ttab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".tpanel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById(id).classList.add("active");}
+function doQ(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This is the fundamental limitation of aggregate accuracy metrics — they can look good while hiding significant disparities. A 91% overall rate in a loan approval model could mean 95% accuracy for majority-demographic applicants and 75% for minority applicants. That disparity is both an ethical problem and a legal one under fair lending law. The audit isn't complete until you know how the model performs for each group that could be affected by its decisions.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("disaggregated"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. The problem isn't the absolute accuracy level or the comparison methodology — it's that the team looked at one number (overall accuracy) and declared the audit done. That number can mask dramatically different performance across demographic groups. A complete bias audit requires disaggregated testing — breaking down the results by the groups that matter — not just an overall score.";}
+}
+</script>
+</body>
+</html>

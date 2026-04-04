@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incomplete Data, Outdated Data, and Partial Visibility: Why AI Often Doesn't Know What It Doesn't Know</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;--blue-mid:#BFDBFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Three limitation cards */
+.lim-card{border-radius:20px;padding:26px;margin:16px 0;border:1.5px solid;}
+.lim-card.incomplete{background:var(--orange-pale);border-color:var(--orange);}
+.lim-card.outdated{background:var(--red-pale);border-color:var(--red);}
+.lim-card.partial{background:var(--blue-pale);border-color:var(--blue);}
+.lc-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:100px;margin-bottom:12px;}
+.incomplete .lc-badge{background:var(--orange);color:var(--white);}
+.outdated .lc-badge{background:var(--red);color:var(--white);}
+.partial .lc-badge{background:var(--blue);color:var(--white);}
+.lc-title{font-family:"Fraunces",serif;font-size:21px;font-weight:700;margin-bottom:8px;}
+.incomplete .lc-title{color:var(--orange);}
+.outdated .lc-title{color:var(--red);}
+.partial .lc-title{color:var(--blue);}
+.lc-body{font-size:15px;line-height:1.75;color:var(--gray-text);margin-bottom:14px;}
+.lc-example{background:rgba(255,255,255,.7);border-radius:12px;padding:14px 18px;}
+.lc-ex-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.incomplete .lc-ex-label{color:var(--orange);}
+.outdated .lc-ex-label{color:var(--red);}
+.partial .lc-ex-label{color:var(--blue);}
+.lc-ex-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.lc-danger{margin-top:10px;font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;}
+.incomplete .lc-danger{background:rgba(217,119,6,.1);color:var(--orange);}
+.outdated .lc-danger{background:rgba(220,38,38,.1);color:var(--red);}
+.partial .lc-danger{background:rgba(29,78,216,.1);color:var(--blue);}
+
+/* The map vs territory visual */
+.map-territory{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.mt-card{border-radius:18px;padding:22px;border:1.5px solid;}
+.mt-card.territory{background:var(--green-pale);border-color:var(--green);}
+.mt-card.map{background:var(--red-pale);border-color:var(--red);}
+.mt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.territory .mt-label{color:var(--green);}
+.map .mt-label{color:var(--red);}
+.mt-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;margin-bottom:10px;}
+.territory .mt-title{color:var(--green);}
+.map .mt-title{color:var(--red);}
+.mt-point{font-size:13px;line-height:1.65;color:var(--gray-text);padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.mt-point:last-child{border-bottom:none;}
+
+/* Oversight imperative */
+.oversight-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.og-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.og-icon{font-size:24px;margin-bottom:8px;}
+.og-title{font-weight:700;color:var(--purple-dark);font-size:15px;margin-bottom:6px;}
+.og-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.2 — Bias &amp; AI Limitations</div>
+  <h1>Incomplete Data, Outdated Data, and Partial Visibility: Why AI Often Doesn't Know What It Doesn't Know</h1>
+  <p class="hero-sub">The most dangerous gap in any AI system isn't the things it gets wrong. It's the things it gets wrong confidently — without any signal that it's operating beyond the edge of what it actually knows.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>The Blind Spot Problem</h2>
+    <p>When you drive a car, your mirrors create blind spots. You know they exist. You compensate by physically checking over your shoulder. The blind spot doesn't surprise you because you've been taught it's there.</p>
+    <p>AI doesn't come with that warning. When an AI model reaches the edge of what its training data covers — when it's asked about a time period it hasn't seen, a population it barely encountered, or a situation its data didn't capture — it doesn't stop and say "I'm not sure about this." It just keeps generating text with the same confident tone it uses when it knows exactly what it's talking about.</p>
+    <p><mark>This is the epistemic limitation that makes human oversight non-negotiable</mark>. Epistemic means "related to knowledge." An epistemic limitation is a limitation in what something can know — and AI's epistemic limitations are structural, invisible, and don't announce themselves.</p>
+    <div class="pull-quote">
+      <p>A person who doesn't know something usually knows they don't know it. An AI that doesn't know something has no mechanism to recognize that gap — and no instinct to flag it.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Three Types of Limitations — Each One Creates a Different Risk</h2>
+
+    <div class="lim-card incomplete">
+      <div class="lc-badge">⚠️ Limitation 1</div>
+      <div class="lc-title">Incomplete Data</div>
+      <div class="lc-body">Incomplete data means the training set simply didn't cover certain situations, populations, or conditions — not because they don't exist, but because they weren't in the data the model learned from. The model performs well on what it saw and poorly on what it didn't — but it can't tell you which is which.</div>
+      <div class="lc-example">
+        <div class="lc-ex-label">🔬 Real Example</div>
+        <div class="lc-ex-text">Sepsis — a life-threatening infection response — presents differently in elderly patients than in younger adults. An AI diagnostic tool trained mostly on data from younger patient populations learned to recognize the standard presentation. When applied to elderly patients whose symptoms were more subtle, the tool performed significantly worse. It didn't flag this gap. Clinicians who trusted the output over their own clinical judgment missed diagnoses the AI couldn't reliably make.</div>
+      </div>
+      <div class="lc-danger">⚠️ The risk: The AI is confidently wrong about the exact patients who most need accurate assessment.</div>
+    </div>
+
+    <div class="lim-card outdated">
+      <div class="lc-badge">📅 Limitation 2</div>
+      <div class="lc-title">Outdated Data</div>
+      <div class="lc-body">Every AI model has a training cutoff — a date after which it has seen nothing. Laws change. Regulations update. Companies restructure. Research advances. Technologies emerge. An AI trained before any of these changes still confidently answers questions about them — using pre-change information — without any indication that the world has moved on.</div>
+      <div class="lc-example">
+        <div class="lc-ex-label">🔬 Real Example</div>
+        <div class="lc-ex-text">Legal AI tools trained on case law and regulatory guidance become outdated the moment new rulings are issued or regulations are amended. In fast-moving areas like AI regulation, data privacy law, and employment law, the gap between a model's training cutoff and today can represent multiple major legal changes. A lawyer using an AI to research current compliance requirements could receive confident guidance based on superseded rules — with no indication that anything has changed.</div>
+      </div>
+      <div class="lc-danger">🔴 The risk: Confident guidance based on rules that no longer exist — in domains where being wrong has legal consequences.</div>
+    </div>
+
+    <div class="lim-card partial">
+      <div class="lc-badge">🔭 Limitation 3</div>
+      <div class="lc-title">Partial Visibility</div>
+      <div class="lc-body">Partial visibility is subtler than the other two. It means the AI has data — but only from one angle, one source, or one perspective. The data isn't absent; it's systematically skewed. The model builds a picture of the world from what it could see, unaware that entire dimensions of the situation are invisible to it.</div>
+      <div class="lc-example">
+        <div class="lc-ex-label">🔬 Real Example</div>
+        <div class="lc-ex-text">Early NLP models trained predominantly on English-language internet content developed strong associations between certain words and concepts — associations that reflected Western, English-speaking cultural contexts. When used for tasks in non-Western contexts, these associations could be actively misleading. The model had partial visibility into human language and culture — it saw a lot of one angle, and almost none of many others. It couldn't flag this because it had no way to know what it wasn't seeing.</div>
+      </div>
+      <div class="lc-danger">🔵 The risk: Outputs that are accurate for the represented context and actively wrong for underrepresented ones — with no signal indicating which situation you're in.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Map Is Not the Territory</h2>
+    <p>There's a useful phrase in philosophy: "The map is not the territory." A map represents the world — but it's not the world itself. It leaves things out. It simplifies. It reflects what the mapmaker chose to include and how they chose to draw it.</p>
+    <p>An AI model's training data is a map of the world. The AI navigates by that map — confidently, quickly, at scale. But if the map is incomplete, out of date, or drawn from only one vantage point, the AI navigates confidently toward wrong destinations.</p>
+
+    <div class="map-territory">
+      <div class="mt-card territory">
+        <div class="mt-label">🌍 The Territory (Reality)</div>
+        <div class="mt-title">How the world actually works</div>
+        <div class="mt-point">Continuously changing — laws update, science advances, companies change</div>
+        <div class="mt-point">Includes every population, language, culture, and situation</div>
+        <div class="mt-point">Contains context that data can't fully capture</div>
+        <div class="mt-point">Has edge cases, exceptions, and rare-but-important situations</div>
+        <div class="mt-point">Is different in different parts of the world simultaneously</div>
+      </div>
+      <div class="mt-card map">
+        <div class="mt-label">🗺️ The Map (Training Data)</div>
+        <div class="mt-title">What the AI learned from</div>
+        <div class="mt-point">Frozen at the training cutoff — doesn't update as the world changes</div>
+        <div class="mt-point">Over-represents some populations, dramatically under-represents others</div>
+        <div class="mt-point">Contains only what was recorded and included — not full context</div>
+        <div class="mt-point">Optimized for common cases — edge cases often poorly covered</div>
+        <div class="mt-point">Reflects the perspective of whoever created and curated the data</div>
+      </div>
+    </div>
+
+    <p>The problem isn't that the map is imperfect — all maps are. The problem is that the AI treats the map as if it were the territory. It doesn't know the map has gaps. So it can't warn you when you're walking into one.</p>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why This Makes Human Oversight Non-Negotiable</h2>
+    <p>This is the core professional implication of everything in this article: because AI cannot flag its own blind spots, a human in the loop is not optional. It's a structural requirement.</p>
+    <div class="oversight-grid">
+      <div class="og-card">
+        <div class="og-icon">🔍</div>
+        <div class="og-title">Check recency for time-sensitive topics</div>
+        <div class="og-text">For anything where the answer could have changed — regulations, drug approvals, company structures, technical standards — independently verify against a current source. Never rely solely on an AI for information that has a shelf life.</div>
+      </div>
+      <div class="og-card">
+        <div class="og-icon">👥</div>
+        <div class="og-title">Ask who was in the training data</div>
+        <div class="og-text">When using AI tools that affect real people, ask: does this model's training data represent my users? If you're building for a global audience or a specific underserved community, assume the model has gaps for those users until proven otherwise.</div>
+      </div>
+      <div class="og-card">
+        <div class="og-icon">🗺️</div>
+        <div class="og-title">Know your domain's rate of change</div>
+        <div class="og-text">Some fields change slowly (basic engineering physics). Others change fast (regulatory compliance, security vulnerabilities, financial markets). The faster your domain changes, the less you should trust AI outputs without verification against current sources.</div>
+      </div>
+      <div class="og-card">
+        <div class="og-icon">🚩</div>
+        <div class="og-title">Treat confident specificity as a trigger for skepticism</div>
+        <div class="og-text">Counterintuitively, the more specific and confident an AI's answer is about a rapidly-changing or specialized topic, the more scrutiny it deserves. Confidence is not a signal of accuracy — it's a feature of how the model is designed to respond.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A developer asks an AI assistant about the current requirements for GDPR compliance in their app. The AI gives a detailed, confident answer citing specific rules and thresholds. What should the developer do before acting on this?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Accept the answer — GDPR is well-established law, and AI is trained on legal documents</button>
+        <button class="qopt" onclick="doQ(this,true)">Verify the specifics against current official EU guidance — GDPR enforcement guidance evolves through regulatory decisions and court rulings that may postdate the AI's training. Confident AI output on regulatory compliance is a trigger for verification, not reassurance.</button>
+        <button class="qopt" onclick="doQ(this,false)">Ask the AI a follow-up question to confirm its answer is current</button>
+        <button class="qopt" onclick="doQ(this,false)">Trust it for the general framework but verify the specific numbers</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>AI has no mechanism to recognize the edge of its own knowledge. When it reaches a gap in its training data — whether incomplete, outdated, or only partially visible — it keeps generating confident output anyway. That silence is the danger.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Three structural gaps: incomplete data (entire populations or situations not in the training set), outdated data (the world has changed since the cutoff), and partial visibility (the data exists but only from one angle).</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The map is not the territory. AI navigates by its training data as if it were a complete, current, unbiased map of reality — when it is none of those things. Human oversight is the correction mechanism the AI cannot provide for itself.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>For any time-sensitive, population-specific, or rapidly-changing topic — verify against primary sources. The faster the domain changes, the less useful AI's frozen knowledge is — and the more critical your own judgment becomes.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. GDPR enforcement is an active, evolving area — guidance from the European Data Protection Board, national supervisory authority decisions, and court rulings continuously refine how the law applies. An AI trained months or years ago may have a solid grasp of GDPR's foundational rules but miss significant enforcement developments. Confident AI output on compliance is exactly the kind of high-stakes, time-sensitive topic that demands verification against current official sources — not just the AI's training snapshot.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("official EU guidance"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Asking the AI a follow-up doesn't help — it will confidently confirm its own potentially outdated answer. 'Trusting the framework' still exposes you to risk in the details, which is where compliance lives. And the fact that GDPR is well-established doesn't mean its enforcement interpretation is frozen — it's one of the most actively litigated areas of tech law. Verify the specifics against current official EU documentation.";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Simulation: Can You Spot the Bias?</title><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"><style>:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}.section{padding:32px 0 0;}h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}.sim-box{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:20px 0;}.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}.sim-progress{display:flex;gap:8px;margin-bottom:20px;align-items:center;}.sim-step{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--purple-mid);background:var(--white);color:var(--gray-muted);}.sim-step.active{background:var(--purple);border-color:var(--purple);color:var(--white);}.sim-step.done{background:var(--green);border-color:var(--green);color:var(--white);}.sim-scenario{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:8px;font-weight:700;line-height:1.35;}.sim-ai-output{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px 20px;margin:14px 0;font-size:14px;line-height:1.75;color:var(--gray-text);}.sim-output-label{font-size:11px;font-weight:700;color:var(--gray-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}.sim-question{font-family:"Fraunces",serif;font-size:17px;color:var(--purple-dark);font-weight:700;margin:14px 0;}.sim-opts{display:flex;flex-direction:column;gap:10px;}.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}.sim-opt.right{background:var(--green-pale);border-color:var(--green);}.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);}.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}.sim-fb.show{display:block;}.sim-fb.good{background:var(--green-pale);color:var(--green);}.sim-fb.bad{background:var(--red-pale);color:var(--red);}.sim-fb.warn{background:var(--orange-pale);color:var(--orange);}.sim-nav{display:flex;gap:10px;margin-top:16px;}.sim-btn{background:var(--purple);color:var(--white);border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .2s;}.sim-btn:hover{background:var(--purple-dark);}.sim-btn:disabled{opacity:.4;cursor:not-allowed;}.score-banner{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:20px;padding:28px 32px;margin:20px 0;color:var(--white);text-align:center;display:none;}.sb-score{font-family:"Fraunces",serif;font-size:48px;font-weight:900;margin-bottom:8px;}.sb-label{font-size:16px;opacity:.8;}.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}.spoint{display:flex;gap:14px;align-items:flex-start;}.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}.sdot svg{width:12px;height:12px;}.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}.fade-in.visible{opacity:1;transform:none;}</style></head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.2 — Bias &amp; AI Limitations</div>
+  <h1>Simulation: Can You Spot the Bias?</h1>
+  <p class="hero-sub">Five real-world AI scenarios. For each one, read the output and identify the bias signal — or confirm when the output looks clean. This is the judgment call you'll make on the job.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <p>This article is the applied counterpart to everything you've learned in Lesson 5.2. For each scenario, you'll read an AI-generated recommendation or output, then identify the most important concern. There are no trick questions — just realistic situations and the kind of critical thinking that separates professionals who catch bias from those who don't.</p>
+
+    <div class="sim-box">
+      <div class="sim-label">🎮 Bias Detection Simulation — 5 Scenarios</div>
+      <div class="sim-progress">
+        <div class="sim-step active" id="dot1">1</div>
+        <div class="sim-step" id="dot2">2</div>
+        <div class="sim-step" id="dot3">3</div>
+        <div class="sim-step" id="dot4">4</div>
+        <div class="sim-step" id="dot5">5</div>
+        <span style="font-size:13px;color:var(--gray-muted);margin-left:6px;">Scenario <span id="cur">1</span> of 5</span>
+      </div>
+
+      <!-- Scenario 1 -->
+      <div id="sc1">
+        <div class="sim-scenario">A healthcare AI recommends a pain management protocol for a patient.</div>
+        <div class="sim-ai-output">
+          <div class="sim-output-label">🤖 AI Recommendation</div>
+          Based on the patient's reported pain level of 7/10 and diagnostic imaging results, the recommended protocol is ibuprofen 400mg three times daily for 14 days, followed by a reassessment. Physical therapy referral is not indicated at this stage. Surgical consultation is not warranted given the current presentation.
+        </div>
+        <div class="sim-question">Research has documented that AI pain assessment tools trained on historical medical data often underestimate pain in Black patients. What's the most important thing to check before implementing this recommendation?</div>
+        <div class="sim-opts" id="sc1-opts">
+          <div class="sim-opt" onclick="doSim(1,'a',this,'❌ The dosage is within standard clinical ranges — that\'s not the primary concern here. The bigger issue is whether the AI\'s pain assessment is being applied equitably.')">Whether the recommended ibuprofen dosage follows standard clinical guidelines</div>
+          <div class="sim-opt" onclick="doSim(1,'b',this,'✅ Correct. Research has documented that pain assessment AI trained on historical data often underestimates pain in Black patients — because historical clinical notes themselves reflect documented disparities in how patient pain was recorded and treated. If this recommendation was generated for a Black patient, the treating clinician should apply additional clinical judgment rather than treating the AI\'s pain-level interpretation as authoritative. This is a case where knowing the demographic context of AI limitations is clinically necessary.',true)">Whether the AI system has documented accuracy disparities for this patient's demographic group, given research on pain assessment bias in AI tools</div>
+          <div class="sim-opt" onclick="doSim(1,'c',this,'❌ The physical therapy and surgical consultation notes are clinical decisions that may or may not be correct — but they\'re not the primary bias concern flagged by the research. The concern is upstream: whether the AI\'s pain level assessment is accurate for this patient.')">Whether physical therapy should have been recommended before medication</div>
+        </div>
+        <div class="sim-fb" id="sc1-fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="sc1-next" onclick="nextSc(2)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Scenario 2 -->
+      <div id="sc2" style="display:none;">
+        <div class="sim-scenario">A developer asks an AI coding assistant about a security vulnerability they've discovered.</div>
+        <div class="sim-ai-output">
+          <div class="sim-output-label">🤖 AI Response</div>
+          This vulnerability type was patched in CVE-2023-1847 through the March 2023 security update. The NIST National Vulnerability Database rates this class of vulnerability as CVSS 7.8 (High). The standard remediation is to update to version 4.2.1 or later, which includes the security patch. This was the most significant vulnerability of this type reported in 2023.
+        </div>
+        <div class="sim-question">The developer's company is running version 4.5.0, which is newer than 4.2.1. What concern should the developer flag about this AI response before closing the issue?</div>
+        <div class="sim-opts" id="sc2-opts">
+          <div class="sim-opt" onclick="doSim(2,'a',this,'✅ Correct. Security vulnerabilities emerge constantly. The AI has a training cutoff — and CVE databases, new exploits, and updated remediation guidance are published continuously. Even if the 2023 information is accurate, the developer should verify against the current CVE database and the framework\'s current security advisories. Running a newer version than the recommended patch doesn\'t mean they\'re current on all vulnerabilities — they need to check what\'s been discovered since the AI\'s training data was collected.',true)">The AI\'s training cutoff means its vulnerability information could be outdated — the developer should verify against the current CVE database and current security advisories</div>
+          <div class="sim-opt" onclick="doSim(2,'b',this,'❌ The CVSS score format is standard and 7.8 High is a real rating tier — the score format isn\'t the concern here. There\'s a more fundamental issue about the reliability of this AI response for security decisions.')">The CVSS score of 7.8 seems too high — the developer should question whether that rating is correct</div>
+          <div class="sim-opt" onclick="doSim(2,'c',this,'❌ The AI\'s response to this CVE may be accurate for 2023 — the concern isn\'t that the AI invented this CVE. The concern is that security is a fast-moving domain and the AI\'s information may be significantly out of date. They\'re running a newer version than the patch, but that doesn\'t mean they\'re protected against everything discovered since the AI\'s training cutoff.')">Nothing — the company is already running a newer version than the recommended patch, so the issue is resolved</div>
+        </div>
+        <div class="sim-fb" id="sc2-fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="sc2-next" onclick="nextSc(3)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Scenario 3 -->
+      <div id="sc3" style="display:none;">
+        <div class="sim-scenario">An AI hiring tool scores two résumés. Both candidates have identical experience and education.</div>
+        <div class="sim-ai-output">
+          <div class="sim-output-label">🤖 AI Scores</div>
+          Candidate A (Emily Chen): Score 87/100 — Strong technical background, leadership experience in student government, demonstrated communication skills through debate team. Recommended for interview.<br><br>
+          Candidate B (Jamal Washington): Score 71/100 — Technical background present, leadership activities noted. Communication and soft skills less evident from résumé presentation. Interview at recruiter's discretion.
+        </div>
+        <div class="sim-question">Both candidates have identical qualifications. The AI scored them 16 points apart. What is the most likely explanation and the right response?</div>
+        <div class="sim-opts" id="sc3-opts">
+          <div class="sim-opt" onclick="doSim(3,'a',this,'❌ The explanation might partially involve activity type — but debate and student government are both leadership activities. More importantly, the 16-point gap on identical qualifications is strong evidence of a bias problem, and the right response isn\'t just to note it — it\'s to flag it and not use the score as a basis for the interview decision.')">Candidate A\'s activities are more relevant to the role than Candidate B\'s, which explains the score difference</div>
+          <div class="sim-opt" onclick="doSim(3,'b',this,'✅ Correct. Identical qualifications producing a 16-point score gap is a red flag for name-based or language-style bias. This pattern — where the AI rates "soft skills" and "communication" differently for candidates with names associated with different demographic groups — is consistent with documented bias in hiring AI tools. The right response is to flag this as a potential bias finding, override the AI score for both candidates (both should interview if their qualifications are truly identical), and escalate to whoever manages the AI tool for a bias audit.',true)">The score gap on identical qualifications is a potential bias signal — likely reflecting name-based or language-style bias in the model. Both candidates should interview, and the finding should be escalated for audit.</div>
+          <div class="sim-opt" onclick="doSim(3,'c',this,'❌ Accepting the score as objective is exactly the wrong response. The tool has just demonstrated a 16-point gap on identical qualifications — that\'s not objectivity, it\'s a bias signal. AI hiring tools are not neutral arbiters; they reflect the patterns in their training data. A significant score disparity on equivalent résumés is a finding that requires investigation, not deference.')">Accept the AI score as an objective assessment — the tool was designed to find differences a human recruiter might miss</div>
+        </div>
+        <div class="sim-fb" id="sc3-fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="sc3-next" onclick="nextSc(4)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Scenario 4 -->
+      <div id="sc4" style="display:none;">
+        <div class="sim-scenario">A content team uses an AI image generator to create stock photos of "doctors and patients" for a hospital website.</div>
+        <div class="sim-ai-output">
+          <div class="sim-output-label">🤖 Generated Image Set (described)</div>
+          The AI generates 12 images. In all 12: the doctor is a white man in his 40s-50s. The patient in 10 of 12 images is white. In 2 images, the patient is Asian. No Black, Latino, or Indigenous patients appear in any image. The doctor is male in all 12 images.
+        </div>
+        <div class="sim-question">The hospital serves a patient population that is 40% Black, 25% Latino, and 15% white. What type of bias is this, and what should the team do?</div>
+        <div class="sim-opts" id="sc4-opts">
+          <div class="sim-opt" onclick="doSim(4,'a',this,'✅ Correct. This is confirmation bias — the model learned from a training set where stock photos overwhelmingly depicted doctors as white men and patients as white, and it reproduces that pattern when generating new images. The images don\'t reflect the actual diversity of doctors or patients. For a hospital serving a majority-minority patient population, publishing these images creates a visual message that may make patients feel unseen and unwelcome. The team should either regenerate with explicit diversity prompts, use a different tool with better representation, or supplement with licensed diverse imagery.',true)">Confirmation bias — the model reproduces the demographic patterns it saw most in training (white male doctors, white patients). For this hospital\'s patient population, these images are actively misrepresentative and should be regenerated with explicit diversity guidance.</div>
+          <div class="sim-opt" onclick="doSim(4,'b',this,'❌ This isn\'t a hallucination — the images depict real, plausible scenarios. The problem is that the scenarios are systematically skewed toward one demographic group, failing to represent the actual diversity of the medical profession and the hospital\'s patient population. The issue is bias, not fabrication.')">A hallucination — the AI invented doctors that don\'t exist</div>
+          <div class="sim-opt" onclick="doSim(4,'c',this,'❌ Stock image libraries have their own well-documented representation problems, which is why AI generation seemed like an alternative. But the AI has simply reproduced the same patterns at scale. The solution isn\'t to go back to a biased library — it\'s to use explicit, diverse prompts with the AI tool or to find specialized providers with better representation.')">Use stock image libraries instead — AI-generated images always have this problem</div>
+        </div>
+        <div class="sim-fb" id="sc4-fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="sc4-next" onclick="nextSc(5)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Scenario 5 -->
+      <div id="sc5" style="display:none;">
+        <div class="sim-scenario">A loan company's AI system is reviewed after 18 months of operation.</div>
+        <div class="sim-ai-output">
+          <div class="sim-output-label">📊 Audit Finding</div>
+          Overall loan approval rate: 68%. Model accuracy on predicting default: 91%. False positive rate (incorrectly flagging creditworthy applicants as high risk): 4.2% overall. By demographic group: White applicants 2.1% false positive rate. Black applicants 8.7% false positive rate. Latino applicants 7.3% false positive rate. The model was trained on 12 years of the company's historical loan data.
+        </div>
+        <div class="sim-question">The model has 91% accuracy and a 4.2% overall false positive rate, which the team considers acceptable. What's the critical finding they're overlooking?</div>
+        <div class="sim-opts" id="sc5-opts">
+          <div class="sim-opt" onclick="doSim(5,'a',this,'❌ The overall accuracy and false positive rates don\'t suggest a calibration problem in the technical sense — the model is performing as designed. The critical issue is something the aggregate numbers are hiding.')">The model needs recalibration — 91% accuracy isn\'t high enough for loan decisions</div>
+          <div class="sim-opt" onclick="doSim(5,'b',this,'✅ Correct. This is a textbook disparate impact finding — and it\'s legally significant. Black applicants are being incorrectly flagged as high risk at 4x the rate of white applicants (8.7% vs 2.1%). Latino applicants face 3.5x the rate. The 91% overall accuracy and 4.2% overall false positive rate look acceptable in aggregate — but they mask a pattern that likely violates the Equal Credit Opportunity Act. This model, trained on historical lending data that reflected past discrimination, is reproducing those discriminatory patterns. The finding requires immediate action: halt reliance on the model for affected groups pending a full bias audit, and consult legal counsel.',true)">The disaggregated false positive rates reveal a critical disparate impact problem — Black applicants face a false positive rate 4x higher than white applicants, which likely constitutes illegal discrimination under fair lending law. The overall numbers hide this finding.</div>
+          <div class="sim-opt" onclick="doSim(5,'c',this,'❌ 12 years of data is actually the problem, not the solution. Historical lending data from 12 years ago includes periods when discriminatory practices were more prevalent. More historical data means more historical discrimination encoded in the model. The issue isn\'t data quantity — it\'s that the data reflects past discrimination, and the model learned it.')">The model needs more training data — 12 years isn\'t enough for a financial application</div>
+        </div>
+        <div class="sim-fb" id="sc5-fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="sc5-next" onclick="showScore()" disabled>Finish ✓</button></div>
+      </div>
+
+      <div class="score-banner" id="score-banner">
+        <div class="sb-score" id="score-display">0/5</div>
+        <div class="sb-label">Bias signals correctly identified</div>
+        <p style="font-size:14px;color:rgba(255,255,255,.8);margin-top:12px;margin-bottom:0;" id="score-msg"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>The Patterns Across All Five Scenarios</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Aggregate metrics consistently hide demographic disparities. Scenario 5's 91% accuracy looked fine until you disaggregated the false positive rates by demographic group. The pattern appears across all five scenarios: the top-line number is not the relevant number.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Historical data carries historical bias. Scenarios 3 and 5 both involve systems trained on historical data that reflects past discrimination — in hiring and in lending. The model doesn't know the history behind the pattern; it just learns to replicate it.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The right response to a bias signal is always escalation, not acceptance. In every scenario where a bias concern was flagged, the correct answer involved flagging the finding and not acting on the biased output. "The AI said so" is never sufficient justification when a bias signal has been identified.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+let score=0;let answered={};
+function doSim(n,opt,btn,msg,correct){
+  if(answered[n])return;answered[n]=true;
+  if(correct)score++;
+  btn.classList.add(correct?'right':'wrong');
+  const fb=document.getElementById('sc'+n+'-fb');
+  fb.className='sim-fb show '+(correct?'good':'bad');
+  fb.textContent=msg;
+  document.getElementById('sc'+n+'-next').disabled=false;
+  document.getElementById('dot'+n).classList.add('done');
+}
+function nextSc(n){
+  document.getElementById('sc'+(n-1)).style.display='none';
+  document.getElementById('sc'+n).style.display='block';
+  document.getElementById('cur').textContent=n;
+  const dot=document.getElementById('dot'+n);
+  dot.classList.add('active');
+}
+function showScore(){
+  document.getElementById('sc5').style.display='none';
+  const banner=document.getElementById('score-banner');
+  banner.style.display='block';
+  document.getElementById('score-display').textContent=score+'/5';
+  const msgs=['Keep practicing — review the explanations for each scenario to build the pattern recognition.','Good start — you caught some of the signals. Re-read the explanations for the ones you missed.','Solid performance — you\'re developing real bias-detection instincts.','Strong work — you spotted most of the key bias signals. You\'re developing professional-grade judgment.','Perfect score — you caught every bias signal. This is exactly the judgment that makes a reliable, responsible tech professional.'];
+  document.getElementById('score-msg').textContent=msgs[score-1]||(score===0?'Keep practicing — review the explanations for each scenario to build the pattern recognition.':'');
+}
+</script>
+</body>
+</html>
