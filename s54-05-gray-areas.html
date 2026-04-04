@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What to Do When You're Unsure: A Step-by-Step Guide for Navigating AI Gray Areas at Work</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* The four-step protocol */
+.protocol{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.proto-step{display:flex;gap:16px;position:relative;padding-bottom:0;}
+.proto-step:not(:last-child)::after{content:"";position:absolute;left:23px;top:48px;width:2px;height:100%;background:var(--purple-mid);}
+.proto-num{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-size:20px;font-weight:900;flex-shrink:0;z-index:1;}
+.proto-num.s1{background:var(--purple);color:var(--white);}
+.proto-num.s2{background:var(--blue);color:var(--white);}
+.proto-num.s3{background:var(--orange);color:var(--white);}
+.proto-num.s4{background:var(--green);color:var(--white);}
+.proto-body{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;margin-bottom:16px;flex:1;}
+.proto-title{font-weight:700;font-size:16px;color:var(--purple-dark);margin-bottom:8px;}
+.proto-text{font-size:14px;line-height:1.7;color:var(--gray-text);margin-bottom:10px;}
+.proto-how{background:var(--white);border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.65;color:var(--gray-text);}
+.proto-how-label{font-weight:700;color:var(--purple-dark);margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* Question bank */
+.question-bank{background:var(--purple-dark);border-radius:20px;padding:28px 32px;margin:20px 0;color:var(--white);}
+.qb-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;}
+.qb-title{font-family:"Fraunces",serif;font-size:22px;font-weight:900;margin-bottom:16px;}
+.qb-sections{display:flex;flex-direction:column;gap:14px;}
+.qb-section{}
+.qb-section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple-mid);margin-bottom:8px;}
+.qb-q{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.07);border-radius:10px;padding:10px 14px;margin-bottom:6px;}
+.qb-q-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.qb-q-text{font-size:13px;line-height:1.65;color:rgba(255,255,255,.9);}
+
+/* Gray area practice */
+.gray-practice{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:24px 0;}
+.gp-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.gp-scenario{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;line-height:1.35;}
+.gp-context{font-size:14px;color:var(--gray-muted);line-height:1.7;margin-bottom:16px;}
+.gp-q{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;}
+.gp-opts{display:flex;flex-direction:column;gap:10px;}
+.gp-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.gp-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.gp-opt.right{background:var(--green-pale);border-color:var(--green);}
+.gp-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.gp-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.gp-fb.show{display:block;}
+.gp-fb.good{background:var(--green-pale);color:var(--green);}
+.gp-fb.bad{background:var(--red-pale);color:var(--red);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.4 — Compliance &amp; Policy Awareness</div>
+  <h1>What to Do When You're Unsure: A Step-by-Step Guide for Navigating AI Gray Areas at Work</h1>
+  <p class="hero-sub">Gray areas aren't a failure of knowledge — they're a feature of real professional life. What separates professionals who handle them well from those who don't isn't certainty. It's a reliable process for navigating uncertainty.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why Gray Areas Are Inevitable</h2>
+    <p>No policy document covers every situation. AI tools are new enough that many organizations are still developing their rules. Regulations are evolving. Technology moves faster than guidance. Gray areas — situations where the right answer isn't immediately clear — are not a sign that you're doing something wrong. They're a normal part of working with emerging technology.</p>
+    <p>The problem isn't gray areas. The problem is making a decision in a gray area without a reliable process. <mark>A confident gut instinct is not the same as a professional process — and in compliance situations, the difference matters.</mark></p>
+    <div class="pull-quote">
+      <p>The goal isn't to never be uncertain. The goal is to know exactly what to do when you are uncertain — and to do it before you take the action, not after.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Four-Step Protocol for AI Gray Areas</h2>
+    <p>When you hit a situation where you're not sure whether a particular AI use is appropriate, follow these four steps in order. Don't skip steps. The sequence matters.</p>
+
+    <div class="protocol">
+      <div class="proto-step">
+        <div class="proto-num s1">1</div>
+        <div class="proto-body">
+          <div class="proto-title">Pause — don't act while uncertain</div>
+          <div class="proto-text">The most important step is the easiest to skip: stop before you do the thing you're unsure about. Deadline pressure, habit, and the ease of the action all push toward "just do it and deal with consequences later." That's how most compliance problems start. The pause doesn't have to be long — it just has to happen before the action.</div>
+          <div class="proto-how">
+            <div class="proto-how-label">How to do this in practice</div>
+            When you notice uncertainty, physically stop. Don't minimize the concern and keep going. Set the task aside — even briefly — and spend 60 seconds thinking through what specifically is making you uncertain before doing anything else.
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-step">
+        <div class="proto-num s2">2</div>
+        <div class="proto-body">
+          <div class="proto-title">Check the policy — look it up before assuming</div>
+          <div class="proto-text">Before asking anyone, check what your company's policy actually says. Many compliance questions have already been answered in an acceptable use policy, an employee handbook, an IT knowledge base, or a data classification guide. "I wasn't sure of the policy" is not a professional answer if the policy is publicly available and you didn't look.</div>
+          <div class="proto-how">
+            <div class="proto-how-label">Where to look</div>
+            Start with: your company's intranet or wiki, the IT team's approved tools list, the AI tool's own policy or FAQ, and your industry's regulatory guidance if applicable. Document that you checked — it's part of your due diligence record.
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-step">
+        <div class="proto-num s3">3</div>
+        <div class="proto-body">
+          <div class="proto-title">Ask a supervisor or the right specialist — with a specific question</div>
+          <div class="proto-text">If the policy doesn't answer your question, escalate with a specific, clear question — not a vague "is this okay?" The more specific your question, the more useful the answer. For technical policy questions, the right people are usually your manager, IT, Legal, or Compliance — depending on the nature of the concern.</div>
+          <div class="proto-how">
+            <div class="proto-how-label">How to ask effectively</div>
+            Frame it specifically: "I want to use [tool] to [do this task]. The task involves [type of data]. Is this covered by our data policy, or does it need an additional review?" A specific question gets a specific answer — and documents that you sought guidance proactively.
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-step">
+        <div class="proto-num s4">4</div>
+        <div class="proto-body">
+          <div class="proto-title">Pause AI use on this task until you have a clear answer</div>
+          <div class="proto-text">While you're waiting for a policy answer or a supervisor's response, don't proceed with the uncertain activity — even if it means a short delay. The gap between "I'm waiting for guidance" and "I went ahead anyway" is the difference between a protected professional decision and a liability.</div>
+          <div class="proto-how">
+            <div class="proto-how-label">What to do in the meantime</div>
+            Work on other tasks. If the uncertainty is blocking an urgent deliverable, tell your manager you're waiting for a compliance clarification — that's a professional communication, not an excuse. Most genuine gray areas are resolved within a business day.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Questions to Ask at Each Step</h2>
+    <div class="question-bank">
+      <div class="qb-label">📋 Reference Guide</div>
+      <div class="qb-title">The right questions for each step</div>
+      <div class="qb-sections">
+        <div class="qb-section">
+          <div class="qb-section-label">Step 1 — The Pause Questions</div>
+          <div class="qb-q"><div class="qb-q-icon">🤔</div><div class="qb-q-text">"What specifically is making me uncertain about this?"</div></div>
+          <div class="qb-q"><div class="qb-q-icon">📊</div><div class="qb-q-text">"What data would be in my prompt if I did this?"</div></div>
+          <div class="qb-q"><div class="qb-q-icon">⚖️</div><div class="qb-q-text">"What's the worst realistic outcome if this turns out to be against policy?"</div></div>
+        </div>
+        <div class="qb-section">
+          <div class="qb-section-label">Step 2 — The Policy Check Questions</div>
+          <div class="qb-q"><div class="qb-q-icon">📄</div><div class="qb-q-text">"Is this tool on our approved AI tools list?"</div></div>
+          <div class="qb-q"><div class="qb-q-icon">🏷️</div><div class="qb-q-text">"What data classification does this information fall under?"</div></div>
+          <div class="qb-q"><div class="qb-q-icon">🌍</div><div class="qb-q-text">"Do any regulations apply to this data type (HIPAA, GDPR, CCPA)?"</div></div>
+        </div>
+        <div class="qb-section">
+          <div class="qb-section-label">Step 3 — What to Ask Your Manager or IT</div>
+          <div class="qb-q"><div class="qb-q-icon">💬</div><div class="qb-q-text">"Is [tool] approved for [this type of task] with [this type of data]?"</div></div>
+          <div class="qb-q"><div class="qb-q-icon">📋</div><div class="qb-q-text">"Does our company have a data processing agreement with [vendor name]?"</div></div>
+          <div class="qb-q"><div class="qb-q-icon">🔒</div><div class="qb-q-text">"What's the approved way to handle this situation?"</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Practice: Apply the Protocol</h2>
+
+    <div class="gray-practice">
+      <div class="gp-label">🎮 Gray Area Practice</div>
+      <div class="gp-scenario">A developer wants to use an AI tool to analyze error logs from a production system to identify patterns. The logs contain server names, error codes, timestamps, and occasionally user IDs that appear in error messages.</div>
+      <div class="gp-context">The developer has used this AI tool for general coding tasks before. The tool is on the "general use" list but the company's data classification guide lists production error logs as "internal confidential." The developer isn't sure if "internal confidential" data is permitted in this tool.</div>
+      <div class="gp-q">Which response correctly applies the four-step protocol?</div>
+      <div class="gp-opts" id="gpopts">
+        <div class="gp-opt" onclick="doPrac(this,false,'❌ This skips the protocol entirely. "General use" approval is not specific enough for data classified as "internal confidential." The tool\'s general approval doesn\'t necessarily extend to all data types — and production logs with user IDs are sensitive enough to warrant a specific check. Acting without that check removes the professional protection of having followed the protocol.')">The tool is on the general use list, so proceed — it\'s already been approved for work use.</div>
+        <div class="gp-opt" onclick="doPrac(this,true,'✅ Correct. This applies all four steps: pause (recognized the uncertainty instead of proceeding), check the policy (found the data classification), ask specifically (a targeted question about whether this tool is approved for this data class), and wait for an answer before acting. The developer also correctly identifies the specific risk (user IDs in logs = PII consideration) which makes their question to IT actionable and specific.')">Pause. The developer notices the uncertainty, checks the data classification guide (finds "internal confidential"), asks IT specifically: "Is [tool name] approved for internal confidential data — specifically production error logs that may contain user IDs?" Then waits for an answer before proceeding.</div>
+        <div class="gp-opt" onclick="doPrac(this,false,'❌ This is a partial solution that still uses the tool before getting a clear answer. Removing some log entries doesn\'t necessarily make the rest compliant — the classification is about the category of data, not individual entries. And proceeding without an answer is the step the protocol specifically instructs you to skip.')">Remove the user IDs from the log sample first, then use the tool — that addresses the PII concern while still getting the analysis done quickly.</div>
+      </div>
+      <div class="gp-fb" id="gpfb"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The four-step protocol for gray areas: Pause before acting, Check the policy document first, Ask a supervisor or specialist with a specific question, and Pause AI use on the task until you have a clear answer. In order. Every time.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Specific questions get specific answers. "Is this okay?" is a bad compliance question. "Is [tool] approved for internal confidential data, specifically production error logs that may contain user IDs?" is a question that leads to an actionable answer and documents that you sought guidance proactively.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>General approval is not category approval. "This tool is on our approved list" doesn't mean "this tool is approved for all data types in all contexts." Most approval lists are general — the specific question of whether a tool is approved for a specific data type in a specific context often requires explicit confirmation.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" react-hook=true"color:var(--gray-text)">Following the protocol protects you professionally. "I noticed I was uncertain, checked the policy, asked IT for specific guidance, and waited for an answer before proceeding" is a defensible professional position. "I wasn't sure but went ahead anyway" is not.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doPrac(btn,correct,msg){
+  const opts=document.getElementById('gpopts');
+  if(opts.querySelector('.right,.wrong'))return;
+  btn.classList.add(correct?'right':'wrong');
+  const fb=document.getElementById('gpfb');
+  fb.className='gp-fb show '+(correct?'good':'bad');
+  fb.textContent=msg;
+}
+</script>
+</body>
+</html>

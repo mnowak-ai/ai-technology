@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation Rules and Audit Trails: Why Your AI Use Needs a Paper Trail</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* What organizations track */
+.track-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.tg-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:18px;}
+.tg-icon{font-size:22px;margin-bottom:8px;}
+.tg-title{font-weight:700;color:var(--purple-dark);font-size:14px;margin-bottom:6px;}
+.tg-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+.tg-why{font-size:12px;color:var(--purple);font-style:italic;margin-top:5px;}
+
+/* Protect yourself steps */
+.protect-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.pl-item{display:flex;gap:12px;align-items:flex-start;background:var(--green-pale);border:1.5px solid var(--green);border-radius:14px;padding:14px 18px;}
+.pl-num{width:26px;height:26px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.pl-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.pl-text strong{color:var(--green);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.4 — Compliance &amp; Policy Awareness</div>
+  <h1>Documentation Rules and Audit Trails: Why Your AI Use Needs a Paper Trail</h1>
+  <p class="hero-sub">Organizations are increasingly required to be able to demonstrate how AI was used in decisions. That means audit trails. That means your individual AI use may be part of an organizational record — whether you know it or not.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What an Audit Trail Actually Is</h2>
+    <p>An <strong>audit trail</strong> is a chronological record of activities that allows investigators, regulators, or reviewers to reconstruct what happened, when, by whom, and with what authorization. In financial systems, audit trails are mandatory — every transaction is logged. In healthcare, audit trails show who accessed patient records and when.</p>
+    <p>In AI-assisted work, audit trails are newer but increasingly required — especially in regulated industries and for high-stakes AI-assisted decisions. The question an audit trail must answer is: <mark>"How was AI involved in this decision, and what human oversight was applied?"</mark></p>
+    <div class="pull-quote">
+      <p>An audit trail doesn't just protect the organization — it protects you. It's the evidence that you followed proper process. Without it, you're left asserting that you were careful. With it, you can show it.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Organizations Track — And Why It Affects You</h2>
+    <div class="track-grid">
+      <div class="tg-card">
+        <div class="tg-icon">🌐</div>
+        <div class="tg-title">Network access logs</div>
+        <div class="tg-text">Corporate networks often log outbound connections to external services — including AI tool domains. IT can see when employees accessed ChatGPT, Claude, or other AI services from company networks.</div>
+        <div class="tg-why">Why it matters to you: If a data incident is investigated, IT can determine that you accessed an AI tool at the time of the incident — even if you didn't know you were being logged.</div>
+      </div>
+      <div class="tg-card">
+        <div class="tg-icon">💻</div>
+        <div class="tg-title">Endpoint monitoring software</div>
+        <div class="tg-text">Many enterprises use Data Loss Prevention (DLP) software that monitors and sometimes blocks sensitive data leaving corporate systems — including through browser-based AI tools.</div>
+        <div class="tg-why">Why it matters to you: DLP systems may flag or block prompts containing credit card numbers, SSNs, or other sensitive patterns — creating a record that the transfer was attempted.</div>
+      </div>
+      <div class="tg-card">
+        <div class="tg-icon">🔌</div>
+        <div class="tg-title">Enterprise AI tool logs</div>
+        <div class="tg-text">Enterprise AI tools (Microsoft Copilot, Google Gemini for Workspace, etc.) typically log usage at the organization level — what tools were used, by whom, and for what types of tasks.</div>
+        <div class="tg-why">Why it matters to you: Your employer may be able to see your AI usage patterns within approved enterprise tools, even if not the specific content of prompts.</div>
+      </div>
+      <div class="tg-card">
+        <div class="tg-icon">📋</div>
+        <div class="tg-title">Compliance-required records</div>
+        <div class="tg-text">In regulated industries, some AI use must be documented formally. Financial services firms may need to retain AI-assisted communications. Healthcare organizations may need to document AI tool involvement in clinical decisions.</div>
+        <div class="tg-why">Why it matters to you: In regulated roles, you may be required to create documentation of your AI use as part of your job — not just as a best practice.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>How to Create Your Own Protective Paper Trail</h2>
+    <p>You can't control what your organization logs. You can control what you document yourself — and self-documentation is often what makes the difference in a professional accountability situation:</p>
+    <div class="protect-list">
+      <div class="pl-item"><div class="pl-num">1</div><div class="pl-text"><strong>Note AI use in your work products.</strong> When AI assisted meaningfully with a deliverable, note it in the relevant place — commit messages, document revision notes, project records. "Used AI to draft initial structure; verified all technical claims independently" is a sentence that protects you.</div></div>
+      <div class="pl-item"><div class="pl-num">2</div><div class="pl-text"><strong>Document verification decisions.</strong> "Checked this statistic against [source] on [date]" is worth recording. If the statistic is later questioned, you have a record that you exercised professional diligence — not just that you used an AI tool.</div></div>
+      <div class="pl-item"><div class="pl-num">3</div><div class="pl-text"><strong>Save guidance you received.</strong> If you asked your manager or IT about whether a specific AI use was permitted, keep a record of that conversation and the response. Email is ideal — it timestamps both the question and the answer.</div></div>
+      <div class="pl-item"><div class="pl-num">4</div><div class="pl-text"><strong>Document exceptions you noticed and reported.</strong> If you flagged an AI error, a bias concern, or a policy gray area — document that you did. The record of having raised a concern is part of your professional protection if the concern later proves significant.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An employee believes their AI use at work is private because they use an incognito browser window. What's wrong with this assumption?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Nothing — incognito mode prevents all tracking of browser activity</button>
+        <button class="qopt" onclick="doQ(this,true)">Incognito mode only prevents local browser history from being saved — it does not prevent network-level logging by IT, DLP software monitoring, or the AI tool's own server-side records. On a corporate network, IT can still see which external services were accessed regardless of browser mode.</button>
+        <button class="qopt" onclick="doQ(this,false)">The assumption is partially correct — incognito prevents some but not all tracking</button>
+        <button class="qopt" onclick="doQ(this,false)">It depends on whether the employee uses a VPN</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" react-hook=true">Your AI use at work may already be tracked — through network logs, DLP software, enterprise tool logs, and compliance recordkeeping requirements. Whether or not you know this, the record exists. Acting as if you're being monitored is simply acting like a professional.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" react-hook=true">Your own documentation is your best protection. The records you create — noting AI use, documenting verification decisions, saving guidance conversations, logging concerns you raised — are the evidence that you exercised professional judgment. Without them, you're asserting care. With them, you can prove it.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Incognito mode clears local browser history — the history stored on your own device. It does not affect anything that happens on the network between your browser and the destination server. Corporate IT can monitor outbound network traffic from company networks or devices regardless of browser mode. DLP software operates at the network or endpoint level, not the browser history level. And the AI tool's servers receive and log your requests regardless of how your browser handles local history.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("network-level logging"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Incognito mode is a local browser feature — it only controls what gets saved in your browser's history on your own device. It has no effect on network traffic monitoring, corporate DLP software, or the AI tool's server-side records. VPNs don't change this analysis either — corporate devices typically route VPN traffic through corporate infrastructure that can still be monitored.";}
+}
+</script>
+</body>
+</html>

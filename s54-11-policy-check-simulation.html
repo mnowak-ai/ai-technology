@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulation: Policy Check — Would This Get You Fired?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,46px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;}
+p{font-size:16px;line-height:1.8;color:var(--gray-text);margin-bottom:14px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.policy-doc{background:var(--gray-soft);border:2px solid var(--purple-mid);border-radius:20px;padding:28px;margin:20px 0;}
+.pd-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1.5px solid var(--purple-mid);}
+.pd-icon{font-size:28px;}
+.pd-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);}
+.pd-sub{font-size:12px;color:var(--gray-muted);}
+.pd-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin:12px 0 6px;}
+.pd-rule{font-size:13px;line-height:1.65;color:var(--gray-text);padding:6px 10px;background:var(--white);border-radius:7px;border-left:3px solid var(--purple-mid);margin-bottom:4px;}
+.pd-rule strong{color:var(--purple-dark);}
+.scenario{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:18px;padding:22px;margin:12px 0;}
+.sc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.sc-num{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-muted);}
+.sc-dept{font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;background:var(--purple-pale);color:var(--purple);}
+.sc-title{font-family:"Fraunces",serif;font-size:16px;font-weight:700;color:var(--purple-dark);margin-bottom:5px;line-height:1.3;}
+.sc-desc{font-size:13px;color:var(--gray-muted);line-height:1.7;margin-bottom:12px;}
+.sc-choices{display:flex;gap:8px;flex-wrap:wrap;}
+.sv{padding:8px 15px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid;transition:all .2s;font-family:"DM Sans",sans-serif;}
+.sv.safe{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.sv.risk{background:var(--orange-pale);border-color:var(--orange);color:var(--orange);}
+.sv.violation{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.sv.safe:hover{background:var(--green);color:var(--white);}
+.sv.risk:hover{background:var(--orange);color:var(--white);}
+.sv.violation:hover{background:var(--red);color:var(--white);}
+.sc-fb{padding:12px 15px;border-radius:10px;font-size:13px;line-height:1.7;margin-top:10px;display:none;}
+.sc-fb.show{display:block;}
+.sc-fb.good{background:var(--green-pale);color:var(--green);}
+.sc-fb.warn{background:var(--orange-pale);color:var(--orange);}
+.sc-fb.bad{background:var(--red-pale);color:var(--red);}
+.score-card{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:20px;padding:28px;margin:24px 0;color:var(--white);display:none;text-align:center;}
+.sc-score-num{font-family:"Fraunces",serif;font-size:52px;font-weight:900;margin-bottom:4px;}
+.sc-score-label{font-size:14px;color:rgba(255,255,255,.75);margin-bottom:10px;}
+.sc-score-msg{font-size:14px;color:rgba(255,255,255,.85);line-height:1.65;}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.4 — Compliance &amp; Policy Awareness</div>
+  <h1>Simulation: Policy Check — Would This Get You Fired?</h1>
+  <p class="hero-sub">Read the company AI policy below. Then assess eight real workplace scenarios against it — deciding for each whether the employee is safe, in a gray area, or in direct violation.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <h2>Step 1: Read the Policy</h2>
+    <p>This is TechCorp's AI Acceptable Use Policy. Read it carefully — your verdicts should be grounded in what it actually says.</p>
+    <div class="policy-doc">
+      <div class="pd-header">
+        <div class="pd-icon">📋</div>
+        <div>
+          <div class="pd-title">TechCorp — AI Tools Acceptable Use Policy v2.1</div>
+          <div class="pd-sub">Applies to all employees, contractors, and vendors · Effective January 2025</div>
+        </div>
+      </div>
+      <div class="pd-section-title">§1 — Approved Tools</div>
+      <div class="pd-rule"><strong>1.1</strong> Employees may use AI tools on the IT-approved tools list for work purposes.</div>
+      <div class="pd-rule"><strong>1.2</strong> Unapproved tools require written IT and manager approval before use.</div>
+      <div class="pd-rule"><strong>1.3</strong> Personal AI accounts must not be used for work tasks involving any company data.</div>
+      <div class="pd-section-title">§2 — Data Classification</div>
+      <div class="pd-rule"><strong>2.1 Public data</strong> (press releases, public docs) — may be used in any approved tool.</div>
+      <div class="pd-rule"><strong>2.2 Internal data</strong> (internal communications, non-public code, strategy docs) — approved tools with DPA only.</div>
+      <div class="pd-rule"><strong>2.3 Confidential data</strong> (client data, contracts, PII, financial projections) — requires explicit written Legal + data owner approval before entry into any AI tool.</div>
+      <div class="pd-rule"><strong>2.4 Restricted data</strong> (patient health data, payment card data, credentials, biometrics) — prohibited in any AI tool, no exceptions.</div>
+      <div class="pd-section-title">§3 — Output &amp; Verification</div>
+      <div class="pd-rule"><strong>3.1</strong> AI-generated content in client deliverables must be reviewed and verified by a qualified employee before submission.</div>
+      <div class="pd-rule"><strong>3.2</strong> Employees are personally responsible for accuracy of work incorporating AI-generated content.</div>
+      <div class="pd-rule"><strong>3.3</strong> AI-generated code deployed to production must pass the same review and testing requirements as human-written code.</div>
+      <div class="pd-section-title">§4 — Disclosure</div>
+      <div class="pd-rule"><strong>4.1</strong> When a client specifically asks whether AI was used, employees must answer accurately and completely.</div>
+      <div class="pd-rule"><strong>4.2</strong> Significant AI use in client-facing work should be noted in the project file for audit purposes.</div>
+      <div class="pd-rule"><strong>4.3</strong> Employees must not represent AI-generated content as their own original work when directly asked.</div>
+      <div class="pd-section-title">§5 — Violations</div>
+      <div class="pd-rule"><strong>5.1</strong> Violations of §2.3 or §2.4 are grounds for immediate disciplinary action up to termination.</div>
+      <div class="pd-rule"><strong>5.2</strong> Violations of §1.2 without prior written approval are subject to corrective action.</div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Step 2: Assess the Scenarios</h2>
+    <p>For each scenario: <strong style="color:var(--green)">✅ Safe</strong>, <strong style="color:var(--orange)">⚠️ Risk/Gray Area</strong>, or <strong style="color:var(--red)">❌ Violation</strong>. Reference specific policy sections in your thinking.</p>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 1</div><div class="sc-dept">Engineering</div></div><div class="sc-title">Using approved GitHub Copilot (DPA confirmed) to write unit tests for an internal microservice</div><div class="sc-desc">Code is internal only — no PII, no credentials. Engineer reviews all generated tests before committing.</div><div class="sc-choices" id="c1"><div class="sv safe" onclick="pick(1,'s',this,'✅ Safe. Approved tool, DPA confirmed = §2.2 satisfied for internal data. Output reviewed per §3.3. Model AI use.')">✅ Safe</div><div class="sv risk" onclick="pick(1,'r',this,'')">⚠️ Risk</div><div class="sv violation" onclick="pick(1,'v',this,'')">❌ Violation</div></div><div class="sc-fb" id="f1"></div></div>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 2</div><div class="sc-dept">Client Services</div></div><div class="sc-title">Pasting a client contract into ChatGPT (approved, general use only, no DPA) to extract key dates and obligations</div><div class="sc-desc">Contract contains client company name, financial terms, and proprietary service specifications.</div><div class="sc-choices" id="c2"><div class="sv safe" onclick="pick(2,'s',this,'')">✅ Safe</div><div class="sv risk" onclick="pick(2,'r',this,'')">⚠️ Risk</div><div class="sv violation" onclick="pick(2,'v',this,'❌ Violation — §2.3. Client contracts are confidential data. §2.3 requires explicit written Legal + data owner approval before entry into any AI tool. ChatGPT "general use, no DPA" does not satisfy this. Per §5.1, this is grounds for termination. Right approach: get Legal approval first, or manually extract key terms.')">❌ Violation</div></div><div class="sc-fb" id="f2"></div></div>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 3</div><div class="sc-dept">Marketing</div></div><div class="sc-title">Using an unapproved AI writing tool to draft a press release, then getting manager sign-off on the final content</div><div class="sc-desc">Press release contains only public product launch information. No written IT/manager tool approval obtained before use.</div><div class="sc-choices" id="c3"><div class="sv safe" onclick="pick(3,'s',this,'')">✅ Safe</div><div class="sv risk" onclick="pick(3,'r',this,'⚠️ Risk — §1.2 violation, but low severity. Manager content approval ≠ prior written tool approval. The data risk is low (public info), but §1.2 requires written IT + manager approval before tool use — not after. Subject to §5.2 corrective action. Right move: get the tool added to the approved list first.')">⚠️ Risk</div><div class="sv violation" onclick="pick(3,'v',this,'')">❌ Violation</div></div><div class="sc-fb" id="f3"></div></div>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 4</div><div class="sc-dept">Finance</div></div><div class="sc-title">Using an approved AI tool (DPA confirmed) to analyze TechCorp's publicly filed SEC 10-Q earnings report</div><div class="sc-desc">The 10-Q is publicly available on SEC.gov and TechCorp's investor relations page. No unreleased financial data involved.</div><div class="sc-choices" id="c4"><div class="sv safe" onclick="pick(4,'s',this,'✅ Safe. 10-Q = public data under §2.1, permitted in any approved tool. Tool approved + DPA. Zero classification concerns — TechCorp chose to disclose this publicly.')">✅ Safe</div><div class="sv risk" onclick="pick(4,'r',this,'')">⚠️ Risk</div><div class="sv violation" onclick="pick(4,'v',this,'')">❌ Violation</div></div><div class="sc-fb" id="f4"></div></div>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 5</div><div class="sc-dept">Engineering</div></div><div class="sc-title">Deploying AI-generated payment processing code to production after personal review only — skipping standard peer code review</div><div class="sc-desc">~300 lines generated by approved AI tool. Developer believes it looks correct. Skips peer review due to deadline pressure.</div><div class="sc-choices" id="c5"><div class="sv safe" onclick="pick(5,'s',this,'')">✅ Safe</div><div class="sv risk" onclick="pick(5,'r',this,'')">⚠️ Risk</div><div class="sv violation" onclick="pick(5,'v',this,'❌ Violation — §3.3. AI-generated code must pass the same review requirements as human-written code. "I reviewed it myself" doesn\'t satisfy the peer review requirement. Additionally, payment code touches restricted-adjacent data (payment card data is §2.4 restricted) — adding extra scrutiny. Deadline pressure is not a policy exception.')">❌ Violation</div></div><div class="sc-fb" id="f5"></div></div>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 6</div><div class="sc-dept">Consulting</div></div><div class="sc-title">When a client asks if AI was used in their strategy report, the project lead says "No — all written by our team"</div><div class="sc-desc">An approved AI tool was used for initial drafting. The team reviewed, verified, and substantially edited the output. The client asked directly during the debrief.</div><div class="sc-choices" id="c6"><div class="sv safe" onclick="pick(6,'s',this,'')">✅ Safe</div><div class="sv risk" onclick="pick(6,'r',this,'')">⚠️ Risk</div><div class="sv violation" onclick="pick(6,'v',this,'❌ Violation — §4.1 and §4.3. When a client directly asks whether AI was used, employees must answer accurately (§4.1). Saying "all written by our team" when AI was used for drafting violates §4.3 (representing AI content as original when directly asked). The AI use was legitimate — the lie about it is the violation. Correct answer: "We used AI for initial drafting, which our team reviewed and substantially edited."')">❌ Violation</div></div><div class="sc-fb" id="f6"></div></div>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 7</div><div class="sc-dept">Product</div></div><div class="sc-title">Using a personal ChatGPT Plus subscription to draft a product requirements document containing internal roadmap details</div><div class="sc-desc">PM uses personal account believing it keeps data "off company systems." PRD contains non-public feature specs and internal roadmap information.</div><div class="sc-choices" id="c7"><div class="sv safe" onclick="pick(7,'s',this,'')">✅ Safe</div><div class="sv risk" onclick="pick(7,'r',this,'')">⚠️ Risk</div><div class="sv violation" onclick="pick(7,'v',this,'❌ Violation — §1.3 and §2.2. §1.3 explicitly prohibits personal accounts for work tasks involving any company data. Using a personal account doesn\'t remove the compliance obligation — it violates it. Internal roadmap data is §2.2 internal data requiring an approved tool with DPA. A personal ChatGPT account has no DPA. Data still left TechCorp\'s control regardless of which account was used.')">❌ Violation</div></div><div class="sc-fb" id="f7"></div></div>
+
+    <div class="scenario fade-in"><div class="sc-top"><div class="sc-num">Scenario 8</div><div class="sc-dept">Legal Operations</div></div><div class="sc-title">Using an approved AI legal research tool (DPA confirmed) to summarize publicly available court cases</div><div class="sc-desc">Only public case law entered into the tool. No confidential case details, client communications, or privileged information used in prompts.</div><div class="sc-choices" id="c8"><div class="sv safe" onclick="pick(8,'s',this,'✅ Safe. Approved tool + DPA. Public court cases = public data under §2.1. No confidential or privileged information entered. Good example of AI for legal research done right: approved tool, public data only.')">✅ Safe</div><div class="sv risk" onclick="pick(8,'r',this,'')">⚠️ Risk</div><div class="sv violation" onclick="pick(8,'v',this,'')">❌ Violation</div></div><div class="sc-fb" id="f8"></div></div>
+
+    <div class="score-card" id="score-card">
+      <div class="sc-score-num" id="score-num">0/8</div>
+      <div class="sc-score-label">Correct policy assessments</div>
+      <div class="sc-score-msg" id="score-msg"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Patterns Across All Eight Scenarios</div>
+    <h2>What This Simulation Teaches</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Data classification is the controlling variable. Whether an action is safe or a violation almost always depends on data category — public, internal, confidential, restricted — not on how convenient or time-saving the AI use seems. Scenarios 2 and 7 both felt low-risk to the employees involved. Both were violations.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Tool approval and data approval are separate checks. An approved tool doesn't automatically permit all data — §2.2 requires a DPA specifically, §2.3 requires Legal approval regardless of tool status. Scenario 2 used an approved tool with the wrong data category.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Disclosure when directly asked is a separate requirement from appropriate AI use. Scenario 6 involved legitimate AI use — the violation was the lie in response to a direct client question. Transparency obligations (§4.1, §4.3) apply independently of whether the underlying AI use was appropriate.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+const correct={1:'s',2:'v',3:'r',4:'s',5:'v',6:'v',7:'v',8:'s'};
+let answered=0,score=0;
+function pick(n,choice,btn,msg){
+  const c=document.getElementById('c'+n);
+  if(c.querySelector('[data-done]'))return;
+  btn.dataset.done=1;
+  c.querySelectorAll('.sv').forEach(b=>b.style.pointerEvents='none');
+  const right=correct[n]===choice;
+  if(right)score++;answered++;
+  if(msg){const fb=document.getElementById('f'+n);fb.className='sc-fb show '+(choice==='s'?'good':choice==='r'?'warn':'bad');fb.textContent=msg;}
+  if(answered===8){
+    const sc=document.getElementById('score-card');sc.style.display='block';
+    document.getElementById('score-num').textContent=score+'/8';
+    const msgs=['Review the explanations — the data classification framework is the key to each verdict.','Some good instincts — focus on the specific policy sections behind the ones you missed.','Good performance — re-read the violations you missed with the specific section numbers in mind.','Strong work — nearly all correct. One or two edge cases to review.','Perfect score. You can read and apply a real AUP at professional standard.'];
+    document.getElementById('score-msg').textContent=msgs[score<=1?0:score<=3?1:score<=5?2:score<=7?3:4];
+  }
+}
+</script>
+</body>
+</html>

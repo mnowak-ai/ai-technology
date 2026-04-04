@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadow AI: What Happens When Employees Use AI Tools Their Company Hasn't Approved</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Why it happens */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.wg-card{background:var(--orange-pale);border:1.5px solid var(--orange);border-radius:16px;padding:18px;}
+.wg-icon{font-size:22px;margin-bottom:6px;}
+.wg-title{font-weight:700;color:var(--orange);font-size:14px;margin-bottom:5px;}
+.wg-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Consequence cards */
+.consequence-list{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.con{border-radius:16px;padding:20px;border:1.5px solid var(--red);background:var(--red-pale);}
+.con-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:100px;margin-bottom:8px;background:var(--red);color:var(--white);}
+.con-title{font-weight:700;color:var(--red);font-size:15px;margin-bottom:5px;}
+.con-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+
+/* The right path forward */
+.path-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.path-item{display:flex;gap:12px;align-items:flex-start;background:var(--green-pale);border:1.5px solid var(--green);border-radius:14px;padding:14px 18px;}
+.path-num{width:26px;height:26px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.path-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.path-text strong{color:var(--green);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.4 — Compliance &amp; Policy Awareness</div>
+  <h1>Shadow AI: What Happens When Employees Use AI Tools Their Company Hasn't Approved</h1>
+  <p class="hero-sub">Shadow AI is one of the biggest real compliance risks in tech workplaces right now. It often starts with the best intentions. It ends with liability your organization didn't know it had — until something went wrong.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>What Shadow AI Is — and Isn't</h2>
+    <p><strong>Shadow AI</strong> (a subset of "shadow IT") refers to AI tools used in the workplace without organizational knowledge, approval, or oversight. It's not about using AI for personal tasks outside work hours — that's your business. It's about using unapproved AI tools for work tasks, on company systems or with company data, in ways the organization hasn't authorized or reviewed.</p>
+    <p>Shadow AI isn't usually malicious. <mark>Most employees who use unapproved AI tools are trying to be more productive, meet a deadline, or do their job better</mark>. The problem is that good intentions don't prevent the risks that unauthorized AI use creates — for the organization and for the employee personally.</p>
+    <div class="pull-quote">
+      <p>Shadow AI feels like a shortcut. It often becomes a liability. The people who face the hardest questions when something goes wrong are the ones who used the tools, not the ones who approved them — because the approvers didn't know.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Why It Happens — The Six Drivers</h2>
+    <div class="why-grid">
+      <div class="wg-card">
+        <div class="wg-icon">🐢</div>
+        <div class="wg-title">Approval processes are slow</div>
+        <div class="wg-text">IT approval cycles can take weeks or months. An employee who discovers a useful AI tool on Friday and has a deadline Monday often doesn't see waiting as a real option.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">📋</div>
+        <div class="wg-title">Approved tools don't meet real needs</div>
+        <div class="wg-text">When approved AI tools are limited or outdated, employees naturally reach for better ones. The gap between "what IT approved" and "what the job actually requires" drives shadow adoption.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">🙈</div>
+        <div class="wg-title">Employees don't know a policy exists</div>
+        <div class="wg-text">New employees, employees who didn't attend training, or employees who started before an AI policy was written may not know approval is required. Unawareness is different from defiance.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">🔍</div>
+        <div class="wg-title">Enforcement is invisible</div>
+        <div class="wg-text">When employees don't see consequences for using unapproved tools, they assume it's tolerated. Policies without enforcement create a gap between official rules and working reality.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">💡</div>
+        <div class="wg-title">Innovation pressure</div>
+        <div class="wg-text">"Use AI to be more productive" is a mandate from above at many companies, but "only use approved AI" isn't always communicated clearly. The resulting gap sends employees to whatever works.</div>
+      </div>
+      <div class="wg-card">
+        <div class="wg-icon">🔒</div>
+        <div class="wg-title">Perceived low risk</div>
+        <div class="wg-text">"It's just a writing tool" or "it's just code suggestions" feel low-risk. Employees don't connect the tool to the company data that flows through it when they're in problem-solving mode.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Real Consequences — For You Personally</h2>
+    <div class="consequence-list">
+      <div class="con">
+        <div class="con-badge">⚖️ Legal and contractual</div>
+        <div class="con-title">Employment contract violations</div>
+        <div class="con-text">Most employment contracts and NDAs include clauses prohibiting disclosure of proprietary information to unauthorized third parties. An unapproved AI tool is a third party your organization never authorized. Using one with company data may violate your employment contract — regardless of whether any visible harm resulted.</div>
+      </div>
+      <div class="con">
+        <div class="con-badge">💼 Professional</div>
+        <div class="con-title">Disciplinary action up to termination</div>
+        <div class="con-text">Shadow AI use discovered during an incident investigation — or even during a routine audit — can result in formal disciplinary processes. When a data incident is traced back to unapproved AI tool use, the employee who used the tool faces personal accountability. "I was trying to be more productive" is context, not a defense.</div>
+      </div>
+      <div class="con">
+        <div class="con-badge">🏢 Organizational</div>
+        <div class="con-title">Your company can't protect what it doesn't know about</div>
+        <div class="con-text">When data enters an unapproved AI system, your organization's security team has no visibility, no controls, no incident response plan, and no contractual relationship with the vendor. If that data is exposed, the organization bears the compliance and legal consequences — and the employee who made the unauthorized connection becomes the point of failure in the post-incident report.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Right Path When Approved Tools Don't Meet Your Needs</h2>
+    <p>Shadow AI is often a symptom of a real problem: the approved tools don't do what employees need them to do. The answer isn't to bypass the approval process — it's to make the problem visible through legitimate channels:</p>
+    <div class="path-list">
+      <div class="path-item"><div class="path-num">1</div><div class="path-text"><strong>Name the gap specifically.</strong> "I need an AI tool that can do X, and our current approved tools can't do this" is actionable information for IT. "The approved tools aren't good enough" isn't. Specificity makes the request real and documentable.</div></div>
+      <div class="path-item"><div class="path-num">2</div><div class="path-text"><strong>Request an expedited review for high-need tools.</strong> Many IT teams have fast-track approval processes for tools that are urgently needed for specific projects. Asking for expedited review is legitimate — using the tool while you wait for the review is not.</div></div>
+      <div class="path-item"><div class="path-num">3</div><div class="path-text"><strong>Use the unapproved tool only with non-sensitive, publicly available information while awaiting approval.</strong> If you need to test whether a tool is useful, you can experiment with it using non-company, non-sensitive data — information that was already public. This is different from using it with work data.</div></div>
+      <div class="path-item"><div class="path-num">4</div><div class="path-text"><strong>Document your request and IT's response.</strong> If you asked for a tool to be approved and IT declined or delayed, that documentation protects you. You sought authorization through proper channels — that's the record you want to exist, not a network log showing unauthorized access.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">An employee has been using an unapproved AI tool for work tasks for three months. They've just learned their company has a policy prohibiting unapproved AI use. What should they do?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Continue using it — past use was without knowing the policy, so future use is no different</button>
+        <button class="qopt" onclick="doQ(this,true)">Stop using the unapproved tool immediately, disclose past use to their manager or IT if company policy requires it, and request official approval if the tool is genuinely useful for their work. Continuing knowing use is now knowingly violating policy — a much more serious position than unaware use.</button>
+        <button class="qopt" onclick="doQ(this,false)">Delete any record of having used the tool — past use doesn't matter if there's no evidence</button>
+        <button class="qopt" onclick="doQ(this,false)">Wait to see if IT discovers it on their own before taking action</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" react-hook=true">Shadow AI happens because approved tools often don't meet real needs, approval processes are slow, and perceived risk is low. Understanding why it happens helps you recognize the pressure to do it — and resist it through legitimate channels rather than workarounds.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" react-hook=true">The personal consequences are real: employment contract violations, disciplinary action, and being the named individual in a post-incident report when data exposure is traced back to your unauthorized tool use. Good intentions don't prevent these outcomes.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" react-hook=true">When approved tools don't meet your needs, the right path is to make that gap visible through legitimate channels: name the specific capability gap, request expedited review, test with non-sensitive data only, and document your request. That's the record you want to exist — not network logs showing unauthorized access.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Learning about a policy creates a clear dividing line between unaware use and knowing use. Continuing to use the tool after learning it violates policy is a materially different professional and legal position — it removes the 'I didn't know' context entirely. Attempting to delete evidence compounds the problem significantly. Waiting to be discovered is a passive choice that continues the violation. The right response: stop immediately, disclose if policy requires it, and request approval through proper channels if the tool is genuinely valuable for your work.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Stop using"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Discovering a policy creates a clear obligation — and continuing to use a tool in knowing violation of policy is much more serious than having used it without knowing. Attempting to delete evidence of past use is a significant additional problem — it could be characterized as destruction of records. Waiting for IT to discover it means continuing to violate the policy while the record accumulates. The right move is to stop immediately and address the situation proactively.";}
+}
+</script>
+</body>
+</html>
