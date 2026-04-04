@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strong vs. Weak Ethical Follow-Through: What the Difference Looks Like in a Real Tech Job</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Scenario comparison */
+.scenario-compare{margin:20px 0;}
+.sc-header{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;}
+.sc-col-label{padding:12px 18px;border-radius:14px 14px 0 0;text-align:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.sc-col-label.weak{background:var(--red);color:var(--white);}
+.sc-col-label.strong{background:var(--green);color:var(--white);}
+.sc-rows{display:flex;flex-direction:column;gap:0;border:1.5px solid var(--purple-mid);border-radius:0 0 14px 14px;overflow:hidden;}
+.sc-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--purple-mid);}
+.sc-row:last-child{border-bottom:none;}
+.sc-cell{padding:14px 18px;font-size:13px;line-height:1.65;}
+.sc-cell.weak-cell{background:var(--red-pale);border-right:1px solid var(--purple-mid);}
+.sc-cell.strong-cell{background:var(--green-pale);}
+.sc-situation{padding:10px 18px;background:var(--purple-pale);font-size:12px;font-weight:700;color:var(--purple-dark);letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--purple-mid);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.3 — Professional Responsibility</div>
+  <h1>Strong vs. Weak Ethical Follow-Through: What the Difference Looks Like in a Real Tech Job</h1>
+  <p class="hero-sub">Ethical responsibility isn't binary — it's a spectrum. This article shows what strong and weak follow-through actually look like in the daily situations tech workers face with AI tools, so you can recognize both in your own work.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Why the Difference Is Often Subtle</h2>
+    <p>Strong and weak ethical follow-through often look similar on the surface. Both versions might involve raising a concern. Both might involve verifying an output. Both might involve documenting something. The difference is in the depth, the honesty, and whether the action actually addressed the problem — or just made it look like it did.</p>
+    <p>Weak ethical follow-through is characterized by going through the motions: filing a concern without making sure it reaches someone who can act on it, "reviewing" an AI output without actually evaluating the substance, documenting your process in ways that look good but don't capture the real decisions made. <mark>The test of ethical follow-through is whether it actually changed anything — or just created the appearance of responsibility.</mark></p>
+    <div class="pull-quote">
+      <p>Strong follow-through is uncomfortable. It means having conversations you'd rather avoid, taking time you don't think you have, and holding a position when the easier move is to let it go. That discomfort is not a bug. It's the cost of doing the job right.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Six Situations — Strong vs. Weak Side by Side</h2>
+
+    <!-- Situation 1 -->
+    <div class="scenario-compare">
+      <div class="sc-situation">Situation: You notice the AI generated an inaccurate statistic in a report that's about to go to a client</div>
+      <div class="sc-header">
+        <div class="sc-col-label weak">❌ Weak Follow-Through</div>
+        <div class="sc-col-label strong">✅ Strong Follow-Through</div>
+      </div>
+      <div class="sc-rows">
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Mentally note that the stat "might be off" and decide it's probably fine</div>
+          <div class="sc-cell strong-cell">Stop. Look up the actual statistic before the report goes anywhere</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Leave it in and add a vague qualifier like "approximately"</div>
+          <div class="sc-cell strong-cell">Remove it if you can't verify it, or replace it with a verified figure</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Tell yourself the client probably won't check</div>
+          <div class="sc-cell strong-cell">Note in your documentation that the original AI-generated stat was replaced</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Situation 2 -->
+    <div class="scenario-compare">
+      <div class="sc-situation">Situation: You're using an AI tool that your company hasn't explicitly approved or disapproved</div>
+      <div class="sc-header">
+        <div class="sc-col-label weak">❌ Weak Follow-Through</div>
+        <div class="sc-col-label strong">✅ Strong Follow-Through</div>
+      </div>
+      <div class="sc-rows">
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Assume silence means approval and use it for anything</div>
+          <div class="sc-cell strong-cell">Ask your manager or IT team whether the tool is approved for work use</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Use it but don't mention it in your work products</div>
+          <div class="sc-cell strong-cell">If you use it before getting an answer, use only non-sensitive material</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Think "everyone else probably uses it too"</div>
+          <div class="sc-cell strong-cell">Document the question you asked and the answer you received</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Situation 3 -->
+    <div class="scenario-compare">
+      <div class="sc-situation">Situation: An AI recommendation feels wrong — you can't fully explain why, but something is off</div>
+      <div class="sc-header">
+        <div class="sc-col-label weak">❌ Weak Follow-Through</div>
+        <div class="sc-col-label strong">✅ Strong Follow-Through</div>
+      </div>
+      <div class="sc-rows">
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Ignore the instinct — "I'm probably overthinking it"</div>
+          <div class="sc-cell strong-cell">Take the instinct seriously. Spend time figuring out what specifically feels off</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Use the recommendation because it's easier than questioning it</div>
+          <div class="sc-cell strong-cell">If you can identify what's wrong, name it and document it</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Hope nothing goes wrong and move on</div>
+          <div class="sc-cell strong-cell">If you can't resolve it yourself, ask a colleague or manager before acting</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Situation 4 -->
+    <div class="scenario-compare">
+      <div class="sc-situation">Situation: You made an error using AI-assisted work and your manager finds it</div>
+      <div class="sc-header">
+        <div class="sc-col-label weak">❌ Weak Follow-Through</div>
+        <div class="sc-col-label strong">✅ Strong Follow-Through</div>
+      </div>
+      <div class="sc-rows">
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">"The AI generated that part — I didn't write it myself"</div>
+          <div class="sc-cell strong-cell">"I used AI to draft that section and didn't catch this error in my review. That's on me."</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Fix it quickly and hope the conversation ends there</div>
+          <div class="sc-cell strong-cell">Fix it, then explain what process change prevents recurrence</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Feel embarrassed and avoid using AI for a while</div>
+          <div class="sc-cell strong-cell">Identify the specific gap in your review process and address it systematically</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Situation 5 -->
+    <div class="scenario-compare">
+      <div class="sc-situation">Situation: You spot a potential bias pattern in an AI tool your team uses — but you're the most junior person on the team</div>
+      <div class="sc-header">
+        <div class="sc-col-label weak">❌ Weak Follow-Through</div>
+        <div class="sc-col-label strong">✅ Strong Follow-Through</div>
+      </div>
+      <div class="sc-rows">
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">"I'm too junior to raise this — someone more senior would have caught it if it were real"</div>
+          <div class="sc-cell strong-cell">Document what you observed specifically — dates, examples, patterns</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Mention it once in passing and drop it when it doesn't get traction</div>
+          <div class="sc-cell strong-cell">Raise it to your direct manager with your documentation</div>
+        </div>
+        <div class="sc-row">
+          <div class="sc-cell weak-cell">Tell yourself it's probably not your place</div>
+          <div class="sc-cell strong-cell">If the manager doesn't act, use formal escalation channels — email, ethics hotline, or skip-level conversation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A developer raises an AI bias concern in a team meeting. The team acknowledges it, says "good catch," and moves on. Two weeks later, nothing has changed. What does strong ethical follow-through look like at this point?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Accept that the concern was heard — you raised it, and the decision about what to do is the team's</button>
+        <button class="qopt" onclick="doQ(this,true)">Follow up in writing to the team or manager: confirm the concern was heard, ask specifically what action is planned or whether it's been decided not to act, and document the exchange. If the concern is serious enough, use a formal escalation path if informal follow-up doesn't move.</button>
+        <button class="qopt" onclick="doQ(this,false)">Raise it again in the next team meeting — repetition demonstrates seriousness</button>
+        <button class="qopt" onclick="doQ(this,false)">Go directly to senior leadership to force a decision</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Strong ethical follow-through means actions that actually change outcomes — not actions that create the appearance of responsibility. The test is: did it work? Did the inaccuracy get corrected? Did the bias concern reach someone who could act? Did the process improve?</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Weak follow-through often involves technically doing something — raising a concern, reviewing an output — while avoiding the uncomfortable parts: the conversation that might push back, the extra time to verify, the written follow-up that creates a record. Identifying where you're defaulting to weak follow-through is the first step to changing it.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" react-hook=true"margin:0"color:var(--gray-text)">Being junior doesn't exempt you from follow-through. It means using the tools available to you: clear documentation, direct manager communication, and — when needed — formal escalation channels. Seniority determines your authority to make decisions; it doesn't determine your obligation to raise concerns.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function doQ(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. Raising a concern once and accepting that 'the team heard it' is weak follow-through when nothing changes. Strong follow-through creates a paper trail and a clear next step. Written follow-up after an unresolved concern does three things: it demonstrates seriousness, it creates a record that the concern was raised and not acted on, and it gives the manager a clear opportunity to either commit to action or explicitly decline — which is information you need for deciding whether to escalate further. Jumping directly to senior leadership without this step is premature; repeating it verbally in meetings is inefficient. Written follow-up with a specific ask is the right tool here.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("Follow up in writing"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Accepting that 'the team heard it' means accepting no accountability for what happens next — which is weak follow-through when the concern is substantive. Verbal repetition in meetings doesn't create a record and is easy to dismiss. Jumping to senior leadership before trying formal written follow-up skips a step. The strongest next move is written follow-up with a specific ask: 'What action is planned, and by when?' That creates a record and a clear commitment point.";}
+}
+</script>
+</body>
+</html>

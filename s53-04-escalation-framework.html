@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When to Escalate an AI Issue: A Decision Framework for Tech Workers</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Decision tree */
+.decision-tree{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:20px 0;}
+.dt-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.dt-question{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;}
+.dt-node{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:14px;padding:16px 18px;margin:10px 0;}
+.dt-node-q{font-weight:700;color:var(--gray-text);font-size:14px;margin-bottom:10px;}
+.dt-answers{display:flex;gap:10px;flex-wrap:wrap;}
+.dt-ans{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:2px solid;}
+.dt-ans.yes{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.dt-ans.no{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.dt-ans.yes:hover{background:var(--red);color:var(--white);}
+.dt-ans.no:hover{background:var(--green);color:var(--white);}
+.dt-result{margin-top:12px;padding:14px 18px;border-radius:12px;font-size:14px;line-height:1.7;display:none;}
+.dt-result.show{display:block;}
+.dt-result.escalate{background:var(--red-pale);color:var(--red);border:1.5px solid var(--red);}
+.dt-result.caution{background:var(--orange-pale);color:var(--orange);border:1.5px solid var(--orange);}
+.dt-result.proceed{background:var(--green-pale);color:var(--green);border:1.5px solid var(--green);}
+.dt-reset{margin-top:10px;background:var(--purple);color:var(--white);border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;}
+
+/* Three triggers */
+.trigger-cards{display:flex;flex-direction:column;gap:14px;margin:20px 0;}
+.trig{border-radius:18px;padding:22px;border:1.5px solid;}
+.trig.high{background:var(--red-pale);border-color:var(--red);}
+.trig.confidence{background:var(--orange-pale);border-color:var(--orange);}
+.trig.harm{background:var(--purple-pale);border-color:var(--purple);}
+.trig-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:100px;margin-bottom:10px;}
+.high .trig-badge{background:var(--red);color:var(--white);}
+.confidence .trig-badge{background:var(--orange);color:var(--white);}
+.harm .trig-badge{background:var(--purple);color:var(--white);}
+.trig-title{font-weight:700;font-size:16px;margin-bottom:8px;}
+.high .trig-title{color:var(--red);}
+.confidence .trig-title{color:var(--orange);}
+.harm .trig-title{color:var(--purple);}
+.trig-body{font-size:14px;line-height:1.75;color:var(--gray-text);margin-bottom:10px;}
+.trig-signals{display:flex;flex-direction:column;gap:5px;}
+.trig-signal{font-size:13px;color:var(--gray-text);padding:5px 8px;background:rgba(255,255,255,.6);border-radius:7px;}
+.trig-signal::before{content:"→ ";font-weight:700;}
+
+/* Escalation paths */
+.path-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.path-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:16px;padding:20px;}
+.path-icon{font-size:22px;margin-bottom:8px;}
+.path-title{font-weight:700;color:var(--purple-dark);font-size:14px;margin-bottom:6px;}
+.path-text{font-size:13px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.3 — Professional Responsibility</div>
+  <h1>When to Escalate an AI Issue: A Decision Framework for Tech Workers</h1>
+  <p class="hero-sub">Not every AI problem is yours to solve alone. Knowing when to bring in your manager, your team, or your legal department — and how to do it — is a core professional skill that most people have to learn the hard way. This article makes it easier.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Escalation Is Not a Failure</h2>
+    <p>Many people avoid escalating because they worry it looks like they can't handle their job. The opposite is true. Knowing which problems are within your scope to resolve and which ones require more authority, more expertise, or more visibility is a sign of professional maturity — not weakness.</p>
+    <p>With AI tools specifically, there's an additional reason to escalate: <mark>you may be the first person in your organization to see a particular type of AI failure</mark>. Your instinct that something is wrong is valuable. Sharing it creates institutional knowledge. Keeping it to yourself leaves the organization blind to a risk it may encounter again.</p>
+    <div class="pull-quote">
+      <p>Escalating an AI concern early — when it's a concern rather than a crisis — is the professional move. Waiting until it becomes a crisis is what gets people fired.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Three Triggers for Escalation</h2>
+    <p>Three conditions should reliably send you toward escalation rather than independent action. Any one of them is sufficient reason to bring in someone with more authority or expertise:</p>
+
+    <div class="trigger-cards">
+      <div class="trig high">
+        <div class="trig-badge">🔴 Trigger 1</div>
+        <div class="trig-title">The stakes are high enough that an error has serious consequences</div>
+        <div class="trig-body">When the downstream consequence of an AI failure — a wrong output, a biased decision, a data exposure — would significantly harm a person, your organization, or your clients, that's beyond solo resolution. The higher the stakes, the more eyes should be on the decision before it goes forward.</div>
+        <div class="trig-signals">
+          <div class="trig-signal">An AI recommendation that affects patient treatment, legal advice, or financial decisions</div>
+          <div class="trig-signal">An AI system making decisions that affect people's employment, housing, or access to services</div>
+          <div class="trig-signal">AI-generated content going to a client or external audience with significant reputational stakes</div>
+          <div class="trig-signal">An AI output that, if wrong, would take significant time and resources to reverse</div>
+        </div>
+      </div>
+
+      <div class="trig confidence">
+        <div class="trig-badge">🟠 Trigger 2</div>
+        <div class="trig-title">You're not confident enough in the output to defend it professionally</div>
+        <div class="trig-body">If you would hesitate to put your name on this output and stand behind it under questioning — that hesitation is information. It means the output hasn't reached the standard of work you can professionally vouch for. Either more review is needed, or someone with more expertise needs to be involved.</div>
+        <div class="trig-signals">
+          <div class="trig-signal">You can't verify a key claim the AI made, and it's too important to leave unverified</div>
+          <div class="trig-signal">The AI's recommendation is in a domain where you lack the expertise to evaluate its accuracy</div>
+          <div class="trig-signal">Something in the output seems off, but you're not sure enough to call it a problem</div>
+          <div class="trig-signal">The AI's output conflicts with something you know — but you're not certain your knowledge is current</div>
+        </div>
+      </div>
+
+      <div class="trig harm">
+        <div class="trig-badge">🟣 Trigger 3</div>
+        <div class="trig-title">The AI's output could harm someone — or already has</div>
+        <div class="trig-body">Potential harm — to individuals, to groups, or to your organization — always warrants escalation. This includes bias findings, privacy concerns, safety risks, and anything that suggests the AI system is making systematically unfair or dangerous decisions. If harm has already occurred, escalation is urgent and mandatory.</div>
+        <div class="trig-signals">
+          <div class="trig-signal">You notice the AI is producing outputs that disadvantage a particular demographic group</div>
+          <div class="trig-signal">An AI recommendation was implemented and caused a negative outcome for a real person</div>
+          <div class="trig-signal">The AI has been given access to or acted on data it shouldn't have</div>
+          <div class="trig-signal">An AI output could be used to discriminate, harass, or violate someone's rights</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Use the Decision Tree</h2>
+    <p>Work through these questions when you're unsure whether to escalate an AI issue:</p>
+
+    <div class="decision-tree">
+      <div class="dt-label">🔍 Escalation Decision Tool</div>
+      <div id="tree-content">
+        <div id="q1-block">
+          <div class="dt-node">
+            <div class="dt-node-q">Could acting on this AI output — or failing to act on it — seriously harm a person, a client, or your organization?</div>
+            <div class="dt-answers">
+              <button class="dt-ans yes" onclick="treeAnswer(1,'yes')">Yes</button>
+              <button class="dt-ans no" onclick="treeAnswer(1,'no')">No / Not sure</button>
+            </div>
+            <div class="dt-result" id="r1-yes"></div>
+            <div class="dt-result" id="r1-no"></div>
+          </div>
+        </div>
+        <div id="q2-block" style="display:none;">
+          <div class="dt-node">
+            <div class="dt-node-q">Are you confident enough in this output to put your name on it and defend it to your manager or a client?</div>
+            <div class="dt-answers">
+              <button class="dt-ans yes" onclick="treeAnswer(2,'yes')">Yes, confident</button>
+              <button class="dt-ans no" onclick="treeAnswer(2,'no')">No / Uncertain</button>
+            </div>
+            <div class="dt-result" id="r2-yes"></div>
+            <div class="dt-result" id="r2-no"></div>
+          </div>
+        </div>
+        <div id="q3-block" style="display:none;">
+          <div class="dt-node">
+            <div class="dt-node-q">Does this situation involve potential legal, regulatory, safety, or discrimination concerns?</div>
+            <div class="dt-answers">
+              <button class="dt-ans yes" onclick="treeAnswer(3,'yes')">Yes</button>
+              <button class="dt-ans no" onclick="treeAnswer(3,'no')">No</button>
+            </div>
+            <div class="dt-result" id="r3-yes"></div>
+            <div class="dt-result" id="r3-no"></div>
+          </div>
+        </div>
+        <div id="q4-block" style="display:none;">
+          <div class="dt-node">
+            <div class="dt-node-q">Is this within your scope and expertise to resolve on your own?</div>
+            <div class="dt-answers">
+              <button class="dt-ans yes" onclick="treeAnswer(4,'yes')">Yes</button>
+              <button class="dt-ans no" onclick="treeAnswer(4,'no')">No</button>
+            </div>
+            <div class="dt-result" id="r4-yes"></div>
+            <div class="dt-result" id="r4-no"></div>
+          </div>
+        </div>
+      </div>
+      <div id="tree-reset" style="display:none;margin-top:12px;">
+        <button class="dt-reset" onclick="resetTree()">↺ Start Over</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Escalation Actually Looks Like</h2>
+    <p>Escalation isn't always "call an emergency meeting." It scales to the situation:</p>
+    <div class="path-grid">
+      <div class="path-card">
+        <div class="path-icon">💬</div>
+        <div class="path-title">A quick check-in with your manager</div>
+        <div class="path-text">"Hey, I'm working on [X] and the AI is recommending [Y]. I'm not confident about it because [Z]. Can I get your take before I move forward?" This is the lowest-friction form of escalation and handles most situations.</div>
+      </div>
+      <div class="path-card">
+        <div class="path-icon">🤝</div>
+        <div class="path-title">Looping in a subject matter expert</div>
+        <div class="path-text">When the AI's output is in a domain where you need specialist judgment — security, legal, medical, compliance — bring in someone with that expertise before acting, even if that means a short delay.</div>
+      </div>
+      <div class="path-card">
+        <div class="path-icon">📋</div>
+        <div class="path-title">Formal reporting for systemic issues</div>
+        <div class="path-text">If you've noticed the AI producing consistently biased, incorrect, or problematic outputs — not just once, but as a pattern — that warrants a more formal report to IT, your data team, or leadership. The system may need to be audited, restricted, or replaced.</div>
+      </div>
+      <div class="path-card">
+        <div class="path-icon">⚖️</div>
+        <div class="path-title">Legal or compliance involvement</div>
+        <div class="path-text">Privacy violations, discrimination concerns, regulatory non-compliance, and potential harm to external parties require your legal or compliance team — not just your manager. This level of escalation is urgent; don't wait for a convenient moment.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A developer notices that an AI recommendation engine used on the company's platform consistently recommends lower loan amounts to users with names that appear to be Hispanic. The developer isn't sure if it's a real pattern or a coincidence. What should they do?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Collect more data privately to confirm it's a real pattern before raising it — no point escalating a coincidence</button>
+        <button class="qopt" onclick="doQ(this,true)">Escalate it now — a potential discrimination pattern in a financial product meets the "potential harm" and "potential regulatory concern" triggers. The appropriate path is to flag it to a manager and likely to the compliance team immediately, not to investigate quietly while the system keeps running.</button>
+        <button class="qopt" onclick="doQ(this,false)">Report it directly to a regulatory agency — discrimination in lending is a federal issue</button>
+        <button class="qopt" onclick="doQ(this,false)">Document the pattern and bring it up at the next team retrospective</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Three triggers reliably call for escalation: high stakes (a serious error would cause significant harm), low confidence (you're not ready to put your name on it), and potential harm (someone could be hurt by this output or already has been).</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Escalation scales to the situation — from a quick manager check-in to formal compliance reporting. The key is matching the channel to the severity. Most AI concerns are resolved with a brief conversation, not a crisis response.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When in doubt, escalate earlier rather than later. The cost of a false alarm — a brief conversation with your manager — is far smaller than the cost of a problem that grew because nobody flagged it. Escalating a concern early is professional; waiting until it becomes a crisis is not.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+let treeState={};
+const answers={
+  '1-yes':{result:'escalate',text:'🔴 Escalate — High-stakes situations require more than your individual judgment. Bring in your manager immediately, and consider whether legal, compliance, or a subject matter expert should be involved. Do not proceed without additional review.'},
+  '1-no':{next:'q2-block'},
+  '2-yes':{next:'q3-block'},
+  '2-no':{result:'caution',text:'🟠 Get input before proceeding — Your uncertainty is telling you something. Either do more verification yourself, or bring in someone who can evaluate the output more confidently. Don\'t submit or act on work you can\'t stand behind.'},
+  '3-yes':{result:'escalate',text:'🔴 Escalate — Legal, regulatory, safety, and discrimination concerns go beyond your individual scope. Your manager needs to know, and legal or compliance likely needs to be involved. Flag it now.'},
+  '3-no':{next:'q4-block'},
+  '4-yes':{result:'proceed',text:'✅ Proceed — This appears within your scope to handle. Complete your standard review process, document your work, and move forward. Keep an eye out for patterns if this type of issue recurs.'},
+  '4-no':{result:'caution',text:'🟠 Get support before proceeding — Even without legal stakes, if this is outside your expertise, bring in someone who can help. Acting outside your competence creates accountability risk even in lower-stakes situations.'}
+};
+
+function treeAnswer(q,choice){
+  const key=q+'-'+choice;
+  const ans=answers[key];
+  if(!ans)return;
+  const btnGroup=document.querySelectorAll('#q'+q+'-block .dt-ans');
+  btnGroup.forEach(b=>b.disabled=true);
+  if(ans.result){
+    const res=document.getElementById('r'+q+'-'+choice);
+    res.className='dt-result show '+ans.result;
+    res.textContent=ans.text;
+    document.getElementById('tree-reset').style.display='block';
+  } else if(ans.next){
+    document.getElementById(ans.next).style.display='block';
+  }
+}
+function resetTree(){
+  ['q2-block','q3-block','q4-block'].forEach(id=>{document.getElementById(id).style.display='none';});
+  document.querySelectorAll('.dt-ans').forEach(b=>b.disabled=false);
+  document.querySelectorAll('.dt-result').forEach(r=>{r.className='dt-result';r.textContent='';});
+  document.getElementById('tree-reset').style.display='none';
+}
+function doQ(btn,correct){
+  if(document.querySelector(".qopt.correct,.qopt.wrong"))return;
+  btn.classList.add(correct?"correct":"wrong");
+  const fb=document.getElementById("qfb1");
+  if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. This hits two escalation triggers simultaneously: potential harm to a specific demographic group, and potential regulatory violation — discriminatory lending patterns are regulated under the Equal Credit Opportunity Act. 'Collecting more data' while the system keeps running means more people are potentially harmed during the investigation. The right move is to flag it to your manager immediately, pause using the AI recommendation for loan amounts if possible, and get compliance involved. You don't need to have proven the pattern — a credible concern about discrimination in a financial product is enough.";}
+  else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("potential harm"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Collecting data privately while the system keeps running delays addressing a potential harm. Going directly to regulators bypasses your organization's compliance process and is not the first step. Waiting for the retrospective means a potentially discriminatory system runs for weeks more. The right first step is immediate escalation internally — to your manager, then compliance — so the organization can make an informed decision about whether to pause the system while the pattern is investigated.";}
+}
+</script>
+</body>
+</html>

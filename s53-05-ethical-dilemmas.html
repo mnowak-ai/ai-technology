@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Would You Do? Ethical Dilemmas in AI-Assisted Tech Work</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Dilemma cards */
+.dilemma{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:28px;margin:20px 0;}
+.dil-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.dil-number{font-family:"Fraunces",serif;font-size:14px;font-weight:700;color:var(--gray-muted);margin-bottom:12px;}
+.dil-scenario{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);font-weight:700;line-height:1.4;margin-bottom:10px;}
+.dil-context{font-size:14px;color:var(--gray-muted);line-height:1.7;margin-bottom:20px;}
+.dil-tension{background:var(--orange-pale);border:1.5px solid var(--orange);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:14px;line-height:1.65;color:var(--gray-text);}
+.dil-tension-label{font-weight:700;color:var(--orange);margin-bottom:4px;}
+.dil-opts{display:flex;flex-direction:column;gap:10px;}
+.dil-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.dil-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.dil-opt.best{background:var(--green-pale);border-color:var(--green);}
+.dil-opt.risky{background:var(--orange-pale);border-color:var(--orange);}
+.dil-opt.wrong{background:var(--red-pale);border-color:var(--red);}
+.dil-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.dil-fb.show{display:block;}
+.dil-fb.good{background:var(--green-pale);color:var(--green);}
+.dil-fb.warn{background:var(--orange-pale);color:var(--orange);}
+.dil-fb.bad{background:var(--red-pale);color:var(--red);}
+.dil-next{margin-top:12px;background:var(--purple);color:var(--white);border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;display:none;}
+.dil-prev{display:none;}
+
+/* Framework card */
+.framework{background:var(--purple-dark);border-radius:20px;padding:28px 32px;margin:20px 0;color:var(--white);}
+.fw-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;}
+.fw-title{font-family:"Fraunces",serif;font-size:22px;font-weight:900;margin-bottom:16px;}
+.fw-list{display:flex;flex-direction:column;gap:10px;}
+.fw-item{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.08);border-radius:12px;padding:12px 16px;}
+.fw-q{font-family:"Fraunces",serif;font-size:20px;font-weight:900;color:var(--purple-mid);flex-shrink:0;width:28px;line-height:1.1;}
+.fw-text{font-size:13px;line-height:1.65;color:rgba(255,255,255,.9);}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.3 — Professional Responsibility</div>
+  <h1>What Would You Do? Ethical Dilemmas in AI-Assisted Tech Work</h1>
+  <p class="hero-sub">Ethical judgment isn't built from rules — it's built from practice. These six realistic workplace dilemmas are the kinds of situations you'll actually face. Work through each one, then read the analysis.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="content">
+
+  <div class="section fade-in">
+    <p>The scenarios in this article don't have single "correct" answers in the way a math problem does. They have better and worse responses — and understanding why certain choices are better is what builds the professional judgment you need. Read each scenario, choose the response that feels most right, then read the analysis carefully.</p>
+
+    <div class="pull-quote">
+      <p>Ethical judgment is a muscle. It gets stronger every time you practice it — and weaker every time you outsource it to the AI, to your manager, or to the assumption that someone else will handle it.</p>
+    </div>
+  </div>
+
+  <!-- Dilemma 1 -->
+  <div class="section fade-in">
+    <div class="dilemma">
+      <div class="dil-label">🎮 Ethical Dilemma</div>
+      <div class="dil-number">Scenario 1 of 6</div>
+      <div class="dil-scenario">Your manager asks you to speed up a code review by using an AI assistant. The AI flags no security issues. You find one yourself — a minor one. You're under pressure to submit.</div>
+      <div class="dil-context">The deadline is tight. Your manager has made it clear the project needs to move. The AI reviewed the code and gave it a clean pass. You found a minor cross-site scripting vulnerability that requires a fix. Fixing it will take about an hour and push the deadline.</div>
+      <div class="dil-tension">
+        <div class="dil-tension-label">⚖️ The tension</div>
+        Deadline pressure vs. professional responsibility. The AI said it was fine. You found something it missed. The fix is real but takes time.
+      </div>
+      <div class="dil-opts" id="d1opts">
+        <div class="dil-opt" onclick="doD(1,'a',this,'✅ This is the right call. Security vulnerabilities don\'t become acceptable because a deadline is tight or because an AI missed them. You found it — that\'s your professional judgment working correctly. A minor vulnerability shipped to production is still a vulnerability. Your job is to fix what you find, not to find only what\'s convenient to fix. The deadline conversation is your manager\'s problem to handle with stakeholders; your problem is to produce secure code.','good')">Fix the vulnerability, then tell your manager it will push the deadline slightly and why</div>
+        <div class="dil-opt" onclick="doD(1,'b',this,'❌ Shipping a known vulnerability because an AI missed it is a professional failure. "The AI said it was okay" is not a defense when you personally identified the issue. You have the knowledge and the obligation to act on what you found. The fact that the AI gave a clean pass doesn\'t change what you know.','bad')">Ship the code — the AI gave it a clean pass, and you don\'t want to second-guess the tool</div>
+        <div class="dil-opt" onclick="doD(1,'c',this,'⚠️ This is closer than option B, but it still ships a known vulnerability. Documenting it doesn\'t fix it. Flagging it as future work means it may never get fixed — especially after the project ships and attention moves elsewhere. Known security issues should be fixed before deployment, not documented as backlog.','warn')">Document the vulnerability as a future ticket, ship now, and fix it in the next sprint</div>
+      </div>
+      <div class="dil-fb" id="d1fb"></div>
+    </div>
+  </div>
+
+  <!-- Dilemma 2 -->
+  <div class="section fade-in">
+    <div class="dilemma">
+      <div class="dil-label">🎮 Ethical Dilemma</div>
+      <div class="dil-number">Scenario 2 of 6</div>
+      <div class="dil-scenario">You're asked to build an AI feature that your company wants to describe as "unbiased" in marketing materials. You've read enough to know that no AI system is truly unbiased.</div>
+      <div class="dil-context">Marketing has drafted copy describing the feature as "completely unbiased AI-powered decisions." Legal has signed off. Your manager is excited. You're the engineer who built it. You know it's been tested for the most obvious bias types but not comprehensively audited across all demographics.</div>
+      <div class="dil-tension">
+        <div class="dil-tension-label">⚖️ The tension</div>
+        Your expertise vs. organizational momentum. The claim isn't technically accurate, but everyone above you has already approved it.
+      </div>
+      <div class="dil-opts" id="d2opts">
+        <div class="dil-opt" onclick="doD(2,'a',this,'✅ Correct. This is the professional obligation of someone with technical knowledge that others lack. "Unbiased AI" is a claim no AI system can accurately make, and allowing that claim to ship creates legal and reputational risk — and potentially harms users who rely on it. You don\'t need to block the launch; you need to surface the accuracy problem to someone who can address it. That\'s not insubordination — it\'s doing your job. Good managers want to know before the claim ships, not after a complaint arrives.','good')">Raise the concern with your manager: the "unbiased" claim isn\'t technically accurate. Propose alternative language like "designed to minimize bias" or "bias-tested."</div>
+        <div class="dil-opt" onclick="doD(2,'b',this,'❌ Legal approval of marketing copy is not the same as technical accuracy. Legal is not evaluating whether "unbiased" is an accurate description of AI behavior — they\'re evaluating legal risk exposure. The fact that no one has objected yet doesn\'t make the claim true, and it doesn\'t remove your professional obligation to surface what you know.','bad')">Say nothing — marketing and legal have already approved it, so it\'s not your call</div>
+        <div class="dil-opt" onclick="doD(2,'c',this,'⚠️ Documenting it protects you to some degree, but it doesn\'t address the problem — the inaccurate claim will still ship. Documentation that sits in a file while a misleading claim reaches customers isn\'t a full professional response. The more direct and appropriate action is to raise the concern with someone who can actually change the copy.','warn')">Document your concern in writing to protect yourself, then let it go</div>
+      </div>
+      <div class="dil-fb" id="d2fb"></div>
+    </div>
+  </div>
+
+  <!-- Dilemma 3 -->
+  <div class="section fade-in">
+    <div class="dilemma">
+      <div class="dil-label">🎮 Ethical Dilemma</div>
+      <div class="dil-number">Scenario 3 of 6</div>
+      <div class="dil-scenario">A client asks you to use AI to generate performance review text for their employees. The AI produces reviews that are positive for some employees and subtly negative for others in ways that seem to correlate with demographics.</div>
+      <div class="dil-context">You've been hired to automate the review process. The client is excited. The AI writes fluent, professional-sounding reviews. But as you review the outputs, you notice the tone and the specific language choices seem different for different demographic groups in ways that could affect promotions and raises.</div>
+      <div class="dil-tension">
+        <div class="dil-tension-label">⚖️ The tension</div>
+        Your professional obligation to the client vs. the potential harm to employees who are the clients' workers — and your potential liability as the person who delivered the tool.
+      </div>
+      <div class="dil-opts" id="d3opts">
+        <div class="dil-opt" onclick="doD(3,'a',this,'✅ This is the right call. You\'ve identified a potential discrimination issue. Delivering a tool that generates biased performance reviews creates legal exposure for your client — and potentially for you. Flagging it before delivery is protecting your client even if they don\'t initially see it that way. The alternative — delivering a tool that generates discriminatory text and saying nothing — is both ethically and legally problematic.','good')">Stop delivery, document the pattern you\'re seeing, and raise it with your manager and the client before going further</div>
+        <div class="dil-opt" onclick="doD(3,'b',this,'❌ Delivering this tool to the client transfers the harm — but not your professional responsibility for identifying it. You noticed a potential discrimination pattern and chose to deliver anyway. That\'s a professional failure regardless of what the client does with the tool afterward.','bad')">Deliver it — it\'s the client\'s responsibility to use the tool appropriately, not yours</div>
+        <div class="dil-opt" onclick="doD(3,'c',this,'⚠️ Adding a disclaimer is better than saying nothing, but it doesn\'t solve the problem. A disclaimer that "AI outputs may reflect bias" doesn\'t protect employees from biased reviews, doesn\'t protect the client from discrimination liability, and doesn\'t protect you from having knowingly delivered a potentially harmful tool. The pattern you observed warrants a direct conversation and a pause, not a legal hedge.','warn')">Add a disclaimer to the deliverable about AI limitations and let the client decide</div>
+      </div>
+      <div class="dil-fb" id="d3fb"></div>
+    </div>
+  </div>
+
+  <!-- Dilemma 4 -->
+  <div class="section fade-in">
+    <div class="dilemma">
+      <div class="dil-label">🎮 Ethical Dilemma</div>
+      <div class="dil-number">Scenario 4 of 6</div>
+      <div class="dil-scenario">You used AI heavily to write a technical article you're publishing under your name on the company blog. Your manager asks "how long did this take you?" You answer honestly. They seem surprised and ask, "did you write it all yourself?"</div>
+      <div class="dil-context">The article is technically accurate — you verified everything in it. The thinking and direction are yours. The drafting was substantially AI-assisted. Your company doesn't have a policy on this. Your manager's question feels like it has professional implications.</div>
+      <div class="dil-tension">
+        <div class="dil-tension-label">⚖️ The tension</div>
+        Transparency vs. the (perhaps unfounded) fear that disclosure will be seen as a failure of professional effort.
+      </div>
+      <div class="dil-opts" id="d4opts">
+        <div class="dil-opt" onclick="doD(4,'a',this,'✅ This is the right answer — and it\'s not complicated. Your manager directly asked. Saying yes when the truthful answer is "substantially AI-assisted" is a lie. It also misrepresents your workflow in a way that could affect professional expectations going forward. Transparency here is both the ethical requirement and the pragmatic one: your manager finding out later would be far worse. Being honest about AI use while demonstrating the value you added — direction, verification, judgment — is a professional response.','good')">Be honest: you directed the content and verified everything, but AI assisted substantially with drafting. Explain your process and the value you added.</div>
+        <div class="dil-opt" onclick="doD(4,'b',this,'❌ This is a lie in response to a direct question from your manager. The fact that the article is accurate doesn\'t make the misrepresentation acceptable. And if your manager finds out later — which is more likely than it seems — the dishonesty is a much larger professional problem than the AI use would have been.','bad')">Say yes — the article is accurate, the ideas are yours, and how you produced it is your business</div>
+        <div class="dil-opt" onclick="doD(4,'c',this,'⚠️ This is better than lying, but deflecting the question rather than answering it is its own form of evasion. Your manager asked a direct question. A clear, confident answer — yes, AI helped significantly with drafting, here\'s what I contributed — is a better professional response than a hedge that leaves the question open.','warn')">Change the subject — bring up the article\'s content and metrics to redirect the conversation</div>
+      </div>
+      <div class="dil-fb" id="d4fb"></div>
+    </div>
+  </div>
+
+  <!-- Dilemma 5 -->
+  <div class="section fade-in">
+    <div class="dilemma">
+      <div class="dil-label">🎮 Ethical Dilemma</div>
+      <div class="dil-number">Scenario 5 of 6</div>
+      <div class="dil-scenario">An AI tool your company uses starts recommending the same product to users who have already purchased it — clearly a system error. It's not your code, and you're the only one who notices. Fixing it isn't your job.</div>
+      <div class="dil-context">You're working on a different part of the platform when you see, in system logs, that the recommendation engine is repeatedly suggesting an item to users who bought it days ago. It's not causing financial harm, but it's creating a bad user experience at scale. The team responsible is in a different department.</div>
+      <div class="dil-tension">
+        <div class="dil-tension-label">⚖️ The tension</div>
+        Scope of responsibility vs. the fact that you're the one who noticed. Is it your job to flag something outside your domain?
+      </div>
+      <div class="dil-opts" id="d5opts">
+        <div class="dil-opt" onclick="doD(5,'a',this,'✅ Correct. Professional responsibility doesn\'t end at your job description. You noticed a problem affecting real users. The correct action is to surface it to someone who can fix it — even if that means a cross-team message or Slack note. "Not my code" doesn\'t mean "not my concern." Noticing and reporting is always within scope. The 15 seconds it takes to flag an issue you\'re aware of is a reasonable professional expectation.','good')">Send a message to the responsible team with what you observed. It\'s not your code to fix, but you can be the one who flags it.</div>
+        <div class="dil-opt" onclick="doD(5,'b',this,'❌ "Not my job" is a professionally passive response when you have information that would help. Organizations work better when people surface problems they notice — even outside their direct scope. Sitting on knowledge of an active user-experience issue is a missed professional opportunity and, in more serious cases, an ethical failure.','bad')">Ignore it — it\'s not your system and not your responsibility to monitor it</div>
+        <div class="dil-opt" onclick="doD(5,'c',this,'⚠️ Waiting for your next check-in means the issue continues affecting users in the meantime. If you have a way to notify the right team directly — even a quick message — that\'s better than holding the information until a scheduled meeting. The right urgency matches the severity; this isn\'t an emergency, but it warrants a timely note rather than a week-long wait.','warn')">Mention it to your manager at your next check-in and let them decide whether to escalate</div>
+      </div>
+      <div class="dil-fb" id="d5fb"></div>
+    </div>
+  </div>
+
+  <!-- Dilemma 6 -->
+  <div class="section fade-in">
+    <div class="dilemma">
+      <div class="dil-label">🎮 Ethical Dilemma</div>
+      <div class="dil-number">Scenario 6 of 6</div>
+      <div class="dil-scenario">Your team is considering deploying an AI feature in a healthcare context. The AI performs well on average but you've read that similar tools often have higher error rates for certain patient populations. You don't have demographic data to test this yet.</div>
+      <div class="dil-context">The feature would help triage patient inquiries. Leadership is excited and wants to move quickly. You raise the possibility of demographic accuracy disparities, but the team's position is: "We don't have evidence it's biased — let's launch and monitor." You're junior on this team.</div>
+      <div class="dil-tension">
+        <div class="dil-tension-label">⚖️ The tension</div>
+        The precautionary principle vs. organizational pressure to move fast. The absence of evidence of bias is not the same as evidence of absence of bias — especially in a high-stakes healthcare context.
+      </div>
+      <div class="dil-opts" id="d6opts">
+        <div class="dil-opt" onclick="doD(6,'a',this,'✅ This is the right call. You\'ve raised the concern. The next step isn\'t to drop it — it\'s to make the argument more concretely and escalate it to someone with the authority to delay the launch pending proper testing. In a healthcare context, "launch and monitor" means real patients are affected by any bias before it\'s detected. The professional and ethical standard is to test before deployment, not after. Requesting demographic test data before launch is a reasonable, specific ask that addresses the concern without blocking the project indefinitely.','good')">Document the concern formally and escalate to a senior leader or the medical ethics team, asking that demographic testing be completed before launch</div>
+        <div class="dil-opt" onclick="doD(6,'b',this,'❌ "Launch and monitor" in healthcare means some patients will be harmed before the bias is detected — if it\'s detected at all. "No evidence of bias" is not the same as "tested for bias and found none." In a high-stakes domain, the absence of exculpatory evidence is not sufficient justification for deployment. Your instinct to push back is correct; the professional move is to escalate it, not to accept the team\'s position that evidence of bias must precede precaution.','bad')">Accept the team\'s position — without evidence of bias, there\'s no basis to delay the launch</div>
+        <div class="dil-opt" onclick="doD(6,'c',this,'⚠️ Resigning is rarely the right first response to an ethical concern — especially before you\'ve exhausted internal escalation paths. You raised the concern once; that\'s not the same as having escalated it formally to someone with authority over the launch decision. The right sequence is: formal documentation, escalation to someone senior, and if all that fails and the harm is serious enough, then more extreme options are on the table.','warn')">You\'ve raised it once and been overruled — at this point, consider whether you can stay on a project with practices you disagree with</div>
+      </div>
+      <div class="dil-fb" id="d6fb"></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>The Framework Behind Every Scenario</h2>
+    <p>Every dilemma above can be analyzed using the same four questions. Memorize these — they're the framework for ethical judgment in AI-assisted work:</p>
+
+    <div class="framework">
+      <div class="fw-label">🔍 The Four-Question Ethical Framework</div>
+      <div class="fw-title">Ask these before every difficult call</div>
+      <div class="fw-list">
+        <div class="fw-item"><div class="fw-q">1</div><div class="fw-text"><strong>Who could be harmed, and how?</strong> Identify the people who could experience negative consequences from this decision — not just your organization, but the users, patients, or community members affected by the AI's outputs.</div></div>
+        <div class="fw-item"><div class="fw-q">2</div><div class="fw-text"><strong>Am I the right person to handle this, or does it need more authority or expertise?</strong> Know your scope. Some concerns need to go up. Some need a specialist. Trying to handle something alone when it requires escalation is itself an ethical failure.</div></div>
+        <div class="fw-item"><div class="fw-q">3</div><div class="fw-text"><strong>Would I be comfortable if this decision were fully transparent — to my manager, to the affected users, to a regulator?</strong> The "transparency test" surfaces the gap between what feels expedient and what's professionally defensible.</div></div>
+        <div class="fw-item"><div class="fw-q">4</div><div class="fw-text"><strong>What's the cost of being wrong in each direction?</strong> Weigh the cost of a false alarm (unnecessary delay, a difficult conversation) against the cost of missing a real problem (harm to people, legal exposure, professional consequence). In high-stakes domains, asymmetry matters: the cost of missing is usually far higher than the cost of checking.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Ethical dilemmas in AI-assisted work rarely announce themselves as ethical dilemmas. They look like deadline pressure, scope questions, manager disagreements, and inconvenient findings. The skill is recognizing when a routine-looking situation has ethical weight and responding to that weight, not just the surface pressure.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Silence is a choice with consequences. In every scenario above, saying nothing or going along without comment was an available option — and in every case, it was the professionally and ethically weaker choice. Raising concerns, even when they're inconvenient, is part of the job.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The four-question framework helps in every situation: Who could be harmed? Am I the right person to handle this? Would I be comfortable if this were fully transparent? What's the cost of being wrong in each direction? These questions don't always produce obvious answers — but they reliably produce better ones.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Being junior doesn't remove ethical responsibility. You have knowledge, access, and observations that others don't. Your professional obligation is to surface what you know through the right channels — not to defer indefinitely because you're not the most senior person in the room.</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+function doD(n,opt,btn,msg,type){
+  const opts=document.getElementById('d'+n+'opts');
+  if(opts.querySelector('.best,.risky,.wrong'))return;
+  btn.classList.add(type==='good'?'best':type==='warn'?'risky':'wrong');
+  const fb=document.getElementById('d'+n+'fb');
+  fb.className='dil-fb show '+type;
+  fb.textContent=msg;
+}
+</script>
+</body>
+</html>

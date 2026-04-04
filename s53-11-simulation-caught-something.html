@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulation: You Caught Something the AI Missed — Now What?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+
+/* Step-by-step simulation */
+.sim-container{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:20px 0;}
+.sim-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.sim-step-indicator{display:flex;gap:8px;margin-bottom:20px;align-items:center;flex-wrap:wrap;}
+.ss-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid var(--purple-mid);background:var(--white);color:var(--gray-muted);transition:all .3s;}
+.ss-dot.active{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.ss-dot.done{background:var(--green);border-color:var(--green);color:var(--white);}
+.sim-scene{display:none;}
+.sim-scene.active{display:block;}
+.sim-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:8px;line-height:1.3;}
+.sim-situation{font-size:14px;color:var(--gray-muted);line-height:1.7;margin-bottom:16px;}
+.sim-doc{background:var(--white);border:1.5px solid var(--purple-mid);border-radius:12px;padding:16px 18px;margin:12px 0;font-size:14px;line-height:1.7;color:var(--gray-text);}
+.sim-doc-label{font-size:11px;font-weight:700;color:var(--gray-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.sim-question{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);margin:14px 0;}
+.sim-opts{display:flex;flex-direction:column;gap:10px;}
+.sim-opt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:13px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.sim-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.sim-opt.best{background:var(--green-pale);border-color:var(--green);pointer-events:none;}
+.sim-opt.risky{background:var(--orange-pale);border-color:var(--orange);pointer-events:none;}
+.sim-opt.wrong{background:var(--red-pale);border-color:var(--red);pointer-events:none;}
+.sim-fb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:10px;display:none;}
+.sim-fb.show{display:block;}
+.sim-fb.good{background:var(--green-pale);color:var(--green);}
+.sim-fb.warn{background:var(--orange-pale);color:var(--orange);}
+.sim-fb.bad{background:var(--red-pale);color:var(--red);}
+.sim-nav{display:flex;gap:10px;margin-top:14px;}
+.sim-btn{background:var(--purple);color:var(--white);border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:background .2s;}
+.sim-btn:hover{background:var(--purple-dark);}
+.sim-btn:disabled{opacity:.4;cursor:not-allowed;}
+.sim-complete{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:18px;padding:28px;color:var(--white);text-align:center;display:none;margin-top:14px;}
+.sc-icon{font-size:48px;margin-bottom:12px;}
+.sc-title{font-family:"Fraunces",serif;font-size:24px;font-weight:900;margin-bottom:8px;}
+.sc-text{font-size:15px;color:rgba(255,255,255,.85);line-height:1.6;}
+
+/* Summary */
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.3 — Professional Responsibility</div>
+  <h1>Simulation: You Caught Something the AI Missed — Now What?</h1>
+  <p class="hero-sub">You're a junior data analyst on a team that's about to deploy an AI-assisted report to a major client. During your final review, you find something that doesn't look right. Walk through every decision, from discovery to resolution.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+  <div class="section fade-in">
+    <p>This simulation follows a single scenario through six consecutive decision points. Each choice shapes what comes next. Read carefully — the decisions build on each other, and the goal is to navigate from discovery to resolution as professionally as possible.</p>
+    <p><strong>Your role:</strong> Junior data analyst, two months into your first tech job. Your team uses an AI tool to generate market analysis reports for enterprise clients. You've been asked to do a final quality check before tomorrow's client presentation.</p>
+
+    <div class="sim-container">
+      <div class="sim-label">🎮 Walkthrough Simulation — 6 Decision Points</div>
+      <div class="sim-step-indicator">
+        <div class="ss-dot active" id="d1">1</div>
+        <div class="ss-dot" id="d2">2</div>
+        <div class="ss-dot" id="d3">3</div>
+        <div class="ss-dot" id="d4">4</div>
+        <div class="ss-dot" id="d5">5</div>
+        <div class="ss-dot" id="d6">6</div>
+        <span style="font-size:12px;color:var(--gray-muted);margin-left:4px;">Step <span id="cur-step">1</span> of 6</span>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="sim-scene active" id="step1">
+        <div class="sim-title">You find something odd in the report</div>
+        <div class="sim-situation">During your review, you notice the AI generated a statistic: "Market penetration in the healthcare sector reached 73% in Q3 2024, a 19% increase from Q2." You try to find a source for this number. You can't. You're not certain it's wrong — but you can't verify it, and the client is a major healthcare company that will make decisions based on this data.</div>
+        <div class="sim-question">What do you do?</div>
+        <div class="sim-opts" id="s1opts">
+          <div class="sim-opt" onclick="pickS(1,'a',this,'✅ This is the right call. An unverifiable statistic that will inform a client\'s business decisions meets every threshold for stopping to investigate. You don\'t need to be certain it\'s wrong — you need to be uncertain enough that you can\'t professionally stand behind it. Stopping and searching first protects the client and you.','good')">Stop the review. Spend the next 20 minutes searching for any credible source for this statistic before deciding what to do next.</div>
+          <div class="sim-opt" onclick="pickS(1,'b',this,'❌ You can\'t verify it — which means you\'re passing along an unverified claim to a client who will use it to make decisions. "Probably AI-generated statistics are generally accurate" is not a standard that holds up professionally. Your job in this review is to catch exactly this kind of problem.','wrong')">Keep going — it\'s a specific-looking number, so it\'s probably based on real data. Complete the review and flag it only if you find something else suspicious.</div>
+          <div class="sim-opt" onclick="pickS(1,'c',this,'⚠️ Adding a qualifier doesn\'t fix the underlying problem — it just softens a potentially false statistic rather than investigating whether it\'s real. The client may still cite "approximately 73%" in their internal planning. The professional move is to verify first, then decide.','warn')">Add "approximately" before the number and keep reviewing — that makes it less definitive without stopping the process.</div>
+        </div>
+        <div class="sim-fb" id="s1fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="s1next" onclick="nextStep(2)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="sim-scene" id="step2">
+        <div class="sim-title">You've searched — and found nothing</div>
+        <div class="sim-situation">You spent 20 minutes searching. You checked three industry databases, two government health statistics sites, and the AI tool's output history. The 73% figure appears nowhere. It's either from a source you don't have access to — or the AI generated it. You still have 45 minutes before the report needs to be sent for final formatting.</div>
+        <div class="sim-question">What do you do now?</div>
+        <div class="sim-opts" id="s2opts">
+          <div class="sim-opt" onclick="pickS(2,'a',this,'✅ Correct. You\'ve done the responsible investigation — you searched, you found nothing, and now you need a decision from someone with more authority. Your manager has more context about the client relationship, may know additional sources, and is the right person to decide whether to delay the report or submit with a correction. This is professional escalation at the right level.','good')">Tell your manager immediately. Explain what you found, what you searched, and that you couldn\'t verify the statistic. Ask how they want to proceed with 45 minutes to deadline.</div>
+          <div class="sim-opt" onclick="pickS(2,'b',this,'❌ Removing it without telling anyone means your manager doesn\'t know there was an AI accuracy problem in the report. They can\'t learn from it, can\'t check whether it appears elsewhere, and can\'t make an informed decision about how to handle the gap. Independent action here is too narrow — this needs communication.','wrong')">Remove the statistic yourself and replace the section with language like "market data pending" — that keeps the report moving without the unverified figure.</div>
+          <div class="sim-opt" onclick="pickS(2,'c',this,'⚠️ You found no source in 20 minutes of searching. Hoping you find one in the next 45 minutes while the formatting clock runs down is a risky bet. And if you don\'t find one, you\'ll have less time to raise the concern and explore options. Your manager needs to know now, not after another search.','warn')">Keep searching for another 30 minutes before deciding — you might find the source with more time.</div>
+        </div>
+        <div class="sim-fb" id="s2fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="s2next" onclick="nextStep(3)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="sim-scene" id="step3">
+        <div class="sim-title">You told your manager. They're annoyed — and asking you to just send it.</div>
+        <div class="sim-situation">Your manager's response: "We've used this AI tool for months, it's never been wrong before. The client is expecting this tomorrow. Just leave the stat in — if they ask, we'll look it up then." You understand the deadline pressure. You also know the stat can't be verified.</div>
+        <div class="sim-question">What do you do?</div>
+        <div class="sim-opts" id="s3opts">
+          <div class="sim-opt" onclick="pickS(3,'a',this,'❌ Your manager has authority, but that authority doesn\'t extend to overriding your professional judgment about submitting an unverifiable claim to a client. Following a directive you believe is professionally wrong doesn\'t transfer your responsibility — it shares it. "My manager told me to" is not a full defense.','wrong')">Your manager said to leave it in, so you leave it in. They have more experience and authority than you, so defer to their judgment.</div>
+          <div class="sim-opt" onclick="pickS(3,'b',this,'✅ This is the right move. You\'re not refusing to send the report — you\'re proposing a solution that addresses the actual problem: a claim that can\'t be verified. Removing the stat or flagging it as unconfirmed doesn\'t delay the report; it just makes the report accurate. This is a professional counter-proposal, not insubordination.','good')">Respectfully push back: "I hear you on the deadline. Could we remove the statistic or flag it as unconfirmed? That lets us send on time without a claim we can\'t stand behind if the client asks." Then offer to make the edit yourself.</div>
+          <div class="sim-opt" onclick="pickS(3,'c',this,'⚠️ Sending without telling the client creates a situation where they may act on a potentially false statistic. If the number turns out to be hallucinated and the client cited it in their planning, the explanation that it was "AI-generated and unverified" will not go well. Transparency now is uncomfortable; discovering this after the fact is worse.','warn')">Send the report but add a footnote: "Some statistics in this report are AI-generated and may require independent verification." That gives the client fair warning.</div>
+        </div>
+        <div class="sim-fb" id="s3fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="s3next" onclick="nextStep(4)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="sim-scene" id="step4">
+        <div class="sim-title">Your manager accepts the counter-proposal. You remove the stat. Report goes out.</div>
+        <div class="sim-situation">The report was sent with the statistic removed. Your manager says "good catch" and moves on. Three days later, in the client debrief, the client asks why the healthcare penetration data was missing from the report — they were specifically looking for that benchmark. Your manager turns to you.</div>
+        <div class="sim-question">How do you explain what happened?</div>
+        <div class="sim-opts" id="s4opts">
+          <div class="sim-opt" onclick="pickS(4,'a',this,'✅ Honest, direct, and complete. You describe what happened: the AI generated a figure, you couldn\'t verify it, and rather than submit an unverifiable claim, you removed it. You also offer a path forward. This is professional communication — it explains your reasoning, demonstrates quality control, and gives the client something actionable.','good')">Explain clearly: "The AI tool generated a market penetration figure that we couldn\'t verify against any source within our timeline, so we removed it rather than include an unverified claim. We can research the right source and send you a verified figure by [specific date]."</div>
+          <div class="sim-opt" onclick="pickS(4,'b',this,'❌ The client will notice the evasion. And if they ask why specifically, you\'ll be in a worse position. Honest professional communication now — explaining a quality control decision you\'re proud of — is much better than being caught in vagueness.','wrong')">Vaguely explain that the data needed additional verification and you\'ll follow up. Keep it brief to avoid getting into the details.</div>
+          <div class="sim-opt" onclick="pickS(4,'c',this,'❌ This misrepresents what happened and hides the AI involvement. The client has a right to know that AI-generated content is part of the workflow — especially if it means they need to apply additional scrutiny. Framing it as "couldn\'t find the right source in time" is both misleading and a missed opportunity to demonstrate your quality control process.','wrong')">Say you couldn\'t find the right data source in time and will send it separately. Don\'t mention the AI tool — that might make them question the whole report.</div>
+        </div>
+        <div class="sim-fb" id="s4fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="s4next" onclick="nextStep(5)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="sim-scene" id="step5">
+        <div class="sim-title">The client is satisfied. Back at the office, you're thinking about the AI tool.</div>
+        <div class="sim-situation">You resolved this specific problem — but the AI tool is still being used for client reports. You don't know if this is a one-off hallucination or a pattern. You're junior. Nobody has asked you to evaluate the tool.</div>
+        <div class="sim-question">What's the right professional move here?</div>
+        <div class="sim-opts" id="s5opts">
+          <div class="sim-opt" onclick="pickS(5,'a',this,'✅ This is exactly the kind of institutional knowledge that prevents future problems. You saw a potential failure mode. Documenting it — even briefly — means the team doesn\'t start from zero if it happens again. And raising it with your manager in a low-pressure context (not in a crisis) is the right way to start a conversation about whether this is a pattern.','good')">Document what happened in a brief internal note. Mention it to your manager in your next 1:1 as something worth monitoring: "That stat issue last week made me wonder if we should add a verification step for AI-generated statistics before they go to clients."</div>
+          <div class="sim-opt" onclick="pickS(5,'b',this,'⚠️ "It worked out" is true about this one case — but it doesn\'t tell you whether there are unverified statistics in previous reports, or whether the pattern will recur. A one-case resolution without process learning is a missed opportunity.','warn')">Let it go — you caught it this time, the client is satisfied, and raising it again will make you look like you\'re pushing an agenda.</div>
+          <div class="sim-opt" onclick="pickS(5,'c',this,'⚠️ Requesting an immediate full audit is a large response to a single case. The right next step is proportional: document it, mention it in a 1:1, and let your manager decide whether a more formal review is warranted. Jumping to a full audit without a chain of command conversation can feel like you\'re going over your manager\'s head prematurely.','warn')">Request a formal audit of all previous reports that used the AI tool — this might be a systemic problem.</div>
+        </div>
+        <div class="sim-fb" id="s5fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="s5next" onclick="nextStep(6)" disabled>Next →</button></div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="sim-scene" id="step6">
+        <div class="sim-title">Your manager responds to your 1:1 note. They ask you to write up a one-page process recommendation.</div>
+        <div class="sim-situation">Your manager was receptive. They want you to write a brief internal recommendation for how the team should handle AI-generated statistics in client reports going forward. This is your chance to turn a single incident into a team-level improvement.</div>
+        <div class="sim-question">What does a strong one-page process recommendation include?</div>
+        <div class="sim-opts" id="s6opts">
+          <div class="sim-opt" onclick="pickS(6,'a',this,'✅ This covers all four dimensions of a useful process recommendation: context (what happened and why it matters), the specific practice change (verification step), how it fits into existing workflow (who does it and when), and what gets documented (creating the paper trail). It\'s proportional — it doesn\'t over-engineer the solution — and it directly addresses the failure mode you identified.','good')">Brief description of the incident and why it matters, a specific verification step (all statistics from AI tools must be sourced before client submission), a clear workflow integration (final reviewer checks AI-sourced data against linked external source), and a documentation requirement (note verified sources in the report file).</div>
+          <div class="sim-opt" onclick="pickS(6,'b',this,'❌ Recommending banning the tool is disproportionate to a single incident and unlikely to be adopted. It also doesn\'t address the actual risk (unverified statistics) — it just removes the tool that surfaces the risk. The goal is a process improvement, not a tool ban.','wrong')">A recommendation to ban the AI tool from client-facing work until its accuracy can be independently validated.</div>
+          <div class="sim-opt" onclick="pickS(6,'c',this,'⚠️ A disclosure policy is one valid component, but it doesn\'t prevent the underlying problem — unverified claims reaching clients. Disclosure says "we use AI"; verification ensures "our AI outputs were checked." A strong recommendation addresses the quality control gap, not just the transparency gap.','warn')">A disclosure policy requiring all reports to note when AI was used in research, so clients understand the provenance of the data.</div>
+        </div>
+        <div class="sim-fb" id="s6fb"></div>
+        <div class="sim-nav"><button class="sim-btn" id="s6next" onclick="showComplete()" disabled>Finish ✓</button></div>
+      </div>
+
+      <div class="sim-complete" id="sim-complete">
+        <div class="sc-icon">🎉</div>
+        <div class="sc-title">Simulation Complete</div>
+        <div class="sc-text">You navigated from discovery through escalation, client communication, and process improvement — the full professional arc of catching something the AI missed. The key at every step: act on what you know, communicate clearly, and turn individual incidents into better systems.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 What the Simulation Teaches</div>
+    <h2>The Pattern Across All Six Steps</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Every step had a "keep going and hope" option. That option was available at every decision point — and wrong at every one. Professional responsibility means stopping when something is wrong, not assuming it will be fine.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Escalating to your manager is not the end of your responsibility. When your manager pushed back, the right response was a professional counter-proposal — not compliance with a directive you believed was wrong, and not going over their head immediately.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Individual incident → team-level process improvement is the full professional arc. Catching the problem was step one. Communicating about it, resolving it honestly with the client, and turning it into a better process — that's the complete response.</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+
+let answered={};
+function pickS(n,opt,btn,msg,type){
+  if(answered[n])return;answered[n]=true;
+  const opts=document.getElementById('s'+n+'opts');
+  opts.querySelectorAll('.sim-opt').forEach(o=>o.style.pointerEvents='none');
+  btn.classList.add(type==='good'?'best':type==='warn'?'risky':'wrong');
+  const fb=document.getElementById('s'+n+'fb');
+  fb.className='sim-fb show '+(type==='good'?'good':type==='warn'?'warn':'bad');
+  fb.textContent=msg;
+  document.getElementById('s'+n+'next').disabled=false;
+  document.getElementById('d'+n).classList.add('done');
+}
+function nextStep(n){
+  document.getElementById('step'+(n-1)).classList.remove('active');
+  document.getElementById('step'+n).classList.add('active');
+  document.getElementById('d'+n).classList.add('active');
+  document.getElementById('cur-step').textContent=n;
+}
+function showComplete(){
+  document.getElementById('step6').classList.remove('active');
+  document.getElementById('sim-complete').style.display='block';
+  document.getElementById('d6').classList.add('done');
+}
+</script>
+</body>
+</html>

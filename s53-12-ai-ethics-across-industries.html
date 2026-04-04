@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Ethics Across Industries: How the Rules Change When You Move From Tech to Finance to Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7B2FBE;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;--purple-dark:#4A1580;--white:#FFFFFF;--gray-soft:#F8F7FA;--gray-text:#3D3547;--gray-muted:#8B7FA0;--green:#276749;--green-pale:#F0FFF4;--orange:#D97706;--orange-pale:#FFFBEB;--red:#DC2626;--red-pale:#FFF1F1;--blue:#1D4ED8;--blue-pale:#EFF6FF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--gray-text);overflow-x:hidden;}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);width:0%;z-index:100;}
+.hero{padding:80px 40px 0;max-width:860px;margin:0 auto;}
+.lesson-tag{display:inline-flex;align-items:center;gap:8px;background:var(--purple-pale);color:var(--purple);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:32px;border:1.5px solid var(--purple-mid);}
+.lesson-tag::before{content:"";width:6px;height:6px;background:var(--purple);border-radius:50%;}
+h1{font-family:"Fraunces",serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.05;color:var(--purple-dark);margin-bottom:24px;letter-spacing:-.02em;}
+.hero-sub{font-size:18px;line-height:1.7;color:var(--gray-muted);max-width:640px;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:2px;margin:32px 0;}
+.content{max-width:860px;margin:0 auto;padding:0 40px 60px;}
+.section{padding:32px 0 0;}
+h2{font-family:"Fraunces",serif;font-size:28px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;line-height:1.2;}
+p{font-size:17px;line-height:1.8;color:var(--gray-text);margin-bottom:16px;}
+mark{background:var(--purple-mid);color:var(--purple-dark);border-radius:3px;padding:1px 4px;font-weight:500;}
+.pull-quote{margin:24px 0;padding:28px 36px;background:var(--purple-pale);border-left:5px solid var(--purple);border-radius:0 16px 16px 0;position:relative;overflow:hidden;}
+.pull-quote::before{content:"\201C";position:absolute;top:-10px;left:20px;font-family:"Fraunces",serif;font-size:100px;color:var(--purple-mid);line-height:1;pointer-events:none;}
+.pull-quote p{font-family:"Fraunces",serif;font-size:20px;font-style:italic;font-weight:300;color:var(--purple-dark);margin:0;position:relative;z-index:1;line-height:1.55;}
+
+/* Industry cards with tabs */
+.ind-tabs{display:flex;gap:0;border-bottom:2px solid var(--purple-mid);overflow-x:auto;}
+.itab{flex:1;min-width:100px;padding:11px 8px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--gray-soft);color:var(--gray-muted);font-family:"DM Sans",sans-serif;transition:all .2s;text-align:center;border-bottom:3px solid transparent;margin-bottom:-2px;}
+.itab.active{background:var(--white);color:var(--purple-dark);border-bottom-color:var(--purple);}
+.ipanel{display:none;padding:20px 0 0;}
+.ipanel.active{display:block;}
+.industry-card{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:18px;padding:24px;}
+.ic-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.ic-icon{font-size:32px;}
+.ic-meta{}
+.ic-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--purple-dark);margin-bottom:2px;}
+.ic-subtitle{font-size:13px;color:var(--gray-muted);}
+.ic-section{margin-bottom:14px;}
+.ic-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:8px;}
+.ic-text{font-size:14px;line-height:1.7;color:var(--gray-text);}
+.ic-rules{display:flex;flex-direction:column;gap:7px;margin-top:8px;}
+.ic-rule{background:var(--white);border:1px solid var(--purple-mid);border-radius:8px;padding:9px 12px;font-size:13px;line-height:1.6;color:var(--gray-text);}
+.ic-rule::before{content:"→ ";color:var(--purple);font-weight:700;}
+.ic-danger{background:var(--red-pale);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.65;color:var(--gray-text);margin-top:10px;}
+.ic-danger-label{font-weight:700;color:var(--red);margin-bottom:4px;}
+
+/* Shared principles */
+.shared-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.sg-card{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:14px;padding:18px;}
+.sg-icon{font-size:20px;margin-bottom:6px;}
+.sg-title{font-weight:700;color:var(--purple-dark);font-size:13px;margin-bottom:5px;}
+.sg-text{font-size:12px;line-height:1.65;color:var(--gray-text);}
+
+/* Quiz */
+.quiz{background:var(--gray-soft);border:1.5px solid var(--purple-mid);border-radius:24px;padding:32px;margin:24px 0;}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:8px;}
+.quiz-q{font-family:"Fraunces",serif;font-size:19px;color:var(--purple-dark);margin-bottom:20px;font-weight:700;line-height:1.35;}
+.qopts{display:flex;flex-direction:column;gap:10px;}
+.qopt{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:14px;line-height:1.65;transition:all .2s;text-align:left;font-family:"DM Sans",sans-serif;}
+.qopt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qopt.correct{background:var(--green-pale);border-color:var(--green);}
+.qopt.wrong{background:var(--red-pale);border-color:var(--red);}
+.qfb{font-size:14px;line-height:1.7;padding:14px 18px;border-radius:12px;margin-top:12px;display:none;}
+.qfb.show{display:block;}
+.qfb.cfb{background:var(--green-pale);color:var(--green);}
+.qfb.wfb{background:var(--red-pale);color:var(--red);}
+.summary{background:var(--purple-pale);border:1.5px solid var(--purple-mid);border-radius:24px;padding:36px;margin:40px 0;}
+.summary-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:12px;}
+.spoints{display:flex;flex-direction:column;gap:16px;margin-top:20px;}
+.spoint{display:flex;gap:14px;align-items:flex-start;}
+.sdot{width:26px;height:26px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sdot svg{width:12px;height:12px;}
+.spoint p{font-size:15px;line-height:1.7;color:var(--gray-text);margin:0;}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pb"></div>
+<div class="hero fade-in visible">
+  <div class="lesson-tag">Lesson 5.3 — Professional Responsibility</div>
+  <h1>AI Ethics Across Industries: How the Rules Change When You Move From Tech to Finance to Healthcare</h1>
+  <p class="hero-sub">The principles of responsible AI use — verify, document, disclose, escalate — apply everywhere. But what those principles require in practice varies enormously depending on the regulatory environment and the stakes of being wrong.</p>
+  <div class="hero-divider"></div>
+</div>
+<div class="content">
+
+  <div class="section fade-in">
+    <h2>Same Principles. Different Consequences.</h2>
+    <p>Imagine the same error in three different industries. An AI tool generates an inaccurate statistic. A professional includes it in a deliverable without verifying it. The client acts on it.</p>
+    <p>In a tech product company: the error may get corrected quickly, the client relationship may absorb the correction, and the professional has a learning moment. In a financial services firm: the client may have made a trading decision on a false number — creating legal liability and regulatory scrutiny. In a healthcare setting: the statistic may have informed a clinical protocol — affecting patient care in ways that can't be easily undone.</p>
+    <p><mark>The ethical principles are identical. The consequence of failing them is not.</mark> Understanding how the stakes and regulations shift across industries is essential preparation for a tech career that may take you into any of these environments.</p>
+    <div class="pull-quote">
+      <p>Every industry you work in will have its own definition of what "reasonable care" looks like for AI use. Learning that definition before you need it is the difference between being a professional in that industry and being a liability to it.</p>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>Four Industries — Explore Each One</h2>
+
+    <div class="ind-tabs">
+      <button class="itab active" onclick="showInd('i1',this)">💻 Tech Products</button>
+      <button class="itab" onclick="showInd('i2',this)">💰 Finance</button>
+      <button class="itab" onclick="showInd('i3',this)">🏥 Healthcare</button>
+      <button class="itab" onclick="showInd('i4',this)">⚖️ Legal</button>
+    </div>
+
+    <div id="i1" class="ipanel active">
+      <div class="industry-card">
+        <div class="ic-header"><div class="ic-icon">💻</div><div class="ic-meta"><div class="ic-title">Tech Product Companies</div><div class="ic-subtitle">Software, SaaS, apps, developer tools, platforms</div></div></div>
+        <div class="ic-section">
+          <div class="ic-section-label">The Environment</div>
+          <div class="ic-text">Tech product companies often have the most flexibility with AI tools — there are fewer specific regulatory requirements than in healthcare or finance, and iteration is expected. AI is frequently embedded directly into product development, content creation, and internal operations. The culture often moves fast and tolerates some level of error as part of the process.</div>
+        </div>
+        <div class="ic-section">
+          <div class="ic-section-label">Key Ethical Rules That Apply</div>
+          <div class="ic-rules">
+            <div class="ic-rule">If AI makes decisions affecting users (ranking, recommendation, moderation), those systems must be testable for bias and explainable to users</div>
+            <div class="ic-rule">Data used to train AI must comply with user privacy agreements and applicable law (CCPA, GDPR)</div>
+            <div class="ic-rule">AI-generated content in marketing or product claims must be accurate — consumer protection law applies</div>
+            <div class="ic-rule">Security vulnerabilities in AI-generated code create direct liability — especially for user data exposure</div>
+          </div>
+        </div>
+        <div class="ic-danger">
+          <div class="ic-danger-label">⚠️ The most common AI failure in this sector</div>
+          Moving fast without bias testing: AI features that work well for the majority user but disadvantage edge case users — often users who are already underrepresented in the training data. Companies that don't build bias evaluation into their development process discover these gaps after public exposure, not during internal review.
+        </div>
+      </div>
+    </div>
+
+    <div id="i2" class="ipanel">
+      <div class="industry-card">
+        <div class="ic-header"><div class="ic-icon">💰</div><div class="ic-meta"><div class="ic-title">Financial Services</div><div class="ic-subtitle">Banking, lending, insurance, investment, payments</div></div></div>
+        <div class="ic-section">
+          <div class="ic-section-label">The Environment</div>
+          <div class="ic-text">Financial services is one of the most heavily regulated sectors for AI use. Multiple federal laws govern how AI can be used in lending, investment advice, and fraud detection. The stakes are high — errors can cost clients significant money, and discriminatory outcomes are legally actionable. Regulators including the CFPB, OCC, and SEC are actively developing AI-specific guidance.</div>
+        </div>
+        <div class="ic-section">
+          <div class="ic-section-label">Key Ethical Rules That Apply</div>
+          <div class="ic-rules">
+            <div class="ic-rule">Equal Credit Opportunity Act (ECOA): AI credit decisions cannot produce discriminatory outcomes — even unintentionally. Disparate impact is a legal violation regardless of intent</div>
+            <div class="ic-rule">Fair Housing Act: AI used in mortgage lending or property insurance must be audited for demographic disparities</div>
+            <div class="ic-rule">Explainability requirements: Many lending decisions require that applicants can receive an explanation of adverse action — a "black box" AI that can't explain itself is a compliance problem</div>
+            <div class="ic-rule">Model risk management: Financial regulators expect documentation of how AI models were developed, validated, and monitored — informal AI use without documentation violates these expectations</div>
+          </div>
+        </div>
+        <div class="ic-danger">
+          <div class="ic-danger-label">⚠️ The most common AI failure in this sector</div>
+          Unexplainable AI in lending decisions: Using AI models that optimize for prediction accuracy but can't explain individual decisions. When regulators or applicants ask "why was my application denied?", an answer of "the model scored you below threshold" is insufficient. Explainability is not optional in regulated financial decisions.
+        </div>
+      </div>
+    </div>
+
+    <div id="i3" class="ipanel">
+      <div class="industry-card">
+        <div class="ic-header"><div class="ic-icon">🏥</div><div class="ic-meta"><div class="ic-title">Healthcare</div><div class="ic-subtitle">Hospitals, clinical software, diagnostics, health IT</div></div></div>
+        <div class="ic-section">
+          <div class="ic-section-label">The Environment</div>
+          <div class="ic-text">Healthcare is the highest-stakes environment for AI errors — wrong outputs can directly harm patients. HIPAA governs all patient data. The FDA regulates AI as a medical device in clinical decision support contexts. Clinical AI is expected to be validated against real patient outcomes, not just general accuracy metrics. The IBM Watson case is the canonical example of what happens when these standards aren't met.</div>
+        </div>
+        <div class="ic-section">
+          <div class="ic-section-label">Key Ethical Rules That Apply</div>
+          <div class="ic-rules">
+            <div class="ic-rule">HIPAA: Any AI system that handles protected health information must meet strict security and privacy standards — and any vendor must sign a Business Associate Agreement</div>
+            <div class="ic-rule">FDA oversight: AI that qualifies as clinical decision support software may require FDA clearance — building it without checking this is a significant legal risk</div>
+            <div class="ic-rule">Clinical validation: AI recommendations that affect patient care must be validated against real patient outcomes — not just tested on general accuracy</div>
+            <div class="ic-rule">Bias testing by population: AI clinical tools must demonstrate performance across demographic groups — lower accuracy for certain populations is not an acceptable launch baseline</div>
+          </div>
+        </div>
+        <div class="ic-danger">
+          <div class="ic-danger-label">⚠️ The most common AI failure in this sector</div>
+          Demographic accuracy gaps going untested: Clinical AI validated primarily on majority-demographic patient data and deployed to diverse patient populations. The resulting accuracy gaps — smaller error rates for some groups, larger for others — only surface after the tool is in clinical use. The fix requires the same thing that would have prevented it: disaggregated testing across patient demographics before deployment.
+        </div>
+      </div>
+    </div>
+
+    <div id="i4" class="ipanel">
+      <div class="industry-card">
+        <div class="ic-header"><div class="ic-icon">⚖️</div><div class="ic-meta"><div class="ic-title">Legal Services</div><div class="ic-subtitle">Law firms, legal tech, courts, compliance</div></div></div>
+        <div class="ic-section">
+          <div class="ic-section-label">The Environment</div>
+          <div class="ic-text">Legal professionals are subject to professional conduct rules that impose verification duties independent of how work was produced. Bar rules in most US jurisdictions require competent representation — which now includes understanding AI tools well enough to identify their limitations. The fake citation cases have prompted courts to begin requiring disclosure of AI use and explicit certification that citations have been verified. Legal tech companies building AI tools for legal use face their own set of regulatory and liability considerations.</div>
+        </div>
+        <div class="ic-section">
+          <div class="ic-section-label">Key Ethical Rules That Apply</div>
+          <div class="ic-rules">
+            <div class="ic-rule">Duty of competence: Attorneys must understand the tools they use well enough to evaluate their outputs — using AI without being able to verify it may itself be incompetent practice</div>
+            <div class="ic-rule">Duty of candor: Submitting AI-generated content to a court without verification violates the duty of candor to the tribunal — and can result in sanctions</div>
+            <div class="ic-rule">Confidentiality: Client information pasted into AI tools may violate attorney-client privilege and professional confidentiality rules — tool choice matters as much as content</div>
+            <div class="ic-rule">Supervision: Partners and supervising attorneys are responsible for ensuring that associates' AI use meets professional standards — responsibility flows up as well as down</div>
+          </div>
+        </div>
+        <div class="ic-danger">
+          <div class="ic-danger-label">⚠️ The most common AI failure in this sector</div>
+          Unverified AI citations: AI legal research tools generate citations that look real but may not exist or may mischaracterize holdings. The professional responsibility to verify all citations before filing exists regardless of how the citation was generated. Every case that has produced attorney sanctions for AI-generated fake citations involved a failure at exactly this verification step.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <h2>What Stays Constant Across All Four</h2>
+    <p>The regulatory requirements differ. The specific laws differ. The magnitude of consequences differs. But these four principles apply in every industry:</p>
+    <div class="shared-grid">
+      <div class="sg-card"><div class="sg-icon">🔍</div><div class="sg-title">Verify before it matters</div><div class="sg-text">In every industry, the time to verify AI outputs is before they reach clients, patients, courts, or regulators — not after questions arise.</div></div>
+      <div class="sg-card"><div class="sg-icon">📝</div><div class="sg-title">Document your process</div><div class="sg-text">In every industry, a documented process is your evidence that professional standards were applied. The absence of documentation is the absence of that evidence.</div></div>
+      <div class="sg-card"><div class="sg-icon">🗣️</div><div class="sg-title">Disclose where required</div><div class="sg-text">Every industry has disclosure requirements — some formal (FDA, Bar rules), some emerging. Know your industry's current expectations before you need them.</div></div>
+      <div class="sg-card"><div class="sg-icon">🚨</div><div class="sg-title">Escalate early</div><div class="sg-text">In every industry, problems found early are cheaper to fix than problems found by regulators, courts, or journalists. The escalation principle doesn't change — the urgency does.</div></div>
+    </div>
+  </div>
+
+  <div class="section fade-in">
+    <div class="quiz">
+      <div class="quiz-label">🧠 Quick Check</div>
+      <div class="quiz-q">A software engineer moves from a consumer tech company to a healthcare IT startup building clinical decision support tools. What's the most important thing they should learn about their new environment's AI ethics requirements?</div>
+      <div class="qopts">
+        <button class="qopt" onclick="doQ(this,false)">Healthcare uses the same agile development principles, so the ethics approach should be similar</button>
+        <button class="qopt" onclick="doQ(this,true)">The FDA may classify their AI tool as a medical device subject to regulatory clearance, HIPAA governs all patient data handling, and clinical AI must be validated against real patient outcomes — with demographic disaggregation. The move-fast culture of consumer tech is actively inappropriate in a clinical setting where errors directly affect patient safety.</button>
+        <button class="qopt" onclick="doQ(this,false)">The main difference is that documentation requirements are stricter in healthcare</button>
+        <button class="qopt" onclick="doQ(this,false)">Healthcare AI ethics is primarily about data privacy — HIPAA compliance covers the main risks</button>
+      </div>
+      <div class="qfb" id="qfb1"></div>
+    </div>
+  </div>
+
+  <div class="summary fade-in">
+    <div class="summary-label">📌 Article Summary</div>
+    <h2>What to Remember</h2>
+    <div class="spoints">
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>The same AI ethics principles apply across every industry — verify, document, disclose, escalate. What changes is what each principle requires in practice, what regulations govern its application, and what the consequence of failure is.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>Healthcare and finance have the highest regulatory density and the most serious consequences for AI errors. Legal services impose professional conduct obligations that are independent of regulatory requirements. Tech product companies have the most flexibility — but also the greatest risk of moving fast past bias and accuracy problems that emerge at scale.</p></div>
+      <div class="spoint"><div class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p>When you change industries, change your default assumptions about what AI use requires. The culture and pace of your last job doesn't transfer automatically. The first question to ask in any new environment: what does responsible AI use mean here, specifically — and what happens when it fails?</p></div>
+    </div>
+  </div>
+</div>
+<script>
+window.addEventListener("scroll",()=>{const e=document.documentElement;document.getElementById("pb").style.width=((e.scrollTop/(e.scrollHeight-e.clientHeight))*100)+"%";});
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add("visible");}),{threshold:.1});
+document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+function showInd(id,btn){document.querySelectorAll(".itab").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".ipanel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");document.getElementById(id).classList.add("active");}
+function doQ(btn,correct){if(document.querySelector(".qopt.correct,.qopt.wrong"))return;btn.classList.add(correct?"correct":"wrong");const fb=document.getElementById("qfb1");if(correct){fb.className="qfb show cfb";fb.textContent="✅ Correct. The move from consumer tech to healthcare IT is one of the most significant context shifts in tech — and one of the most commonly underestimated. Clinical AI may be regulated as a medical device by the FDA, requiring a regulatory pathway before deployment. Patient data requires HIPAA compliance and vendor BAAs. Clinical performance must be validated against real patient outcomes and tested across demographic groups. And the iterative-testing-in-production culture that works in consumer software is actively dangerous when the test population is patients. Learning the specific regulatory environment of your new industry is step one — not something to figure out as problems arise.";}else{document.querySelectorAll(".qopt").forEach(o=>{if(o.textContent.includes("FDA may classify"))o.classList.add("correct");});fb.className="qfb show wfb";fb.textContent="❌ Not quite. Agile development is a process methodology, not an ethics framework — it doesn't carry ethical requirements between industries. HIPAA is necessary but not sufficient — FDA oversight, clinical validation standards, and demographic accuracy requirements all exist independently of HIPAA. And documentation, while important, is one component of a much broader set of differences between consumer tech and clinical AI development.";}
+}
+</script>
+</body>
+</html>
