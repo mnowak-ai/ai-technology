@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Ethics in Technology — Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #7B2FBE;
+    --brand-dark: #5a1f8e;
+    --brand-light: #a855f7;
+    --brand-pale: #f3e8ff;
+    --teal: #0d9488;
+    --teal-pale: #e0f2f1;
+    --red: #dc2626;
+    --red-pale: #fef2f2;
+    --amber: #d97706;
+    --amber-pale: #fffbeb;
+    --green: #16a34a;
+    --green-pale: #f0fdf4;
+    --text: #1a1023;
+    --text-muted: #64537a;
+    --border: #e5d9f7;
+    --bg: #faf7ff;
+    --white: #ffffff;
+    --card-shadow: 0 4px 24px rgba(123,47,190,0.10);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+  #hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #7B2FBE 100%);
+    color: white; padding: 60px 24px 52px; text-align: center; position: relative; overflow: hidden;
+  }
+  #hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M0 0h1v1H0zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1zM0 10h1v1H0zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1zM0 20h1v1H0zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1zM0 30h1v1H0zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1zm10 0h1v1h-1z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  #hero .pill { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; padding: 6px 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
+  #hero h1 { font-family: 'Fraunces', serif; font-size: clamp(28px, 5vw, 46px); font-weight: 700; line-height: 1.15; margin-bottom: 14px; }
+  #hero p { font-size: 16px; opacity: 0.85; max-width: 560px; margin: 0 auto 28px; line-height: 1.6; }
+  .progress-bar-wrap { max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.2); border-radius: 999px; height: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: white; border-radius: 999px; transition: width 0.5s ease; }
+  .progress-label { font-size: 13px; opacity: 0.75; margin-top: 8px; }
+
+  main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .screen { display: none; animation: fadeIn 0.4s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--border); padding: 32px; margin-bottom: 24px; box-shadow: var(--card-shadow); }
+
+  .scenario-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--brand-pale); color: var(--brand); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px; }
+  .scenario-badge .dot { width: 8px; height: 8px; background: var(--brand); border-radius: 50%; }
+  .difficulty-badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-left: 10px; }
+  .diff-easy   { background: var(--green-pale); color: var(--green); }
+  .diff-medium { background: var(--amber-pale); color: var(--amber); }
+  .diff-hard   { background: var(--red-pale);   color: var(--red);   }
+
+  .branch-banner { background: linear-gradient(135deg, #0f172a, #1e3a5f); color: white; border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 22px; font-size: 14px; line-height: 1.6; display: flex; gap: 12px; align-items: flex-start; }
+  .branch-banner .icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .branch-banner strong { display: block; font-size: 15px; margin-bottom: 3px; }
+
+  h2.scenario-title { font-family: 'Fraunces', serif; font-size: clamp(20px, 3vw, 26px); font-weight: 700; line-height: 1.25; margin-bottom: 8px; color: var(--text); }
+  .scene-text { font-size: 15px; line-height: 1.75; color: #2d2040; margin-bottom: 16px; }
+
+  .def-box { background: linear-gradient(135deg, var(--teal-pale), #e0f7f4); border-left: 4px solid var(--teal); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 20px; font-size: 14px; line-height: 1.65; color: #0f4038; }
+  .def-box strong { color: var(--teal); }
+
+  /* code-style callout for tech context */
+  .code-box { background: #0f172a; border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 16px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; color: #e2e8f0; border-left: 4px solid var(--brand-light); }
+  .code-box .comment { color: #64748b; }
+  .code-box .value { color: #a78bfa; }
+  .code-box .key { color: #38bdf8; }
+
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-btn { background: var(--white); border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 18px 22px; text-align: left; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: flex-start; gap: 14px; line-height: 1.55; }
+  .choice-btn:hover { border-color: var(--brand); background: var(--brand-pale); transform: translateX(3px); }
+  .choice-btn .letter { flex-shrink: 0; width: 30px; height: 30px; background: var(--brand-pale); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+
+  .consequence { display: none; animation: fadeIn 0.35s ease; }
+  .consequence.show { display: block; }
+  .consequence-box { border-radius: var(--radius-sm); padding: 22px 24px; margin-bottom: 20px; font-size: 15px; line-height: 1.7; }
+  .consequence-box.good { background: var(--green-pale); border: 2px solid #86efac; }
+  .consequence-box.okay { background: var(--amber-pale); border: 2px solid #fcd34d; }
+  .consequence-box.bad  { background: var(--red-pale);   border: 2px solid #fca5a5; }
+  .consequence-box .verdict { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .consequence-box.good .verdict { color: var(--green); }
+  .consequence-box.okay .verdict { color: var(--amber); }
+  .consequence-box.bad  .verdict { color: var(--red);   }
+
+  .lesson-callout { background: var(--brand-pale); border: 1.5px solid #c4b5fd; border-radius: var(--radius-sm); padding: 16px 20px; margin-top: 16px; font-size: 14px; line-height: 1.65; color: var(--brand-dark); }
+  .lesson-callout strong { color: var(--brand); }
+
+  .branch-preview { background: #0f172a; color: #e2e8f0; border-radius: var(--radius-sm); padding: 20px 22px; margin-top: 18px; font-size: 14px; line-height: 1.7; display: none; }
+  .branch-preview strong { color: #a78bfa; display: block; margin-bottom: 6px; font-size: 15px; }
+
+  .next-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--brand); color: white; border: none; border-radius: 999px; padding: 14px 28px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.15s; margin-top: 20px; }
+  .next-btn:hover { background: var(--brand-dark); transform: translateY(-1px); }
+
+  .score-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+  .score-chip { display: flex; align-items: center; gap: 6px; background: var(--white); border: 1.5px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+
+  .intro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 24px 0; }
+  .intro-tile { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 18px 16px; text-align: center; font-size: 13px; line-height: 1.55; color: var(--text-muted); }
+  .intro-tile .icon { font-size: 28px; margin-bottom: 8px; }
+  .intro-tile strong { display: block; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+
+  .start-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #1e3a5f, #7B2FBE); color: white; border: none; border-radius: 999px; padding: 16px 36px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(123,47,190,0.35); margin-top: 8px; }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(123,47,190,0.45); }
+
+  #results-screen .big-score { text-align: center; padding: 40px 24px; }
+  .score-ring { width: 130px; height: 130px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-family: 'Fraunces', serif; font-size: 42px; font-weight: 700; color: white; }
+  .score-ring.excellent  { background: linear-gradient(135deg, #16a34a, #15803d); }
+  .score-ring.good       { background: linear-gradient(135deg, #7B2FBE, #a855f7); }
+  .score-ring.okay       { background: linear-gradient(135deg, #d97706, #f59e0b); }
+  .score-ring.needs-work { background: linear-gradient(135deg, #dc2626, #f87171); }
+  .results-title    { font-family: 'Fraunces', serif; font-size: clamp(22px, 4vw, 32px); font-weight: 700; margin-bottom: 8px; }
+  .results-subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.6; }
+  .review-list { display: flex; flex-direction: column; gap: 14px; }
+  .review-item { display: flex; align-items: flex-start; gap: 14px; background: var(--white); border-radius: var(--radius-sm); border: 1.5px solid var(--border); padding: 16px 18px; font-size: 14px; line-height: 1.6; }
+  .review-item .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+  .branch-result-note { background: #0f172a; color: #e2e8f0; border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 24px; font-size: 14px; line-height: 1.7; display: none; }
+  .branch-result-note strong { color: #a78bfa; }
+
+  .restart-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--brand); border: 2px solid var(--brand); border-radius: 999px; padding: 13px 28px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; }
+  .restart-btn:hover { background: var(--brand-pale); }
+
+  @media (max-width: 600px) { .card { padding: 20px 16px; } main { padding: 24px 14px 60px; } }
+</style>
+</head>
+<body>
+
+<div id="hero">
+  <div class="pill">💻 AI Ethics Simulation</div>
+  <h1>You're the AI Ethics Advisor<br>at a Tech Company</h1>
+  <p>Work through real-world situations where you decide how AI tools should — and should not — be used in technology. Every choice has consequences. One will follow you.</p>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="heroProgress" style="width:0%"></div></div>
+  <div class="progress-label" id="progressLabel">0 of 6 scenarios complete</div>
+</div>
+
+<main>
+
+<!-- ══ INTRO ══ -->
+<div class="screen active" id="intro-screen">
+  <div class="card">
+    <h2 class="scenario-title">Welcome to the Simulation</h2>
+    <p class="scene-text">You've just joined Meridian Tech — a mid-sized software company that builds AI tools used by businesses, schools, and government agencies. Your title is AI Ethics Advisor. Your job is to catch problems before they become crises.</p>
+    <p class="scene-text">You'll face 6 real-world situations covering security, bias, and professional responsibility. Some are straightforward. Some are genuinely hard. <strong>A decision you make in Scenario 3 will change what happens in Scenario 6.</strong></p>
+    <div class="intro-grid">
+      <div class="intro-tile"><div class="icon">🔐</div><strong>Security Risks</strong>Spotting AI data and network threats</div>
+      <div class="intro-tile"><div class="icon">⚖️</div><strong>Bias & Fairness</strong>Recognizing unfair AI outputs</div>
+      <div class="intro-tile"><div class="icon">📋</div><strong>Professional Responsibility</strong>Reporting and acting ethically</div>
+      <div class="intro-tile"><div class="icon">🔀</div><strong>Branching Story</strong>Your choices shape what happens next</div>
+    </div>
+    <div class="def-box"><strong>📘 Key Term — AI Ethics:</strong> AI ethics means thinking carefully about whether using an AI tool is fair, safe, and responsible. It's not just about whether the AI works — it's about whether it works for everyone, without causing hidden harm.</div>
+    <button class="start-btn" onclick="goTo('s1')">Start the Simulation →</button>
+  </div>
+</div>
+
+<!-- ══ S1: Security — Easy ══ -->
+<div class="screen" id="s1">
+  <div class="score-row" id="scoreRow1"></div>
+  <div class="card">
+    <div><span class="scenario-badge"><span class="dot"></span>Scenario 1 of 6</span><span class="difficulty-badge diff-easy">⬤ Easier</span></div>
+    <h2 class="scenario-title">The AI That Remembers Everything</h2>
+    <div class="def-box"><strong>📘 Key Term — Data Privacy:</strong> Data privacy means people have the right to control who sees their personal information — like their name, passwords, location, or messages. When an AI tool stores or shares that information without permission, it becomes a security risk.</div>
+    <p class="scene-text">Meridian Tech has rolled out an AI assistant called <strong>HelperBot</strong> that employees use to answer questions, draft emails, and look up company files. It's connected to the company's internal network and can read any file it has been given access to.</p>
+    <p class="scene-text">A new employee named Jordan uses HelperBot to help write a proposal. While using it, Jordan notices the AI's response includes details from a confidential contract — one Jordan was never supposed to see. Jordan didn't ask for it. The AI just pulled it in because it was relevant.</p>
+    <p class="scene-text"><strong>What should Jordan do?</strong></p>
+    <div class="choices">
+      <button class="choice-btn" onclick="answer(1,'A')"><span class="letter">A</span>Use the information — it showed up in a company tool, so it must be fine to use.</button>
+      <button class="choice-btn" onclick="answer(1,'B')"><span class="letter">B</span>Stop using that information immediately, report the issue to IT and a supervisor, and don't share what was seen. The AI is exposing data it shouldn't have access to.</button>
+      <button class="choice-btn" onclick="answer(1,'C')"><span class="letter">C</span>Delete the AI's response and don't mention it — it was probably a glitch and no one needs to know.</button>
+    </div>
+    <div class="consequence" id="s1-result">
+      <div class="consequence-box" id="s1-box"><div class="verdict" id="s1-verdict"></div><div id="s1-text"></div></div>
+      <div class="lesson-callout" id="s1-lesson"></div>
+      <button class="next-btn" onclick="goTo('s2')">Next Scenario →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S2: Security — Medium ══ -->
+<div class="screen" id="s2">
+  <div class="score-row" id="scoreRow2"></div>
+  <div class="card">
+    <div><span class="scenario-badge"><span class="dot"></span>Scenario 2 of 6</span><span class="difficulty-badge diff-medium">⬤ Medium</span></div>
+    <h2 class="scenario-title">The AI That Opens the Door</h2>
+    <div class="def-box"><strong>📘 Key Term — Network Security:</strong> Network security means protecting a company's computers, servers, and data from being accessed by people who shouldn't have access. AI tools that connect to the internet or store data in the cloud can create new openings — called vulnerabilities — that hackers might use to get in.</div>
+    <p class="scene-text">Meridian Tech's engineering team has integrated a popular third-party AI coding assistant into their development environment. The AI helps developers write code faster by suggesting lines of code and finding bugs.</p>
+    <p class="scene-text">During a security review, you discover that the AI coding tool sends snippets of the company's source code to an external server to generate its suggestions. The company that makes the tool says the data is "anonymized and deleted after 30 days."</p>
+    <p class="scene-text">However, Meridian's source code contains proprietary algorithms — the secret logic that makes their products valuable. No one signed off on sharing this externally when the tool was installed. <strong>What do you recommend?</strong></p>
+    <div class="choices">
+      <button class="choice-btn" onclick="answer(2,'A')"><span class="letter">A</span>The vendor says data is deleted after 30 days — that seems fine. Let the team keep using it, the productivity gains are worth it.</button>
+      <button class="choice-btn" onclick="answer(2,'B')"><span class="letter">B</span>Pause use of the tool immediately. Escalate to legal and security teams to review the vendor's data practices and terms of service before any more source code is transmitted externally.</button>
+      <button class="choice-btn" onclick="answer(2,'C')"><span class="letter">C</span>Allow the team to keep using it but tell them not to paste any "really important" code into the AI. That should limit the risk.</button>
+    </div>
+    <div class="consequence" id="s2-result">
+      <div class="consequence-box" id="s2-box"><div class="verdict" id="s2-verdict"></div><div id="s2-text"></div></div>
+      <div class="lesson-callout" id="s2-lesson"></div>
+      <button class="next-btn" onclick="goTo('s3')">Next Scenario →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S3: Bias — Medium / BRANCHING DECISION ══ -->
+<div class="screen" id="s3">
+  <div class="score-row" id="scoreRow3"></div>
+  <div class="card">
+    <div><span class="scenario-badge"><span class="dot"></span>Scenario 3 of 6</span><span class="difficulty-badge diff-medium">⬤ Medium</span></div>
+    <h2 class="scenario-title">The Hiring AI With a Pattern</h2>
+    <div class="def-box"><strong>📘 Key Term — Algorithmic Bias:</strong> Algorithmic bias happens when an AI tool makes decisions that unfairly favor or disadvantage certain groups of people. This often happens because the AI was trained on historical data that already contained bias — so it learned to repeat those unfair patterns automatically.</div>
+    <p class="scene-text">Meridian Tech has been using an AI tool to screen job applications for the past six months. The AI ranks candidates from 1 to 100 based on their resume. Candidates who score above 70 get a human interview. Below 70, they are automatically rejected.</p>
+    <p class="scene-text">During a quarterly review, you analyze the data and find a pattern:</p>
+    <div class="code-box">
+      <span class="comment">// AI Screening Results — Last 6 Months</span><br>
+      <span class="key">candidates_reviewed</span>: <span class="value">1,240</span><br>
+      <span class="key">avg_score_engineering_roles</span>: <span class="value">74.2 (men), 58.1 (women)</span><br>
+      <span class="key">interviews_granted</span>: <span class="value">83% male, 17% female</span><br>
+      <span class="key">industry_avg_applicants</span>: <span class="value">52% male, 48% female</span><br>
+      <span class="comment">// Note: AI was trained on 10 years of past Meridian hiring data</span>
+    </div>
+    <p class="scene-text">The AI was trained on 10 years of Meridian's past hiring decisions — a period when the company hired very few women for engineering roles. <strong>What do you do with this finding?</strong></p>
+    <div class="choices">
+      <button class="choice-btn" onclick="answer(3,'A')"><span class="letter">A</span>The AI is just reflecting who got hired historically. The data is accurate — let it keep running.</button>
+      <button class="choice-btn" onclick="answer(3,'B')"><span class="letter">B</span>Suspend the AI screening tool immediately. Document the findings, notify leadership and HR, and require human review of all applications until a bias audit is complete.</button>
+      <button class="choice-btn" onclick="answer(3,'C')"><span class="letter">C</span>Keep the tool running but manually review female applicants who scored between 60–70 as a workaround. Don't escalate yet.</button>
+    </div>
+    <div class="consequence" id="s3-result">
+      <div class="consequence-box" id="s3-box"><div class="verdict" id="s3-verdict"></div><div id="s3-text"></div></div>
+      <div class="lesson-callout" id="s3-lesson"></div>
+      <div class="branch-preview" id="s3-branch-preview"></div>
+      <button class="next-btn" onclick="goTo('s4')">Next Scenario →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S4: Bias — Hard ══ -->
+<div class="screen" id="s4">
+  <div class="score-row" id="scoreRow4"></div>
+  <div class="card">
+    <div><span class="scenario-badge"><span class="dot"></span>Scenario 4 of 6</span><span class="difficulty-badge diff-hard">⬤ Harder</span></div>
+    <h2 class="scenario-title">The AI That Grades on a Curve Nobody Chose</h2>
+    <div class="def-box"><strong>📘 Key Term — Training Data:</strong> Training data is the information an AI learns from before it starts doing its job. If the training data has patterns that are unfair or incomplete, the AI will repeat those patterns — even if the people using it don't realize it's happening.</div>
+    <p class="scene-text">Meridian Tech sells an AI grading tool to school districts. The tool automatically scores student essays from 1 to 10 and provides feedback. It was trained on essays from college-level writing programs.</p>
+    <p class="scene-text">A teacher named Ms. Okafor contacts Meridian's support line. She has noticed that her students — who attend a school where many students are English language learners — consistently receive lower scores than similar essays she has hand-graded herself. The AI marks their writing as "unclear" or "informal" even when the ideas are strong and well-organized.</p>
+    <p class="scene-text">Ms. Okafor has documented 47 examples over three months. She is asking whether the AI is fair to her students. <strong>How do you respond?</strong></p>
+    <div class="choices">
+      <button class="choice-btn" onclick="answer(4,'A')"><span class="letter">A</span>Tell Ms. Okafor the AI was built using validated data and her sample size is too small to draw conclusions. Encourage her to keep using it.</button>
+      <button class="choice-btn" onclick="answer(4,'B')"><span class="letter">B</span>Take Ms. Okafor's complaint seriously. Request a formal review of the AI's performance across different student populations. Acknowledge that training on college-level essays may have created a bias against non-standard English and English learners.</button>
+      <button class="choice-btn" onclick="answer(4,'C')"><span class="letter">C</span>Offer Ms. Okafor a discount on her next year's subscription as a goodwill gesture. Internally flag it for "future review" but take no immediate action.</button>
+    </div>
+    <div class="consequence" id="s4-result">
+      <div class="consequence-box" id="s4-box"><div class="verdict" id="s4-verdict"></div><div id="s4-text"></div></div>
+      <div class="lesson-callout" id="s4-lesson"></div>
+      <button class="next-btn" onclick="goTo('s5')">Next Scenario →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S5: Professional Responsibility — Hard ══ -->
+<div class="screen" id="s5">
+  <div class="score-row" id="scoreRow5"></div>
+  <div class="card">
+    <div><span class="scenario-badge"><span class="dot"></span>Scenario 5 of 6</span><span class="difficulty-badge diff-hard">⬤ Harder</span></div>
+    <h2 class="scenario-title">The Finding Nobody Wants to Hear</h2>
+    <div class="def-box"><strong>📘 Key Term — Responsible Disclosure:</strong> Responsible disclosure means reporting a problem you've found — like a security flaw or an AI error — to the right people in the right way, so it can be fixed before it causes serious harm. In technology, staying quiet about a known problem is considered unethical and can be illegal.</div>
+    <p class="scene-text">While doing a routine check of Meridian Tech's customer-facing AI assistant, you discover something alarming: the AI has been giving incorrect answers about government benefit eligibility to users who ask about financial assistance programs.</p>
+    <p class="scene-text">The AI confidently tells users they "do not qualify" for certain benefits when, in fact, they do. You estimate the tool has been giving wrong answers for at least 8 weeks. The affected users are people applying for housing and food assistance programs.</p>
+    <p class="scene-text">Your manager tells you: <em>"Don't make this bigger than it is. We'll fix it in the next release cycle in 6 weeks. No need to tell customers — it'll just cause panic."</em></p>
+    <p class="scene-text"><strong>What do you do?</strong></p>
+    <div class="choices">
+      <button class="choice-btn" onclick="answer(5,'A')"><span class="letter">A</span>Follow your manager's guidance. They have more experience and it will be fixed in 6 weeks anyway.</button>
+      <button class="choice-btn" onclick="answer(5,'B')"><span class="letter">B</span>Disagree with your manager — respectfully but clearly. This error is actively harming vulnerable people. Escalate above your manager if needed, push for an immediate fix or takedown, and document everything in writing.</button>
+      <button class="choice-btn" onclick="answer(5,'C')"><span class="letter">C</span>Add a disclaimer to the AI tool that says "results may vary" while waiting for the fix. That covers the company legally without causing a disruption.</button>
+    </div>
+    <div class="consequence" id="s5-result">
+      <div class="consequence-box" id="s5-box"><div class="verdict" id="s5-verdict"></div><div id="s5-text"></div></div>
+      <div class="lesson-callout" id="s5-lesson"></div>
+      <button class="next-btn" onclick="goTo('s6')">Next Scenario →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S6: BRANCHED Final Challenge ══ -->
+<div class="screen" id="s6">
+  <div class="score-row" id="scoreRow6"></div>
+  <div class="card">
+    <div id="s6-branch-banner"></div>
+    <div><span class="scenario-badge"><span class="dot"></span>Scenario 6 of 6 — Final Challenge</span><span class="difficulty-badge diff-hard">⬤ Hardest</span></div>
+    <h2 class="scenario-title" id="s6-title"></h2>
+    <div class="def-box"><strong>📘 Key Term — Accountability:</strong> Accountability means being willing to take responsibility for your decisions and their consequences — including when things go wrong. In AI, accountability means someone has to own the outcome of what an AI tool does. That person is usually a human, not the AI itself.</div>
+    <div id="s6-scene"></div>
+    <div class="choices" id="s6-choices"></div>
+    <div class="consequence" id="s6-result">
+      <div class="consequence-box" id="s6-box"><div class="verdict" id="s6-verdict"></div><div id="s6-text"></div></div>
+      <div class="lesson-callout" id="s6-lesson"></div>
+      <button class="next-btn" onclick="showResults()">See My Results →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div class="screen" id="results-screen">
+  <div class="card">
+    <div class="big-score">
+      <div class="score-ring" id="scoreRing">0/6</div>
+      <h2 class="results-title" id="resultsTitle"></h2>
+      <p class="results-subtitle" id="resultsSubtitle"></p>
+    </div>
+    <div class="branch-result-note" id="branchResultNote"></div>
+    <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin:0 0 16px;">Your Decision Review</h3>
+    <div class="review-list" id="reviewList"></div>
+    <div style="margin-top:30px;"><button class="restart-btn" onclick="restartSim()">↺ Try Again</button></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+const scenarios = {
+  1: {
+    correct:'B', title:'The AI That Remembers Everything',
+    answers:{
+      A:{type:'bad', verdict:'❌ Using that data created a serious problem.', text:"Jordan used confidential contract details that were never supposed to be visible. Even though the AI surfaced the information, using it without authorization is a data privacy violation. The other party in that contract could take legal action against Meridian if they found out their confidential terms were accessed and used by an unauthorized employee.", lesson:'<strong>What this teaches us (5.1 Security Risks):</strong> Just because an AI tool shows you information doesn\'t mean you\'re authorized to use it. AI tools connected to large data systems can accidentally expose confidential files. Employees have a responsibility to report these incidents — not take advantage of them.'},
+      B:{type:'good', verdict:'✅ Excellent — you caught a security gap and reported it.', text:"Jordan did exactly the right thing. The AI had access to files it should not have been able to pull into a general response. By reporting immediately, Jordan gave IT the chance to close the security gap before more confidential data was accidentally exposed to other employees or external parties. One report can prevent dozens of future violations.", lesson:'<strong>What this teaches us (5.1 Security Risks):</strong> AI tools connected to internal networks must have access controls — limits on which data they can read and share. When those controls fail, reporting immediately is the responsible and ethical action. Silence makes the problem worse.'},
+      C:{type:'bad', verdict:"❌ Staying quiet made the problem worse.", text:"By deleting the response and saying nothing, Jordan left the security gap open. Other employees using HelperBot that same day could have seen the same confidential contract — or others. Unreported AI security issues tend to compound. A problem that could have been fixed with one IT ticket became a much larger exposure risk.", lesson:'<strong>What this teaches us (5.1 Security Risks):</strong> Hoping an AI security issue was "just a glitch" is not a responsible response. Reporting it — even if it feels awkward — is part of working ethically in a technology environment. Every unreported vulnerability is an open door.'}
+    }
+  },
+  2: {
+    correct:'B', title:'The AI That Opens the Door',
+    answers:{
+      A:{type:'bad', verdict:"❌ Trusting the vendor's word isn't enough.", text:"\"Deleted after 30 days\" is a promise from a vendor — not a verified fact. Meridian's source code was being transmitted to an external server without legal review, without a signed data agreement, and without leadership approval. If that vendor is breached or sells data, Meridian's proprietary algorithms could end up in a competitor's hands.", lesson:'<strong>What this teaches us (5.1 Security Risks):</strong> AI tools that send data to external servers require legal review before use — not after. Vendor assurances about data deletion are not the same as contractual protections. Productivity gains never outweigh the risk of an unreviewed data pipeline.'},
+      B:{type:'good', verdict:'✅ You caught an unreviewed external data pipeline.', text:"Pausing and escalating was exactly right. Source code is often a company's most valuable asset. Transmitting it to an external AI service without legal sign-off creates intellectual property risk, potential regulatory violations, and competitive exposure. A pause, a legal review, and a proper vendor agreement could have prevented a future crisis.", lesson:'<strong>What this teaches us (5.1 Security Risks):</strong> Before any AI tool is allowed to send company data externally, legal and security teams must review what data is being sent, where it goes, how it\'s stored, and what the vendor\'s contract actually guarantees. "It seems fine" is not a security posture.'},
+      C:{type:'okay', verdict:"⚠️ A well-intentioned workaround — but not a real fix.", text:"Asking developers not to paste \"really important\" code is an informal, unenforceable policy. Developers often don't know which code is most sensitive. The AI tool will still be transmitting code snippets to an external server — the risk is just slightly reduced, not removed. And no one in legal or security knows this is happening.", lesson:'<strong>What this teaches us (5.1 Security Risks):</strong> Informal workarounds are not the same as security controls. When an AI tool has a data exposure risk, the right answer is a formal review — not a verbal policy that depends on every employee making the right judgment call every time.'}
+    }
+  },
+  3: {
+    correct:'B', title:'The Hiring AI With a Pattern',
+    answers:{
+      A:{type:'bad', branch:'bad', verdict:'❌ Historical data is not neutral — it carries the past forward.', text:"Saying the AI is \"just reflecting history\" is the same as saying the bias is acceptable. An AI that was trained on a period when women were systematically underrepresented in engineering will continue that pattern automatically — at 1,240 candidates per review cycle. The company is now compounding past discrimination with an automated system.", lesson:'<strong>What this teaches us (5.2 Bias & Fairness):</strong> Historical data often reflects historical unfairness. When an AI learns from that data, it doesn\'t learn fairness — it learns to repeat the past. Accepting biased outputs because they\'re "data-driven" is not a neutral stance. It\'s a choice to continue the bias.'},
+      B:{type:'good', branch:'good', verdict:'✅ You identified and escalated a systemic bias problem.', text:"Suspending the tool and requiring human review was the right call. The data was clear: 83% of interviews went to male candidates when the applicant pool was nearly 50/50. That gap cannot be explained by qualifications alone. Documenting and escalating this finding protects the company legally and — more importantly — gives qualified candidates a fair shot.", lesson:'<strong>What this teaches us (5.2 Bias & Fairness):</strong> When AI is making high-stakes decisions like hiring, regular bias audits are not optional. When a pattern is found, the ethical response is to pause the tool and fix the source of the bias — not work around it quietly.'},
+      C:{type:'okay', branch:'bad', verdict:"⚠️ You helped a few people — but left a broken system running.", text:"Manually reviewing some candidates in a narrow range is better than doing nothing. But the biased AI is still making decisions about everyone else. Candidates who scored 55 or below are still being automatically rejected based on a flawed system. And because you didn't escalate, leadership doesn't know the company is potentially violating equal employment laws.", lesson:'<strong>What this teaches us (5.2 Bias & Fairness):</strong> Partial fixes to biased AI systems give a false sense of safety. If the tool is producing discriminatory outcomes, the right move is to stop it — not quietly patch one small group while the larger problem continues.'}
+    }
+  },
+  4: {
+    correct:'B', title:"The AI That Grades on a Curve Nobody Chose",
+    answers:{
+      A:{type:'bad', verdict:"❌ Dismissing documented evidence put students at risk.", text:"Ms. Okafor submitted 47 documented examples over three months. That is substantial evidence of a pattern. Telling her the sample size is too small was dismissive and inaccurate. If the AI grading tool is systematically marking down English learners, their academic records may be affected — and Meridian could face legal challenges for selling a biased product to schools.", lesson:'<strong>What this teaches us (5.2 Bias & Fairness):</strong> When users bring documented evidence of AI bias, dismissing it is not a neutral response — it is a choice to let the harm continue. Teachers, students, and other end users often notice bias before the company does. Their feedback is valuable data.'},
+      B:{type:'good', verdict:'✅ You took the complaint seriously and opened a real investigation.', text:"Acknowledging that training on college-level writing may have disadvantaged English learners was honest and correct. AI grading tools trained on narrow, homogeneous data will consistently undervalue writing styles that are different but equally valid. Starting a formal review protects students and builds the kind of trust that makes Meridian's products credible long-term.", lesson:'<strong>What this teaches us (5.2 Bias & Fairness):</strong> AI tools built for education must be tested across diverse student populations before deployment — not after complaints. When bias is found, transparent acknowledgment and a real audit are both ethically required and legally safer than denial.'},
+      C:{type:'bad', verdict:"❌ A discount doesn't fix a bias problem.", text:"Offering a discount is a customer service response to what is actually an AI ethics problem. The students in Ms. Okafor's class are still being graded unfairly every day. Three months from now, another teacher in another district will notice the same thing — and Meridian will have 90 more days of documented bias on its record.", lesson:'<strong>What this teaches us (5.2 Bias & Fairness):</strong> Commercial relationships don\'t override ethical responsibilities. A discount is not a solution. When an AI product is causing harm to students, the response must address the harm — not the customer relationship.'}
+    }
+  },
+  5: {
+    correct:'B', title:"The Finding Nobody Wants to Hear",
+    answers:{
+      A:{type:'bad', verdict:"❌ Following this instruction caused ongoing harm.", text:"For 6 more weeks, people applying for food and housing assistance were told by an AI that they didn't qualify — when they actually did. Some of those people may have stopped applying altogether. A manager's instruction to delay a fix for vulnerable users is not a judgment call an ethics advisor should defer to. Waiting made you complicit in the continued harm.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> Professional responsibility sometimes means disagreeing with your manager. When an AI tool is actively harming people — especially vulnerable ones — the ethical obligation to escalate outweighs the obligation to defer. Staying quiet is also a decision, with real consequences.'},
+      B:{type:'good', verdict:'✅ You prioritized people over convenience.', text:"Pushing back on your manager — respectfully but clearly — and escalating when necessary is exactly what professional responsibility looks like. The affected users were applying for housing and food assistance. Every week of delay was a week those people may have gone without benefits they were entitled to. Documenting everything in writing also protects you if the situation is reviewed later.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> Responsible disclosure means acting quickly, escalating properly, and documenting your actions. When AI causes harm to real people, "we\'ll fix it in the next release cycle" is not an acceptable answer. The fix timeline must match the severity of the harm.'},
+      C:{type:'bad', verdict:"❌ A disclaimer doesn't stop the AI from giving wrong answers.", text:"The AI was still confidently telling users they didn't qualify for benefits they were entitled to. Adding \"results may vary\" in fine print doesn't change that. Users were still being misled. This response protected the company legally in a superficial way while doing nothing to actually stop the harm.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> Disclaimers are not a substitute for fixing AI errors that cause real harm. When an AI is giving factually wrong information that affects people\'s access to basic needs, the only acceptable fix is to correct or remove the tool — not add a warning that most users won\'t read.'}
+    }
+  }
+};
+
+const s6Branches = {
+  good: {
+    title:"The Press Call — A Second Chance to Get It Right",
+    bannerText:"<strong>⚡ Your Scenario 3 choice changed this scenario.</strong> Because you suspended the biased hiring AI and escalated properly, Meridian launched a formal bias audit. The results were not flattering — but the company got ahead of the story. Now a journalist is calling.",
+    scene:`<p class="scene-text">It has been two months since you flagged the hiring AI's bias. Meridian's audit confirmed the findings: the tool had been systematically scoring female engineering candidates lower for over 18 months. Leadership has already committed to fixing the tool and reviewing past rejections.</p>
+<p class="scene-text">A technology journalist contacts Meridian asking for comment. She has obtained internal data — it's unclear how — and is publishing a story this week. Her article will describe the bias pattern in detail.</p>
+<p class="scene-text">Your VP of Communications wants to issue a statement saying: <em>"Meridian proactively identified and addressed a data quality issue in one of our internal tools. No external customers were affected."</em></p>
+<p class="scene-text">You know this statement is misleading. The tool affected real job candidates who were rejected unfairly. And it wasn't "proactively" found — you flagged it because the numbers looked wrong during a quarterly review. <strong>What do you recommend?</strong></p>`,
+    choices:[
+      {key:'A', text:"Approve the statement — the company already fixed the problem. There's no reason to expose more liability."},
+      {key:'B', text:"Push back on the statement. Recommend a more honest response: acknowledge the bias was found during a review, name the affected population (job candidates), describe what's being done to make it right, and commit to publishing audit results."},
+      {key:'C', text:"Suggest saying nothing and letting the article run. The audit results speak for themselves."}
+    ],
+    correct:'B',
+    answers:{
+      A:{type:'bad', verdict:"❌ A misleading statement made a fixable story much worse.", text:"The journalist published the internal data alongside Meridian's statement — and fact-checkers immediately identified the contradictions. \"No external customers were affected\" was false: job candidates are external people affected by the tool. The story became about the cover-up, not just the bias. Trust, once lost this way, takes years to rebuild.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> Misleading public statements about AI failures are not just ethically wrong — they are strategically self-defeating. Transparency, especially when you\'ve already taken corrective action, is almost always the better path. Accountability builds credibility.'},
+      B:{type:'good', verdict:"✅ Honest accountability turned a crisis into a trust-builder.", text:"Recommending a transparent statement — one that names what happened, who was affected, and what's being done — was the right call both ethically and strategically. Because Meridian had already fixed the problem (thanks to your Scenario 3 decision), the company could tell a story of responsible self-correction. The journalist's article noted that Meridian was one of the few tech companies to proactively audit and disclose a hiring bias finding.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> When AI causes harm, honest accountability is both ethically required and practically wise. Companies that disclose problems transparently and describe real corrective action earn more trust than those that minimize or deny.'},
+      C:{type:'okay', verdict:"⚠️ Silence let others define the story for you.", text:"The article ran without a Meridian response. The journalist quoted former job candidates who felt their rejections were unfair. Meridian's silence was interpreted as guilt. The audit results Meridian planned to publish later were overshadowed by the narrative that had already been set. Saying nothing was not neutral — it was a missed opportunity to lead the story.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> In AI ethics, silence is rarely neutral. When your organization has taken real corrective action, communicating that openly is part of responsible disclosure. Letting others define your story usually ends up worse than telling it yourself.'}
+    }
+  },
+  bad: {
+    title:"The Lawsuit — The Bill Comes Due",
+    bannerText:"<strong>⚡ Your Scenario 3 choice changed this scenario.</strong> Because the hiring AI was never suspended or properly audited, it kept running. Now, 18 months later, a former job candidate has filed a discrimination complaint — and it has escalated into a class-action lawsuit.",
+    scene:`<p class="scene-text">A former candidate named Priya Sharma applied to Meridian Tech twice over the past two years. Both times she was automatically rejected by the hiring AI with a score of 54. She was later hired by a competitor where she became a senior engineer within a year.</p>
+<p class="scene-text">Priya connected with 14 other women through a professional network. All of them had applied to Meridian, all received low scores from the AI, and all went on to successful engineering careers elsewhere.</p>
+<p class="scene-text">Their attorney has filed a class-action lawsuit citing unlawful discrimination. A journalist has also published an investigation. Meridian's legal team now wants to know: <em>When did internal staff first become aware of the bias pattern?</em></p>
+<p class="scene-text">You pull your records. You flagged the scoring gap in the quarterly review 18 months ago. You implemented a quiet manual workaround but never escalated it formally. That record now exists. <strong>What do you do?</strong></p>`,
+    choices:[
+      {key:'A', text:"Say nothing proactively. Let legal handle it — they'll decide what to disclose."},
+      {key:'B', text:"Come forward immediately with your documentation. Acknowledge that you identified the pattern 18 months ago and did not escalate it properly. Cooperate fully with the investigation and recommend full transparency."},
+      {key:'C', text:"Suggest the company settle quickly and quietly to avoid more publicity. Frame it as a data issue, not a bias issue."}
+    ],
+    correct:'B',
+    answers:{
+      A:{type:'bad', verdict:"❌ Staying silent compounded the original mistake.", text:"Legal teams cannot make good decisions without complete information. By saying nothing, you allowed Meridian's lawyers to be blindsided when the documentation surfaced during discovery. Courts respond poorly to companies that appear to be hiding evidence. The liability grew significantly because the cover-up story became as damaging as the original bias finding.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> When you have documentation that is relevant to an investigation — especially one involving harm to real people — professional responsibility requires you to surface it. Staying quiet to avoid personal consequences is both unethical and legally risky.'},
+      B:{type:'good', verdict:"✅ Coming forward was the hardest and most responsible choice.", text:"Acknowledging that you identified the pattern and didn't escalate it properly was difficult — but it was the right thing to do. Full cooperation gave Meridian's legal team the full picture. It also demonstrated to the court that the company, once confronted with the complete story, chose transparency over self-protection. Your Scenario 3 decision made this moment inevitable — but your Scenario 6 decision determined how it ended.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> Responsible disclosure includes disclosing your own prior knowledge, even when it\'s uncomfortable. The consequences of honest accountability are almost always less severe — and more ethical — than the consequences of concealment.'},
+      C:{type:'bad', verdict:"❌ Framing a bias problem as a data issue made things worse.", text:"Courts, journalists, and the public are increasingly familiar with the difference between \"data issue\" and \"discriminatory AI outcome.\" Priya Sharma and 14 other candidates had documented careers proving their qualifications. Calling their rejection a \"data issue\" while settling quietly would likely have made the story bigger, not smaller — and left the underlying AI problem unfixed for the next hiring cycle.", lesson:'<strong>What this teaches us (5.3 Professional Responsibility):</strong> Language choices matter in AI accountability. Minimizing harm through corporate framing erodes trust and rarely prevents legal or reputational consequences. Real accountability requires naming the problem accurately and fixing it genuinely.'}
+    }
+  }
+};
+
+let score = 0, answers = {}, currentScenario = 0;
+const total = 6;
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 's6') buildS6();
+  updateScoreRow(id);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress() {
+  const pct = (currentScenario / total) * 100;
+  document.getElementById('heroProgress').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = currentScenario + ' of ' + total + ' scenarios complete';
+}
+
+function getBranch() { return answers[3] === 'B' ? 'good' : 'bad'; }
+
+function updateScoreRow(screenId) {
+  const num = parseInt(screenId.replace('s',''));
+  if (isNaN(num)) return;
+  const row = document.getElementById('scoreRow' + num);
+  if (!row) return;
+  let html = '';
+  for (let i = 1; i < num; i++) {
+    const a = answers[i]; if (!a) continue;
+    const correct = i < 6 ? scenarios[i].correct.includes(a) : s6Branches[getBranch()].correct.includes(a);
+    html += `<div class="score-chip">${correct ? '✅' : '⚠️'} Scenario ${i}</div>`;
+  }
+  row.innerHTML = html;
+}
+
+function buildS6() {
+  const b = getBranch();
+  const d = s6Branches[b];
+  document.getElementById('s6-branch-banner').innerHTML = `<div class="branch-banner"><span class="icon">🔀</span><div>${d.bannerText}</div></div>`;
+  document.getElementById('s6-title').textContent = d.title;
+  document.getElementById('s6-scene').innerHTML = d.scene;
+  if (!answers[6]) {
+    document.getElementById('s6-choices').innerHTML = d.choices.map(c =>
+      `<button class="choice-btn" onclick="answer(6,'${c.key}')"><span class="letter">${c.key}</span>${c.text}</button>`
+    ).join('');
+  }
+}
+
+function answer(n, choice) {
+  answers[n] = choice;
+  currentScenario = Math.max(currentScenario, n);
+  updateProgress();
+
+  let data, isCorrect;
+  if (n === 6) {
+    const b = getBranch();
+    data = s6Branches[b].answers[choice];
+    isCorrect = s6Branches[b].correct.includes(choice);
+  } else {
+    data = scenarios[n].answers[choice];
+    isCorrect = scenarios[n].correct.includes(choice);
+  }
+  if (isCorrect) score++;
+
+  const btns = document.querySelectorAll(`#s${n} .choice-btn`);
+  btns.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; b.style.cursor = 'default'; });
+  const idx = ['A','B','C'].indexOf(choice);
+  if (btns[idx]) {
+    btns[idx].style.opacity = '1';
+    btns[idx].style.borderColor = data.type === 'good' ? 'var(--green)' : data.type === 'bad' ? 'var(--red)' : 'var(--amber)';
+  }
+
+  document.getElementById(`s${n}-box`).className = 'consequence-box ' + data.type;
+  document.getElementById(`s${n}-verdict`).textContent = data.verdict;
+  document.getElementById(`s${n}-text`).innerHTML = data.text;
+  document.getElementById(`s${n}-lesson`).innerHTML = data.lesson;
+
+  if (n === 3) {
+    const bp = document.getElementById('s3-branch-preview');
+    bp.innerHTML = choice === 'B'
+      ? '<strong>🔀 Your choice will affect Scenario 6.</strong> You suspended the hiring AI and escalated formally. A bias audit was launched. That paper trail will shape how Meridian handles what comes next.'
+      : '<strong>🔀 Your choice will affect Scenario 6.</strong> The hiring AI kept running. Without a formal escalation, the bias continued for months. That decision will come back around in Scenario 6.';
+    bp.style.display = 'block';
+  }
+
+  document.getElementById(`s${n}-result`).classList.add('show');
+  setTimeout(() => document.getElementById(`s${n}-result`).scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+}
+
+function showResults() {
+  currentScenario = total;
+  updateProgress();
+  goTo('results-screen');
+
+  const ring = document.getElementById('scoreRing');
+  ring.textContent = score + '/6';
+  const ratingMap = ['needs-work','needs-work','okay','okay','good','good','excellent'];
+  ring.className = 'score-ring ' + ratingMap[score];
+
+  const msgs = [
+    ["Let's Review — These Concepts Are Critical","AI ethics in technology has real consequences for real people. Revisit the lessons on security risks, bias, and professional responsibility — then try again."],
+    ["Let's Review — These Concepts Are Critical","AI ethics in technology has real consequences for real people. Revisit the lessons on security risks, bias, and professional responsibility — then try again."],
+    ["Keep Going — Some Key Concepts to Revisit","You made some strong calls, but a few scenarios revealed gaps in how you think about security, bias, and your responsibility to report. Try again — these decisions matter."],
+    ["Keep Going — Some Key Concepts to Revisit","You made some strong calls, but a few scenarios revealed gaps in how you think about security, bias, and your responsibility to report. Try again — these decisions matter."],
+    ["Strong Work — You're Thinking Like a Responsible AI Professional","You got most of the hard calls right. Review the ones you missed — the hardest scenarios carry the most important lessons."],
+    ["Strong Work — You're Thinking Like a Responsible AI Professional","You got most of the hard calls right. Review the ones you missed — the hardest scenarios carry the most important lessons."],
+    ["Outstanding — You're an AI Ethics Leader in Tech","You made the right call in every scenario, including the branching final challenge. You understand security, bias, and what professional responsibility actually requires when things go wrong."]
+  ];
+  document.getElementById('resultsTitle').textContent = msgs[score][0];
+  document.getElementById('resultsSubtitle').textContent = msgs[score][1];
+
+  const b = getBranch();
+  const noteEl = document.getElementById('branchResultNote');
+  noteEl.innerHTML = b === 'good'
+    ? "<strong>🔀 Your Scenario 3 decision gave Meridian a chance to lead the story.</strong> Because you escalated the hiring bias properly and triggered a formal audit, the company had real corrective actions to point to when the journalist called. One decision to do the right thing — even when it was uncomfortable — created a paper trail that protected the company and the candidates."
+    : "<strong>🔀 Your Scenario 3 decision led to a lawsuit 18 months later.</strong> By not escalating the hiring AI bias, the tool kept running. Priya Sharma and 14 other qualified engineers were rejected unfairly. Your documentation of the quiet workaround became evidence in a class-action case. A decision to avoid short-term discomfort created long-term harm — for the candidates and for Meridian.";
+  noteEl.style.display = 'block';
+
+  const names = {1:'The AI That Remembers Everything',2:'The AI That Opens the Door',3:'The Hiring AI With a Pattern',4:"The AI That Grades on a Curve Nobody Chose",5:"The Finding Nobody Wants to Hear",6:s6Branches[b].title};
+  let html = '';
+  for (let i = 1; i <= 6; i++) {
+    const a = answers[i]; if (!a) continue;
+    const d = i === 6 ? s6Branches[b].answers[a] : scenarios[i].answers[a];
+    const correct = i === 6 ? s6Branches[b].correct.includes(a) : scenarios[i].correct.includes(a);
+    html += `<div class="review-item"><span class="icon">${correct ? '✅' : d.type === 'okay' ? '⚠️' : '❌'}</span><div><strong style="display:block;margin-bottom:4px;">Scenario ${i}: ${names[i]}</strong><span style="color:var(--text-muted);">You chose <strong>Option ${a}</strong> — ${d.verdict.replace(/[✅❌⚠️]\s*/,'')}</span></div></div>`;
+  }
+  document.getElementById('reviewList').innerHTML = html;
+}
+
+function restartSim() {
+  score = 0; answers = {}; currentScenario = 0;
+  updateProgress();
+  for (let i = 1; i <= 6; i++) {
+    const r = document.getElementById(`s${i}-result`); if (r) r.classList.remove('show');
+    document.querySelectorAll(`#s${i} .choice-btn`).forEach(b => { b.disabled=false; b.style.opacity='1'; b.style.cursor='pointer'; b.style.borderColor=''; });
+    const row = document.getElementById('scoreRow'+i); if (row) row.innerHTML='';
+  }
+  const bp = document.getElementById('s3-branch-preview');
+  if (bp) { bp.innerHTML=''; bp.style.display='none'; }
+  document.getElementById('s6-branch-banner').innerHTML='';
+  document.getElementById('s6-title').textContent='';
+  document.getElementById('s6-scene').innerHTML='';
+  document.getElementById('s6-choices').innerHTML='';
+  document.getElementById('branchResultNote').style.display='none';
+  goTo('intro-screen');
+}
+</script>
+</body>
+</html>
