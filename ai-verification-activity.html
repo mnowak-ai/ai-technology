@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Activity: What Would You Change or Verify?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;
+  --purple-dark:#4A1580;
+  --purple-pale:#F3EAFF;
+  --purple-mid:#E8D5FF;
+  --white:#FFFFFF;
+  --ink:#2B1A3D;
+  --grey:#6B6275;
+  --green:#1E8A5F;
+  --green-pale:#E6F7EF;
+  --amber:#B5700A;
+  --amber-pale:#FFF3DD;
+  --red:#C23B3B;
+  --red-pale:#FCEAEA;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:var(--white);color:var(--ink);}
+.wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
+
+.hero{text-align:center;padding:20px 0 28px;}
+.lesson-tag{display:inline-block;background:var(--purple-pale);color:var(--purple-dark);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:18px;}
+.hero h1{font-family:"Fraunces",serif;font-weight:700;font-size:32px;line-height:1.18;margin:0 0 12px;color:var(--purple-dark);}
+.hero p{font-size:16px;line-height:1.6;color:var(--grey);max-width:600px;margin:0 auto;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:4px;margin:24px auto 0;}
+
+.instructions{background:var(--purple-pale);border-radius:18px;padding:20px 24px;margin:24px 0 36px;display:flex;gap:14px;align-items:flex-start;}
+.instructions .icon{font-size:24px;flex-shrink:0;line-height:1;margin-top:2px;}
+.instructions p{margin:0;font-size:15px;line-height:1.6;color:var(--purple-dark);}
+.instructions strong{font-weight:700;}
+
+/* Phase nav */
+.phase-nav{display:flex;gap:0;border-radius:14px;overflow:hidden;border:2px solid var(--purple-mid);margin-bottom:34px;}
+.phase-tab{flex:1;padding:12px 6px;font-size:13px;font-weight:700;color:var(--grey);text-align:center;background:var(--white);cursor:default;transition:all .2s ease;border:none;font-family:"DM Sans",sans-serif;}
+.phase-tab.active{background:var(--purple);color:#fff;}
+.phase-tab.done{background:var(--purple-pale);color:var(--purple-dark);}
+
+.phase{display:none;}
+.phase.active{display:block;animation:slideIn .4s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.phase-title{font-family:"Fraunces",serif;font-weight:700;font-size:22px;color:var(--ink);margin:0 0 6px;}
+.phase-sub{font-size:15px;color:var(--grey);line-height:1.6;margin:0 0 24px;}
+
+/* AI recommendation card */
+.ai-rec-card{
+  background:#1A0D2E;border-radius:20px;padding:24px;margin-bottom:22px;
+}
+.ai-rec-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.ai-rec-dot{width:10px;height:10px;border-radius:50%;background:var(--purple);}
+.ai-rec-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9B6FD0;}
+.ai-rec-confidence{margin-left:auto;font-size:12px;font-weight:700;color:#5FD08A;background:rgba(95,208,138,.12);padding:3px 10px;border-radius:6px;}
+.ai-rec-body{font-size:15px;line-height:1.75;color:#C9A8E8;font-style:italic;}
+.ai-rec-body strong{color:#fff;font-style:normal;}
+
+/* Context cards — collapsible reference in Phase 2 */
+.ref-toggle{
+  width:100%;background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;
+  padding:14px 18px;font-size:14px;font-weight:700;color:var(--purple-dark);cursor:pointer;
+  font-family:"DM Sans",sans-serif;text-align:left;display:flex;justify-content:space-between;
+  align-items:center;margin-bottom:14px;transition:all .15s ease;
+}
+.ref-toggle:hover{border-color:var(--purple);background:var(--purple-pale);}
+.ref-toggle.open{border-color:var(--purple);background:var(--purple-pale);border-radius:14px 14px 0 0;margin-bottom:0;}
+.ref-toggle .ref-arrow{font-size:16px;transition:transform .25s ease;display:inline-block;}
+.ref-toggle.open .ref-arrow{transform:rotate(180deg);}
+.ref-panel{display:none;border:2px solid var(--purple);border-top:none;border-radius:0 0 14px 14px;overflow:hidden;margin-bottom:18px;}
+.ref-panel.open{display:block;animation:slideIn .3s ease;}
+
+/* Evidence tiles inside ref panel */
+.evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:18px;}
+@media(max-width:580px){.evidence-grid{grid-template-columns:1fr;}}
+.evidence-tile{background:var(--purple-pale);border-radius:14px;padding:16px 18px;}
+.evidence-tile h4{font-family:"Fraunces",serif;font-size:14px;color:var(--purple-dark);margin:0 0 8px;display:flex;align-items:center;gap:7px;}
+.evidence-tile ul{margin:0;padding-left:18px;}
+.evidence-tile li{font-size:13px;line-height:1.65;color:var(--ink);margin-bottom:4px;}
+.evidence-tile li:last-child{margin-bottom:0;}
+.evidence-tile li.flag{color:var(--red);font-weight:600;}
+.evidence-tile li.ok{color:var(--green);}
+.evidence-tile li.warn{color:var(--amber);}
+
+/* Phase 2 — interrogation checklist */
+.interrogate-intro{font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:18px;}
+.check-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.check-item{
+  border:2px solid var(--purple-mid);border-radius:14px;padding:15px 18px;cursor:pointer;
+  transition:all .15s ease;background:var(--white);display:flex;align-items:flex-start;gap:13px;
+}
+.check-item:hover{border-color:var(--purple);background:var(--purple-pale);}
+.check-item.checked{border-color:var(--purple);background:var(--purple-pale);}
+.check-item.locked{cursor:default;}
+.check-item.locked:hover{border-color:var(--purple-mid);background:var(--white);}
+.check-item.locked.checked:hover{border-color:var(--purple);background:var(--purple-pale);}
+.check-box{
+  width:22px;height:22px;border-radius:6px;border:2px solid var(--purple-mid);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:1px;
+  transition:all .15s ease;background:var(--white);
+}
+.check-item.checked .check-box{background:var(--purple);border-color:var(--purple);color:#fff;}
+.check-text{font-size:14px;line-height:1.6;color:var(--ink);}
+.check-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:3px;}
+/* reveal insight when checked */
+.check-insight{
+  margin-top:10px;padding:10px 12px;background:var(--purple-pale);border-radius:8px;
+  font-size:13px;line-height:1.6;color:var(--purple-dark);display:none;
+}
+.check-item.checked .check-insight{display:block;}
+
+.check-count{text-align:center;font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:6px;}
+
+/* Phase btn */
+.phase-btn{
+  display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:14px;
+  padding:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:10px;
+}
+.phase-btn.show{display:block;}
+.phase-btn:hover{background:var(--purple-dark);}
+
+/* Phase 3 — verdict */
+.verdict-intro{font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:22px;}
+
+.verdict-shell{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin-bottom:22px;}
+.verdict-header{background:linear-gradient(135deg,var(--purple-dark),var(--purple));padding:18px 22px;color:#fff;}
+.verdict-header h3{font-family:"Fraunces",serif;font-size:17px;margin:0 0 3px;}
+.verdict-header p{font-size:13px;opacity:.8;margin:0;}
+
+.verdict-field{border-bottom:1px solid var(--purple-mid);padding:18px 22px;}
+.verdict-field:last-child{border-bottom:none;}
+.verdict-field-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:10px;}
+
+.verdict-opts{display:flex;flex-direction:column;gap:8px;}
+.verdict-opt{
+  border:2px solid var(--purple-mid);border-radius:10px;padding:13px 15px;font-size:14px;
+  color:var(--ink);cursor:pointer;background:var(--white);transition:all .15s ease;
+  text-align:left;line-height:1.5;font-family:"DM Sans",sans-serif;
+}
+.verdict-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.verdict-opt.best{border-color:var(--green);background:var(--green-pale);color:var(--green);font-weight:600;}
+.verdict-opt.partial{border-color:var(--amber);background:var(--amber-pale);color:var(--amber);font-weight:600;}
+.verdict-opt.locked-neutral{border-color:var(--purple-mid);color:var(--grey);cursor:default;}
+.verdict-opt.locked-neutral:hover{background:var(--white);}
+.verdict-feedback{margin-top:10px;font-size:13px;line-height:1.6;display:none;padding:10px 12px;border-radius:8px;}
+.verdict-feedback.show{display:block;}
+.verdict-feedback.good{background:var(--green-pale);color:var(--green);}
+.verdict-feedback.ok{background:var(--amber-pale);color:var(--amber);}
+
+/* Finale */
+.finale-icon{text-align:center;font-size:48px;margin-bottom:12px;}
+.finale-title{font-family:"Fraunces",serif;font-weight:700;font-size:26px;color:var(--purple-dark);text-align:center;margin:0 0 10px;}
+.finale-sub{font-size:15px;line-height:1.7;color:var(--grey);max-width:560px;margin:0 auto 28px;text-align:center;}
+
+.verdict-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin-bottom:24px;}
+.vc-header{background:linear-gradient(135deg,var(--purple-dark),var(--purple));padding:18px 22px;color:#fff;}
+.vc-header h3{font-family:"Fraunces",serif;font-size:17px;margin:0 0 3px;}
+.vc-header p{font-size:13px;opacity:.8;margin:0;}
+.vc-body{padding:20px 22px;}
+.vc-row{display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.6;align-items:flex-start;}
+.vc-row:last-child{margin-bottom:0;}
+.vc-label{font-weight:700;color:var(--grey);font-size:12px;text-transform:uppercase;letter-spacing:.03em;min-width:130px;flex-shrink:0;margin-top:2px;}
+.vc-value{color:var(--ink);}
+
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:30px 28px;color:#fff;text-align:left;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 16px;color:#fff;}
+.summary-item{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.summary-item:last-child{margin-bottom:0;}
+.summary-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.summary-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+@media(max-width:560px){.hero h1{font-size:25px;}.phase-tab{font-size:11px;padding:10px 4px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero fade-in">
+    <div class="lesson-tag">Hands-On Activity</div>
+    <h1>What Would You Change or Verify?</h1>
+    <p>The AI gave you a confident recommendation. Before anyone acts on it, your job is to interrogate it — check whether it holds up against what you actually know.</p>
+    <div class="hero-divider"></div>
+  </div>
+
+  <div class="instructions fade-in">
+    <div class="icon">👆</div>
+    <p><strong>How this works:</strong> Step 1 — read the AI recommendation and the available evidence. Step 2 — work through the verification questions. Step 3 — make your call. No typing — just tap and evaluate.</p>
+  </div>
+
+  <div class="phase-nav">
+    <button class="phase-tab active" id="tab-0">1. Read the Recommendation</button>
+    <button class="phase-tab" id="tab-1">2. Interrogate It</button>
+    <button class="phase-tab" id="tab-2">3. Make Your Call</button>
+  </div>
+
+  <!-- PHASE 1: Read AI recommendation + evidence -->
+  <div class="phase active" id="phase-0">
+    <div class="phase-title">Here's What the AI Is Recommending</div>
+    <div class="phase-sub">Read the AI's output carefully — then study the available evidence below. You'll use all of this to evaluate whether the recommendation holds up.</div>
+
+    <div class="ai-rec-card fade-in">
+      <div class="ai-rec-header">
+        <div class="ai-rec-dot"></div>
+        <div class="ai-rec-label">AI Recommendation — Line 3, Station 4</div>
+        <div class="ai-rec-confidence">Confidence: High</div>
+      </div>
+      <div class="ai-rec-body">
+        <strong>Root cause identified:</strong> Thermal overload at Station 4 due to cooling system degradation. Recommended action: replace the cooling fan assembly immediately and schedule a full thermal inspection of the station before resuming production. Estimated downtime: 4–6 hours.
+      </div>
+    </div>
+
+    <div style="margin-bottom:22px;" class="fade-in">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:14px;">Available Evidence — Study Before Continuing</div>
+
+      <div class="evidence-grid" style="padding:0;gap:12px;display:grid;grid-template-columns:1fr 1fr;">
+
+        <div class="evidence-tile">
+          <h4>⚙️ Maintenance Records</h4>
+          <ul>
+            <li class="ok">Cooling fan inspected 9 days ago — no issues found</li>
+            <li class="warn">Fan replaced 6 weeks ago (new unit)</li>
+            <li class="flag">Lubrication on drive shaft last done: 47 days ago (overdue at 30-day interval)</li>
+            <li>No other recent repairs at Station 4</li>
+          </ul>
+        </div>
+
+        <div class="evidence-tile">
+          <h4>🌡️ Sensor Data</h4>
+          <ul>
+            <li class="flag">Temperature spike: sudden, not gradual</li>
+            <li class="ok">Coolant flow rate: normal throughout event</li>
+            <li class="ok">Fan RPM: within spec during event</li>
+            <li class="warn">Drive shaft vibration: slightly elevated 2 days prior</li>
+          </ul>
+        </div>
+
+        <div class="evidence-tile">
+          <h4>📋 Operator Notes</h4>
+          <ul>
+            <li class="warn">Shift A technician noted "unusual grinding noise" from Station 4 yesterday — not logged formally</li>
+            <li>Production schedule unchanged — no unusual load</li>
+            <li class="ok">No software updates or config changes this week</li>
+          </ul>
+        </div>
+
+        <div class="evidence-tile">
+          <h4>📊 Performance History</h4>
+          <ul>
+            <li class="ok">Station 4 performed normally for 6 weeks post fan replacement</li>
+            <li class="flag">Two prior thermal events in last 12 months — both caused by mechanical friction, not cooling failure</li>
+            <li class="warn">Current event pattern matches those prior incidents</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="instructions fade-in" style="margin-bottom:10px;">
+      <div class="icon">🤔</div>
+      <p>Does the AI's recommendation match what you're seeing in this evidence? What would you want to check before acting on it?</p>
+    </div>
+
+    <button class="phase-btn show" onclick="goToPhase(1)">Interrogate the recommendation →</button>
+  </div>
+
+  <!-- PHASE 2: Interrogate the recommendation -->
+  <div class="phase" id="phase-1">
+    <div class="phase-title">Work Through the Verification Questions</div>
+    <div class="phase-sub">Tap each question to investigate it. See what the evidence actually tells you about the AI's recommendation — before you make any call.</div>
+
+    <!-- Collapsible reference -->
+    <button class="ref-toggle" id="refToggle" onclick="toggleRef()">
+      <span>📋 Reference: AI Recommendation + Evidence</span>
+      <span class="ref-arrow">▼</span>
+    </button>
+    <div class="ref-panel" id="refPanel">
+      <div style="padding:18px;">
+        <div class="ai-rec-card" style="margin-bottom:14px;">
+          <div class="ai-rec-header">
+            <div class="ai-rec-dot"></div>
+            <div class="ai-rec-label">AI Recommendation</div>
+            <div class="ai-rec-confidence">Confidence: High</div>
+          </div>
+          <div class="ai-rec-body">
+            <strong>Root cause:</strong> Cooling system degradation. <strong>Action:</strong> Replace cooling fan assembly immediately. Full thermal inspection before resuming. <strong>Downtime:</strong> 4–6 hours.
+          </div>
+        </div>
+        <div class="evidence-grid" style="padding:0;">
+          <div class="evidence-tile">
+            <h4>⚙️ Maintenance</h4>
+            <ul>
+              <li class="ok">Fan inspected 9 days ago — OK</li>
+              <li class="warn">Fan replaced 6 weeks ago (new unit)</li>
+              <li class="flag">Drive shaft lubrication overdue (47 days vs. 30-day interval)</li>
+            </ul>
+          </div>
+          <div class="evidence-tile">
+            <h4>🌡️ Sensors</h4>
+            <ul>
+              <li class="flag">Temperature spike: sudden onset</li>
+              <li class="ok">Coolant flow: normal</li>
+              <li class="ok">Fan RPM: within spec</li>
+              <li class="warn">Drive shaft vibration: elevated 2 days prior</li>
+            </ul>
+          </div>
+          <div class="evidence-tile">
+            <h4>📋 Operator Notes</h4>
+            <ul>
+              <li class="warn">Grinding noise at Station 4 yesterday (unlogged)</li>
+              <li class="ok">No software changes or unusual load</li>
+            </ul>
+          </div>
+          <div class="evidence-tile">
+            <h4>📊 History</h4>
+            <ul>
+              <li class="flag">2 prior thermal events — both caused by mechanical friction, not cooling failure</li>
+              <li class="warn">Current pattern matches those incidents</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="interrogate-intro">Tap each question below to check what the evidence says about the AI's recommendation:</div>
+
+    <div class="check-grid" id="checkGrid">
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div style="flex:1;">
+          <div class="check-label">Match with reality?</div>
+          <div class="check-text">Does the AI's recommended fix — replacing the cooling fan — match what the sensor data actually shows?</div>
+          <div class="check-insight">Not well. Fan RPM was within spec during the event, coolant flow was normal, and the fan was just inspected 9 days ago with no issues. The cooling system doesn't appear to be failing — the AI may be pointing at the wrong component.</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div style="flex:1;">
+          <div class="check-label">Missing context?</div>
+          <div class="check-text">Is there anything in the evidence that the AI recommendation doesn't seem to account for?</div>
+          <div class="check-insight">Yes — two things. The drive shaft lubrication is 47 days overdue (against a 30-day interval), and vibration on the drive shaft was already elevated two days before this event. The AI's output doesn't reflect either of these.</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div style="flex:1;">
+          <div class="check-label">Recent changes?</div>
+          <div class="check-text">Were there any recent changes — maintenance, configuration, or operational — that might affect how to interpret this event?</div>
+          <div class="check-insight">The cooling fan was replaced 6 weeks ago and has been running fine since. No software or config changes. The main recent "change" is that drive shaft maintenance has been skipped — an omission rather than a change.</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div style="flex:1;">
+          <div class="check-label">Does history support it?</div>
+          <div class="check-text">What do the two prior thermal events at Station 4 tell you about the AI's cooling-failure hypothesis?</div>
+          <div class="check-insight">They contradict it directly. Both previous thermal events were caused by mechanical friction — not cooling system degradation. The current event's pattern matches those incidents. History points to a mechanical cause, not a cooling cause.</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div style="flex:1;">
+          <div class="check-label">Unlogged signal?</div>
+          <div class="check-text">A technician noted a grinding noise yesterday but didn't formally log it. Should that affect your evaluation?</div>
+          <div class="check-insight">Yes. Grinding noise combined with elevated drive shaft vibration two days prior and overdue lubrication all point in the same direction — mechanical friction on the drive shaft. This informal observation is meaningful even without a formal log entry.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="check-count" id="checkCount">Investigated: 0 / 5</div>
+    <button class="phase-btn" id="checkNext" onclick="submitChecks()">Make my call →</button>
+  </div>
+
+  <!-- PHASE 3: Verdict -->
+  <div class="phase" id="phase-2">
+    <div class="phase-title">Make Your Call</div>
+    <div class="phase-sub">You've interrogated the recommendation against the evidence. Now decide — for each question, choose what you'd actually do as the professional responsible for this decision.</div>
+
+    <!-- Collapsible reference -->
+    <button class="ref-toggle" id="refToggle2" onclick="toggleRef2()">
+      <span>📋 Reference: AI Recommendation + Evidence</span>
+      <span class="ref-arrow">▼</span>
+    </button>
+    <div class="ref-panel" id="refPanel2">
+      <div style="padding:18px;">
+        <div class="ai-rec-card" style="margin-bottom:14px;">
+          <div class="ai-rec-header">
+            <div class="ai-rec-dot"></div>
+            <div class="ai-rec-label">AI Recommendation</div>
+            <div class="ai-rec-confidence">Confidence: High</div>
+          </div>
+          <div class="ai-rec-body">
+            <strong>Root cause:</strong> Cooling system degradation. <strong>Action:</strong> Replace cooling fan assembly immediately. Full thermal inspection before resuming. <strong>Downtime:</strong> 4–6 hours.
+          </div>
+        </div>
+        <div class="evidence-grid" style="padding:0;">
+          <div class="evidence-tile">
+            <h4>⚙️ Maintenance</h4>
+            <ul>
+              <li class="ok">Fan inspected 9 days ago — OK</li>
+              <li class="flag">Drive shaft lubrication: 47 days overdue</li>
+            </ul>
+          </div>
+          <div class="evidence-tile">
+            <h4>🌡️ Sensors</h4>
+            <ul>
+              <li class="ok">Fan RPM + coolant flow: normal</li>
+              <li class="warn">Drive shaft vibration elevated 2 days prior</li>
+            </ul>
+          </div>
+          <div class="evidence-tile">
+            <h4>📋 Operator notes</h4>
+            <ul>
+              <li class="warn">Grinding noise noted yesterday (unlogged)</li>
+            </ul>
+          </div>
+          <div class="evidence-tile">
+            <h4>📊 History</h4>
+            <ul>
+              <li class="flag">2 prior events — both mechanical friction, not cooling failure</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-shell">
+      <div class="verdict-header">
+        <h3>Verification Decision — Line 3, Station 4</h3>
+        <p>Select the best answer for each question. You can change your mind before submitting.</p>
+      </div>
+
+      <!-- Q1: Is the AI's diagnosis correct? -->
+      <div class="verdict-field" id="vf-0">
+        <div class="verdict-field-label">Is the AI's root cause diagnosis correct?</div>
+        <div class="verdict-opts">
+          <button class="verdict-opt" onclick="pickVerdict(0,this,'partial','Partly right — the AI correctly identified that Station 4 has a thermal problem. But "cooling system degradation" doesn\'t match the evidence. Fan and coolant data look normal. The AI got the location right and the mechanism wrong.')">Yes — the AI correctly identified a thermal issue at Station 4.</button>
+          <button class="verdict-opt" onclick="pickVerdict(0,this,'best','Right. The AI identified the right station and the right symptom (thermal event), but pointed at the wrong cause. Sensor data shows the cooling system is functioning — the evidence points toward mechanical friction on the drive shaft, not cooling degradation.')">Partially — the AI identified the right location but likely the wrong cause.</button>
+          <button class="verdict-opt" onclick="pickVerdict(0,this,'partial','Too strong a rejection. The AI did correctly flag Station 4 and a thermal event — it just pointed to the wrong mechanism. Dismissing it entirely would lose that useful starting point.')">No — the AI recommendation is completely wrong and should be ignored.</button>
+        </div>
+        <div class="verdict-feedback" id="vfb-0"></div>
+      </div>
+
+      <!-- Q2: What should actually be investigated first? -->
+      <div class="verdict-field" id="vf-1">
+        <div class="verdict-field-label">What should be investigated first?</div>
+        <div class="verdict-opts">
+          <button class="verdict-opt" onclick="pickVerdict(1,this,'partial','This is what the AI recommended — but the evidence doesn\'t support it. Fan RPM and coolant flow were normal during the event. Replacing a recently inspected, likely functional component wastes time and doesn\'t address the actual pattern.')">Replace the cooling fan as recommended and run a full thermal inspection.</button>
+          <button class="verdict-opt" onclick="pickVerdict(1,this,'best','Right. Overdue lubrication, elevated vibration two days prior, a grinding noise yesterday, and a history of friction-based thermal events all converge on the drive shaft. That\'s where the evidence points — not the cooling system.')">Inspect the drive shaft — check lubrication status, vibration readings, and signs of mechanical wear consistent with the grinding noise report.</button>
+          <button class="verdict-opt" onclick="pickVerdict(1,this,'partial','Too passive. The evidence gives you a clear direction — the drive shaft, not the cooling system. Waiting for more data without acting on what you already have delays a necessary investigation.')">Wait for more data before doing anything — the evidence is still unclear.</button>
+        </div>
+        <div class="verdict-feedback" id="vfb-1"></div>
+      </div>
+
+      <!-- Q3: How should the AI's recommendation be used? -->
+      <div class="verdict-field" id="vf-2">
+        <div class="verdict-field-label">How should the AI's recommendation factor into your decision?</div>
+        <div class="verdict-opts">
+          <button class="verdict-opt" onclick="pickVerdict(2,this,'partial','Overconfident in the AI. "Confidence: High" reflects the system\'s certainty about its own pattern match — not a guarantee of accuracy. Confidence scores don\'t substitute for checking the recommendation against real evidence.')">Follow it — high confidence means the AI is very likely correct.</button>
+          <button class="verdict-opt" onclick="pickVerdict(2,this,'partial','Too dismissive. The AI correctly identified the station and the thermal event — that\'s genuinely useful. The issue is the specific mechanism it proposed, not the entire output.')">Discard it — if it\'s wrong about the cause, the whole output is unreliable.</button>
+          <button class="verdict-opt" onclick="pickVerdict(2,this,'best','Right. The AI gave a useful starting point — Station 4, thermal event — but the evidence reveals a gap in its reasoning. Using it as a partial input while redirecting the investigation is exactly how AI fits into a professional workflow.')">Use it as a starting point — it correctly identified the location and symptom, but the evidence redirects the investigation to the drive shaft rather than the cooling system.</button>
+        </div>
+        <div class="verdict-feedback" id="vfb-2"></div>
+      </div>
+
+    </div>
+
+    <button class="phase-btn" id="verdictNext" onclick="showFinale()">See my verification assessment →</button>
+  </div>
+
+  <!-- FINALE -->
+  <div class="phase" id="phase-3">
+    <div class="finale-icon">🔎</div>
+    <div class="finale-title">Your Verification Assessment</div>
+    <div class="finale-sub">You didn't just accept the recommendation — you interrogated it. Here's what your evaluation produced compared to what the AI said.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;" class="compare-grid-final">
+      <div style="background:var(--red-pale);border:2px solid var(--red);border-radius:16px;padding:18px 20px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--red);margin-bottom:8px;">AI Said</div>
+        <p style="font-size:14px;line-height:1.65;color:var(--red);font-style:italic;margin:0;">"Cooling system degradation. Replace cooling fan. 4–6 hour downtime."</p>
+      </div>
+      <div style="background:var(--green-pale);border:2px solid var(--green);border-radius:16px;padding:18px 20px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--green);margin-bottom:8px;">Evidence Points To</div>
+        <p style="font-size:14px;line-height:1.65;color:var(--green);font-style:italic;margin:0;">"Mechanical friction on drive shaft. Inspect and lubricate before replacing any components."</p>
+      </div>
+    </div>
+
+    <div class="verdict-card">
+      <div class="vc-header">
+        <h3>Professional Verification Report — Station 4</h3>
+        <p>Based on evidence review · Supersedes AI recommendation</p>
+      </div>
+      <div class="vc-body">
+        <div class="vc-row">
+          <div class="vc-label">AI diagnosis</div>
+          <div class="vc-value">Partially correct — right location, wrong mechanism. Cooling system data does not support cooling failure as the root cause.</div>
+        </div>
+        <div class="vc-row">
+          <div class="vc-label">Evidence-based cause</div>
+          <div class="vc-value">Mechanical friction on drive shaft — supported by overdue lubrication, elevated vibration two days prior, grinding noise report, and history of two prior friction-based thermal events.</div>
+        </div>
+        <div class="vc-row">
+          <div class="vc-label">Recommended action</div>
+          <div class="vc-value">Inspect drive shaft first. Check lubrication and wear. Do not replace cooling fan until drive shaft investigation rules out mechanical cause.</div>
+        </div>
+        <div class="vc-row">
+          <div class="vc-label">AI's role in this</div>
+          <div class="vc-value">Useful starting point — flagged the right station and symptom. Did not account for maintenance gaps, vibration data, operator observations, or historical pattern. Human review corrected the direction.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <h3>What This Activity Showed</h3>
+      <div class="summary-item">
+        <div class="summary-check">✓</div>
+        <p>A confident AI output isn't a verified finding. "Confidence: High" means the system is sure about its pattern match — not that the pattern matches your situation.</p>
+      </div>
+      <div class="summary-item">
+        <div class="summary-check">✓</div>
+        <p>Verification means checking the recommendation against maintenance records, sensor data, operator observations, and operational history — not just accepting what sounds reasonable.</p>
+      </div>
+      <div class="summary-item">
+        <div class="summary-check">✓</div>
+        <p>AI can be partially right and still mislead. The skill isn't rejecting AI — it's knowing which parts of its output hold up and which parts need to be redirected based on what you actually know.</p>
+      </div>
+    </div>
+
+    <button class="restart-btn" onclick="restartActivity()">Evaluate again</button>
+  </div>
+
+</div>
+
+<style>
+@media(max-width:580px){
+  .compare-grid-final{grid-template-columns:1fr!important;}
+  .evidence-grid{grid-template-columns:1fr!important;}
+}
+</style>
+
+<script>
+let currentPhase = 0;
+
+function goToPhase(n){
+  document.getElementById('phase-'+currentPhase).classList.remove('active');
+  const oldTab = document.getElementById('tab-'+currentPhase);
+  if(oldTab){ oldTab.classList.remove('active'); oldTab.classList.add('done'); }
+  currentPhase = n;
+  document.getElementById('phase-'+n).classList.add('active');
+  const newTab = document.getElementById('tab-'+n);
+  if(newTab) newTab.classList.add('active');
+  window.scrollTo({top: document.querySelector('.phase-nav').offsetTop - 20, behavior:'smooth'});
+}
+
+/* Collapsible references */
+function toggleRef(){
+  document.getElementById('refToggle').classList.toggle('open');
+  document.getElementById('refPanel').classList.toggle('open');
+}
+function toggleRef2(){
+  document.getElementById('refToggle2').classList.toggle('open');
+  document.getElementById('refPanel2').classList.toggle('open');
+}
+
+/* Phase 2 — interrogation checklist (toggle, reveal insight when checked) */
+let checkedCount = 0;
+const TOTAL_CHECKS = 5;
+
+function toggleCheck(el){
+  if(el.classList.contains('locked')) return;
+  el.classList.toggle('checked');
+  checkedCount = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkCount').textContent = 'Investigated: ' + checkedCount + ' / ' + TOTAL_CHECKS;
+  document.getElementById('checkNext').classList.toggle('show', checkedCount === TOTAL_CHECKS);
+}
+
+function submitChecks(){
+  document.querySelectorAll('.check-item').forEach(el => {
+    el.classList.add('locked');
+    el.onclick = null;
+    el.style.cursor = 'default';
+    // ensure all insights stay visible
+    el.classList.add('checked');
+  });
+  goToPhase(2);
+}
+
+/* Phase 3 — verdict builder (toggle until submitted) */
+const verdictPending = [null, null, null];
+let verdictLocked = false;
+
+function pickVerdict(fi, btn, type, feedbackText){
+  if(verdictLocked) return;
+
+  const field = document.getElementById('vf-'+fi);
+  const opts = field.querySelectorAll('.verdict-opt');
+  const fb = document.getElementById('vfb-'+fi);
+
+  if(btn.dataset.pending === 'true'){
+    btn.dataset.pending = 'false';
+    btn.classList.remove('best','partial');
+    fb.classList.remove('show','good','ok');
+    fb.textContent = '';
+    verdictPending[fi] = null;
+    document.getElementById('verdictNext').classList.remove('show');
+    return;
+  }
+
+  opts.forEach(o => { o.dataset.pending = 'false'; o.classList.remove('best','partial'); });
+  btn.dataset.pending = 'true';
+  btn.classList.add(type === 'best' ? 'best' : 'partial');
+  fb.textContent = feedbackText;
+  fb.className = 'verdict-feedback show ' + (type === 'best' ? 'good' : 'ok');
+  verdictPending[fi] = { type };
+
+  if(verdictPending.every(v => v !== null)){
+    document.getElementById('verdictNext').classList.add('show');
+    window.scrollTo({top: document.getElementById('verdictNext').offsetTop - 20, behavior:'smooth'});
+  }
+}
+
+function showFinale(){
+  verdictLocked = true;
+  document.querySelectorAll('.verdict-opt').forEach(o => {
+    o.style.cursor = 'default';
+    o.onclick = null;
+    if(!o.classList.contains('best') && !o.classList.contains('partial')){
+      o.classList.add('locked-neutral');
+    }
+  });
+  goToPhase(3);
+}
+
+function restartActivity(){ location.reload(); }
+
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.15});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
