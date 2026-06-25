@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Activity: Where Would You Double-Check AI?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --dark:#0A0A18;--dark3:#1C1830;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:var(--white);color:var(--ink);}
+.wrap{max-width:900px;margin:0 auto;padding:40px 24px 80px;}
+
+.hero{text-align:center;padding:20px 0 28px;}
+.lesson-tag{display:inline-block;background:var(--purple-pale);color:var(--purple-dark);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:18px;}
+.hero h1{font-family:"Fraunces",serif;font-weight:700;font-size:32px;line-height:1.18;margin:0 0 12px;color:var(--purple-dark);}
+.hero p{font-size:16px;line-height:1.6;color:var(--grey);max-width:600px;margin:0 auto;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:4px;margin:24px auto 0;}
+
+.tip-box{background:var(--purple-pale);border-radius:18px;padding:20px 24px;margin:24px 0 32px;display:flex;gap:14px;align-items:flex-start;}
+.tip-box .icon{font-size:24px;flex-shrink:0;line-height:1;margin-top:2px;}
+.tip-box p{margin:0;font-size:15px;line-height:1.6;color:var(--purple-dark);}
+.tip-box strong{font-weight:700;}
+
+/* Step nav */
+.step-nav{display:flex;gap:0;border-radius:14px;overflow:hidden;border:2px solid var(--purple-mid);margin-bottom:32px;}
+.step-tab{flex:1;padding:12px 6px;font-size:12px;font-weight:700;color:var(--grey);text-align:center;background:var(--white);border:none;font-family:"DM Sans",sans-serif;cursor:default;transition:all .2s;}
+.step-tab.active{background:var(--purple);color:#fff;}
+.step-tab.done{background:var(--purple-pale);color:var(--purple-dark);}
+
+/* Phase */
+.phase{display:none;}
+.phase.active{display:block;animation:fadeUp .4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.phase-title{font-family:"Fraunces",serif;font-weight:700;font-size:22px;color:var(--ink);margin:0 0 6px;}
+.phase-sub{font-size:15px;color:var(--grey);line-height:1.6;margin:0 0 22px;}
+
+/* Scenario card */
+.scenario{background:var(--dark);border-radius:20px;overflow:hidden;margin-bottom:22px;border:1px solid #2A2040;}
+.scenario-bar{background:var(--dark3);padding:11px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2A2040;}
+.sc-dot{width:9px;height:9px;border-radius:50%;}
+.sc-title{font-family:"DM Mono",monospace;font-size:12px;color:#5A507A;margin-left:4px;flex:1;}
+.sc-badge{font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:5px;background:rgba(74,230,138,.1);color:#3DDB7A;border:1px solid rgba(74,230,138,.3);}
+.scenario-body{padding:18px 22px;font-size:14px;line-height:1.75;color:#C9A8E8;}
+.scenario-body strong{color:#fff;}
+.scenario-body p{margin:0 0 10px;}
+.scenario-body p:last-child{margin:0;}
+
+/* ── WORKFLOW STEPS ── */
+.workflow-title{font-family:"Fraunces",serif;font-weight:700;font-size:17px;color:var(--ink);margin:0 0 6px;}
+.workflow-sub{font-size:14px;color:var(--grey);line-height:1.6;margin:0 0 20px;}
+
+/* Tool selector */
+.tool-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.tool-label{font-size:13px;font-weight:700;color:var(--grey);}
+.tool-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:2px solid var(--purple-mid);background:var(--white);font-size:13px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;color:var(--grey);transition:all .15s ease;}
+.tool-btn:hover{border-color:var(--purple);color:var(--purple-dark);background:var(--purple-pale);}
+.tool-btn.active-check{border-color:var(--red);background:var(--red-pale);color:var(--red);}
+.tool-btn.active-safe{border-color:var(--green);background:var(--green-pale);color:var(--green);}
+.tool-btn.active-none{border-color:rgba(100,100,100,.3);color:var(--grey);}
+.tool-count{margin-left:auto;font-size:13px;font-weight:600;color:var(--purple-dark);}
+
+/* Workflow node */
+.wf-row{display:flex;align-items:stretch;gap:0;margin-bottom:0;}
+.wf-node{
+  flex:1;border:2px solid #E4E7EC;border-radius:16px;padding:16px 18px;
+  background:var(--white);cursor:pointer;transition:all .2s ease;position:relative;
+  margin-bottom:0;
+}
+.wf-node:hover{border-color:var(--purple);background:var(--purple-pale);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.wf-node.checked{border-color:var(--red);background:var(--red-pale);}
+.wf-node.safe-marked{border-color:var(--green);background:var(--green-pale);}
+.wf-node.revealed-correct{border-color:var(--green);background:var(--green-pale);}
+.wf-node.revealed-missed{border-color:var(--amber);background:var(--amber-pale);}
+.wf-node.revealed-unnecessary{border-color:#DDD;background:#FAFAFA;}
+.wf-node.revealed-ok{border-color:var(--green);background:var(--green-pale);}
+
+.wf-node-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.wf-icon{font-size:20px;flex-shrink:0;}
+.wf-name{font-size:14px;font-weight:700;color:var(--ink);flex:1;}
+.wf-type{font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
+.wf-type.auto{background:var(--purple-pale);color:var(--purple-dark);}
+.wf-type.ai{background:var(--dark);color:#C9A8E8;font-family:"DM Mono",monospace;}
+.wf-type.human{background:#E8F4E8;color:var(--green);}
+.wf-type.system{background:#E4EEFF;color:var(--blue,#1457A8);}
+.wf-desc{font-size:13px;color:var(--grey);line-height:1.55;}
+.wf-risk{font-size:12px;margin-top:6px;display:flex;align-items:center;gap:5px;}
+.wf-risk .risk-pill{padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700;}
+.risk-high{background:var(--red-pale);color:var(--red);}
+.risk-med{background:var(--amber-pale);color:var(--amber);}
+.risk-low{background:var(--green-pale);color:var(--green);}
+
+/* Stamp overlay */
+.stamp{position:absolute;top:10px;right:12px;font-size:20px;pointer-events:none;opacity:0;transition:opacity .2s ease;}
+.wf-node.checked .stamp.check-stamp{opacity:1;}
+.wf-node.safe-marked .stamp.safe-stamp{opacity:1;}
+
+/* Connector */
+.wf-connector{display:flex;justify-content:center;align-items:center;height:32px;color:#CBD5E1;font-size:20px;}
+.wf-connector.highlight{color:var(--red);}
+
+/* Tally */
+.tally-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.tally-chip{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;border:2px solid;}
+.tally-chip.t-check{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.tally-chip.t-safe{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+.tally-chip.t-need{background:var(--purple-pale);border-color:var(--purple);color:var(--purple-dark);}
+
+/* Continue */
+.cont-btn{display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:12px;}
+.cont-btn.show{display:block;}
+.cont-btn:hover{background:var(--purple-dark);}
+
+/* ── Reveal phase ── */
+.reveal-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.rl-item{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--grey);}
+.rl-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.rl-dot.correct{background:var(--green);}
+.rl-dot.missed{background:var(--amber);}
+.rl-dot.unnecessary{background:#CCC;}
+.rl-dot.ok{background:var(--green);}
+
+.reveal-detail{margin-top:14px;background:#F8F9FA;border-radius:14px;padding:16px 18px;display:none;font-size:14px;line-height:1.7;color:var(--ink);}
+.reveal-detail.show{display:block;}
+.reveal-detail strong{color:var(--purple-dark);}
+
+/* Score */
+.score-wrap{background:var(--purple-pale);border-radius:16px;padding:20px 22px;margin-bottom:22px;}
+.score-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--purple-dark);margin-bottom:14px;}
+.score-bars{display:flex;flex-direction:column;gap:10px;}
+.score-bar-row{display:flex;align-items:center;gap:12px;}
+.score-bar-label{font-size:13px;color:var(--grey);min-width:140px;}
+.score-bar-track{flex:1;height:10px;background:var(--purple-mid);border-radius:999px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:999px;transition:width 1s ease;}
+.score-bar-fill.green{background:var(--green);}
+.score-bar-fill.amber{background:var(--amber);}
+.score-bar-fill.red{background:var(--red);}
+.score-bar-val{font-size:13px;font-weight:700;min-width:32px;text-align:right;}
+
+/* Reflection Q */
+.rq-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;}
+.rq-card{border:2px solid #EEE;border-radius:14px;overflow:hidden;}
+.rq-head{padding:13px 18px;background:#FAFAFA;border-bottom:1px solid #EEE;}
+.rq-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:4px;}
+.rq-q{font-size:14px;font-weight:600;color:var(--ink);}
+.rq-opts{padding:12px;display:flex;flex-direction:column;gap:7px;}
+.rq-opt{border:2px solid #EEE;border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);cursor:pointer;background:var(--white);transition:all .15s;text-align:left;line-height:1.5;font-family:"DM Sans",sans-serif;width:100%;}
+.rq-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.rq-opt.correct{border-color:var(--green);background:var(--green-pale);color:var(--green);font-weight:600;}
+.rq-opt.wrong{border-color:var(--red);background:var(--red-pale);color:var(--red);}
+.rq-opt.locked:hover{background:var(--white);border-color:#EEE;}
+.rq-opt.locked.correct:hover{background:var(--green-pale);border-color:var(--green);}
+.rq-fb{padding:10px 12px;font-size:13px;line-height:1.6;display:none;border-top:1px solid #EEE;}
+.rq-fb.show{display:block;}
+.rq-fb.good{background:var(--green-pale);color:var(--green);}
+.rq-fb.ok{background:var(--amber-pale);color:var(--amber);}
+
+/* Summary */
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:28px;color:#fff;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 14px;color:#fff;}
+.s-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.s-item:last-child{margin-bottom:0;}
+.s-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.s-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+@media(max-width:560px){.hero h1{font-size:26px;}.step-tab{font-size:10px;padding:10px 3px;}.tool-bar{gap:7px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero fade-in">
+  <div class="lesson-tag">Hands-On Activity</div>
+  <h1>Where Would You Double-Check AI?</h1>
+  <p>You're a systems reviewer, not just a user. Your job isn't to run this workflow — it's to find the spots where a mistake would matter most before it goes live.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="tip-box fade-in">
+  <div class="icon">🔍</div>
+  <p><strong>How this works:</strong> Read the scenario. Then pick a tool — "Needs a human check" or "Safe to automate" — and stamp each step. You're not checking everything, you're being strategic. When you're done, see how your judgment compared to an expert's. No typing needed.</p>
+</div>
+
+<div class="step-nav">
+  <button class="step-tab active" id="sn-0">1. Read the Scenario</button>
+  <button class="step-tab" id="sn-1">2. Stamp the Workflow</button>
+  <button class="step-tab" id="sn-2">3. See the Results</button>
+  <button class="step-tab" id="sn-3">4. Reflect</button>
+</div>
+
+<!-- ══════════ PHASE 0: SCENARIO ══════════ -->
+<div class="phase active" id="phase-0">
+  <div class="phase-title">The Scenario: Automated Loan Pre-Screening</div>
+  <div class="phase-sub">A bank has built an AI-powered workflow that automatically handles the first stage of every loan application. Read the full scenario before reviewing the steps.</div>
+
+  <div class="scenario fade-in">
+    <div class="scenario-bar">
+      <div class="sc-dot" style="background:#FF5F56;"></div>
+      <div class="sc-dot" style="background:#FEBC2E;"></div>
+      <div class="sc-dot" style="background:#27C840;"></div>
+      <span class="sc-title">LoanFlow AI — Automated Pre-Screening Pipeline · Production</span>
+      <span class="sc-badge">● LIVE</span>
+    </div>
+    <div class="scenario-body">
+      <p><strong>What this workflow does:</strong> When someone applies for a personal loan online, this system automatically processes their application from start to finish — without any human involvement unless the system flags a problem.</p>
+      <p><strong>The volume:</strong> This workflow runs about 400 times per day. A senior loan officer used to review each application manually. The bank automated the process to save time and handle more volume.</p>
+      <p><strong>The stakes:</strong> Each decision affects whether a real person gets access to money — and potentially what interest rate they pay. Incorrect decisions can cause financial harm to applicants or create risk for the bank.</p>
+      <p><strong>Your job:</strong> You've been brought in as a systems reviewer to look at this workflow before the next version goes live. You need to mark which steps are safe to run automatically — and which ones need a human to double-check the AI's work before anything happens.</p>
+    </div>
+  </div>
+
+  <div style="background:var(--amber-pale);border:1px solid var(--amber);border-radius:14px;padding:14px 18px;font-size:14px;color:var(--amber);line-height:1.65;margin-bottom:20px;" class="fade-in">
+    💡 <strong>Think before you stamp:</strong> Not every step needs a human check — that would defeat the purpose of automation. Focus on the steps where a mistake would have the biggest consequence. Where could the AI be missing context? Where does a wrong output cause serious harm?
+  </div>
+
+  <button class="cont-btn show" onclick="goToPhase(1)">Review the workflow →</button>
+</div>
+
+<!-- ══════════ PHASE 1: STAMP ══════════ -->
+<div class="phase" id="phase-1">
+  <div class="phase-title">Stamp Each Step</div>
+  <div class="phase-sub">Pick a tool, then tap each step to mark it. You're looking for the 3–4 steps where human review matters most — not every step.</div>
+
+  <div class="tally-bar">
+    <div class="tally-chip t-check" id="tchip">🔴 Needs human check: 0</div>
+    <div class="tally-chip t-safe" id="schip">🟢 Safe to automate: 0</div>
+    <div class="tally-chip t-need" id="nchip">Stamp at least 3 steps to continue</div>
+  </div>
+
+  <div class="tool-bar">
+    <span class="tool-label">Active tool:</span>
+    <button class="tool-btn" id="tbtn-check" onclick="setTool('check')">🔴 Needs a human check</button>
+    <button class="tool-btn" id="tbtn-safe" onclick="setTool('safe')">🟢 Safe to automate</button>
+    <button class="tool-btn" id="tbtn-none" onclick="setTool('none')">✋ Stop stamping</button>
+  </div>
+
+  <div id="workflowSteps"></div>
+
+  <div id="hoveredDetail" style="margin-top:14px;padding:13px 16px;background:#F8F9FA;border-radius:12px;font-size:13px;color:var(--grey);line-height:1.6;min-height:44px;">
+    Tap a step to stamp it. Hover to see more detail.
+  </div>
+
+  <button class="cont-btn" id="stampNext" onclick="goToReveal()">See how I did →</button>
+</div>
+
+<!-- ══════════ PHASE 2: REVEAL ══════════ -->
+<div class="phase" id="phase-2">
+  <div class="phase-title">Your Stamps vs. Expert Review</div>
+  <div class="phase-sub">Here's how your judgment lines up with an experienced systems reviewer. Tap any step to see the reasoning.</div>
+
+  <div class="reveal-legend">
+    <div class="rl-item"><div class="rl-dot correct"></div>You flagged this — and it's a critical checkpoint</div>
+    <div class="rl-item"><div class="rl-dot missed"></div>You missed this critical checkpoint</div>
+    <div class="rl-item"><div class="rl-dot unnecessary"></div>You flagged this — but it's safe to automate</div>
+    <div class="rl-item"><div class="rl-dot ok"></div>Correctly identified as safe to automate</div>
+  </div>
+
+  <div id="revealFlow"></div>
+  <div class="reveal-detail" id="revealDetail"></div>
+
+  <div class="score-wrap" style="margin-top:20px;" id="scoreWrap">
+    <div class="score-title">Your Pattern Recognition</div>
+    <div class="score-bars" id="scoreBars"></div>
+  </div>
+
+  <button class="cont-btn show" onclick="goToPhase(3)">Reflect on this →</button>
+</div>
+
+<!-- ══════════ PHASE 3: REFLECT ══════════ -->
+<div class="phase" id="phase-3">
+  <div class="phase-title">Think Like a Systems Reviewer</div>
+  <div class="phase-sub">Use what you saw in the workflow to answer these questions about where and why AI needs a human checkpoint.</div>
+
+  <div class="rq-grid">
+    <div class="rq-card">
+      <div class="rq-head"><div class="rq-label">Question 1 of 3</div><div class="rq-q">The AI reads each applicant's uploaded documents. Why is this a critical checkpoint?</div></div>
+      <div class="rq-opts">
+        <button class="rq-opt" onclick="ansRQ(0,this,'ok','Speed matters but it\'s not the reason this step needs human review. The AI can read documents faster than a person — but the question is whether it\'s reading them correctly. A misread could deny a qualified applicant or approve a fraudulent one.')">Because a human can read documents faster than the AI.</button>
+        <button class="rq-opt" onclick="ansRQ(0,this,'good','Exactly. Documents can be low quality, in unexpected formats, or contain unusual structures the AI wasn\'t trained on. When the AI misreads income or employment details, every downstream step — the risk score, the approval decision, the interest rate — inherits that error. One bad read cascades through the entire application.')">Because if the AI misreads income or employment details, that error flows into every decision that follows — the risk score, the approval, the interest rate. A wrong input at step one creates wrong outputs everywhere.</button>
+        <button class="rq-opt" onclick="ansRQ(0,this,'ok','Fraud detection is a concern, but that\'s a separate step. The critical issue with document reading is accuracy — a clean document from an honest applicant can still be misread by the AI, causing incorrect decisions even when no fraud is involved.')">Because the AI can\'t detect fraud in documents.</button>
+      </div>
+      <div class="rq-fb" id="rqfb-0"></div>
+    </div>
+
+    <div class="rq-card">
+      <div class="rq-head"><div class="rq-label">Question 2 of 3</div><div class="rq-q">Why is "send rejection letter" safe to automate — but "deny the application" needs human review?</div></div>
+      <div class="rq-opts">
+        <button class="rq-opt" onclick="ansRQ(1,this,'ok','The cost of a letter isn\'t the issue — sending a rejection letter is cheap whether a human writes it or the system sends it. The real distinction is about what creates the outcome versus what communicates it.')">Because letters are cheaper to automate than decisions.</button>
+        <button class="rq-opt" onclick="ansRQ(1,this,'ok','Tone matters for communication quality, but that\'s a separate concern from why these two steps get different treatment. A politely-worded rejection doesn\'t fix a wrongful rejection.')">Because humans write letters with a better tone than AI.</button>
+        <button class="rq-opt" onclick="ansRQ(1,this,'good','Right. The decision is where the harm can happen — an incorrect denial affects a real person\'s access to money. Once a human confirms the denial is correct, automating the letter delivery is just execution. The rule: automate the steps that carry out a confirmed decision. Put checkpoints on the steps that make the decision.')">Because the decision determines whether someone gets denied — a human should verify that\'s correct before it\'s locked in. Once the decision is confirmed, sending the letter is just carrying it out. Automating execution is fine. Automating judgment is the risk.</button>
+      </div>
+      <div class="rq-fb" id="rqfb-1"></div>
+    </div>
+
+    <div class="rq-card">
+      <div class="rq-head"><div class="rq-label">Question 3 of 3</div><div class="rq-q">The workflow processes 400 applications per day. How does this scale change the risk of a small AI error?</div></div>
+      <div class="rq-opts">
+        <button class="rq-opt" onclick="ansRQ(2,this,'ok','High volume does stress-test systems — but that\'s not specifically why a small error becomes dangerous. The key issue is what happens to an error when it\'s repeated hundreds of times.')">High volume means the system will crash more often.</button>
+        <button class="rq-opt" onclick="ansRQ(2,this,'good','Exactly. If the AI\'s risk model has a subtle flaw that unfairly penalizes applicants from a certain demographic or region — even by a small amount — that flaw runs on 400 applications per day. At scale, even a 1% error rate means 4 people per day get an incorrect outcome. Over a year, that\'s over a thousand people wrongly affected. Scale turns small errors into systemic problems.')">A small systematic error gets multiplied by 400 every single day. An error that might be a minor problem for one person becomes a large-scale, harmful pattern across hundreds of applications per week — especially if the error consistently affects the same kinds of applicants.</button>
+        <button class="rq-opt" onclick="ansRQ(2,this,'ok','More data does generally improve AI — but that\'s not why scale increases risk here. The risk isn\'t about training; it\'s about the impact of an existing flaw being repeated hundreds of times daily.')">High volume means the AI gets more data to learn from, which reduces the risk over time.</button>
+      </div>
+      <div class="rq-fb" id="rqfb-2"></div>
+    </div>
+  </div>
+
+  <button class="cont-btn" id="rqNext" onclick="goToPhase(4)">See the summary →</button>
+</div>
+
+<!-- ══════════ FINALE ══════════ -->
+<div class="phase" id="phase-4">
+  <div style="text-align:center;font-size:52px;margin-bottom:14px;">🔍</div>
+  <div style="font-family:'Fraunces',serif;font-weight:700;font-size:26px;color:var(--purple-dark);text-align:center;margin:0 0 12px;">You Just Thought Like a Systems Reviewer</div>
+  <div style="font-size:15px;line-height:1.7;color:var(--grey);max-width:540px;margin:0 auto 28px;text-align:center;">The skill isn't checking everything — it's knowing which steps carry the most risk and placing your trust strategically.</div>
+
+  <div class="summary-box">
+    <h3>What This Activity Showed</h3>
+    <div class="s-item"><div class="s-check">✓</div><p>Not every AI step needs human review — that would defeat the purpose of automation. The goal is strategic placement of checkpoints where mistakes have the biggest consequences.</p></div>
+    <div class="s-item"><div class="s-check">✓</div><p>Critical checkpoints usually fall where: AI is interpreting data (not just moving it), a decision affects a real person's outcome, or an error early in the process cascades into later steps.</p></div>
+    <div class="s-item"><div class="s-check">✓</div><p>Safe-to-automate steps are usually execution steps — carrying out a confirmed decision, sending a notification, logging a record. The judgment comes before; the automation executes after.</p></div>
+    <div class="s-item"><div class="s-check">✓</div><p>At scale, even a small AI error rate becomes a serious problem. 400 applications per day means a 1% flaw affects thousands of real people per year — which is why human checkpoints in high-volume automated systems are not optional.</p></div>
+  </div>
+  <button class="restart-btn" onclick="restartActivity()">Review it again</button>
+</div>
+
+</div>
+
+<script>
+let curPhase = 0;
+let activeTool = null;
+const userStamps = {}; // stepId -> 'check' | 'safe' | null
+
+// ── Workflow definition ──
+const STEPS = [
+  {
+    id:0, icon:'📥', name:'Receive application', type:'system', typeLabel:'System',
+    desc:'Application form submitted online — data goes directly into the system.',
+    risk:'low',
+    expertCheck:false,
+    expertReason:'This step just receives and stores what the applicant submitted. No interpretation, no judgment, no decision. If something is wrong here, the applicant can resubmit. Safe to automate.'
+  },
+  {
+    id:1, icon:'📄', name:'AI reads uploaded documents', type:'ai', typeLabel:'AI Step',
+    desc:'AI extracts income, employment history, and identity from uploaded bank statements and pay stubs.',
+    risk:'high',
+    expertCheck:true,
+    expertReason:'This is the foundation for every decision that follows. If the AI misreads a pay stub — or rejects a valid document because of an unusual format — the wrong numbers flow into the risk model, the credit check, and ultimately the approval decision. One bad read here cascades through everything.'
+  },
+  {
+    id:2, icon:'✅', name:'Verify identity (automated)', type:'auto', typeLabel:'Auto',
+    desc:'System cross-checks name, address, and SSN against government identity databases.',
+    risk:'low',
+    expertCheck:false,
+    expertReason:'This is a binary lookup against external databases — name matches or it doesn\'t. The databases are reliable, the process is well-established, and there\'s a clear escalation path if there\'s a mismatch. Safe to automate.'
+  },
+  {
+    id:3, icon:'🤖', name:'AI generates risk score', type:'ai', typeLabel:'AI Step',
+    desc:'AI model assigns a risk score (0–100) based on extracted data. This score determines what happens next.',
+    risk:'high',
+    expertCheck:true,
+    expertReason:'The risk score is a judgment call, not a fact lookup. It\'s based on a model trained on historical data — which can contain biases, can misweight factors, or can misfire on applicants whose profile doesn\'t match the training data. This score gates everything downstream. If it\'s wrong, the outcome is wrong.'
+  },
+  {
+    id:4, icon:'📊', name:'Credit check (external)', type:'system', typeLabel:'System',
+    desc:'System pulls credit score from external credit bureau. Score is added to applicant\'s file.',
+    risk:'low',
+    expertCheck:false,
+    expertReason:'This is a standard pull from a regulated, external data source. The bank doesn\'t control credit bureau data, and the result is what it is. If the credit score is disputed, that\'s handled through a separate credit bureau process, not here. Safe to automate.'
+  },
+  {
+    id:5, icon:'⚖️', name:'AI makes approval decision', type:'ai', typeLabel:'AI Step',
+    desc:'AI combines risk score and credit score to approve or deny the application. High scorers proceed; low scorers are denied.',
+    risk:'high',
+    expertCheck:true,
+    expertReason:'This is the most consequential step in the entire workflow. A wrong denial affects a real person\'s access to money. An incorrect approval creates financial risk for the bank. The AI is making a binary judgment call that directly determines someone\'s financial outcome — this is exactly where human validation before action matters most.'
+  },
+  {
+    id:6, icon:'💰', name:'AI calculates interest rate', type:'ai', typeLabel:'AI Step',
+    desc:'For approved applications, AI sets the interest rate tier (low/medium/high) based on risk profile.',
+    risk:'med',
+    expertCheck:true,
+    expertReason:'A miscalculated interest rate can financially harm the applicant over the life of the loan — and the bank. Unlike a flat approval/denial, interest rates have ongoing compounding impact. This also has regulatory implications in many jurisdictions where discriminatory pricing is illegal. Worth a human check before it\'s set.'
+  },
+  {
+    id:7, icon:'📬', name:'Send approval or rejection letter', type:'auto', typeLabel:'Auto',
+    desc:'System automatically generates and sends the appropriate letter to the applicant.',
+    risk:'low',
+    expertCheck:false,
+    expertReason:'At this point, a human has already verified the decision. The letter is just communicating a confirmed outcome — execution, not judgment. The content is templated and regulated. Safe to automate.'
+  },
+  {
+    id:8, icon:'📋', name:'Log outcome to database', type:'system', typeLabel:'System',
+    desc:'Final decision, interest rate, and applicant data are recorded for compliance and auditing.',
+    risk:'low',
+    expertCheck:false,
+    expertReason:'Logging is pure record-keeping. It records what already happened. No decision, no judgment, no downstream effects. This is exactly the kind of step that should be automated.'
+  },
+];
+
+const EXPERT_CHECK_IDS = STEPS.filter(s=>s.expertCheck).map(s=>s.id); // [1,3,5,6]
+
+// ── Build step cards ──
+function buildWorkflow(){
+  const container = document.getElementById('workflowSteps');
+  container.innerHTML = '';
+  STEPS.forEach((s,i)=>{
+    const stamp = userStamps[s.id];
+    const div = document.createElement('div');
+    div.className = 'wf-node' + (stamp==='check'?' checked':stamp==='safe'?' safe-marked':'');
+    div.id = 'wfn-'+s.id;
+    div.innerHTML = `
+      <div class="stamp check-stamp">🔴</div>
+      <div class="stamp safe-stamp">🟢</div>
+      <div class="wf-node-top">
+        <div class="wf-icon">${s.icon}</div>
+        <div class="wf-name">${s.name}</div>
+        <div class="wf-type ${s.type}">${s.typeLabel}</div>
+      </div>
+      <div class="wf-desc">${s.desc}</div>
+      <div class="wf-risk">
+        <span class="risk-pill ${s.risk==='high'?'risk-high':s.risk==='med'?'risk-med':'risk-low'}">
+          ${s.risk==='high'?'⚠ High risk if wrong':s.risk==='med'?'△ Moderate risk':'✓ Low risk'}
+        </span>
+      </div>
+    `;
+    div.onclick = () => handleStamp(s.id, div, s);
+    div.onmouseenter = () => showDetail(s);
+    container.appendChild(div);
+
+    if(i<STEPS.length-1){
+      const arr = document.createElement('div');
+      arr.className = 'wf-connector';
+      arr.textContent = '↓';
+      container.appendChild(arr);
+    }
+  });
+}
+
+function showDetail(s){
+  const el = document.getElementById('hoveredDetail');
+  el.innerHTML = `<strong>${s.name}:</strong> ${s.desc}`;
+}
+
+function handleStamp(id, el, s){
+  if(!activeTool) return;
+  const prev = userStamps[id];
+  el.classList.remove('checked','safe-marked');
+
+  if(prev===activeTool){
+    // toggle off
+    userStamps[id]=null;
+  } else {
+    userStamps[id]=activeTool;
+    el.classList.add(activeTool==='check'?'checked':'safe-marked');
+  }
+  updateTally();
+}
+
+function updateTally(){
+  const checks = Object.values(userStamps).filter(v=>v==='check').length;
+  const safes = Object.values(userStamps).filter(v=>v==='safe').length;
+  const total = checks+safes;
+  document.getElementById('tchip').textContent = '🔴 Needs human check: '+checks;
+  document.getElementById('schip').textContent = '🟢 Safe to automate: '+safes;
+  const ready = total>=3;
+  document.getElementById('stampNext').classList.toggle('show',ready);
+  if(ready){
+    document.getElementById('nchip').textContent='✓ Ready to see results';
+    document.getElementById('nchip').style.cssText='background:var(--green-pale);border-color:var(--green);color:var(--green);padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;border:2px solid;';
+  } else {
+    document.getElementById('nchip').textContent='Stamp at least 3 steps to continue';
+    document.getElementById('nchip').style.cssText='background:var(--purple-pale);border-color:var(--purple);color:var(--purple-dark);padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;border:2px solid;';
+  }
+  // Rebuild cards with updated stamps
+  buildWorkflow();
+}
+
+function setTool(t){
+  activeTool = t==='none'?null:t;
+  document.getElementById('tbtn-check').className='tool-btn'+(activeTool==='check'?' active-check':'');
+  document.getElementById('tbtn-safe').className='tool-btn'+(activeTool==='safe'?' active-safe':'');
+  document.getElementById('tbtn-none').className='tool-btn'+(activeTool===null?' active-none':'');
+}
+
+// ── Reveal ──
+function goToReveal(){
+  buildRevealFlow();
+  goToPhase(2);
+}
+
+function buildRevealFlow(){
+  const container = document.getElementById('revealFlow');
+  container.innerHTML='';
+  let correct=0, missed=0, unnecessary=0, ok=0;
+
+  STEPS.forEach((s,i)=>{
+    const userStamp = userStamps[s.id]||null;
+    const expert = s.expertCheck;
+    let cls='', resultLabel='';
+    if(userStamp==='check' && expert){ cls='revealed-correct'; resultLabel='✓ You flagged — expert agrees'; correct++; }
+    else if(userStamp!=='check' && expert){ cls='revealed-missed'; resultLabel='⚠ You missed this checkpoint'; missed++; }
+    else if(userStamp==='check' && !expert){ cls='revealed-unnecessary'; resultLabel='◎ You flagged — but safe to automate'; unnecessary++; }
+    else { cls='revealed-ok'; resultLabel='✓ Correctly identified as safe'; ok++; }
+
+    const div = document.createElement('div');
+    div.className='wf-node '+cls;
+    div.style.cursor='pointer';
+    div.innerHTML=`
+      <div class="wf-node-top">
+        <div class="wf-icon">${s.icon}</div>
+        <div class="wf-name">${s.name}</div>
+        <div class="wf-type ${s.type}">${s.typeLabel}</div>
+      </div>
+      <div class="wf-desc">${s.desc}</div>
+      <div style="margin-top:8px;font-size:12px;font-weight:700;color:${cls==='revealed-correct'||cls==='revealed-ok'?'var(--green)':cls==='revealed-missed'?'var(--amber)':'var(--grey)'};">${resultLabel}</div>
+    `;
+    div.onclick=()=>showRevealDetail(s);
+    container.appendChild(div);
+    if(i<STEPS.length-1){
+      const arr=document.createElement('div');
+      arr.className='wf-connector';
+      arr.textContent='↓';
+      container.appendChild(arr);
+    }
+  });
+
+  // Score bars
+  const total=STEPS.length;
+  const scoreBars=document.getElementById('scoreBars');
+  scoreBars.innerHTML=`
+    <div class="score-bar-row">
+      <div class="score-bar-label">Critical checkpoints caught</div>
+      <div class="score-bar-track"><div class="score-bar-fill green" style="width:0%" data-w="${Math.round(correct/EXPERT_CHECK_IDS.length*100)}%"></div></div>
+      <div class="score-bar-val">${correct}/${EXPERT_CHECK_IDS.length}</div>
+    </div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">Checkpoints missed</div>
+      <div class="score-bar-track"><div class="score-bar-fill amber" style="width:0%" data-w="${Math.round(missed/EXPERT_CHECK_IDS.length*100)}%"></div></div>
+      <div class="score-bar-val">${missed}</div>
+    </div>
+    <div class="score-bar-row">
+      <div class="score-bar-label">Over-flagged (safe steps)</div>
+      <div class="score-bar-track"><div class="score-bar-fill red" style="width:0%" data-w="${Math.round(unnecessary/(total-EXPERT_CHECK_IDS.length)*100)}%"></div></div>
+      <div class="score-bar-val">${unnecessary}</div>
+    </div>
+  `;
+  setTimeout(()=>{
+    scoreBars.querySelectorAll('.score-bar-fill').forEach(el=>{
+      el.style.width=el.dataset.w;
+    });
+  },400);
+}
+
+function showRevealDetail(s){
+  const el=document.getElementById('revealDetail');
+  el.innerHTML=`<strong>${s.icon} ${s.name} — ${s.expertCheck?'🔴 Needs human checkpoint':'🟢 Safe to automate'}</strong><br>${s.expertReason}`;
+  el.classList.add('show');
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Reflect Q&A ──
+const rqAnswers=[null,null,null];
+function ansRQ(qi,btn,type,fb){
+  const card=btn.closest('.rq-card');
+  const opts=card.querySelectorAll('.rq-opt');
+  if(btn.dataset.pending==='true'){
+    btn.dataset.pending='false';btn.classList.remove('correct','wrong');
+    card.querySelector('.rq-fb').classList.remove('show','good','ok');
+    card.querySelector('.rq-fb').textContent='';
+    rqAnswers[qi]=null;checkRQ();return;
+  }
+  opts.forEach(o=>{o.dataset.pending='false';o.classList.remove('correct','wrong');});
+  btn.dataset.pending='true';
+  btn.classList.add(type==='good'?'correct':'wrong');
+  const fbe=document.getElementById('rqfb-'+qi);
+  fbe.textContent=fb;fbe.className='rq-fb show '+(type==='good'?'good':'ok');
+  rqAnswers[qi]=type;checkRQ();
+}
+function checkRQ(){
+  const done=rqAnswers.filter(v=>v!==null).length;
+  document.getElementById('rqNext').classList.toggle('show',done===3);
+}
+
+// ── Phase nav ──
+function goToPhase(n){
+  document.getElementById('phase-'+curPhase).classList.remove('active');
+  document.getElementById('sn-'+curPhase).classList.remove('active');
+  document.getElementById('sn-'+curPhase).classList.add('done');
+  curPhase=n;
+  document.getElementById('phase-'+n).classList.add('active');
+  if(n<4) document.getElementById('sn-'+n).classList.add('active');
+  window.scrollTo({top:document.querySelector('.step-nav').offsetTop-20,behavior:'smooth'});
+}
+
+function restartActivity(){location.reload();}
+
+// Init
+buildWorkflow();
+setTool('none');
+
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
