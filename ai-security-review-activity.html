@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Security Lab: Prompt Risk Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;--green-mid:#A8DFC4;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --blue:#1457A8;--blue-pale:#E4EEFF;
+  /* Risk flag colors — readable on white */
+  --flag-pii-bg:#FCEAEA;--flag-pii-line:#C23B3B;--flag-pii-text:#9B1C1C;
+  --flag-scope-bg:#FFF3DD;--flag-scope-line:#B5700A;--flag-scope-text:#7A4A00;
+  --flag-access-bg:#E4EEFF;--flag-access-line:#1457A8;--flag-access-text:#0D3D7A;
+  --flag-over-bg:#F3EAFF;--flag-over-line:#7B2FBE;--flag-over-text:#4A1580;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:#F7F5FB;color:var(--ink);font-family:"Inter",sans-serif;}
+
+/* ── App shell ── */
+.lab-bar{background:var(--purple-dark);border-bottom:1px solid var(--purple);padding:12px 24px;display:flex;align-items:center;gap:16px;}
+.lab-logo{font-family:"DM Mono",monospace;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
+.lab-logo::before{content:'>';color:var(--purple-mid);}
+.lab-status{font-family:"DM Mono",monospace;font-size:11px;color:rgba(255,255,255,.6);margin-left:auto;}
+.lab-status span{color:#FFD080;}
+.analyst-badge{font-family:"DM Mono",monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:5px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);}
+
+.lab-body{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 48px);}
+@media(max-width:720px){.lab-body{grid-template-columns:1fr;}}
+
+/* ── Left: review canvas ── */
+.review-canvas{padding:24px;overflow-y:auto;background:#F7F5FB;}
+
+/* Case card */
+.case-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin-bottom:22px;box-shadow:0 2px 12px rgba(123,47,190,.06);}
+.case-header{background:var(--purple-pale);border-bottom:1px solid var(--purple-mid);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.case-num{font-family:"DM Mono",monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;}
+.case-num.low{background:var(--green-pale);color:var(--green);border:1px solid var(--green-mid);}
+.case-num.med{background:var(--amber-pale);color:var(--amber);border:1px solid #DFA050;}
+.case-num.high{background:var(--red-pale);color:var(--red);border:1px solid #E08080;}
+.case-title{font-family:"DM Mono",monospace;font-size:13px;color:var(--purple-dark);flex:1;}
+.case-from{font-size:11px;color:var(--grey);}
+
+/* The prompt to review */
+.prompt-label{font-family:"DM Mono",monospace;font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:.08em;padding:14px 20px 8px;}
+.prompt-text{padding:16px 20px;font-family:"DM Mono",monospace;font-size:13px;line-height:2;color:var(--ink);border-bottom:1px solid var(--purple-mid);background:#FDFCFF;}
+
+/* Highlight spans inside prompt */
+.hl{cursor:pointer;border-radius:3px;padding:1px 3px;transition:all .15s;border-bottom:2px solid transparent;position:relative;}
+.hl:hover{background:var(--purple-pale);}
+.hl.flagged-pii{background:var(--flag-pii-bg);border-bottom-color:var(--flag-pii-line);color:var(--flag-pii-text);}
+.hl.flagged-scope{background:var(--flag-scope-bg);border-bottom-color:var(--flag-scope-line);color:var(--flag-scope-text);}
+.hl.flagged-access{background:var(--flag-access-bg);border-bottom-color:var(--flag-access-line);color:var(--flag-access-text);}
+.hl.flagged-over{background:var(--flag-over-bg);border-bottom-color:var(--flag-over-line);color:var(--flag-over-text);}
+
+/* Annotation toolbar */
+.anno-toolbar{padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--purple-mid);background:var(--white);}
+.anno-label{font-size:11px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.06em;}
+.anno-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:2px solid var(--purple-mid);background:var(--white);font-size:12px;font-weight:700;cursor:pointer;font-family:"Inter",sans-serif;transition:all .15s;color:var(--grey);}
+.anno-btn:hover{border-color:var(--purple);color:var(--purple-dark);background:var(--purple-pale);}
+.anno-btn.active-pii{border-color:var(--red);background:var(--red-pale);color:var(--red);}
+.anno-btn.active-scope{border-color:var(--amber);background:var(--amber-pale);color:var(--amber);}
+.anno-btn.active-access{border-color:var(--blue);background:var(--blue-pale);color:var(--blue);}
+.anno-btn.active-over{border-color:var(--purple);background:var(--purple-pale);color:var(--purple-dark);}
+.anno-btn.active-clear{border-color:var(--grey);background:#F3F4F6;color:var(--ink);}
+.anno-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.anno-dot.pii{background:var(--red);}
+.anno-dot.scope{background:var(--amber);}
+.anno-dot.access{background:var(--blue);}
+.anno-dot.over{background:var(--purple);}
+
+/* Phase sections */
+.phase{display:none;}
+.phase.active{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Fix panel */
+.fix-panel{background:var(--purple-pale);border:2px solid var(--purple-mid);border-radius:14px;padding:18px;margin-bottom:16px;}
+.fix-panel-title{font-family:"DM Mono",monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple-dark);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.fix-panel-title::before{content:'//';color:var(--purple-mid);}
+
+.fix-field{margin-bottom:16px;}
+.fix-field:last-child{margin-bottom:0;}
+.fix-field-label{font-size:12px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+.fix-opts{display:flex;flex-direction:column;gap:6px;}
+.fix-opt{border:2px solid var(--purple-mid);border-radius:8px;padding:10px 13px;font-size:13px;cursor:pointer;background:var(--white);text-align:left;font-family:"Inter",sans-serif;color:var(--ink);transition:all .15s;line-height:1.5;}
+.fix-opt:hover{border-color:var(--purple);background:var(--purple-pale);color:var(--purple-dark);}
+.fix-opt.selected{border-color:var(--green);background:var(--green-pale);color:var(--green);font-weight:600;}
+.fix-opt.wrong{border-color:var(--red);background:var(--red-pale);color:var(--red);}
+.fix-opt.locked{cursor:default;}
+.fix-opt.locked:hover{border-color:var(--purple-mid);background:var(--white);color:var(--ink);}
+.fix-opt.locked.selected:hover{border-color:var(--green);background:var(--green-pale);color:var(--green);}
+.fix-fb{font-size:12px;line-height:1.6;margin-top:8px;padding:8px 10px;border-radius:7px;display:none;}
+.fix-fb.show{display:block;}
+.fix-fb.good{background:var(--green-pale);color:var(--green);border:1px solid var(--green-mid);}
+.fix-fb.ok{background:var(--amber-pale);color:var(--amber);border:1px solid #DFA050;}
+
+/* Safe prompt output */
+.safe-prompt{background:var(--green-pale);border:2px solid var(--green-mid);border-radius:12px;padding:16px;font-family:"DM Mono",monospace;font-size:13px;line-height:1.8;color:var(--green);margin-top:12px;}
+
+/* ── Right: sidebar ── */
+.sidebar{background:var(--white);border-left:2px solid var(--purple-mid);padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:0;}
+@media(max-width:720px){.sidebar{border-left:none;border-top:2px solid var(--purple-mid);}}
+
+.sb-section{margin-bottom:22px;}
+.sb-section-title{font-family:"DM Mono",monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--grey);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.sb-section-title::before{content:'//';color:var(--purple-mid);}
+
+/* Case queue */
+.case-queue{display:flex;flex-direction:column;gap:6px;}
+.cq-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;border:2px solid var(--purple-mid);cursor:pointer;transition:all .15s;background:var(--white);}
+.cq-item:hover{border-color:var(--purple);background:var(--purple-pale);}
+.cq-item.active{border-color:var(--purple);background:var(--purple-pale);}
+.cq-item.done{border-color:var(--green-mid);background:var(--green-pale);}
+.cq-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.cq-dot.low{background:var(--green);}
+.cq-dot.med{background:var(--amber);}
+.cq-dot.high{background:var(--red);}
+.cq-name{font-family:"DM Mono",monospace;font-size:12px;color:var(--ink);flex:1;}
+.cq-status{font-size:11px;font-weight:700;color:var(--grey);}
+.cq-item.done .cq-status{color:var(--green);}
+
+/* Risk legend */
+.risk-legend{display:flex;flex-direction:column;gap:8px;}
+.rl-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.5;}
+.rl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.rl-dot.pii{background:var(--red);}
+.rl-dot.scope{background:var(--amber);}
+.rl-dot.access{background:var(--blue);}
+.rl-dot.over{background:var(--purple);}
+.rl-label{color:var(--ink);font-weight:700;}
+.rl-desc{color:var(--grey);font-size:11px;}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat-box{background:var(--purple-pale);border:2px solid var(--purple-mid);border-radius:9px;padding:10px 12px;}
+.stat-val{font-family:"DM Mono",monospace;font-size:20px;font-weight:700;color:var(--purple-dark);line-height:1;}
+.stat-label{font-size:11px;color:var(--grey);margin-top:2px;}
+
+/* Continue btn */
+.cont-btn{display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:"Inter",sans-serif;margin-top:12px;}
+.cont-btn.show{display:block;}
+.cont-btn:hover{background:var(--purple-dark);}
+
+/* Results */
+.results-wrap{padding:32px 24px;max-width:860px;margin:0 auto;}
+.results-title{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);margin-bottom:4px;}
+.results-sub{font-size:14px;color:var(--grey);margin-bottom:22px;line-height:1.6;}
+
+.result-row{background:var(--white);border:2px solid var(--purple-mid);border-radius:12px;padding:14px 18px;margin-bottom:12px;}
+.result-row-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+.result-num{font-family:"DM Mono",monospace;font-size:11px;padding:2px 8px;border-radius:4px;}
+.result-name{font-family:"DM Mono",monospace;font-size:13px;color:var(--ink);flex:1;}
+.result-score{font-family:"DM Mono",monospace;font-size:13px;font-weight:700;}
+.result-score.great{color:var(--green);}
+.result-score.ok{color:var(--amber);}
+.result-score.miss{color:var(--red);}
+.result-finding{font-size:13px;color:var(--grey);line-height:1.6;}
+
+.final-score-wrap{background:var(--purple-pale);border:2px solid var(--purple-mid);border-radius:16px;padding:24px;margin-bottom:22px;text-align:center;}
+.final-score-num{font-family:"Fraunces",serif;font-size:56px;font-weight:700;color:var(--purple-dark);}
+.final-score-label{font-size:14px;color:var(--grey);margin-top:4px;}
+
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:18px;padding:24px;color:#fff;margin-bottom:20px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:18px;margin:0 0 14px;color:#fff;}
+.s-item{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.s-item:last-child{margin-bottom:0;}
+.s-check{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;}
+.s-item p{font-size:13px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:10px;padding:11px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:"Inter",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+</style>
+<body>
+
+<!-- ══ INTRO SCREEN (shown first, dismissed to enter the tool) ══ -->
+<div id="introScreen" style="background:#F7F5FB;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:48px 24px 80px;">
+  <div style="max-width:680px;width:100%;text-align:center;">
+
+    <div style="display:inline-block;background:var(--purple-pale);color:var(--purple-dark);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:20px;">Hands-On Activity</div>
+
+    <h1 style="font-family:'Fraunces',serif;font-weight:700;font-size:34px;line-height:1.15;color:var(--purple-dark);margin:0 0 14px;">Is This AI Prompt Safe?</h1>
+    <p style="font-size:16px;line-height:1.65;color:var(--grey);margin:0 0 36px;">In real companies, AI tools get used dozens of times a day — and sometimes people accidentally include sensitive information in their prompts. Your job is to spot the risks before they become problems.</p>
+
+    <!-- What you'll do -->
+    <div style="background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;padding:28px 32px;text-align:left;margin-bottom:28px;">
+      <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:18px;">Here's what you'll do in this activity:</div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;">1</div>
+          <div><strong style="color:var(--ink);font-size:15px;">Read a real-looking AI prompt</strong><br><span style="font-size:14px;color:var(--grey);line-height:1.6;">Each case shows you a prompt that someone at a company sent to an AI tool. It looks normal — but some have hidden problems.</span></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;">2</div>
+          <div><strong style="color:var(--ink);font-size:15px;">Click the risky parts to flag them</strong><br><span style="font-size:14px;color:var(--grey);line-height:1.6;">Pick a risk type from the toolbar, then click the part of the prompt that contains that risk. It highlights in color.</span></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;">3</div>
+          <div><strong style="color:var(--ink);font-size:15px;">Choose how to fix it</strong><br><span style="font-size:14px;color:var(--grey);line-height:1.6;">For each problem you find, pick the best way to rewrite it so the AI can still do the job — without the security risk.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk types preview -->
+    <div style="background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;padding:24px 28px;text-align:left;margin-bottom:32px;">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:14px;">The 4 types of risk you're looking for:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;"></div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--ink);">Personal Info (PII)</div><div style="font-size:13px;color:var(--grey);line-height:1.5;">Names, SSNs, card numbers, emails — any data that identifies a real person</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px;"></div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--ink);">Scope Creep</div><div style="font-size:13px;color:var(--grey);line-height:1.5;">Asking the AI to do or access more than the task actually needs</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px;"></div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--ink);">Insecure Access</div><div style="font-size:13px;color:var(--grey);line-height:1.5;">Passwords, API keys, or login credentials included in the prompt text</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px;"></div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--ink);">Over-sharing</div><div style="font-size:13px;color:var(--grey);line-height:1.5;">Internal business data or confidential info that doesn't need to be in the prompt</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--amber-pale);border:2px solid var(--amber);border-radius:14px;padding:14px 18px;font-size:14px;color:var(--amber);line-height:1.65;margin-bottom:28px;text-align:left;">
+      💡 <strong>Heads up:</strong> One of the three prompts is actually clean — no problems at all. Part of the skill is knowing when a prompt is safe, not just finding risks.
+    </div>
+
+    <button onclick="enterLab()" style="background:var(--purple);color:#fff;border:none;border-radius:14px;padding:16px 40px;font-size:17px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;width:100%;max-width:340px;">Start reviewing prompts →</button>
+    <div style="font-size:13px;color:var(--grey);margin-top:12px;">3 prompts · No typing needed · Tap to flag and fix</div>
+
+  </div>
+</div>
+
+<!-- ══ MAIN TOOL (hidden until intro dismissed) ══ -->
+<div id="mainTool" style="display:none;">
+
+<div class="lab-bar">
+  <div class="lab-logo">AI Prompt Security Review</div>
+  <div class="analyst-badge">YOU: Analyst</div>
+  <div class="lab-status">Queue: <span id="queueStatus">3 prompts pending</span></div>
+</div>
+
+<div id="mainView">
+<div class="lab-body">
+
+  <!-- ── Left: Review Canvas ── -->
+  <div class="review-canvas" id="reviewCanvas">
+    <!-- Content injected per case -->
+  </div>
+
+  <!-- ── Right: Sidebar ── -->
+  <div class="sidebar">
+
+    <div class="sb-section">
+      <div class="sb-section-title">Case Queue</div>
+      <div class="case-queue" id="caseQueue">
+        <div class="cq-item active" id="qi-0" onclick="switchCase(0)">
+          <div class="cq-dot med"></div>
+          <div class="cq-name">Case 001</div>
+          <div class="cq-status" id="qs-0">Open</div>
+        </div>
+        <div class="cq-item" id="qi-1" onclick="switchCase(1)">
+          <div class="cq-dot high"></div>
+          <div class="cq-name">Case 002</div>
+          <div class="cq-status" id="qs-1">Open</div>
+        </div>
+        <div class="cq-item" id="qi-2" onclick="switchCase(2)">
+          <div class="cq-dot low"></div>
+          <div class="cq-name">Case 003</div>
+          <div class="cq-status" id="qs-2">Open</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-section-title">Risk Types — Quick Reference</div>
+      <div class="risk-legend">
+        <div class="rl-item"><div class="rl-dot pii"></div><div><div class="rl-label">Personal Info (PII)</div><div class="rl-desc">Names, emails, SSNs, card numbers</div></div></div>
+        <div class="rl-item"><div class="rl-dot scope"></div><div><div class="rl-label">Scope Creep</div><div class="rl-desc">Asking AI to access more than needed</div></div></div>
+        <div class="rl-item"><div class="rl-dot access"></div><div><div class="rl-label">Insecure Access</div><div class="rl-desc">Passwords, tokens, API keys in prompt</div></div></div>
+        <div class="rl-item"><div class="rl-dot over"></div><div><div class="rl-label">Over-sharing</div><div class="rl-desc">Confidential business info not needed</div></div></div>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-section-title">Session Stats</div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="stat-reviewed">0</div><div class="stat-label">Reviewed</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-risks">0</div><div class="stat-label">Risks found</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-fixed">0</div><div class="stat-label">Fixed</div></div>
+        <div class="stat-box"><div class="stat-val" id="stat-score">—</div><div class="stat-label">Accuracy</div></div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /lab-body -->
+</div><!-- /mainView -->
+</div><!-- /mainTool -->
+
+<!-- Results view (hidden until done) -->
+<div id="resultsView" style="display:none;background:#F7F5FB;min-height:100vh;" class="results-wrap">
+  <div class="results-title">Review Complete</div>
+  <div class="results-sub">All three prompts reviewed. Here's your analysis summary.</div>
+  <div id="resultsContent"></div>
+  <button class="restart-btn" onclick="restartActivity()">Run another batch →</button>
+</div>
+
+<script>
+function enterLab(){
+  document.getElementById('introScreen').style.display='none';
+  document.getElementById('mainTool').style.display='block';
+  renderCase(0);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restartActivity(){location.reload();}
+
+// ── Case definitions ──
+const CASES = [
+  {
+    id:0, severity:'med', title:'HR Scheduling Assistant',
+    from:'Submitted by: hr-assistant-bot@company.com',
+    intro:'A prompt used by an HR tool to ask an AI to help schedule performance reviews.',
+    prompt:[
+      {id:'p0-a', text:'You are an HR scheduling assistant. Review the following employee performance data and schedule annual reviews.\n\n'},
+      {id:'p0-b', text:'Employee: Sarah Chen, sarah.chen@company.com, SSN: 847-22-1934, Salary: $94,500, Manager: David Park', risk:'pii', label:'PII'},
+      {id:'p0-c', text:'\n\n'},
+      {id:'p0-d', text:'Also pull her full HR record including disciplinary history and medical leave data', risk:'scope', label:'Scope Creep'},
+      {id:'p0-e', text:' and suggest whether she should be considered for promotion based on our internal calibration framework. '},
+      {id:'p0-f', text:'Use our HR system login: admin / Hr2024!', risk:'access', label:'Insecure Access'},
+      {id:'p0-g', text:' to retrieve the data.'},
+    ],
+    risks:['pii','scope','access'],
+    fixFields:[
+      {
+        id:'ff0-0', label:'What should replace the employee\'s personal details?',
+        opts:[
+          {text:'Reference the employee by ID only (e.g., EMP-4421)', correct:true},
+          {text:'Use first name only — "Sarah"', correct:false},
+          {text:'Keep the full details — scheduling requires it', correct:false},
+        ],
+        feedback:['Right. Employee IDs let the system do its job without exposing SSNs, salaries, or full names to the AI.','First name alone still links to a real person without adding much. Employee IDs are better — they\'re meaningless without internal context.','Scheduling a review doesn\'t require SSN or salary data. Those details shouldn\'t be in a prompt at all.'],
+      },
+      {
+        id:'ff0-1', label:'What should happen with the HR system login?',
+        opts:[
+          {text:'Remove it entirely — credentials should never appear in prompts', correct:true},
+          {text:'Replace it with the employee\'s credentials instead', correct:false},
+          {text:'Encrypt the password before including it', correct:false},
+        ],
+        feedback:['Correct. System credentials in a prompt can be logged, stored, or leaked. Authentication should happen at the API layer, not inside the prompt text.','That doesn\'t solve the problem — any credentials in a prompt are a security risk, regardless of whose they are.','Encryption doesn\'t help here — the AI would need to decrypt it to use it, which means the key is also exposed.'],
+      },
+    ],
+    safePrompt:'You are an HR scheduling assistant.\n\nSchedule an annual performance review for employee EMP-4421.\n\nTask: Identify available times in the next 30 days and propose three scheduling options based on the employee\'s department calendar.',
+    caseScore:null,
+  },
+  {
+    id:1, severity:'high', title:'Customer Support Query',
+    from:'Submitted by: support-ai@company.com',
+    intro:'A prompt used in a customer support automation tool to resolve a billing issue.',
+    prompt:[
+      {id:'p1-a', text:'Help me resolve a billing dispute for this customer:\n\n'},
+      {id:'p1-b', text:'Name: Marcus Webb, Account: 8821-4421-9902, Credit Card: 4532-7721-8843-2291, CVV: 441, Billing ZIP: 90210', risk:'pii', label:'PII + Financial Data'},
+      {id:'p1-c', text:'\n\n'},
+      {id:'p1-d', text:'The customer is disputing a $142 charge. To resolve this, access our billing system, CRM, payment processor, and fraud detection logs', risk:'scope', label:'Scope Creep'},
+      {id:'p1-e', text:' to find the full transaction history going back 5 years. '},
+      {id:'p1-f', text:'Our payment API key is: pk_live_9fKa28xNqRTvL', risk:'access', label:'API Key Exposed'},
+      {id:'p1-g', text:'. Also, '},
+      {id:'p1-h', text:'our Q3 refund approval rate is 34% and we\'ve had 14 fraud flags this month — don\'t approve anything over $200', risk:'over', label:'Confidential Business Data'},
+      {id:'p1-i', text:'.'},
+    ],
+    risks:['pii','scope','access','over'],
+    fixFields:[
+      {
+        id:'ff1-0', label:'How should the customer\'s payment info be handled?',
+        opts:[
+          {text:'Replace card number with a ticket or case reference ID', correct:true},
+          {text:'Include the last 4 digits only', correct:false},
+          {text:'Keep it — the AI needs it to process the refund', correct:false},
+        ],
+        feedback:['Right. A case or ticket ID lets the support system look up everything needed without putting live card data into the prompt — which could be logged or exposed.','Better than the full number, but card data shouldn\'t be in prompts at all. A case ID is the right pattern.','The AI isn\'t processing the payment — a human or a secure payment system does. There\'s no reason for card data to appear in a text prompt.'],
+      },
+      {
+        id:'ff1-1', label:'What should happen with the internal business stats?',
+        opts:[
+          {text:'Remove them — internal approval rates and fraud counts are confidential', correct:true},
+          {text:'Summarize them more vaguely — "we have some fraud concerns"', correct:false},
+          {text:'Keep them — the AI needs context to make good decisions', correct:false},
+        ],
+        feedback:['Correct. Putting internal fraud rates and approval thresholds into a prompt risks exposing confidential business strategy — especially if the AI service logs or trains on prompt data.','Vague references to internal data still create exposure. The cleaner approach is to encode policy rules directly in the AI\'s system configuration, not in individual prompts.','This is a policy enforcement question, not an AI judgment question. Approval thresholds and fraud data belong in your internal systems — not in a prompt that could be captured or replicated.'],
+      },
+    ],
+    safePrompt:'Help resolve a billing dispute.\n\nCase reference: CASE-88214\nDispute amount: $142\n\nTask: Review the transaction associated with this case and provide a recommended resolution based on our standard dispute policy.',
+    caseScore:null,
+  },
+  {
+    id:2, severity:'low', title:'Code Review Assistant',
+    from:'Submitted by: dev-tools@company.com',
+    intro:'A prompt used by developers to ask an AI to review a code snippet for bugs.',
+    prompt:[
+      {id:'p2-a', text:'Review this Python function for bugs and suggest improvements:\n\n'},
+      {id:'p2-b', text:'def calculate_discount(user_id, purchase_total):\n    db = connect_db()\n    user = db.query(f"SELECT * FROM users WHERE id={user_id}")\n    discount = user[\'loyalty_tier\'] * 0.05\n    return purchase_total * (1 - discount)', risk:null, label:null},
+      {id:'p2-c', text:'\n\nThis function is part of our checkout service.'},
+    ],
+    risks:[],
+    fixFields:[],
+    isClean:true,
+    safePrompt:'This prompt is actually fine as-is. It contains no personal data, no credentials, and no confidential business information. The code snippet itself is a generic function — sharing it for a code review is appropriate.',
+    caseScore:null,
+  },
+];
+
+let currentCase = 0;
+let caseResults = [null,null,null]; // per case: {flagScore, fixScore}
+let activeAnnoTool = null;
+let userFlags = {}; // elementId -> risk type flagged
+let fixPending = {}; // fieldId -> selected opt index
+
+function renderCase(caseIdx){
+  const c = CASES[caseIdx];
+  const canvas = document.getElementById('reviewCanvas');
+
+  if(c.isClean){
+    canvas.innerHTML = `
+      <div class="case-card" style="animation:fadeUp .3s ease;">
+        <div class="case-header">
+          <span class="case-num low">CASE ${String(caseIdx+1).padStart(3,'0')} · LOW RISK</span>
+          <span class="case-title">${c.title}</span>
+          <span class="case-from">${c.from}</span>
+        </div>
+        <div class="prompt-label">// SUBMITTED PROMPT — REVIEW FOR SECURITY RISKS</div>
+        <div class="prompt-text" style="font-family:'DM Mono',monospace;font-size:13px;line-height:1.9;color:var(--ink);">${c.prompt.map(p=>`<span>${escHtml(p.text)}</span>`).join('')}</div>
+        <div class="anno-toolbar"><span class="anno-label">Your assessment:</span></div>
+        <div style="padding:16px 20px;">
+          <div style="font-size:14px;color:var(--grey);margin-bottom:14px;">Does this prompt contain any security risks? Tap your verdict:</div>
+          <div style="display:flex;gap:10px;">
+            <button class="fix-opt" id="clean-yes" onclick="voteClean('risk')" style="flex:1;text-align:center;padding:13px;">🔴 Yes — I see a risk</button>
+            <button class="fix-opt" id="clean-no" onclick="voteClean('clean')" style="flex:1;text-align:center;padding:13px;">🟢 No — this looks safe</button>
+          </div>
+          <div class="fix-fb" id="clean-fb"></div>
+          <div style="margin-top:14px;background:var(--green-pale);border:2px solid var(--green-mid);border-radius:10px;padding:13px 15px;font-family:'DM Mono',monospace;font-size:12px;color:var(--green);display:none;" id="clean-explain">
+            ${c.safePrompt}
+          </div>
+        </div>
+      </div>
+      <button class="cont-btn" id="cleanNext" onclick="completeCase(2,'clean')">Next case →</button>
+    `;
+  } else {
+    // Risk cases
+    canvas.innerHTML = `
+      <div class="case-card" style="animation:fadeUp .3s ease;">
+        <div class="case-header">
+          <span class="case-num ${c.severity}">${c.severity==='high'?'CASE '+String(caseIdx+1).padStart(3,'0')+' · HIGH RISK':'CASE '+String(caseIdx+1).padStart(3,'0')+' · MEDIUM RISK'}</span>
+          <span class="case-title">${c.title}</span>
+          <span class="case-from">${c.from}</span>
+        </div>
+        <div class="prompt-label">// SUBMITTED PROMPT — CLICK RISKY SECTIONS TO FLAG THEM</div>
+        <div class="prompt-text" id="promptText-${caseIdx}">
+          ${buildPromptHtml(c, caseIdx)}
+        </div>
+        <div class="anno-toolbar">
+          <span class="anno-label">Flag as:</span>
+          <button class="anno-btn" id="atb-pii" onclick="setAnnoTool('pii')"><div class="anno-dot pii"></div>PII</button>
+          <button class="anno-btn" id="atb-scope" onclick="setAnnoTool('scope')"><div class="anno-dot scope"></div>Scope Creep</button>
+          <button class="anno-btn" id="atb-access" onclick="setAnnoTool('access')"><div class="anno-dot access"></div>Insecure Access</button>
+          <button class="anno-btn" id="atb-over" onclick="setAnnoTool('over')"><div class="anno-dot over"></div>Over-sharing</button>
+          <button class="anno-btn" id="atb-clear" onclick="setAnnoTool('clear')">✕ Clear</button>
+        </div>
+      </div>
+
+      <div class="phase active" id="phase-flag">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px;">// FLAG THE RISKS — THEN FIX THEM</div>
+        <div style="font-size:14px;color:var(--grey);margin-bottom:12px;line-height:1.6;">Click sections of the prompt above to flag risks. Flag at least ${c.risks.length} risk(s), then answer the fix questions below.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;" id="flagTally-${caseIdx}">
+          <div style="padding:6px 13px;border-radius:999px;border:2px solid var(--purple-mid);font-size:12px;font-weight:700;color:var(--grey);background:var(--white);" id="flag-count-${caseIdx}">0 risks flagged</div>
+        </div>
+        <div class="fix-panel" id="fixPanel-${caseIdx}">
+          <div class="fix-panel-title">How to make this safer</div>
+          ${buildFixFields(c, caseIdx)}
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green);padding:14px 16px;background:var(--green-pale);border:2px solid var(--green-mid);border-radius:10px;margin-top:12px;display:none;line-height:1.8;" id="safePrompt-${caseIdx}">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--grey);margin-bottom:8px;">// SAFER VERSION</div>
+          ${escHtml(c.safePrompt)}
+        </div>
+        <button class="cont-btn" id="caseNext-${caseIdx}" onclick="completeCase(${caseIdx},'risk')">
+          ${caseIdx<2 ? 'Next case →' : 'See full results →'}
+        </button>
+      </div>
+    `;
+    setAnnoTool('pii'); // default
+  }
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+
+function buildPromptHtml(c, caseIdx){
+  return c.prompt.map(p=>{
+    if(!p.risk) return `<span id="${p.id}">${escHtml(p.text)}</span>`;
+    return `<span class="hl" id="${p.id}" data-risk="${p.risk}" data-case="${caseIdx}" onclick="flagSpan('${p.id}','${p.risk}',${caseIdx})">${escHtml(p.text)}<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-left:4px;padding:1px 5px;border-radius:4px;background:rgba(0,0,0,.06);color:var(--grey);display:none;" id="lbl-${p.id}">${p.label}</span></span>`;
+  }).join('');
+}
+
+function buildFixFields(c, caseIdx){
+  if(!c.fixFields||!c.fixFields.length) return '';
+  return c.fixFields.map((f,fi)=>`
+    <div class="fix-field" id="ff-${caseIdx}-${fi}">
+      <div class="fix-field-label">${f.label}</div>
+      <div class="fix-opts">
+        ${f.opts.map((o,oi)=>`<button class="fix-opt" onclick="pickFix(${caseIdx},${fi},${oi},this)">${escHtml(o.text)}</button>`).join('')}
+      </div>
+      <div class="fix-fb" id="fb-${caseIdx}-${fi}"></div>
+    </div>
+  `).join('');
+}
+
+// ── Anno tool ──
+function setAnnoTool(t){
+  activeAnnoTool = t;
+  ['pii','scope','access','over','clear'].forEach(k=>{
+    const b = document.getElementById('atb-'+k);
+    if(b) b.className = 'anno-btn' + (t===k?' active-'+k:'');
+  });
+}
+
+function flagSpan(spanId, risk, caseIdx){
+  const el = document.getElementById(spanId);
+  if(!el) return;
+  const lbl = document.getElementById('lbl-'+spanId);
+
+  if(activeAnnoTool==='clear'){
+    el.className='hl';
+    if(lbl) lbl.style.display='none';
+    delete userFlags[spanId];
+  } else if(activeAnnoTool){
+    el.className='hl flagged-'+activeAnnoTool;
+    if(lbl) lbl.style.display='inline';
+    userFlags[spanId]=activeAnnoTool;
+  }
+  updateFlagCount(caseIdx);
+}
+
+function updateFlagCount(caseIdx){
+  const c = CASES[caseIdx];
+  const count = Object.keys(userFlags).filter(k=>k.startsWith('p'+caseIdx)).length;
+  const el = document.getElementById('flag-count-'+caseIdx);
+  if(el) el.textContent = count+' risk'+(count!==1?'s':'')+' flagged';
+  checkCaseReady(caseIdx);
+}
+
+// ── Fix fields ──
+function pickFix(caseIdx, fi, oi, btn){
+  const c = CASES[caseIdx];
+  const field = c.fixFields[fi];
+  const fieldEl = document.getElementById('ff-'+caseIdx+'-'+fi);
+  const opts = fieldEl.querySelectorAll('.fix-opt');
+  const fb = document.getElementById('fb-'+caseIdx+'-'+fi);
+  const key = caseIdx+'-'+fi;
+
+  if(btn.classList.contains('selected')&&!btn.classList.contains('locked')){
+    btn.classList.remove('selected');
+    fb.classList.remove('show','good','ok');
+    fb.textContent='';
+    delete fixPending[key];
+    checkCaseReady(caseIdx);
+    return;
+  }
+
+  opts.forEach(o=>{ o.classList.remove('selected','wrong'); });
+  btn.classList.add('selected');
+  const isCorrect = field.opts[oi].correct;
+  fb.textContent = field.feedback[oi];
+  fb.className = 'fix-fb show '+(isCorrect?'good':'ok');
+  fixPending[key] = {oi, correct:isCorrect};
+  checkCaseReady(caseIdx);
+}
+
+function checkCaseReady(caseIdx){
+  const c = CASES[caseIdx];
+  if(c.isClean) return;
+  const flagCount = Object.keys(userFlags).filter(k=>k.startsWith('p'+caseIdx)).length;
+  const fixCount = c.fixFields.length;
+  const fixDone = c.fixFields.filter((_,fi)=>fixPending[caseIdx+'-'+fi]).length;
+  const ready = flagCount>=1 && fixDone===fixCount;
+  const btn = document.getElementById('caseNext-'+caseIdx);
+  if(btn) btn.classList.toggle('show', ready);
+  if(ready){
+    const safe = document.getElementById('safePrompt-'+caseIdx);
+    if(safe) safe.style.display='block';
+  }
+}
+
+// ── Clean case voting ──
+function voteClean(verdict){
+  const fb = document.getElementById('clean-fb');
+  const explain = document.getElementById('clean-explain');
+  const yesBtn = document.getElementById('clean-yes');
+  const noBtn = document.getElementById('clean-no');
+
+  [yesBtn,noBtn].forEach(b=>b.classList.remove('selected','wrong'));
+
+  if(verdict==='clean'){
+    noBtn.classList.add('selected');
+    fb.textContent = 'Right. This prompt shares a code snippet for review — that\'s exactly what code review AI tools are for. No personal data, no credentials, no confidential business information. A clean prompt.';
+    fb.className='fix-fb show good';
+  } else {
+    yesBtn.classList.add('wrong');
+    fb.textContent = 'Look more carefully. This prompt contains only a generic code function — no names, no account numbers, no API keys, no confidential business data. The function name and logic don\'t identify any real person or system.';
+    fb.className='fix-fb show ok';
+  }
+  fb.style.display='block';
+  explain.style.display='block';
+  document.getElementById('cleanNext').classList.add('show');
+}
+
+// ── Case completion ──
+function completeCase(caseIdx, type){
+  const c = CASES[caseIdx];
+
+  // Calculate score
+  let flagScore = 0, fixScore = 0;
+  if(type==='clean'){
+    // Handled by vote
+    caseResults[caseIdx] = {type:'clean'};
+  } else {
+    // Flag score: how many correct risks flagged / total risks
+    const correctFlags = c.prompt.filter(p=>p.risk&&userFlags[p.id]===p.risk).length;
+    flagScore = correctFlags/c.risks.length;
+    // Fix score: how many fix fields answered correctly
+    const correctFixes = c.fixFields.filter((_,fi)=>fixPending[caseIdx+'-'+fi]?.correct).length;
+    fixScore = c.fixFields.length>0 ? correctFixes/c.fixFields.length : 1;
+    caseResults[caseIdx] = {type:'risk', flagScore, fixScore, flagged:correctFlags, total:c.risks.length};
+  }
+
+  // Update sidebar
+  document.getElementById('qi-'+caseIdx).className='cq-item done';
+  document.getElementById('qs-'+caseIdx).textContent='Done ✓';
+  const reviewed = caseResults.filter(v=>v!==null).length;
+  document.getElementById('stat-reviewed').textContent=reviewed;
+  updateQueue();
+
+  // Advance to next or show results
+  if(caseIdx<2){
+    const nextIdx = caseIdx+1;
+    currentCase=nextIdx;
+    document.getElementById('qi-'+nextIdx).className='cq-item active';
+    userFlags={};
+    fixPending={};
+    activeAnnoTool=null;
+    renderCase(nextIdx);
+    document.getElementById('queueStatus').textContent=(3-reviewed)+' prompt'+(3-reviewed!==1?'s':'')+' pending review';
+  } else {
+    showResults();
+  }
+}
+
+function switchCase(idx){
+  if(caseResults[idx]!==null) return; // already done
+  currentCase=idx;
+  userFlags={};
+  fixPending={};
+  activeAnnoTool=null;
+  ['0','1','2'].forEach(i=>{ document.getElementById('qi-'+i).className='cq-item'+(caseResults[i]!==null?' done':i==idx?' active':''); });
+  renderCase(idx);
+}
+
+function updateQueue(){
+  const stats = {risks:0,fixed:0};
+  caseResults.forEach(r=>{
+    if(!r)return;
+    if(r.type==='risk'){stats.risks+=r.flagged||0;stats.fixed+=(r.fixScore===1?1:0);}
+  });
+  document.getElementById('stat-risks').textContent=stats.risks;
+  document.getElementById('stat-fixed').textContent=stats.fixed;
+}
+
+// ── Results ──
+function showResults(){
+  document.getElementById('mainTool').style.display='none';
+  document.getElementById('resultsView').style.display='block';
+  document.getElementById('queueStatus').textContent='Batch complete';
+
+  let totalScore=0, count=0;
+  const html = CASES.map((c,i)=>{
+    const r=caseResults[i];
+    if(!r) return '';
+    let score='—', scoreClass='ok', finding='';
+    if(r.type==='clean'){
+      score='Clean ✓'; scoreClass='great';
+      finding='Correctly identified this prompt as safe — no unnecessary risks flagged.';
+      totalScore+=1;count++;
+    } else {
+      const s=Math.round((r.flagScore+r.fixScore)/2*100);
+      totalScore+=s/100;count++;
+      score=s+'%'; scoreClass=s>=80?'great':s>=50?'ok':'miss';
+      finding=`Flagged ${r.flagged} of ${r.total} risks. Fix accuracy: ${Math.round(r.fixScore*100)}%.`;
+    }
+    return `
+      <div class="result-row">
+        <div class="result-row-top">
+          <span class="result-num ${c.severity}">CASE ${String(i+1).padStart(3,'0')}</span>
+          <span class="result-name">${c.title}</span>
+          <span class="result-score ${scoreClass}">${score}</span>
+        </div>
+        <div class="result-finding">${finding}</div>
+      </div>`;
+  }).join('');
+
+  const overall = Math.round((totalScore/count)*100);
+  document.getElementById('resultsContent').innerHTML=`
+    <div class="final-score-wrap">
+      <div class="final-score-num">${overall}%</div>
+      <div class="final-score-label">Overall accuracy · ${overall>=80?'Strong pattern recognition':'Keep practicing — this is a learned skill'}</div>
+    </div>
+    ${html}
+    <div class="summary-box" style="margin-top:20px;">
+      <h3>Key Patterns to Remember</h3>
+      <div class="s-item"><div class="s-check">✓</div><p>Personal data (names, SSNs, card numbers) almost never needs to be in a prompt. Reference IDs and ticket numbers do the job without the exposure.</p></div>
+      <div class="s-item"><div class="s-check">✓</div><p>Credentials — passwords, API keys, tokens — should never appear in prompt text. Authentication happens at the system level, not inside the message.</p></div>
+      <div class="s-item"><div class="s-check">✓</div><p>Not every prompt is risky. Part of building good security intuition is recognizing clean prompts — and not over-flagging legitimate ones.</p></div>
+      <div class="s-item"><div class="s-check">✓</div><p>Business data (fraud rates, approval thresholds, internal metrics) doesn't belong in prompts. Those belong in system configuration and internal tools — not text that could be logged or leaked.</p></div>
+    </div>
+  `;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Init — renderCase called by enterLab() when intro is dismissed
+</script>
+</body>
+</html>
