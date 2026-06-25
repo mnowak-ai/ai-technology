@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Activity: Build a Knowledge Base Entry</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;--green-mid:#A8DFC4;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --blue:#1A5A9A;--blue-pale:#E3EEFF;
+  --dark:#0F0A1E;--dark3:#251845;--md:#6B5A90;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:#F7F5FB;color:var(--ink);}
+.wrap{max-width:900px;margin:0 auto;padding:0 0 80px;}
+
+/* ── App Shell ── */
+.app-bar{
+  background:var(--purple-dark);color:#fff;padding:14px 28px;
+  display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,.25);
+}
+.app-logo{font-family:"Fraunces",serif;font-size:18px;font-weight:700;}
+.app-logo span{opacity:.6;font-weight:300;}
+.app-bar-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.app-avatar{width:32px;height:32px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.3);}
+.app-username{font-size:13px;opacity:.8;}
+
+.app-body{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 52px);}
+@media(max-width:680px){.app-body{grid-template-columns:1fr;}}
+
+/* ── Sidebar ── */
+.sidebar{background:var(--dark);padding:24px 16px;display:flex;flex-direction:column;gap:4px;}
+.sidebar-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--md);padding:16px 12px 6px;margin-top:4px;}
+.sidebar-section:first-child{padding-top:0;}
+.sb-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
+  font-size:13px;color:rgba(255,255,255,.55);cursor:pointer;transition:all .15s ease;
+}
+.sb-item.active{background:var(--purple);color:#fff;}
+.sb-item.done{color:rgba(255,255,255,.55);}
+.sb-item.done .sb-check{color:var(--green);}
+.sb-icon{font-size:15px;flex-shrink:0;}
+.sb-check{font-size:12px;margin-left:auto;opacity:0;}
+.sb-item.done .sb-check{opacity:1;}
+.sb-item.active .sb-check{opacity:0;}
+@media(max-width:680px){.sidebar{display:none;}}
+
+/* ── Main content area ── */
+.main-area{background:var(--white);padding:32px 36px 40px;}
+@media(max-width:560px){.main-area{padding:20px 16px 32px;}}
+
+.step-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #EEE;}
+.step-num{
+  width:36px;height:36px;border-radius:50%;background:var(--purple);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;margin-top:2px;
+}
+.step-title{font-family:"Fraunces",serif;font-weight:700;font-size:22px;color:var(--ink);margin:0 0 4px;}
+.step-sub{font-size:14px;color:var(--grey);line-height:1.6;margin:0;}
+
+/* Phase display */
+.phase{display:none;}
+.phase.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── SCENARIO CARD ── */
+.scenario-card{background:var(--purple-pale);border:1px solid var(--purple-mid);border-radius:14px;padding:22px 24px;margin-bottom:22px;}
+.sc-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.sc-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:4px 10px;border-radius:6px;}
+.sc-tag.type{background:var(--purple);color:#fff;}
+.sc-tag.status{background:var(--green-pale);color:var(--green);border:1px solid var(--green);}
+.sc-tag.date{background:var(--white);color:var(--grey);border:1px solid #DDD;}
+.sc-title{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--purple-dark);margin:0 0 10px;}
+.sc-body{font-size:14px;line-height:1.75;color:var(--ink);}
+.sc-body p{margin:0 0 8px;}
+.sc-body p:last-child{margin:0;}
+
+.timeline{margin:18px 0 0;display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:12px;align-items:flex-start;padding:8px 0;position:relative;}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:15px;top:28px;width:2px;height:100%;background:var(--purple-mid);}
+.tl-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:2px solid var(--purple-mid);background:var(--white);}
+.tl-text{padding-top:4px;}
+.tl-time{font-size:11px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+.tl-desc{font-size:13px;color:var(--ink);line-height:1.55;}
+
+/* ── QUIZ QUESTIONS (phase 1) ── */
+.quiz-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:14px;}
+.quiz-q{border:2px solid #EEE;border-radius:14px;overflow:hidden;}
+.quiz-q-head{padding:14px 18px;background:#FAFAFA;border-bottom:1px solid #EEE;}
+.quiz-q-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:4px;}
+.quiz-q-text{font-size:14px;font-weight:600;color:var(--ink);}
+.quiz-opts{padding:12px;}
+.quiz-opt{
+  border:2px solid #EEE;border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);
+  cursor:pointer;background:var(--white);transition:all .15s ease;text-align:left;
+  line-height:1.5;font-family:"DM Sans",sans-serif;width:100%;margin-bottom:8px;display:block;
+}
+.quiz-opt:last-child{margin-bottom:0;}
+.quiz-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.quiz-opt.correct{border-color:var(--green);background:var(--green-pale);color:var(--green);font-weight:600;}
+.quiz-opt.wrong{border-color:var(--red);background:var(--red-pale);color:var(--red);}
+.quiz-opt.locked{cursor:default;}
+.quiz-opt.locked:hover{background:var(--white);border-color:#EEE;}
+.quiz-opt.locked.wrong:hover{background:var(--red-pale);border-color:var(--red);}
+.quiz-fb{padding:10px 12px;font-size:13px;line-height:1.6;display:none;border-top:1px solid #EEE;}
+.quiz-fb.show{display:block;}
+.quiz-fb.good{background:var(--green-pale);color:var(--green);}
+.quiz-fb.ok{background:var(--amber-pale);color:var(--amber);}
+
+.q-count{font-size:14px;font-weight:600;color:var(--purple-dark);text-align:center;margin-bottom:8px;}
+
+/* ── KB FIELD BUILDER (phase 2) ── */
+.kb-form{display:flex;flex-direction:column;gap:16px;margin-bottom:18px;}
+.kb-field{border:2px solid #EEE;border-radius:14px;overflow:hidden;}
+.kb-field-head{padding:12px 18px;background:#FAFAFA;border-bottom:1px solid #EEE;display:flex;align-items:center;gap:10px;}
+.kb-field-icon{font-size:18px;}
+.kb-field-label{font-size:13px;font-weight:700;color:var(--ink);}
+.kb-field-sub{font-size:12px;color:var(--grey);margin-left:auto;}
+.kb-options{padding:12px;display:flex;flex-direction:column;gap:8px;}
+.kb-opt{
+  border:2px solid #EEE;border-radius:10px;padding:11px 14px;font-size:14px;
+  color:var(--ink);cursor:pointer;background:var(--white);transition:all .15s ease;
+  text-align:left;line-height:1.55;font-family:"DM Sans",sans-serif;width:100%;display:block;
+}
+.kb-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.kb-opt.selected{border-color:var(--purple);background:var(--purple-pale);color:var(--purple-dark);font-weight:600;}
+.kb-opt.locked{cursor:default;}
+.kb-opt.locked:hover{border-color:#EEE;background:var(--white);}
+.kb-opt.locked.selected:hover{border-color:var(--purple);background:var(--purple-pale);}
+.kb-fb{padding:10px 12px;font-size:13px;line-height:1.6;display:none;border-top:1px solid #EEE;}
+.kb-fb.show{display:block;}
+.kb-fb.good{background:var(--green-pale);color:var(--green);}
+.kb-fb.ok{background:var(--amber-pale);color:var(--amber);}
+
+/* live preview */
+.live-preview{background:#FAFAFA;border:1px solid #EEE;border-radius:14px;padding:16px 20px;margin-bottom:18px;}
+.lp-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.lp-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;}
+.lp-row{display:flex;gap:10px;margin-bottom:8px;font-size:13px;line-height:1.55;}
+.lp-row:last-child{margin-bottom:0;}
+.lp-key{font-weight:700;color:var(--grey);min-width:120px;flex-shrink:0;}
+.lp-val{color:var(--ink);}
+.lp-val.empty{color:#CCC;font-style:italic;}
+
+/* ── AI SUGGESTIONS (phase 3) ── */
+.ai-suggestion-card{
+  background:var(--dark);border-radius:16px;overflow:hidden;margin-bottom:14px;border:1px solid #3D2460;
+}
+.ai-sug-head{background:var(--dark3);padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #3D2460;}
+.ai-sug-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);}
+.ai-sug-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--md);}
+.ai-sug-conf{margin-left:auto;font-size:11px;color:rgba(255,255,255,.5);font-family:"DM Mono",monospace;}
+.ai-sug-body{padding:14px 18px;}
+.ai-sug-text{font-size:13px;color:#C9A8E8;line-height:1.7;font-style:italic;}
+.ai-sug-text strong{color:#fff;font-style:normal;}
+
+.verdict-row{display:flex;gap:8px;margin-top:12px;}
+.verdict-btn{
+  flex:1;border:2px solid #3D2460;border-radius:10px;padding:10px;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s ease;text-align:center;
+  background:transparent;
+}
+.verdict-btn.accept-btn{color:#4AE68A;}
+.verdict-btn.accept-btn:hover,.verdict-btn.accept-btn.picked{border-color:#4AE68A;background:rgba(74,230,138,.1);color:#4AE68A;}
+.verdict-btn.edit-btn{color:var(--ma);}
+.verdict-btn.edit-btn:hover,.verdict-btn.edit-btn.picked{border-color:var(--ma);background:rgba(255,184,77,.1);color:var(--ma);}
+.verdict-btn.reject-btn{color:var(--mr);}
+.verdict-btn.reject-btn:hover,.verdict-btn.reject-btn.picked{border-color:var(--mr);background:rgba(255,107,107,.1);color:var(--mr);}
+.verdict-btn:disabled{opacity:.3;cursor:not-allowed;}
+.verdict-explain{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.6;display:none;}
+.verdict-explain.show{display:block;}
+.verdict-explain.accept{background:rgba(74,230,138,.08);color:#4AE68A;}
+.verdict-explain.edit{background:rgba(255,184,77,.08);color:var(--ma);}
+.verdict-explain.reject{background:rgba(255,107,107,.08);color:var(--mr);}
+
+.ai-count{font-size:14px;font-weight:600;color:var(--purple-dark);text-align:center;margin-bottom:8px;}
+
+/* Phase btn */
+.step-btn{
+  background:var(--purple);color:#fff;border:none;border-radius:12px;padding:14px 28px;
+  font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;
+  display:none;width:100%;margin-top:6px;
+}
+.step-btn.show{display:block;}
+.step-btn:hover{background:var(--purple-dark);}
+.step-btn.secondary{background:var(--white);color:var(--purple);border:2px solid var(--purple);}
+.step-btn.secondary:hover{background:var(--purple-pale);}
+
+/* ── PUBLISHED KB ENTRY ── */
+.kb-published{background:var(--white);border:2px solid var(--green-mid);border-radius:18px;overflow:hidden;margin-bottom:24px;box-shadow:0 4px 20px rgba(30,138,95,.08);}
+.kbp-bar{background:var(--green-pale);border-bottom:1px solid var(--green-mid);padding:10px 20px;display:flex;align-items:center;gap:10px;}
+.kbp-bar-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+.kbp-bar-label{font-size:12px;font-weight:700;color:var(--green);font-family:"DM Mono",monospace;}
+.kbp-bar-time{font-size:12px;color:var(--grey);margin-left:auto;font-family:"DM Mono",monospace;}
+.kbp-body{padding:24px 28px;}
+.kbp-title{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--ink);margin:0 0 6px;}
+.kbp-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.kbp-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:var(--purple-pale);color:var(--purple-dark);}
+.kbp-section{margin-bottom:18px;}
+.kbp-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #EEE;}
+.kbp-section-body{font-size:14px;line-height:1.7;color:var(--ink);}
+.kbp-section-body ul{margin:8px 0 0;padding-left:20px;}
+.kbp-section-body li{margin-bottom:4px;}
+.kbp-ai-note{background:var(--purple-pale);border-left:3px solid var(--purple);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;color:var(--purple-dark);margin-top:10px;line-height:1.6;}
+
+.confetti-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.conf-stat{background:var(--purple-pale);border-radius:12px;padding:12px 16px;flex:1;min-width:120px;text-align:center;}
+.conf-stat-num{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);}
+.conf-stat-label{font-size:12px;color:var(--grey);margin-top:2px;}
+
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:28px 28px;color:#fff;text-align:left;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 14px;color:#fff;}
+.summary-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.summary-item:last-child{margin-bottom:0;}
+.s-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.summary-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+@media(max-width:560px){.kbp-body{padding:16px;}.step-header{flex-direction:column;gap:8px;}.confetti-row{gap:8px;}}
+</style>
+</head>
+<body>
+
+<!-- App bar -->
+<div class="app-bar">
+  <div class="app-logo">KnowledgeBase <span>Pro</span></div>
+  <div style="font-size:12px;opacity:.5;font-family:'DM Mono',monospace;">New Article · Draft</div>
+  <div class="app-bar-right">
+    <div class="app-avatar">YO</div>
+    <div class="app-username">You (IT Analyst)</div>
+  </div>
+</div>
+
+<div class="app-body">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-section">This Article</div>
+    <div class="sb-item active" id="sb-0"><span class="sb-icon">📋</span>Read the Scenario<span class="sb-check">✓</span></div>
+    <div class="sb-item" id="sb-1"><span class="sb-icon">✍️</span>Fill In the Details<span class="sb-check">✓</span></div>
+    <div class="sb-item" id="sb-2"><span class="sb-icon">🤖</span>Review AI Input<span class="sb-check">✓</span></div>
+    <div class="sb-item" id="sb-3"><span class="sb-icon">🚀</span>Publish<span class="sb-check">✓</span></div>
+    <div class="sidebar-section">KB Stats</div>
+    <div class="sb-item" style="cursor:default;"><span class="sb-icon">📚</span><span>847 articles</span></div>
+    <div class="sb-item" style="cursor:default;"><span class="sb-icon">👥</span><span>23 contributors</span></div>
+    <div class="sb-item" style="cursor:default;"><span class="sb-icon">🔍</span><span>1,240 searches/mo</span></div>
+  </div>
+
+  <!-- Main -->
+  <div class="main-area">
+
+    <!-- ══ PHASE 0: READ THE SCENARIO ══ -->
+    <div class="phase active" id="phase-0">
+      <div class="step-header fade-in">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Read the Scenario</div>
+          <div class="step-sub">Before writing anything, understand exactly what happened. This is a real ticket that just got resolved — your job is to turn it into a knowledge base article so others can handle it faster next time.</div>
+        </div>
+      </div>
+
+      <div class="scenario-card fade-in">
+        <div class="sc-meta">
+          <span class="sc-tag type">🎫 Resolved Ticket</span>
+          <span class="sc-tag status">✓ Fixed</span>
+          <span class="sc-tag date">📅 Today, 11:42 AM</span>
+        </div>
+        <div class="sc-title">Employees can't log in after company-wide password reset</div>
+        <div class="sc-body">
+          <p><strong>What happened:</strong> At 9:15 AM, IT sent out a company-wide forced password reset. By 9:30 AM, the help desk started getting flooded with calls — employees were getting an error saying their new password "doesn't meet requirements" even when it did. Some employees were being locked out after 3 tries.</p>
+          <p><strong>Who was affected:</strong> All 340 employees who tried to log in between 9:15 and 10:45 AM. About 180 of them couldn't get in at all.</p>
+          <p><strong>What turned out to be wrong:</strong> The password reset system had an old rule still active that required passwords to be at least 12 characters. The company changed the rule to 10 characters six months ago — but nobody updated it in the reset system. So when people created new 10-character passwords, the system silently rejected them without explaining why.</p>
+          <p><strong>How it was fixed:</strong> IT found the old rule at 10:20 AM by checking the reset system's settings. They updated it to match the current 10-character minimum. All locked-out accounts were unlocked by 10:45 AM. No data was lost.</p>
+        </div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot">🔔</div>
+            <div class="tl-text"><div class="tl-time">9:15 AM</div><div class="tl-desc">Company-wide password reset sent out</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">📞</div>
+            <div class="tl-text"><div class="tl-time">9:30 AM</div><div class="tl-desc">Help desk flooded with "password doesn't work" calls</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">🔍</div>
+            <div class="tl-text"><div class="tl-time">10:20 AM</div><div class="tl-desc">Root cause found: outdated 12-character rule still active in reset system</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">✅</div>
+            <div class="tl-text"><div class="tl-time">10:45 AM</div><div class="tl-desc">Rule updated, all accounts unlocked, issue resolved</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--amber-pale);border:1px solid var(--amber);border-radius:14px;padding:16px 20px;margin-bottom:18px;font-size:14px;color:var(--amber);line-height:1.65;" class="fade-in">
+        <strong>⚠️ Why this needs to be documented:</strong> This same problem could happen again anytime there's a system update or rule change. A good knowledge base article means the next person who sees this error can fix it in minutes instead of spending 90 minutes figuring it out from scratch.
+      </div>
+
+      <div style="font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:8px;text-align:center;" class="fade-in">Answer two quick questions to make sure you understood the scenario — then you'll write the article.</div>
+
+      <div class="quiz-grid fade-in">
+        <div class="quiz-q">
+          <div class="quiz-q-head">
+            <div class="quiz-q-label">Check Your Understanding — Q1</div>
+            <div class="quiz-q-text">What was the actual cause of the login failures?</div>
+          </div>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="answerQ(0,this,'ok','Not quite. The system was working — it was actively enforcing a password rule. The problem was that the rule it was enforcing was outdated and no longer matched company policy.')">The login system was broken and stopped working.</button>
+            <button class="quiz-opt" onclick="answerQ(0,this,'good','Exactly right. The reset system still required 12 characters even though the company had changed the requirement to 10 months ago. That gap between the old system setting and the new policy is what caused the problem.')">An old password length rule was still active in the reset system, rejecting passwords that actually met the current requirement.</button>
+            <button class="quiz-opt" onclick="answerQ(0,this,'ok','Not this time. The company password rule was already updated to 10 characters six months ago — the problem was that the reset system hadn\'t been updated to match.')">Employees were creating passwords that were too short.</button>
+          </div>
+          <div class="quiz-fb" id="qfb-0"></div>
+        </div>
+
+        <div class="quiz-q">
+          <div class="quiz-q-head">
+            <div class="quiz-q-label">Check Your Understanding — Q2</div>
+            <div class="quiz-q-text">How long did it take from the first calls to the problem being fully fixed?</div>
+          </div>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="answerQ(1,this,'ok','Close — but the calls started at 9:30 AM and the fix was complete at 10:45 AM. That\'s 75 minutes.')">About 30 minutes.</button>
+            <button class="quiz-opt" onclick="answerQ(1,this,'good','Right. Calls started at 9:30 AM, the issue was resolved at 10:45 AM — that\'s 75 minutes of disruption for 180 employees. Documenting this properly could save that entire time block for any future team.')">About 75 minutes — from the first help desk calls until all accounts were unlocked.</button>
+            <button class="quiz-opt" onclick="answerQ(1,this,'ok','Not quite. 3 hours would put the resolution around 12:30 PM — but the fix was done at 10:45 AM, about 75 minutes after calls started.')">About 3 hours.</button>
+          </div>
+          <div class="quiz-fb" id="qfb-1"></div>
+        </div>
+      </div>
+
+      <div class="q-count" id="qCount" style="display:none;">Both questions answered ✓</div>
+      <button class="step-btn" id="p0btn" onclick="goToPhase(1)">Start writing the article →</button>
+    </div>
+
+    <!-- ══ PHASE 1: FILL IN THE KB FIELDS ══ -->
+    <div class="phase" id="phase-1">
+      <div class="step-header fade-in">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Fill In the Details</div>
+          <div class="step-sub">Choose the best version of each field. Think about what someone who <em>wasn't there</em> would need to understand and fix this problem quickly.</div>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div class="live-preview fade-in" id="livePreview">
+        <div class="lp-label">Article preview — updates as you fill in each field</div>
+        <div class="lp-row"><div class="lp-key">Problem</div><div class="lp-val empty" id="lp-0">Not filled in yet</div></div>
+        <div class="lp-row"><div class="lp-key">Root cause</div><div class="lp-val empty" id="lp-1">Not filled in yet</div></div>
+        <div class="lp-row"><div class="lp-key">How to fix</div><div class="lp-val empty" id="lp-2">Not filled in yet</div></div>
+        <div class="lp-row"><div class="lp-key">How to prevent</div><div class="lp-val empty" id="lp-3">Not filled in yet</div></div>
+      </div>
+
+      <div class="kb-form fade-in">
+
+        <div class="kb-field" id="kbf-0">
+          <div class="kb-field-head">
+            <div class="kb-field-icon">🔴</div>
+            <div class="kb-field-label">Describe the Problem</div>
+            <div class="kb-field-sub">What does it look like from the user's side?</div>
+          </div>
+          <div class="kb-options">
+            <button class="kb-opt" onclick="pickKB(0,this,'ok','Better than nothing — but "login issues" could mean hundreds of different things. The next person searching the KB might not find this article because it doesn\'t describe the specific error.')">Employees had login issues after a password reset.</button>
+            <button class="kb-opt" onclick="pickKB(0,this,'good','Right. This tells the next person exactly what they\'ll see — the specific error message, when it happens, and what result it causes (lockout). This is searchable and immediately recognizable.')">After a company-wide password reset, employees see a "password doesn\'t meet requirements" error even when their new password follows the rules. Repeated attempts can lock the account.</button>
+            <button class="kb-opt" onclick="pickKB(0,this,'ok','This describes what IT did, not what the user experiences. Someone searching the KB for help with this problem would see this from a user\'s perspective first — then the technical detail comes in the "cause" field.')">The password reset system rejected valid passwords due to a misconfiguration.</button>
+          </div>
+          <div class="kb-fb" id="kbfb-0"></div>
+        </div>
+
+        <div class="kb-field" id="kbf-1">
+          <div class="kb-field-head">
+            <div class="kb-field-icon">🔍</div>
+            <div class="kb-field-label">What Caused It</div>
+            <div class="kb-field-sub">The technical reason — precise enough to fix, simple enough to understand</div>
+          </div>
+          <div class="kb-options">
+            <button class="kb-opt" onclick="pickKB(1,this,'ok','True — but "a bug" is too vague to act on. The next person reading this still doesn\'t know where to look or what to change. A good cause statement is specific enough that someone can find and fix the problem directly.')">There was a bug in the password reset system.</button>
+            <button class="kb-opt" onclick="pickKB(1,this,'ok','Partially right — but it focuses on the policy change, not the technical location of the problem. The key detail that lets someone fix this is where the old rule lives (the reset system settings), not just that a policy changed.')">The company updated its password rules 6 months ago but didn\'t tell everyone.</button>
+            <button class="kb-opt" onclick="pickKB(1,this,'good','Right. This is specific enough to act on — it tells you exactly what setting is wrong, where it is, and what value it should be. The next person can find and fix this in minutes.')">The password reset system had a minimum-length rule set to 12 characters. The company\'s actual policy is 10 characters (updated 6 months ago), but the reset system was never updated to match. So it silently rejected valid 10-character passwords.')">The password reset system had a minimum-length rule set to 12 characters. The company\'s actual policy is 10 characters, but the reset system setting was never updated to match.</button>
+          </div>
+          <div class="kb-fb" id="kbfb-1"></div>
+        </div>
+
+        <div class="kb-field" id="kbf-2">
+          <div class="kb-field-head">
+            <div class="kb-field-icon">🔧</div>
+            <div class="kb-field-label">How to Fix It</div>
+            <div class="kb-field-sub">Step-by-step, specific enough that someone who wasn't there can do it</div>
+          </div>
+          <div class="kb-options">
+            <button class="kb-opt" onclick="pickKB(2,this,'ok','This is the right idea but it\'s missing the crucial first step — checking the settings to find the mismatch. Someone following this might just start unlocking accounts without fixing the root cause, which means the problem continues.')">Unlock all affected accounts and ask employees to try again.</button>
+            <button class="kb-opt" onclick="pickKB(2,this,'good','Right. These steps are in the right order: fix the cause first (update the setting), then fix the effects (unlock accounts). Someone following this can resolve the issue completely even if they weren\'t involved the first time.')">1. Go to the password reset system settings and find the minimum password length rule. Change it from 12 to 10 characters to match current policy. 2. Unlock all accounts that were locked during the incident. 3. Confirm with test users that the new password reset process works correctly.</button>
+            <button class="kb-opt" onclick="pickKB(2,this,'ok','This is too general to be useful. "Review settings" and "address the issue" don\'t tell someone what to actually do. A good fix section is a set of specific steps someone can follow immediately.')">Review the system settings to identify the misconfiguration and address the issue.</button>
+          </div>
+          <div class="kb-fb" id="kbfb-2"></div>
+        </div>
+
+        <div class="kb-field" id="kbf-3">
+          <div class="kb-field-head">
+            <div class="kb-field-icon">🛡️</div>
+            <div class="kb-field-label">How to Prevent This in the Future</div>
+            <div class="kb-field-sub">What change would stop this from happening again?</div>
+          </div>
+          <div class="kb-options">
+            <button class="kb-opt" onclick="pickKB(3,this,'ok','Useful but only covers one system. This particular gap can happen wherever password rules are stored. A better prevention note addresses the broader pattern — whenever any policy changes, check all the places that policy is stored.')">Make sure the password reset system is always tested before sending a company-wide reset.</button>
+            <button class="kb-opt" onclick="pickKB(3,this,'ok','This is vague to the point of being unhelpful. Staying "up to date on changes" doesn\'t tell an IT team what process to follow. A good prevention note is something specific enough to put on a checklist.')">Ensure the IT team stays up to date on any company policy changes.</button>
+            <button class="kb-opt" onclick="pickKB(3,this,'good','Right. This addresses the root pattern — policy updated in one place but not in all the places that policy applies. Creating a checklist makes it repeatable and something the team can actually follow.')">Whenever any company-wide password policy changes, create a checklist of every system that stores or enforces password rules and update all of them before the change goes live. Add this checklist to the standard change management process.</button>
+          </div>
+          <div class="kb-fb" id="kbfb-3"></div>
+        </div>
+
+      </div>
+
+      <div style="font-size:14px;font-weight:600;color:var(--purple-dark);text-align:center;margin-bottom:8px;" id="kbCount">Filled in: 0 / 4 fields</div>
+      <button class="step-btn" id="p1btn" onclick="goToPhase(2)">Review AI suggestions →</button>
+    </div>
+
+    <!-- ══ PHASE 2: REVIEW AI INPUT ══ -->
+    <div class="phase" id="phase-2">
+      <div class="step-header fade-in">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Review What the AI Suggested</div>
+          <div class="step-sub">The AI read the ticket and added three suggestions to your article. Your job is to decide what to do with each one — accept it, flag it as needing a fix, or reject it. AI suggestions always need a human check before going live.</div>
+        </div>
+      </div>
+
+      <div class="ai-suggestion-card fade-in">
+        <div class="ai-sug-head">
+          <div class="ai-sug-dot"></div>
+          <div class="ai-sug-label">AI Suggestion 1 of 3 — Related Articles</div>
+          <div class="ai-sug-conf">Confidence: High</div>
+        </div>
+        <div class="ai-sug-body">
+          <div class="ai-sug-text">Based on the keywords in this ticket, I found <strong>3 similar past articles</strong> in the knowledge base that might be useful to link here:<br><br>
+            • "Company-wide password reset procedure — Step by step guide" (KB-0221)<br>
+            • "Employee account lockout — how to unlock" (KB-0187)<br>
+            • "Password policy reference — current rules" (KB-0093)
+          </div>
+          <div class="verdict-row">
+            <button class="verdict-btn accept-btn" id="v0a" onclick="setVerdict(0,'accept',this)">✓ Accept — link these</button>
+            <button class="verdict-btn edit-btn" id="v0e" onclick="setVerdict(0,'edit',this)">✏ Accept with note</button>
+            <button class="verdict-btn reject-btn" id="v0r" onclick="setVerdict(0,'reject',this)">✕ Reject</button>
+          </div>
+          <div class="verdict-explain" id="ve-0"></div>
+        </div>
+      </div>
+
+      <div class="ai-suggestion-card fade-in">
+        <div class="ai-sug-head">
+          <div class="ai-sug-dot"></div>
+          <div class="ai-sug-label">AI Suggestion 2 of 3 — Impact Estimate</div>
+          <div class="ai-sug-conf">Confidence: Medium</div>
+        </div>
+        <div class="ai-sug-body">
+          <div class="ai-sug-text">Based on similar past incidents, I estimate this type of issue typically affects <strong>20–30% of employees</strong> during a company-wide reset. The resolution time in comparable cases averaged <strong>45 minutes</strong>.</div>
+          <div class="verdict-row">
+            <button class="verdict-btn accept-btn" id="v1a" onclick="setVerdict(1,'accept',this)">✓ Accept — add this</button>
+            <button class="verdict-btn edit-btn" id="v1e" onclick="setVerdict(1,'edit',this)">✏ Flag — numbers are off</button>
+            <button class="verdict-btn reject-btn" id="v1r" onclick="setVerdict(1,'reject',this)">✕ Reject</button>
+          </div>
+          <div class="verdict-explain" id="ve-1"></div>
+        </div>
+      </div>
+
+      <div class="ai-suggestion-card fade-in">
+        <div class="ai-sug-head">
+          <div class="ai-sug-dot"></div>
+          <div class="ai-sug-label">AI Suggestion 3 of 3 — Tags / Categories</div>
+          <div class="ai-sug-conf">Confidence: High</div>
+        </div>
+        <div class="ai-sug-body">
+          <div class="ai-sug-text">I suggest tagging this article with: <strong>Password Reset</strong>, <strong>Account Lockout</strong>, <strong>Login Issues</strong>, <strong>Network Configuration</strong>, <strong>VPN Troubleshooting</strong></div>
+          <div class="verdict-row">
+            <button class="verdict-btn accept-btn" id="v2a" onclick="setVerdict(2,'accept',this)">✓ Accept all tags</button>
+            <button class="verdict-btn edit-btn" id="v2e" onclick="setVerdict(2,'edit',this)">✏ Remove irrelevant ones</button>
+            <button class="verdict-btn reject-btn" id="v2r" onclick="setVerdict(2,'reject',this)">✕ Start over with tags</button>
+          </div>
+          <div class="verdict-explain" id="ve-2"></div>
+        </div>
+      </div>
+
+      <div class="ai-count" id="aiCount">Reviewed: 0 / 3 suggestions</div>
+      <button class="step-btn" id="p2btn" onclick="goToPhase(3)">Publish the article →</button>
+    </div>
+
+    <!-- ══ PHASE 3: PUBLISHED ══ -->
+    <div class="phase" id="phase-3">
+      <div class="step-header fade-in">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Article Published ✓</div>
+          <div class="step-sub">Your knowledge base article is live. Here's what you built — and what it means for the next person who runs into this problem.</div>
+        </div>
+      </div>
+
+      <div class="confetti-row fade-in">
+        <div class="conf-stat"><div class="conf-stat-num">75</div><div class="conf-stat-label">minutes this incident took</div></div>
+        <div class="conf-stat"><div class="conf-stat-num">~5</div><div class="conf-stat-label">minutes it'll take next time</div></div>
+        <div class="conf-stat"><div class="conf-stat-num">847</div><div class="conf-stat-label">articles in the KB (now 848)</div></div>
+      </div>
+
+      <div class="kb-published fade-in">
+        <div class="kbp-bar">
+          <div class="kbp-bar-dot"></div>
+          <span class="kbp-bar-label">● PUBLISHED — KB-0848</span>
+          <span class="kbp-bar-time">Today 11:43 AM · by You (IT Analyst)</span>
+        </div>
+        <div class="kbp-body">
+          <div class="kbp-title">Password reset fails with "doesn't meet requirements" error — employees get locked out</div>
+          <div class="kbp-tags">
+            <span class="kbp-tag">Password Reset</span>
+            <span class="kbp-tag">Account Lockout</span>
+            <span class="kbp-tag">Login Issues</span>
+            <span class="kbp-tag">Company-Wide</span>
+          </div>
+
+          <div class="kbp-section">
+            <div class="kbp-section-title">🔴 The Problem</div>
+            <div class="kbp-section-body" id="pub-problem">After a company-wide password reset, employees see a "password doesn't meet requirements" error even when their new password follows the rules. Repeated attempts can lock the account.</div>
+          </div>
+
+          <div class="kbp-section">
+            <div class="kbp-section-title">🔍 What Causes This</div>
+            <div class="kbp-section-body" id="pub-cause">The password reset system had a minimum-length rule set to 12 characters. The company's actual policy is 10 characters, but the reset system setting was never updated to match.</div>
+          </div>
+
+          <div class="kbp-section">
+            <div class="kbp-section-title">🔧 How to Fix It</div>
+            <div class="kbp-section-body" id="pub-fix">
+              <ol style="margin:0;padding-left:20px;">
+                <li>Go to the password reset system settings and find the minimum password length rule. Change it from 12 to 10 characters to match current policy.</li>
+                <li>Unlock all accounts that were locked during the incident.</li>
+                <li>Confirm with test users that the new password reset process works correctly.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="kbp-section">
+            <div class="kbp-section-title">🛡️ How to Prevent This</div>
+            <div class="kbp-section-body" id="pub-prevent">Whenever any company-wide password policy changes, create a checklist of every system that stores or enforces password rules and update all of them before the change goes live. Add this checklist to the standard change management process.</div>
+          </div>
+
+          <div class="kbp-section">
+            <div class="kbp-section-title">🔗 Related Articles</div>
+            <div class="kbp-section-body">
+              <ul>
+                <li>Company-wide password reset procedure — Step by step guide (KB-0221)</li>
+                <li>Employee account lockout — how to unlock (KB-0187)</li>
+                <li>Password policy reference — current rules (KB-0093)</li>
+              </ul>
+              <div class="kbp-ai-note">🤖 <strong>AI suggested these links</strong> — and they were accurate and relevant, so they were accepted as-is. The AI's impact estimate was flagged because this incident affected 53% of employees (not the 20–30% it estimated). The two VPN/Network tags were removed because they had nothing to do with this issue.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="summary-box fade-in">
+        <h3>What This Activity Showed</h3>
+        <div class="summary-item">
+          <div class="s-check">✓</div>
+          <p>A knowledge base entry is only useful if it's specific enough to act on. Vague entries like "login issues occurred" teach future readers nothing — the key details are the exact error, the exact cause, and the exact steps to fix it.</p>
+        </div>
+        <div class="summary-item">
+          <div class="s-check">✓</div>
+          <p>AI can help with pattern matching — finding related articles, suggesting tags, estimating impact. But it doesn't know the details of your specific situation. Human review caught the wrong impact estimate and the irrelevant tags before they went into the article.</p>
+        </div>
+        <div class="summary-item">
+          <div class="s-check">✓</div>
+          <p>Good documentation turns a 75-minute incident into a 5-minute fix for the next person. That's the entire value — not just capturing what happened, but making it reusable.</p>
+        </div>
+      </div>
+      <button class="restart-btn" onclick="restartActivity()">Write another article</button>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /app-body -->
+
+<script>
+let curPhase = 0;
+
+// ── State ──
+const quizAnswers = [null, null];
+const kbAnswers = [null, null, null, null];
+const aiVerdicts = [null, null, null];
+let kbLocked = false, aiLocked = false;
+
+const kbPreviews = [
+  ['After a company-wide password reset, employees see a "password doesn\'t meet requirements" error even when their new password follows the rules. Repeated attempts can lock the account.',
+   'Employees had login issues after a password reset.',
+   'The password reset system rejected valid passwords due to a misconfiguration.'],
+  ['The password reset system had a minimum-length rule set to 12 characters. The company\'s actual policy is 10 characters, but the reset system setting was never updated to match.',
+   'There was a bug in the password reset system.',
+   'The company updated its password rules 6 months ago but didn\'t tell everyone.'],
+  ['1. Update reset system minimum length to 10 characters. 2. Unlock affected accounts. 3. Test with a user.',
+   'Unlock all affected accounts and ask employees to try again.',
+   'Review the system settings to identify the misconfiguration and address the issue.'],
+  ['Whenever any password policy changes, update all systems that enforce it before the change goes live.',
+   'Test the password reset system before any company-wide reset.',
+   'Ensure IT stays up to date on policy changes.'],
+];
+
+function goToPhase(n){
+  document.getElementById('phase-'+curPhase).classList.remove('active');
+  const sb = document.getElementById('sb-'+curPhase);
+  if(sb){ sb.classList.remove('active'); sb.classList.add('done'); const chk=sb.querySelector('.sb-check'); if(chk) chk.style.opacity='1'; }
+  curPhase = n;
+  document.getElementById('phase-'+n).classList.add('active');
+  const nsb = document.getElementById('sb-'+n);
+  if(nsb){ nsb.classList.add('active'); nsb.classList.remove('done'); }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Phase 0: Quiz ──
+function answerQ(qi, btn, type, fb){
+  const field = btn.closest('.quiz-q');
+  const opts = field.querySelectorAll('.quiz-opt');
+  if(btn.classList.contains('locked')) return;
+
+  if(btn.dataset.pending === 'true'){
+    btn.dataset.pending='false';
+    btn.classList.remove('correct','wrong');
+    field.querySelector('.quiz-fb').classList.remove('show','good','ok');
+    field.querySelector('.quiz-fb').textContent='';
+    quizAnswers[qi]=null;
+    checkQuizDone();
+    return;
+  }
+
+  opts.forEach(o=>{ o.dataset.pending='false'; o.classList.remove('correct','wrong'); });
+  btn.dataset.pending='true';
+  btn.classList.add(type==='good'?'correct':'wrong');
+  const fbe=document.getElementById('qfb-'+qi);
+  fbe.textContent=fb;
+  fbe.className='quiz-fb show '+(type==='good'?'good':'ok');
+  quizAnswers[qi]=type;
+  checkQuizDone();
+}
+
+function checkQuizDone(){
+  const done=quizAnswers.filter(v=>v!==null).length;
+  const allGood=quizAnswers.every(v=>v==='good');
+  if(done===2){
+    document.getElementById('qCount').style.display='block';
+    document.getElementById('p0btn').classList.add('show');
+  }
+}
+
+// ── Phase 1: KB fields ──
+function pickKB(fi, btn, type, fb){
+  if(kbLocked) return;
+  const field = document.getElementById('kbf-'+fi);
+  const opts = field.querySelectorAll('.kb-opt');
+  const fbe = document.getElementById('kbfb-'+fi);
+
+  if(btn.dataset.pending==='true'){
+    btn.dataset.pending='false'; btn.classList.remove('selected');
+    fbe.classList.remove('show','good','ok'); fbe.textContent='';
+    kbAnswers[fi]=null;
+    updateLivePreview(fi,null);
+    updateKBCount();
+    return;
+  }
+
+  opts.forEach(o=>{ o.dataset.pending='false'; o.classList.remove('selected'); });
+  btn.dataset.pending='true'; btn.classList.add('selected');
+  fbe.textContent=fb; fbe.className='kb-fb show '+(type==='good'?'good':'ok');
+  kbAnswers[fi]=type;
+
+  // Update live preview
+  const optIdx=[...opts].indexOf(btn);
+  updateLivePreview(fi, kbPreviews[fi][optIdx]);
+  updateKBCount();
+}
+
+function updateLivePreview(fi, text){
+  const el = document.getElementById('lp-'+fi);
+  if(text){ el.textContent=text; el.classList.remove('empty'); }
+  else { el.textContent='Not filled in yet'; el.classList.add('empty'); }
+}
+
+function updateKBCount(){
+  const n=kbAnswers.filter(v=>v!==null).length;
+  document.getElementById('kbCount').textContent='Filled in: '+n+' / 4 fields';
+  document.getElementById('p1btn').classList.toggle('show', n===4);
+}
+
+// ── Phase 2: AI verdicts ──
+const verdictTexts = {
+  0: {
+    accept: { cls:'accept', text:'✓ Good call. The AI found genuinely useful related articles — exactly the kind of pattern-matching it does well. These links help the next person navigate the KB without searching manually.' },
+    edit:   { cls:'edit',   text:'✏ Fair — you could link some and note why others are less relevant. For this incident, all three links are actually on-topic, so accepting them all works fine.' },
+    reject: { cls:'reject', text:'✕ Consider keeping at least the related articles — they were accurately identified and help future readers navigate. Rejecting accurate, useful AI suggestions leaves out value.' },
+  },
+  1: {
+    accept: { cls:'accept', text:'⚠ Check the numbers. The AI said 20–30% of employees would be affected — but in this actual incident, 180 of 340 employees (53%) couldn\'t log in. Accepting inaccurate stats puts wrong information into the KB.' },
+    edit:   { cls:'edit',   text:'✓ Right call. The AI\'s impact estimate was based on historical averages, but this incident was more severe — 53% of employees affected vs. the predicted 20–30%, and 75 minutes to resolve vs. 45. Flagging this means the article will show accurate numbers.' },
+    reject: { cls:'reject', text:'Fair — removing an inaccurate estimate is better than including a wrong one. The impact section can be filled in manually with the actual numbers from this incident.' },
+  },
+  2: {
+    accept: { cls:'accept', text:'⚠ Look closely at the last two tags. "Network Configuration" and "VPN Troubleshooting" have nothing to do with this problem — this was a password rule mismatch, not a network issue. Accepting all tags would make this article appear in unrelated searches.' },
+    edit:   { cls:'edit',   text:'✓ Right call. "Password Reset," "Account Lockout," and "Login Issues" are all accurate. "Network Configuration" and "VPN Troubleshooting" don\'t apply here — removing them keeps the article from showing up in irrelevant searches.' },
+    reject: { cls:'reject', text:'You could start over, but 3 of the 5 suggested tags were accurate. Keeping "Password Reset," "Account Lockout," and "Login Issues" saves time and keeps the article discoverable for the right searches.' },
+  },
+};
+
+function setVerdict(idx, verdict, btn){
+  if(aiLocked) return;
+  const row=btn.closest('.verdict-row');
+  const btns=row.querySelectorAll('.verdict-btn');
+  const expl=document.getElementById('ve-'+idx);
+
+  if(btn.classList.contains('picked')){
+    btns.forEach(b=>b.classList.remove('picked'));
+    expl.classList.remove('show','accept','edit','reject'); expl.textContent='';
+    aiVerdicts[idx]=null; updateAICount(); return;
+  }
+
+  btns.forEach(b=>b.classList.remove('picked'));
+  btn.classList.add('picked');
+  const vt=verdictTexts[idx][verdict];
+  expl.textContent=vt.text; expl.className='verdict-explain show '+vt.cls;
+  aiVerdicts[idx]=verdict;
+  updateAICount();
+}
+
+function updateAICount(){
+  const n=aiVerdicts.filter(v=>v!==null).length;
+  document.getElementById('aiCount').textContent='Reviewed: '+n+' / 3 suggestions';
+  document.getElementById('p2btn').classList.toggle('show', n===3);
+}
+
+function restartActivity(){ location.reload(); }
+
+const obs=new IntersectionObserver(e=>e.forEach(x=>{ if(x.isIntersecting) x.target.classList.add('visible'); }),{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
