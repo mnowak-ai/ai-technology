@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Activity: Write the Incident Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --dark:#0F0A1E;--dark3:#251845;--md:#6B5A90;
+  --mg:#4AE68A;--mr:#FF6B6B;--ma:#FFB84D;--mb:#7EC8FF;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:var(--white);color:var(--ink);}
+.wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
+
+.hero{text-align:center;padding:20px 0 28px;}
+.lesson-tag{display:inline-block;background:var(--purple-pale);color:var(--purple-dark);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:18px;}
+.hero h1{font-family:"Fraunces",serif;font-weight:700;font-size:32px;line-height:1.18;margin:0 0 12px;color:var(--purple-dark);}
+.hero p{font-size:16px;line-height:1.6;color:var(--grey);max-width:600px;margin:0 auto;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:4px;margin:24px auto 0;}
+
+.tip-box{background:var(--purple-pale);border-radius:18px;padding:20px 24px;margin:24px 0 32px;display:flex;gap:14px;align-items:flex-start;}
+.tip-box .icon{font-size:24px;flex-shrink:0;line-height:1;margin-top:2px;}
+.tip-box p{margin:0;font-size:15px;line-height:1.6;color:var(--purple-dark);}
+.tip-box strong{font-weight:700;}
+
+/* Phase nav */
+.phase-nav{display:flex;gap:0;border-radius:14px;overflow:hidden;border:2px solid var(--purple-mid);margin-bottom:34px;}
+.phase-tab{flex:1;padding:12px 4px;font-size:12px;font-weight:700;color:var(--grey);text-align:center;background:var(--white);cursor:default;transition:all .2s ease;border:none;font-family:"DM Sans",sans-serif;line-height:1.3;}
+.phase-tab.active{background:var(--purple);color:#fff;}
+.phase-tab.done{background:var(--purple-pale);color:var(--purple-dark);}
+
+.phase{display:none;}
+.phase.active{display:block;animation:fadeUp .4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.phase-title{font-family:"Fraunces",serif;font-weight:700;font-size:22px;color:var(--ink);margin:0 0 6px;}
+.phase-sub{font-size:15px;color:var(--grey);line-height:1.6;margin:0 0 22px;}
+
+.phase-btn{display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:14px;}
+.phase-btn.show{display:block;}
+.phase-btn:hover{background:var(--purple-dark);}
+
+/* ── RAW DATA FEED ── */
+.feed-screen{background:var(--dark);border-radius:20px;overflow:hidden;margin-bottom:10px;border:1px solid #3D2460;}
+.feed-bar{background:var(--dark3);padding:10px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #3D2460;}
+.fd{width:10px;height:10px;border-radius:50%;}
+.feed-title{font-family:"DM Mono",monospace;font-size:12px;color:var(--md);margin-left:6px;flex:1;}
+.feed-badge{font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:5px;background:rgba(255,107,107,.15);color:var(--mr);border:1px solid rgba(255,107,107,.3);}
+.feed-body{padding:18px 22px;display:flex;flex-direction:column;gap:8px;}
+
+.raw-entry{
+  background:#1A1030;border-radius:10px;padding:12px 14px;
+  border-left:3px solid #3D2460;transition:all .2s ease;cursor:default;
+}
+.raw-entry.signal{border-left-color:var(--mr);}
+.raw-entry.warn{border-left-color:var(--ma);}
+.raw-entry.noise{border-left-color:#3D2460;opacity:.7;}
+.re-top{display:flex;gap:10px;align-items:flex-start;margin-bottom:4px;}
+.re-ts{font-family:"DM Mono",monospace;font-size:11px;color:var(--md);white-space:nowrap;flex-shrink:0;}
+.re-src{font-family:"DM Mono",monospace;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.re-src.crit{color:var(--mr);}
+.re-src.warn{color:var(--ma);}
+.re-src.info{color:var(--mb);}
+.re-src.ok{color:var(--mg);}
+.re-msg{font-family:"DM Mono",monospace;font-size:12px;color:#C9A8E8;line-height:1.5;}
+.re-msg strong{color:#fff;}
+.re-plain{font-size:13px;color:var(--grey);line-height:1.55;font-style:italic;margin-top:4px;padding-top:4px;border-top:1px solid #2A1845;}
+
+/* ── PHASE 2: SORT CARDS ── */
+.sort-intro{font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:20px;}
+
+.sort-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+@media(max-width:600px){.sort-layout{grid-template-columns:1fr;}}
+
+.sort-col{border-radius:16px;overflow:hidden;border:2px solid var(--purple-mid);}
+.sort-col-head{padding:12px 16px;display:flex;align-items:center;gap:10px;}
+.sort-col-head.signal-col{background:linear-gradient(135deg,#3D0A0A,#6B1A1A);}
+.sort-col-head.noise-col{background:linear-gradient(135deg,#1A1A2E,#2A2A40);}
+.sort-col-icon{font-size:20px;}
+.sort-col-head h3{font-family:"Fraunces",serif;font-size:14px;color:#fff;margin:0 0 2px;}
+.sort-col-head p{font-size:12px;color:rgba(255,255,255,.65);margin:0;}
+.sort-col-body{padding:12px;min-height:80px;display:flex;flex-direction:column;gap:8px;}
+.sort-empty{font-size:13px;color:var(--grey);font-style:italic;padding:6px;text-align:center;}
+
+.sorted-pill{
+  border-radius:10px;padding:9px 12px;font-size:13px;line-height:1.5;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.sorted-pill.sp-signal{background:var(--red-pale);color:var(--red);}
+.sorted-pill.sp-noise{background:#F3F4F6;color:var(--grey);}
+.sorted-pill .sp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.sp-signal .sp-dot{background:var(--red);}
+.sp-noise .sp-dot{background:var(--grey);}
+
+.sort-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.sort-card{
+  border:2px solid var(--purple-mid);border-radius:14px;background:var(--white);overflow:hidden;
+}
+.sort-card-top{padding:12px 16px;}
+.sort-card-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:5px;}
+.sort-card-text{font-size:14px;line-height:1.6;color:var(--ink);}
+.sort-card-btns{display:flex;border-top:1px solid var(--purple-mid);}
+.sc-btn{flex:1;border:none;padding:10px;font-size:13px;font-weight:700;cursor:pointer;background:var(--white);transition:all .15s ease;font-family:"DM Sans",sans-serif;color:var(--grey);}
+.sc-btn:first-child{border-right:1px solid var(--purple-mid);}
+.sc-btn.signal-btn:hover,.sc-btn.signal-btn.active{background:var(--red-pale);color:var(--red);}
+.sc-btn.noise-btn:hover,.sc-btn.noise-btn.active{background:#F3F4F6;color:var(--grey);}
+.sc-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+.sort-count{text-align:center;font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:6px;}
+
+/* ── PHASE 3: BUILD SUMMARY ── */
+.builder-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+@media(max-width:620px){.builder-layout{grid-template-columns:1fr;}}
+
+/* Left: source chips to drag/tap */
+.chip-pool-wrap{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;}
+.chip-pool-head{background:var(--purple-pale);padding:12px 16px;border-bottom:1px solid var(--purple-mid);}
+.chip-pool-head h3{font-family:"Fraunces",serif;font-size:14px;color:var(--purple-dark);margin:0 0 2px;}
+.chip-pool-head p{font-size:12px;color:var(--grey);margin:0;}
+.chip-pool-body{padding:12px;display:flex;flex-direction:column;gap:7px;}
+
+.info-chip{
+  border:2px solid var(--purple-mid);border-radius:10px;padding:9px 12px;
+  font-size:13px;line-height:1.5;color:var(--ink);cursor:pointer;
+  background:var(--white);transition:all .15s ease;display:flex;gap:8px;align-items:flex-start;
+}
+.info-chip:hover{border-color:var(--purple);background:var(--purple-pale);}
+.info-chip.used{opacity:.4;cursor:default;pointer-events:none;}
+.info-chip.used:hover{border-color:var(--purple-mid);background:var(--white);}
+.chip-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* Right: summary form */
+.summary-form{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;}
+.summary-form-head{background:linear-gradient(135deg,var(--purple-dark),var(--purple));padding:12px 16px;}
+.summary-form-head h3{font-family:"Fraunces",serif;font-size:14px;color:#fff;margin:0 0 2px;}
+.summary-form-head p{font-size:12px;color:rgba(255,255,255,.7);margin:0;}
+.summary-form-body{padding:12px;display:flex;flex-direction:column;gap:10px;}
+
+.summary-slot{
+  border:2px dashed var(--purple-mid);border-radius:10px;padding:10px 12px;
+  min-height:54px;background:var(--purple-pale);transition:all .2s ease;
+}
+.summary-slot.filled{background:var(--white);border:2px solid var(--purple);border-style:solid;}
+.summary-slot-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:5px;}
+.summary-slot-content{font-size:13px;color:var(--ink);line-height:1.55;min-height:22px;}
+.summary-slot-empty{font-size:13px;color:var(--purple-mid);font-style:italic;}
+.slot-remove{font-size:11px;color:var(--red);cursor:pointer;margin-top:4px;display:none;background:none;border:none;padding:0;font-family:"DM Sans",sans-serif;}
+.summary-slot.filled .slot-remove{display:inline-block;}
+
+.build-count{text-align:center;font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:6px;}
+
+/* ── PHASE 4: RATE THE SUMMARY ── */
+.rate-intro{font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:22px;}
+
+.summary-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:620px){.summary-compare{grid-template-columns:1fr;}}
+
+.summary-version{border-radius:16px;overflow:hidden;border:2px solid var(--purple-mid);}
+.sv-head{padding:12px 16px;}
+.sv-head.yours{background:var(--purple-pale);}
+.sv-head.expert{background:var(--green-pale);border-bottom:1px solid var(--green-mid, #A8DFC4);}
+.sv-head h3{font-family:"Fraunces",serif;font-size:14px;margin:0 0 2px;}
+.sv-head.yours h3{color:var(--purple-dark);}
+.sv-head.expert h3{color:var(--green);}
+.sv-head p{font-size:12px;color:var(--grey);margin:0;}
+.sv-body{padding:14px 16px;}
+.sv-field{margin-bottom:12px;}
+.sv-field:last-child{margin-bottom:0;}
+.sv-field-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:4px;}
+.sv-field-value{font-size:13px;line-height:1.6;color:var(--ink);}
+.sv-field-value.empty{color:var(--purple-mid);font-style:italic;}
+.diff-highlight{background:#E6F7EF;border-radius:3px;padding:1px 3px;}
+
+.rate-field{border-bottom:1px solid var(--purple-mid);padding:18px 22px;}
+.rate-field:last-child{border-bottom:none;}
+.rate-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:10px;}
+.rate-opts{display:flex;flex-direction:column;gap:8px;}
+.rate-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink);cursor:pointer;background:var(--white);transition:all .15s ease;text-align:left;line-height:1.5;font-family:"DM Sans",sans-serif;}
+.rate-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.rate-opt.best{border-color:var(--green);background:var(--green-pale);color:var(--green);font-weight:600;}
+.rate-opt.partial{border-color:var(--amber);background:var(--amber-pale);color:var(--amber);font-weight:600;}
+.rate-opt.locked{border-color:var(--purple-mid);color:var(--grey);cursor:default;}
+.rate-opt.locked:hover{background:var(--white);}
+.rate-fb{margin-top:10px;font-size:13px;line-height:1.6;display:none;padding:10px 12px;border-radius:8px;}
+.rate-fb.show{display:block;}
+.rate-fb.good{background:var(--green-pale);color:var(--green);}
+.rate-fb.ok{background:var(--amber-pale);color:var(--amber);}
+
+.rate-shell{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin-bottom:22px;}
+.rate-shell-head{background:linear-gradient(135deg,var(--purple-dark),var(--purple));padding:16px 22px;color:#fff;}
+.rate-shell-head h3{font-family:"Fraunces",serif;font-size:17px;margin:0 0 3px;}
+.rate-shell-head p{font-size:13px;opacity:.8;margin:0;}
+
+/* Finale */
+.finale-icon{text-align:center;font-size:48px;margin-bottom:12px;}
+.finale-title{font-family:"Fraunces",serif;font-weight:700;font-size:26px;color:var(--purple-dark);text-align:center;margin:0 0 10px;}
+.finale-sub{font-size:15px;line-height:1.7;color:var(--grey);max-width:560px;margin:0 auto 28px;text-align:center;}
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:30px 28px;color:#fff;text-align:left;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 16px;color:#fff;}
+.summary-item{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.summary-item:last-child{margin-bottom:0;}
+.s-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.summary-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+@media(max-width:560px){.hero h1{font-size:26px;}.phase-tab{font-size:10px;padding:10px 2px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero fade-in">
+  <div class="lesson-tag">Hands-On Activity</div>
+  <h1>Write the Incident Summary</h1>
+  <p>You've just been handed a messy pile of raw logs, alerts, and notes from a live incident. Your job: turn the noise into a clear summary another team can act on in minutes.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="tip-box fade-in">
+  <div class="icon">👆</div>
+  <p><strong>How this works:</strong> Step through four stages — read the raw data, separate signal from noise, build your summary, then evaluate it against an expert version. No typing needed at any step.</p>
+</div>
+
+<div class="phase-nav">
+  <button class="phase-tab active" id="tab-0">1. Raw Data</button>
+  <button class="phase-tab" id="tab-1">2. Signal vs. Noise</button>
+  <button class="phase-tab" id="tab-2">3. Build Summary</button>
+  <button class="phase-tab" id="tab-3">4. Evaluate</button>
+</div>
+
+<!-- ════════════════════════════
+     PHASE 1 — Raw data feed
+════════════════════════════ -->
+<div class="phase active" id="phase-0">
+  <div class="phase-title">The Raw Incident Data</div>
+  <div class="phase-sub">This is what landed in your queue. It's messy, it's out of order, and some of it doesn't matter. Read it all carefully before moving on — you'll need to separate what's important from what isn't.</div>
+
+  <div class="feed-screen fade-in">
+    <div class="feed-bar">
+      <div class="fd" style="background:#FF5F56;"></div>
+      <div class="fd" style="background:#FEBC2E;"></div>
+      <div class="fd" style="background:#27C840;"></div>
+      <span class="feed-title">Raw Incident Feed — INS-2024-0892 · Tuesday 3:18 PM</span>
+      <span class="feed-badge">● ACTIVE</span>
+    </div>
+    <div class="feed-body">
+
+      <div class="raw-entry signal">
+        <div class="re-top">
+          <span class="re-ts">3:02 PM</span>
+          <span class="re-src crit">[AUTH-SRV]</span>
+          <span class="re-msg">Login failure spike: <strong>312 failed attempts</strong> in 90 seconds. Account: <strong>admin_portal</strong>. Source: multiple external IPs.</span>
+        </div>
+        <div class="re-plain">→ In plain English: Someone outside the company tried to guess the admin account password hundreds of times in under 2 minutes.</div>
+      </div>
+
+      <div class="raw-entry noise">
+        <div class="re-top">
+          <span class="re-ts">3:04 PM</span>
+          <span class="re-src ok">[BACKUP-SRV]</span>
+          <span class="re-msg">Scheduled backup job completed successfully. <strong>Files archived: 14,822.</strong> Duration: 4 min 11 sec.</span>
+        </div>
+        <div class="re-plain">→ In plain English: The regular backup finished normally. Not related to what's happening.</div>
+      </div>
+
+      <div class="raw-entry signal">
+        <div class="re-top">
+          <span class="re-ts">3:05 PM</span>
+          <span class="re-src crit">[AUTH-SRV]</span>
+          <span class="re-msg"><strong>Successful login</strong> detected for <strong>admin_portal</strong> from IP 185.220.101.45 — <strong>not in approved location list.</strong> Session opened.</span>
+        </div>
+        <div class="re-plain">→ In plain English: One of those attempts worked. Someone logged in as admin from an address the company doesn't recognize.</div>
+      </div>
+
+      <div class="raw-entry warn">
+        <div class="re-top">
+          <span class="re-ts">3:06 PM</span>
+          <span class="re-src warn">[USER-MGMT]</span>
+          <span class="re-msg">admin_portal session: <strong>4 new user accounts created</strong> in 38 seconds. New accounts: temp_usr_01 through temp_usr_04. No approval workflow triggered.</span>
+        </div>
+        <div class="re-plain">→ In plain English: While logged in as admin, someone quickly created 4 new accounts — skipping the normal approval process.</div>
+      </div>
+
+      <div class="raw-entry noise">
+        <div class="re-top">
+          <span class="re-ts">3:07 PM</span>
+          <span class="re-src ok">[HELPDESK]</span>
+          <span class="re-msg">Ticket #44821 opened: <strong>User reports VPN slow today.</strong> Assigned to Tier 1. Low priority.</span>
+        </div>
+        <div class="re-plain">→ In plain English: A separate support ticket about a slow VPN — unrelated to this incident.</div>
+      </div>
+
+      <div class="raw-entry signal">
+        <div class="re-top">
+          <span class="re-ts">3:09 PM</span>
+          <span class="re-src crit">[ACCESS-LOG]</span>
+          <span class="re-msg">New accounts temp_usr_01–04: <strong>accessed HR payroll records, IT infrastructure docs, and customer database</strong> within 3 minutes of creation. Read-only access confirmed.</span>
+        </div>
+        <div class="re-plain">→ In plain English: The 4 new accounts immediately started reading sensitive company files — employee pay info, tech systems docs, and customer data.</div>
+      </div>
+
+      <div class="raw-entry warn">
+        <div class="re-top">
+          <span class="re-ts">3:11 PM</span>
+          <span class="re-src warn">[NETWORK]</span>
+          <span class="re-msg">Unusual outbound traffic: <strong>1.8 GB transferred</strong> to external IP 45.76.22.198 over 6 minutes. Port 443. Destination not in approved list.</span>
+        </div>
+        <div class="re-plain">→ In plain English: Almost 2 GB of data left the company network and went to an outside address that's not approved. This could be the files being sent out.</div>
+      </div>
+
+      <div class="raw-entry noise">
+        <div class="re-top">
+          <span class="re-ts">3:14 PM</span>
+          <span class="re-src ok">[MONITOR]</span>
+          <span class="re-msg">Server health check: all primary servers operating within normal parameters. CPU: 34%. Memory: 61%. Disk: 47%.</span>
+        </div>
+        <div class="re-plain">→ In plain English: The servers themselves are running fine. This is a routine health report.</div>
+      </div>
+
+      <div class="raw-entry signal">
+        <div class="re-top">
+          <span class="re-ts">3:17 PM</span>
+          <span class="re-src crit">[SECURITY]</span>
+          <span class="re-msg"><strong>Automated response triggered:</strong> admin_portal session terminated. Accounts temp_usr_01–04 suspended. Security team alerted.</span>
+        </div>
+        <div class="re-plain">→ In plain English: The security system kicked the attacker out and locked the new accounts. Your security team was notified automatically.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tip-box" style="margin-top:14px;margin-bottom:10px;">
+    <div class="icon">🤔</div>
+    <p>Before moving on — which of these entries are important to the incident? Which are background noise? You'll sort them in the next step.</p>
+  </div>
+
+  <button class="phase-btn show" onclick="goToPhase(1)">Sort signal from noise →</button>
+</div>
+
+<!-- ════════════════════════════
+     PHASE 2 — Sort signal vs noise
+════════════════════════════ -->
+<div class="phase" id="phase-1">
+  <div class="phase-title">Signal or Noise?</div>
+  <div class="phase-sub">Not everything in that feed matters for your summary. For each entry, decide: is this a key part of the incident, or is it background information that doesn't affect what happened? Tap your choice on each card.</div>
+
+  <div class="sort-layout">
+    <div class="sort-col">
+      <div class="sort-col-head signal-col">
+        <div class="sort-col-icon">🔴</div>
+        <div><h3>Matters for the Summary</h3><p>Part of what happened or what to do</p></div>
+      </div>
+      <div class="sort-col-body" id="signalCol">
+        <div class="sort-empty" id="signalEmpty">Nothing sorted here yet</div>
+      </div>
+    </div>
+    <div class="sort-col">
+      <div class="sort-col-head noise-col">
+        <div class="sort-col-icon">⚫</div>
+        <div><h3>Background Noise</h3><p>Unrelated or not important enough to include</p></div>
+      </div>
+      <div class="sort-col-body" id="noiseCol">
+        <div class="sort-empty" id="noiseEmpty">Nothing sorted here yet</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sort-cards" id="sortCards"></div>
+  <div class="sort-count" id="sortCount">Sorted: 0 / 9 entries</div>
+  <button class="phase-btn" id="sortNext" onclick="submitSort()">Build the summary →</button>
+</div>
+
+<!-- ════════════════════════════
+     PHASE 3 — Build summary
+════════════════════════════ -->
+<div class="phase" id="phase-2">
+  <div class="phase-title">Build the Incident Summary</div>
+  <div class="phase-sub">Now use the key facts to fill in the four fields of the summary. Tap a fact chip on the left, then tap the slot it belongs in on the right. You can remove and reassign at any time.</div>
+
+  <div class="builder-layout">
+    <!-- Left: chips -->
+    <div class="chip-pool-wrap">
+      <div class="chip-pool-head">
+        <h3>📋 Key Facts</h3>
+        <p>Tap one, then tap the slot it belongs in</p>
+      </div>
+      <div class="chip-pool-body" id="chipPool"></div>
+    </div>
+
+    <!-- Right: summary slots -->
+    <div class="summary-form">
+      <div class="summary-form-head">
+        <h3>📝 Incident Summary</h3>
+        <p>Fill in each field from the facts on the left</p>
+      </div>
+      <div class="summary-form-body">
+        <div class="summary-slot" id="slot-0" onclick="assignSlot(0)">
+          <div class="summary-slot-label">What happened?</div>
+          <div class="summary-slot-content"><span class="summary-slot-empty">Tap a fact, then tap here</span></div>
+          <button class="slot-remove" onclick="removeSlot(event,0)">✕ Remove</button>
+        </div>
+        <div class="summary-slot" id="slot-1" onclick="assignSlot(1)">
+          <div class="summary-slot-label">How did they get in?</div>
+          <div class="summary-slot-content"><span class="summary-slot-empty">Tap a fact, then tap here</span></div>
+          <button class="slot-remove" onclick="removeSlot(event,1)">✕ Remove</button>
+        </div>
+        <div class="summary-slot" id="slot-2" onclick="assignSlot(2)">
+          <div class="summary-slot-label">What did they do inside?</div>
+          <div class="summary-slot-content"><span class="summary-slot-empty">Tap a fact, then tap here</span></div>
+          <button class="slot-remove" onclick="removeSlot(event,2)">✕ Remove</button>
+        </div>
+        <div class="summary-slot" id="slot-3" onclick="assignSlot(3)">
+          <div class="summary-slot-label">Current status / what was done</div>
+          <div class="summary-slot-content"><span class="summary-slot-empty">Tap a fact, then tap here</span></div>
+          <button class="slot-remove" onclick="removeSlot(event,3)">✕ Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="build-count" id="buildCount">Filled: 0 / 4 fields</div>
+  <button class="phase-btn" id="buildNext" onclick="submitBuild()">Evaluate my summary →</button>
+</div>
+
+<!-- ════════════════════════════
+     PHASE 4 — Rate vs expert
+════════════════════════════ -->
+<div class="phase" id="phase-3">
+  <div class="phase-title">How Does Your Summary Compare?</div>
+  <div class="phase-sub">Here's your summary next to an expert version. Then answer three questions about what makes a good incident summary — and what your choices got right or missed.</div>
+
+  <div class="summary-compare" id="summaryCompare">
+    <div class="summary-version">
+      <div class="sv-head yours"><h3>📝 Your Summary</h3><p>Built from your choices</p></div>
+      <div class="sv-body" id="yourSummaryDisplay"></div>
+    </div>
+    <div class="summary-version">
+      <div class="sv-head expert"><h3>✅ Expert Summary</h3><p>What a senior analyst would write</p></div>
+      <div class="sv-body">
+        <div class="sv-field">
+          <div class="sv-field-label">What happened?</div>
+          <div class="sv-field-value">An attacker gained access to the company's admin account through repeated password guessing and used it to create unauthorized accounts that accessed sensitive company data.</div>
+        </div>
+        <div class="sv-field">
+          <div class="sv-field-label">How did they get in?</div>
+          <div class="sv-field-value">312 failed login attempts in 90 seconds were followed by one successful login from an unrecognized outside address (185.220.101.45).</div>
+        </div>
+        <div class="sv-field">
+          <div class="sv-field-label">What did they do inside?</div>
+          <div class="sv-field-value">4 unauthorized accounts were created in 38 seconds and immediately accessed HR payroll records, IT infrastructure documents, and customer data. 1.8 GB was then transferred to an external address.</div>
+        </div>
+        <div class="sv-field">
+          <div class="sv-field-label">Current status / what was done</div>
+          <div class="sv-field-value">The attacker's session was terminated and the 4 created accounts were suspended at 3:17 PM. Security team alerted. Investigation ongoing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rate-shell">
+    <div class="rate-shell-head">
+      <h3>Reflection Questions</h3>
+      <p>Think about what makes an incident summary actually useful.</p>
+    </div>
+
+    <div class="rate-field" id="rf-0">
+      <div class="rate-label">Why is the server health check entry (CPU 34%, Memory 61%) NOT worth including?</div>
+      <div class="rate-opts">
+        <button class="rate-opt" onclick="pickRate(0,this,'partial','The servers actually were under normal load during this incident — but that\'s not why we leave it out. The reason it doesn\'t belong is that it doesn\'t help anyone understand what happened or what to do next. Normal server health during an attack doesn\'t change the response.')">Because the servers were under heavy load and that\'s a separate problem.</button>
+        <button class="rate-opt" onclick="pickRate(0,this,'best','Exactly right. The server health data is technically accurate but operationally useless for this incident. A good summary only includes information that changes how someone would respond. Normal CPU stats don\'t do that.')">Because it doesn\'t help anyone understand what happened or decide what to do — it\'s just routine background data.</button>
+        <button class="rate-opt" onclick="pickRate(0,this,'partial','The entry is accurate — it was from the same time period. The problem isn\'t accuracy, it\'s relevance. Including it would waste the reader\'s time without helping them respond to the incident.')">Because it might be inaccurate during an active incident.</button>
+      </div>
+      <div class="rate-fb" id="rfb-0"></div>
+    </div>
+
+    <div class="rate-field" id="rf-1">
+      <div class="rate-label">The 1.8 GB data transfer is important to include. Why?</div>
+      <div class="rate-opts">
+        <button class="rate-opt" onclick="pickRate(1,this,'partial','2 GB is large, but size alone isn\'t the reason it matters. Lots of legitimate transfers are larger. What matters is where it went (an unapproved outside address) and when it happened (right after the unauthorized accounts accessed sensitive files).')">Because 2 GB is a very large amount of data to move.</button>
+        <button class="rate-opt" onclick="pickRate(1,this,'best','Right. The timing and destination turn this entry from "large transfer" into "possible data theft." It\'s what tells the next team whether data actually left the company — which determines whether customers and employees need to be notified.')">Because it happened right after sensitive files were accessed, and the destination is unapproved — which suggests data may have been stolen and taken outside the company.</button>
+        <button class="rate-opt" onclick="pickRate(1,this,'partial','Not quite — 1.8 GB is unusual, but traffic spikes alone don\'t indicate a breach. The important part is the combination: after the unauthorized access, to an unapproved location. The context is what makes it significant.')">Because any spike in network traffic during an incident is automatically suspicious.</button>
+      </div>
+      <div class="rate-fb" id="rfb-1"></div>
+    </div>
+
+    <div class="rate-field" id="rf-2">
+      <div class="rate-label">What makes the expert summary more useful than a list of log entries?</div>
+      <div class="rate-opts">
+        <button class="rate-opt" onclick="pickRate(2,this,'partial','Shorter is often better, but brevity alone isn\'t the goal. A very short summary can still be useless if it doesn\'t explain what happened or what to do. The expert summary is useful because it\'s organized, not just brief.')">It\'s shorter, so it\'s faster to read.</button>
+        <button class="rate-opt" onclick="pickRate(2,this,'partial','Technical details are included where they matter — like the IP address and the account name — so that\'s not quite right either. The difference is that those details appear in a structured context that makes their significance clear, rather than as raw log lines.')">It removes all technical details so anyone can understand it.</button>
+        <button class="rate-opt" onclick="pickRate(2,this,'best','Exactly. Raw logs tell you what the system saw. A good summary tells you what it means and what should happen next. The structure (what happened → how → what they did → current status) is what lets someone read it in 30 seconds and know exactly what action to take.')">It organizes the information into a clear story — what happened, how, what the impact was, and what\'s been done — so the reader can understand the full picture and respond immediately without re-reading the raw logs.</button>
+      </div>
+      <div class="rate-fb" id="rfb-2"></div>
+    </div>
+
+  </div>
+
+  <button class="phase-btn" id="rateNext" onclick="showFinale()">See the wrap-up →</button>
+</div>
+
+<!-- FINALE -->
+<div class="phase" id="phase-4">
+  <div class="finale-icon">📋</div>
+  <div class="finale-title">You Just Wrote an Incident Summary</div>
+  <div class="finale-sub">That process — read everything, separate signal from noise, organize it into a clear story — is what happens in real operations teams every time an incident comes in.</div>
+
+  <div class="summary-box">
+    <h3>What This Activity Showed</h3>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>Raw incident data is always messy. The real skill isn't reading logs — it's deciding which ones matter and which ones are just background noise.</p>
+    </div>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>A good summary isn't just shorter — it's structured. What happened, how they got in, what they did, and what's been done is the framework that lets another team act in 30 seconds without reading everything from scratch.</p>
+    </div>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>AI tools can help pull together and organize incident data faster than a person reading logs manually — but a human still has to decide what's relevant, what the data means, and what the next team actually needs to know.</p>
+    </div>
+  </div>
+  <button class="restart-btn" onclick="restartActivity()">Run it again</button>
+</div>
+
+</div>
+
+<script>
+let curPhase = 0;
+
+// ── Data ──
+const entries = [
+  { id:0, label:'Login failure spike', text:'312 failed login attempts in 90 seconds on the admin account from multiple outside computers', correct:'signal' },
+  { id:1, label:'Backup completed', text:'Scheduled backup finished normally — 14,822 files archived', correct:'noise' },
+  { id:2, label:'Successful unauthorized login', text:'One login attempt succeeded — the attacker got into the admin account from an unrecognized outside address', correct:'signal' },
+  { id:3, label:'4 fake accounts created', text:'4 new user accounts were created in 38 seconds by the attacker\'s session, bypassing the normal approval process', correct:'signal' },
+  { id:4, label:'Slow VPN support ticket', text:'A separate support ticket was opened about a slow VPN — unrelated to this incident', correct:'noise' },
+  { id:5, label:'Sensitive files accessed', text:'The 4 new accounts accessed HR payroll records, IT infrastructure documents, and customer data within minutes', correct:'signal' },
+  { id:6, label:'1.8 GB sent outside', text:'1.8 GB of data was transferred to an outside address not on the approved list — likely data being stolen', correct:'signal' },
+  { id:7, label:'Server health normal', text:'Servers are running at normal capacity — CPU 34%, Memory 61%, Disk 47%', correct:'noise' },
+  { id:8, label:'Automated lockout', text:'The security system terminated the attacker\'s session and suspended the 4 created accounts at 3:17 PM. Security team notified.', correct:'signal' },
+];
+
+// Chips for the builder (key facts to assign to slots)
+const chips = [
+  { id:'c0', icon:'🔐', text:'Someone guessed the admin account password (after 312 attempts) and logged in from an outside address the company doesn\'t recognize.', slot:1 },
+  { id:'c1', icon:'👤', text:'4 unauthorized accounts were created in 38 seconds and immediately read sensitive company data (payroll, IT docs, customers). 1.8 GB was then sent to an outside address.', slot:2 },
+  { id:'c2', icon:'🛑', text:'An attacker broke into the admin account, created unauthorized user accounts, and accessed sensitive company data — possibly exporting it.', slot:0 },
+  { id:'c3', icon:'✅', text:'The attacker\'s session and fake accounts were shut down at 3:17 PM. Security team has been alerted and investigation is ongoing.', slot:3 },
+  { id:'c4', icon:'📊', text:'Server health is normal — CPU 34%, Memory 61%.', slot:-1 }, // decoy
+  { id:'c5', icon:'💾', text:'The daily backup completed successfully with 14,822 files archived.', slot:-1 }, // decoy
+];
+
+// Sort state
+const sortState = {};
+entries.forEach(e => sortState[e.id] = null);
+
+// Build state
+let selectedChip = null;
+const slotState = [null,null,null,null]; // slot index -> chip id or null
+
+// Rate state
+const ratePending = [null,null,null];
+let rateLocked = false;
+
+function goToPhase(n){
+  document.getElementById('phase-'+curPhase).classList.remove('active');
+  const ot = document.getElementById('tab-'+curPhase);
+  if(ot){ ot.classList.remove('active'); ot.classList.add('done'); }
+  curPhase = n;
+  document.getElementById('phase-'+n).classList.add('active');
+  const nt = document.getElementById('tab-'+n);
+  if(nt) nt.classList.add('active');
+  window.scrollTo({top: document.querySelector('.phase-nav').offsetTop - 20, behavior:'smooth'});
+}
+
+// ── Build sort cards ──
+function buildSortCards(){
+  const grid = document.getElementById('sortCards');
+  entries.forEach(e => {
+    const card = document.createElement('div');
+    card.className = 'sort-card';
+    card.id = 'sc-'+e.id;
+    card.innerHTML = `
+      <div class="sort-card-top">
+        <div class="sort-card-label">${e.label}</div>
+        <div class="sort-card-text">${e.text}</div>
+      </div>
+      <div class="sort-card-btns">
+        <button class="sc-btn signal-btn" id="sb-s-${e.id}" onclick="setSort(${e.id},'signal',this)">🔴 Matters for summary</button>
+        <button class="sc-btn noise-btn" id="sb-n-${e.id}" onclick="setSort(${e.id},'noise',this)">⚫ Background noise</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+buildSortCards();
+
+function setSort(id, val, btn){
+  if(btn.disabled) return;
+  const prev = sortState[id];
+  const sBtn = document.getElementById('sb-s-'+id);
+  const nBtn = document.getElementById('sb-n-'+id);
+
+  if(prev === val){
+    sortState[id] = null;
+    sBtn.classList.remove('active'); nBtn.classList.remove('active');
+  } else {
+    sortState[id] = val;
+    sBtn.classList.toggle('active', val === 'signal');
+    nBtn.classList.toggle('active', val === 'noise');
+  }
+  updateSortCols();
+  const sorted = Object.values(sortState).filter(v=>v!==null).length;
+  document.getElementById('sortCount').textContent = 'Sorted: '+sorted+' / '+entries.length+' entries';
+  document.getElementById('sortNext').classList.toggle('show', sorted === entries.length);
+}
+
+function updateSortCols(){
+  const sc = document.getElementById('signalCol');
+  const nc = document.getElementById('noiseCol');
+  sc.innerHTML = ''; nc.innerHTML = '';
+  let hasS=false, hasN=false;
+  entries.forEach(e => {
+    if(sortState[e.id] === 'signal'){
+      hasS=true;
+      const p=document.createElement('div');
+      p.className='sorted-pill sp-signal';
+      p.innerHTML=`<div class="sp-dot"></div><div>${e.label}</div>`;
+      sc.appendChild(p);
+    } else if(sortState[e.id] === 'noise'){
+      hasN=true;
+      const p=document.createElement('div');
+      p.className='sorted-pill sp-noise';
+      p.innerHTML=`<div class="sp-dot"></div><div>${e.label}</div>`;
+      nc.appendChild(p);
+    }
+  });
+  if(!hasS) sc.innerHTML='<div class="sort-empty">Nothing sorted here yet</div>';
+  if(!hasN) nc.innerHTML='<div class="sort-empty">Nothing sorted here yet</div>';
+}
+
+function submitSort(){
+  document.querySelectorAll('.sc-btn').forEach(b => { b.disabled=true; });
+  buildChips();
+  goToPhase(2);
+}
+
+// ── Build summary chips ──
+function buildChips(){
+  const pool = document.getElementById('chipPool');
+  chips.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'info-chip';
+    el.id = 'chip-'+c.id;
+    el.innerHTML = `<span class="chip-icon">${c.icon}</span><span>${c.text}</span>`;
+    el.onclick = () => selectChip(c.id, el);
+    pool.appendChild(el);
+  });
+}
+
+function selectChip(id, el){
+  if(el.classList.contains('used')) return;
+  // Deselect previous
+  if(selectedChip){
+    const prev = document.getElementById('chip-'+selectedChip);
+    if(prev) prev.style.outline='';
+    if(selectedChip === id){ selectedChip=null; return; }
+  }
+  selectedChip = id;
+  el.style.outline='2px solid var(--purple)';
+}
+
+function assignSlot(slotIdx){
+  if(!selectedChip) return;
+  const chip = chips.find(c=>c.id===selectedChip);
+  if(!chip) return;
+
+  // If slot already filled, return old chip to pool
+  if(slotState[slotIdx]){
+    const oldId = slotState[slotIdx];
+    const oldEl = document.getElementById('chip-'+oldId);
+    if(oldEl){ oldEl.classList.remove('used'); oldEl.style.outline=''; }
+  }
+
+  slotState[slotIdx] = selectedChip;
+
+  // Mark chip as used
+  const chipEl = document.getElementById('chip-'+selectedChip);
+  if(chipEl){ chipEl.classList.add('used'); chipEl.style.outline=''; }
+
+  // Fill slot
+  const slot = document.getElementById('slot-'+slotIdx);
+  slot.classList.add('filled');
+  slot.querySelector('.summary-slot-content').innerHTML = chip.text;
+  slot.querySelector('.slot-remove').style.display='inline-block';
+
+  selectedChip = null;
+  updateBuildCount();
+}
+
+function removeSlot(e, slotIdx){
+  e.stopPropagation();
+  const chipId = slotState[slotIdx];
+  if(!chipId) return;
+  const chipEl = document.getElementById('chip-'+chipId);
+  if(chipEl){ chipEl.classList.remove('used'); }
+
+  slotState[slotIdx] = null;
+  const slot = document.getElementById('slot-'+slotIdx);
+  slot.classList.remove('filled');
+  slot.querySelector('.summary-slot-content').innerHTML='<span class="summary-slot-empty">Tap a fact, then tap here</span>';
+  slot.querySelector('.slot-remove').style.display='none';
+  updateBuildCount();
+}
+
+function updateBuildCount(){
+  const filled = slotState.filter(v=>v!==null).length;
+  document.getElementById('buildCount').textContent='Filled: '+filled+' / 4 fields';
+  document.getElementById('buildNext').classList.toggle('show', filled===4);
+}
+
+function submitBuild(){
+  // Build "your summary" display
+  const labels = ['What happened?','How did they get in?','What did they do inside?','Current status / what was done'];
+  const display = document.getElementById('yourSummaryDisplay');
+  display.innerHTML='';
+  slotState.forEach((chipId, i) => {
+    const chip = chips.find(c=>c.id===chipId);
+    const div=document.createElement('div');
+    div.className='sv-field';
+    div.innerHTML=`<div class="sv-field-label">${labels[i]}</div><div class="sv-field-value">${chip ? chip.text : '<span class="empty">Not filled in</span>'}</div>`;
+    display.appendChild(div);
+  });
+  goToPhase(3);
+}
+
+// ── Rating ──
+function pickRate(fi, btn, type, fb){
+  if(rateLocked) return;
+  const field = document.getElementById('rf-'+fi);
+  const opts = field.querySelectorAll('.rate-opt');
+  const fbe = document.getElementById('rfb-'+fi);
+
+  if(btn.dataset.pending==='true'){
+    btn.dataset.pending='false'; btn.classList.remove('best','partial');
+    fbe.classList.remove('show','good','ok'); fbe.textContent='';
+    ratePending[fi]=null;
+    document.getElementById('rateNext').classList.remove('show');
+    return;
+  }
+
+  opts.forEach(o=>{ o.dataset.pending='false'; o.classList.remove('best','partial'); });
+  btn.dataset.pending='true';
+  btn.classList.add(type==='best'?'best':'partial');
+  fbe.textContent=fb;
+  fbe.className='rate-fb show '+(type==='best'?'good':'ok');
+  ratePending[fi]={type};
+
+  if(ratePending.every(v=>v!==null)){
+    document.getElementById('rateNext').classList.add('show');
+    window.scrollTo({top:document.getElementById('rateNext').offsetTop-20,behavior:'smooth'});
+  }
+}
+
+function showFinale(){
+  rateLocked=true;
+  document.querySelectorAll('.rate-opt').forEach(o=>{
+    o.style.cursor='default'; o.onclick=null;
+    if(!o.classList.contains('best')&&!o.classList.contains('partial')) o.classList.add('locked');
+  });
+  goToPhase(4);
+}
+
+function restartActivity(){ location.reload(); }
+
+const obs=new IntersectionObserver(e=>e.forEach(x=>{ if(x.isIntersecting) x.target.classList.add('visible'); }),{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
