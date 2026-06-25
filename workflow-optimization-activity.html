@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Activity: Optimize the Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;--green-mid:#A8DFC4;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --blue:#1457A8;--blue-pale:#E4EEFF;
+  --dark:#0A0A18;--dark3:#1C1830;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:#F0EDF7;color:var(--ink);}
+
+/* ── App Shell ── */
+.app-chrome{background:var(--purple-dark);padding:0;}
+.app-topbar{padding:13px 24px;display:flex;align-items:center;gap:14px;}
+.app-logo{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:#fff;}
+.app-logo span{opacity:.5;font-weight:300;font-size:14px;margin-left:6px;}
+.app-tabs{display:flex;gap:0;margin-left:20px;}
+.app-tab{padding:8px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;}
+.app-tab.active{color:#fff;border-bottom-color:#fff;}
+.app-breadcrumb{font-size:12px;color:rgba(255,255,255,.45);margin-left:auto;font-family:"DM Mono",monospace;}
+
+/* Main layout */
+.app-layout{display:grid;grid-template-columns:1fr 340px;min-height:calc(100vh - 52px);gap:0;}
+@media(max-width:760px){.app-layout{grid-template-columns:1fr;}}
+
+/* Left: canvas */
+.canvas-area{background:#F0EDF7;padding:24px;overflow:hidden;}
+.canvas-title{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--ink);margin:0 0 4px;}
+.canvas-sub{font-size:13px;color:var(--grey);margin:0 0 20px;}
+.canvas-label{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:6px;margin-bottom:16px;}
+.canvas-label.before{background:var(--red-pale);color:var(--red);}
+.canvas-label.after{background:var(--green-pale);color:var(--green);}
+
+/* Flow diagram */
+.flow-wrap{background:var(--white);border-radius:16px;border:2px solid #E0DCF0;padding:20px;overflow-x:auto;}
+.flow{display:flex;flex-direction:column;gap:0;align-items:stretch;}
+
+/* Flow node */
+.flow-node{
+  border-radius:14px;border:2px solid #DDD;padding:14px 16px;background:var(--white);
+  position:relative;margin-bottom:0;transition:all .2s ease;
+}
+.flow-node.bottleneck{border-color:var(--red);background:var(--red-pale);}
+.flow-node.bottleneck .fn-time{color:var(--red);}
+.flow-node.optimized{border-color:var(--green);background:var(--green-pale);}
+.flow-node.optimized .fn-time{color:var(--green);}
+.flow-node.removed{opacity:.35;border-style:dashed;border-color:var(--grey);}
+.flow-node.new-node{border-color:var(--purple);background:var(--purple-pale);}
+.flow-node.new-node .fn-time{color:var(--purple-dark);}
+.flow-node.clickable{cursor:pointer;}
+.flow-node.clickable:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.flow-node.selected{outline:3px solid var(--purple);outline-offset:2px;}
+
+.fn-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.fn-icon{font-size:20px;flex-shrink:0;}
+.fn-name{font-size:14px;font-weight:700;color:var(--ink);flex:1;}
+.fn-time{font-family:"DM Mono",monospace;font-size:12px;font-weight:700;white-space:nowrap;color:var(--grey);}
+.fn-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:5px;}
+.fn-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;}
+.fn-badge.manual{background:#F3F4F6;color:var(--grey);}
+.fn-badge.bottleneck-badge{background:var(--red-pale);color:var(--red);border:1px solid var(--red);}
+.fn-badge.auto{background:var(--purple-pale);color:var(--purple-dark);}
+.fn-badge.removed-badge{background:#F3F4F6;color:var(--grey);text-decoration:line-through;}
+.fn-badge.new-badge{background:var(--green-pale);color:var(--green);border:1px solid var(--green);}
+.fn-desc{font-size:12px;color:var(--grey);line-height:1.5;}
+.fn-issue{font-size:12px;color:var(--red);margin-top:4px;font-weight:600;}
+.fn-improvement{font-size:12px;color:var(--green);margin-top:4px;font-weight:600;}
+
+/* Connector arrow */
+.flow-arrow{display:flex;justify-content:center;align-items:center;height:28px;color:var(--grey);font-size:18px;position:relative;}
+.flow-arrow.bottleneck-arrow{color:var(--red);}
+.fa-label{font-size:11px;font-weight:700;color:var(--amber);position:absolute;right:0;font-family:"DM Mono",monospace;}
+
+/* Right: panel */
+.panel-area{background:var(--white);border-left:2px solid #E0DCF0;display:flex;flex-direction:column;}
+.panel-tabs{display:flex;border-bottom:2px solid #E0DCF0;}
+.panel-tab{flex:1;padding:12px 8px;font-size:12px;font-weight:700;color:var(--grey);text-align:center;cursor:pointer;border:none;background:var(--white);transition:all .2s;border-bottom:3px solid transparent;font-family:"DM Sans",sans-serif;}
+.panel-tab.active{color:var(--purple);border-bottom-color:var(--purple);}
+.panel-body{padding:20px;flex:1;overflow-y:auto;}
+.panel-section{display:none;}
+.panel-section.active{display:block;}
+
+/* Panel components */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.stat-box{background:#F8F7FC;border-radius:10px;padding:12px 14px;}
+.stat-box-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:4px;}
+.stat-box-val{font-family:"Fraunces",serif;font-size:20px;font-weight:700;color:var(--ink);}
+.stat-box-sub{font-size:11px;color:var(--grey);margin-top:2px;}
+.stat-box.warn .stat-box-val{color:var(--red);}
+.stat-box.good .stat-box-val{color:var(--green);}
+
+.bottleneck-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.bn-item{background:var(--red-pale);border:1px solid var(--red);border-radius:10px;padding:11px 13px;}
+.bn-item-top{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.bn-icon{font-size:16px;}
+.bn-name{font-size:13px;font-weight:700;color:var(--red);}
+.bn-time{font-family:"DM Mono",monospace;font-size:12px;color:var(--red);margin-left:auto;}
+.bn-desc{font-size:12px;color:var(--red);line-height:1.5;}
+
+/* AI suggestion cards */
+.ai-sug-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.ai-sug{background:var(--dark);border:1px solid #3D2460;border-radius:12px;overflow:hidden;}
+.ai-sug-head{background:var(--dark3);padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #3D2460;}
+.ai-sug-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);}
+.ai-sug-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9B6FD0;flex:1;}
+.ai-sug-conf{font-size:11px;color:rgba(255,255,255,.35);font-family:"DM Mono",monospace;}
+.ai-sug-body{padding:12px 14px;font-size:13px;color:#C9A8E8;line-height:1.65;}
+.ai-sug-body strong{color:#fff;}
+.ai-verdict-row{display:flex;gap:6px;padding:0 14px 12px;}
+.ai-v-btn{flex:1;border:1px solid #3D2460;border-radius:8px;padding:7px 6px;font-size:12px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;background:transparent;text-align:center;}
+.ai-v-btn.acc{color:#3DDB7A;}
+.ai-v-btn.acc:hover,.ai-v-btn.acc.picked{border-color:#3DDB7A;background:rgba(61,219,122,.1);}
+.ai-v-btn.rej{color:#FF6060;}
+.ai-v-btn.rej:hover,.ai-v-btn.rej.picked{border-color:#FF6060;background:rgba(255,96,96,.1);}
+.ai-v-btn:disabled{opacity:.3;cursor:not-allowed;}
+.ai-v-explain{padding:0 14px 10px;font-size:12px;line-height:1.6;display:none;}
+.ai-v-explain.show{display:block;}
+.ai-v-explain.acc{color:#3DDB7A;}
+.ai-v-explain.rej{color:#FF6060;}
+
+/* Optimize */
+.opt-step{border:2px solid #EEE;border-radius:12px;overflow:hidden;margin-bottom:10px;}
+.opt-step-head{padding:12px 16px;background:#FAFAFA;border-bottom:1px solid #EEE;display:flex;align-items:center;gap:10px;}
+.opt-step-icon{font-size:18px;}
+.opt-step-name{font-size:14px;font-weight:700;color:var(--ink);}
+.opt-step-status{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;}
+.opt-step-status.pending{background:#F3F4F6;color:var(--grey);}
+.opt-step-status.done{background:var(--green-pale);color:var(--green);}
+.opt-step-body{padding:12px 16px;font-size:13px;color:var(--grey);line-height:1.6;display:none;}
+.opt-step-body.show{display:block;}
+.opt-apply-btn{display:block;width:100%;background:var(--purple);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:10px;}
+.opt-apply-btn:hover{background:var(--purple-dark);}
+.opt-apply-btn:disabled{background:var(--green);cursor:default;}
+
+/* Phases */
+.phase{display:none;}
+.phase.active{display:block;}
+
+/* Canvas nav */
+.canvas-phase-nav{display:flex;justify-content:center;gap:8px;margin-top:20px;}
+.cpn-dot{width:10px;height:10px;border-radius:50%;background:var(--purple-mid);transition:all .3s;}
+.cpn-dot.active{background:var(--purple);transform:scale(1.3);}
+.cpn-dot.done{background:var(--green);}
+
+/* Main continue btn */
+.main-btn{display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:16px;}
+.main-btn.show{display:block;}
+.main-btn:hover{background:var(--purple-dark);}
+
+/* Before/after compare */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+@media(max-width:640px){.compare-grid{grid-template-columns:1fr;}}
+
+.compare-box{border-radius:14px;padding:16px 18px;}
+.compare-box.before-box{background:var(--red-pale);border:2px solid var(--red);}
+.compare-box.after-box{background:var(--green-pale);border:2px solid var(--green);}
+.compare-box h3{font-family:"Fraunces",serif;font-size:14px;margin:0 0 10px;}
+.before-box h3{color:var(--red);}
+.after-box h3{color:var(--green);}
+.compare-stat{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px;line-height:1.5;}
+.compare-stat:last-child{margin-bottom:0;}
+.compare-stat .label{color:var(--grey);}
+.compare-stat .val{font-weight:700;}
+.before-box .val{color:var(--red);}
+.after-box .val{color:var(--green);}
+
+/* Summary */
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:28px;color:#fff;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 14px;color:#fff;}
+.s-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.s-item:last-child{margin-bottom:0;}
+.s-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.s-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+@media(max-width:560px){.app-tab{font-size:11px;padding:8px 10px;}.canvas-area{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="app-chrome">
+  <div class="app-topbar">
+    <div class="app-logo">FlowBuilder <span>Pro</span></div>
+    <div class="app-tabs">
+      <div class="app-tab active">Workflows</div>
+      <div class="app-tab">Analytics</div>
+      <div class="app-tab">Integrations</div>
+    </div>
+    <div class="app-breadcrumb">IT Onboarding → New Hire Setup</div>
+  </div>
+</div>
+
+<div class="app-layout">
+
+  <!-- ── Left: Canvas ── -->
+  <div class="canvas-area">
+
+    <!-- Phase 0: Analyze -->
+    <div class="phase active" id="cp-0">
+      <div class="canvas-title">Current Workflow: New Hire IT Setup</div>
+      <div class="canvas-sub">This is how the process works today. Study each step carefully — look at how long things take and what's happening at each stage.</div>
+      <div class="canvas-label before">Current State</div>
+      <div class="flow-wrap">
+        <div class="flow" id="currentFlow"></div>
+      </div>
+      <div class="canvas-phase-nav">
+        <div class="cpn-dot active" id="cpn-0"></div>
+        <div class="cpn-dot" id="cpn-1"></div>
+        <div class="cpn-dot" id="cpn-2"></div>
+        <div class="cpn-dot" id="cpn-3"></div>
+      </div>
+      <button class="main-btn show" onclick="advanceCanvas(1)">Identify the bottlenecks →</button>
+    </div>
+
+    <!-- Phase 1: Bottlenecks highlighted -->
+    <div class="phase" id="cp-1">
+      <div class="canvas-title">Bottlenecks Highlighted</div>
+      <div class="canvas-sub">The steps in red are where the workflow gets stuck. Click any red step to learn more about why it's a bottleneck.</div>
+      <div class="canvas-label before">Problems Identified</div>
+      <div class="flow-wrap">
+        <div class="flow" id="bottleneckFlow"></div>
+      </div>
+      <div id="bnDetail" style="margin-top:14px;display:none;background:var(--red-pale);border:2px solid var(--red);border-radius:14px;padding:14px 18px;font-size:14px;color:var(--red);line-height:1.7;"></div>
+      <div class="canvas-phase-nav">
+        <div class="cpn-dot done" id="cpn-0b"></div>
+        <div class="cpn-dot active" id="cpn-1b"></div>
+        <div class="cpn-dot" id="cpn-2b"></div>
+        <div class="cpn-dot" id="cpn-3b"></div>
+      </div>
+      <button class="main-btn" id="bnNext" onclick="advanceCanvas(2)">Apply AI suggestions →</button>
+    </div>
+
+    <!-- Phase 2: AI suggestions applied -->
+    <div class="phase" id="cp-2">
+      <div class="canvas-title">Applying AI Suggestions</div>
+      <div class="canvas-sub">Use the panel on the right to accept or reject each AI suggestion. See how your choices change the workflow in real time.</div>
+      <div class="canvas-label before" id="aiCanvasLabel">AI Reviewing...</div>
+      <div class="flow-wrap">
+        <div class="flow" id="aiFlow"></div>
+      </div>
+      <div class="canvas-phase-nav">
+        <div class="cpn-dot done"></div>
+        <div class="cpn-dot done"></div>
+        <div class="cpn-dot active"></div>
+        <div class="cpn-dot" id="cpn-3c"></div>
+      </div>
+      <button class="main-btn" id="aiNext" onclick="advanceCanvas(3)">Optimize and compare →</button>
+    </div>
+
+    <!-- Phase 3: Optimized -->
+    <div class="phase" id="cp-3">
+      <div class="canvas-title">Optimized Workflow</div>
+      <div class="canvas-sub">Here's the improved process. Compare it to where you started.</div>
+      <div class="canvas-label after">Optimized State</div>
+      <div class="flow-wrap">
+        <div class="flow" id="optimizedFlow"></div>
+      </div>
+
+      <div class="compare-grid" style="margin-top:20px;">
+        <div class="compare-box before-box">
+          <h3>❌ Before</h3>
+          <div class="compare-stat"><span class="label">Total time</span><span class="val">4–6 days</span></div>
+          <div class="compare-stat"><span class="label">Manual steps</span><span class="val">7 of 9</span></div>
+          <div class="compare-stat"><span class="label">Approval wait</span><span class="val">Up to 48 hrs</span></div>
+          <div class="compare-stat"><span class="label">Error rate</span><span class="val">~30% (re-entry)</span></div>
+        </div>
+        <div class="compare-box after-box">
+          <h3>✅ After</h3>
+          <div class="compare-stat"><span class="label">Total time</span><span class="val">4–8 hours</span></div>
+          <div class="compare-stat"><span class="label">Manual steps</span><span class="val">3 of 6</span></div>
+          <div class="compare-stat"><span class="label">Approval wait</span><span class="val">Under 15 min</span></div>
+          <div class="compare-stat"><span class="label">Error rate</span><span class="val">~5% (automated)</span></div>
+        </div>
+      </div>
+
+      <div class="summary-box" style="margin-top:4px;">
+        <h3>What This Activity Showed</h3>
+        <div class="s-item"><div class="s-check">✓</div><p>Workflow optimization starts with understanding the current process — you can't fix what you haven't mapped. Even this simple 9-step workflow had hidden wait times and duplicate steps.</p></div>
+        <div class="s-item"><div class="s-check">✓</div><p>AI suggestions are a starting point, not a final answer. Accepting the email auto-notification was smart. Fully removing the manager approval wasn't — some human checkpoints exist for good reasons.</p></div>
+        <div class="s-item"><div class="s-check">✓</div><p>The biggest gains came from eliminating data re-entry and automating routine wait steps — not from removing human judgment from the parts that need it.</p></div>
+      </div>
+      <button class="restart-btn" onclick="restartActivity()">Try again</button>
+    </div>
+
+  </div><!-- /canvas-area -->
+
+  <!-- ── Right: Panel ── -->
+  <div class="panel-area">
+    <div class="panel-tabs">
+      <button class="panel-tab active" id="ptab-0" onclick="switchPanel(0)">📊 Overview</button>
+      <button class="panel-tab" id="ptab-1" onclick="switchPanel(1)">⚠️ Problems</button>
+      <button class="panel-tab" id="ptab-2" onclick="switchPanel(2)">🤖 AI</button>
+      <button class="panel-tab" id="ptab-3" onclick="switchPanel(3)">⚙️ Optimize</button>
+    </div>
+    <div class="panel-body">
+
+      <!-- Overview tab -->
+      <div class="panel-section active" id="ps-0">
+        <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;">New Hire IT Setup</div>
+        <div style="font-size:13px;color:var(--grey);margin-bottom:16px;">The process that runs every time a new employee joins the company.</div>
+        <div class="stat-grid">
+          <div class="stat-box warn">
+            <div class="stat-box-label">Avg. Duration</div>
+            <div class="stat-box-val">4–6 days</div>
+            <div class="stat-box-sub">Target: under 1 day</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-label">Steps</div>
+            <div class="stat-box-val">9</div>
+            <div class="stat-box-sub">7 manual, 2 auto</div>
+          </div>
+          <div class="stat-box warn">
+            <div class="stat-box-label">Biggest Wait</div>
+            <div class="stat-box-val">48 hrs</div>
+            <div class="stat-box-sub">Manager approval</div>
+          </div>
+          <div class="stat-box warn">
+            <div class="stat-box-label">Re-entry Errors</div>
+            <div class="stat-box-val">~30%</div>
+            <div class="stat-box-sub">Data typed twice</div>
+          </div>
+        </div>
+        <div style="background:var(--amber-pale);border:1px solid var(--amber);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--amber);line-height:1.6;">
+          ⚠️ <strong>This workflow has real problems.</strong> A new employee waits up to 6 days to get their accounts and access set up — and 30% of the time, someone makes a typo because data gets entered into two different systems by hand. Move through the steps to identify and fix the issues.
+        </div>
+        <div style="margin-top:14px;font-size:13px;color:var(--grey);line-height:1.6;">Use the tabs above to explore the problems, review what AI suggests, and track what you optimize. The canvas on the left updates as you work.</div>
+      </div>
+
+      <!-- Problems tab -->
+      <div class="panel-section" id="ps-1">
+        <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">Where This Workflow Gets Stuck</div>
+        <div style="font-size:13px;color:var(--grey);margin-bottom:16px;">Click any item below to highlight it on the workflow diagram.</div>
+        <div class="bottleneck-list">
+          <div class="bn-item" onclick="highlightBottleneck(0)" style="cursor:pointer;">
+            <div class="bn-item-top"><div class="bn-icon">⏳</div><div class="bn-name">Manager Approval Wait</div><div class="bn-time">Up to 48 hrs</div></div>
+            <div class="bn-desc">Every new hire request sits in a manager's email inbox until they approve it. No reminders, no deadline. It just waits — often over a weekend.</div>
+          </div>
+          <div class="bn-item" onclick="highlightBottleneck(1)" style="cursor:pointer;">
+            <div class="bn-item-top"><div class="bn-icon">📝</div><div class="bn-name">Duplicate Data Entry</div><div class="bn-time">30% error rate</div></div>
+            <div class="bn-desc">HR enters the new hire's info into the HR system. Then IT manually re-types the same info into the account creation system. Same data, entered twice, by two different people.</div>
+          </div>
+          <div class="bn-item" onclick="highlightBottleneck(2)" style="cursor:pointer;">
+            <div class="bn-item-top"><div class="bn-icon">📬</div><div class="bn-name">Manual Email Notifications</div><div class="bn-time">Frequently missed</div></div>
+            <div class="bn-desc">At the end, IT manually emails the new hire, their manager, and their team. This gets forgotten when IT is busy — leaving people unaware that setup is complete.</div>
+          </div>
+          <div class="bn-item" onclick="highlightBottleneck(3)" style="cursor:pointer;">
+            <div class="bn-item-top"><div class="bn-icon">🔁</div><div class="bn-name">No Status Visibility</div><div class="bn-time">Causes repeat questions</div></div>
+            <div class="bn-desc">No one can see where the request is in the process. The new hire's manager keeps emailing IT to ask for updates — each of which takes time to answer manually.</div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--grey);line-height:1.6;background:#FAFAFA;border-radius:10px;padding:12px 14px;">
+          Once you've reviewed the problems, switch to the <strong>AI tab</strong> to see what the AI recommends fixing — and decide what to accept.
+        </div>
+      </div>
+
+      <!-- AI suggestions tab -->
+      <div class="panel-section" id="ps-2">
+        <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">AI Recommendations</div>
+        <div style="font-size:13px;color:var(--grey);margin-bottom:16px;">The AI analyzed 847 similar onboarding workflows. Here's what it recommends. Accept or reject each one — your choices update the workflow on the left.</div>
+
+        <div class="ai-sug-list">
+
+          <div class="ai-sug" id="ais-0">
+            <div class="ai-sug-head"><div class="ai-sug-dot"></div><div class="ai-sug-label">Suggestion 1 — Approval Automation</div><div class="ai-sug-conf">High confidence</div></div>
+            <div class="ai-sug-body">Remove the manual manager approval step entirely. Based on patterns from similar workflows, <strong>94% of requests are approved without changes.</strong> Auto-approve all requests and notify the manager afterward.</div>
+            <div class="ai-verdict-row">
+              <button class="ai-v-btn acc" id="v0a" onclick="aiVerdict(0,'accept',this)">✓ Accept</button>
+              <button class="ai-v-btn rej" id="v0r" onclick="aiVerdict(0,'reject',this)">✕ Reject</button>
+            </div>
+            <div class="ai-v-explain" id="ve-0"></div>
+          </div>
+
+          <div class="ai-sug" id="ais-1">
+            <div class="ai-sug-head"><div class="ai-sug-dot"></div><div class="ai-sug-label">Suggestion 2 — Auto-Sync HR Data</div><div class="ai-sug-conf">High confidence</div></div>
+            <div class="ai-sug-body">Automatically pull new hire data from the HR system when a request is submitted. <strong>Eliminates manual re-entry entirely</strong> and removes the 30% error rate caused by duplicate typing.</div>
+            <div class="ai-verdict-row">
+              <button class="ai-v-btn acc" id="v1a" onclick="aiVerdict(1,'accept',this)">✓ Accept</button>
+              <button class="ai-v-btn rej" id="v1r" onclick="aiVerdict(1,'reject',this)">✕ Reject</button>
+            </div>
+            <div class="ai-v-explain" id="ve-1"></div>
+          </div>
+
+          <div class="ai-sug" id="ais-2">
+            <div class="ai-sug-head"><div class="ai-sug-dot"></div><div class="ai-sug-label">Suggestion 3 — Auto-Notify on Completion</div><div class="ai-sug-conf">High confidence</div></div>
+            <div class="ai-sug-body">Replace the manual email step with automatic notifications sent to the new hire, manager, and team the moment setup is complete. <strong>Zero effort, zero chance of being forgotten.</strong></div>
+            <div class="ai-verdict-row">
+              <button class="ai-v-btn acc" id="v2a" onclick="aiVerdict(2,'accept',this)">✓ Accept</button>
+              <button class="ai-v-btn rej" id="v2r" onclick="aiVerdict(2,'reject',this)">✕ Reject</button>
+            </div>
+            <div class="ai-v-explain" id="ve-2"></div>
+          </div>
+
+          <div class="ai-sug" id="ais-3">
+            <div class="ai-sug-head"><div class="ai-sug-dot"></div><div class="ai-sug-label">Suggestion 4 — Live Status Tracker</div><div class="ai-sug-conf">Medium confidence</div></div>
+            <div class="ai-sug-body">Add a self-serve status page so managers and new hires can see exactly where their request is. <strong>Eliminates the manual "where is my request?" emails</strong> to the IT team.</div>
+            <div class="ai-verdict-row">
+              <button class="ai-v-btn acc" id="v3a" onclick="aiVerdict(3,'accept',this)">✓ Accept</button>
+              <button class="ai-v-btn rej" id="v3r" onclick="aiVerdict(3,'reject',this)">✕ Reject</button>
+            </div>
+            <div class="ai-v-explain" id="ve-3"></div>
+          </div>
+
+        </div>
+
+        <div style="font-size:13px;color:var(--grey);line-height:1.6;background:#FAFAFA;border-radius:10px;padding:12px 14px;" id="aiPanelHint">
+          Review all four suggestions, then check the <strong>Optimize tab</strong> to apply your accepted changes one step at a time.
+        </div>
+      </div>
+
+      <!-- Optimize tab -->
+      <div class="panel-section" id="ps-3">
+        <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;">Apply the Changes</div>
+        <div style="font-size:13px;color:var(--grey);margin-bottom:16px;">Implement each accepted change one at a time. Watch the workflow update on the left as you go.</div>
+
+        <div id="optStepsList"></div>
+
+        <div style="font-size:13px;color:var(--grey);line-height:1.6;background:#FAFAFA;border-radius:10px;padding:12px 14px;margin-top:10px;" id="optHint">
+          Accept suggestions in the AI tab first, then come back here to apply them.
+        </div>
+        <button class="main-btn" id="optDoneBtn" style="display:none;" onclick="advanceCanvas(3)">See the optimized workflow →</button>
+      </div>
+
+    </div><!-- /panel-body -->
+  </div><!-- /panel-area -->
+
+</div><!-- /app-layout -->
+
+<script>
+// ── Workflow data ──
+const NODES_CURRENT = [
+  {icon:'📋',name:'HR submits new hire request',time:'~5 min',badges:['Manual'],desc:'HR fills out a form with the new hire\'s name, role, start date, and department.',issue:null},
+  {icon:'⏳',name:'Manager approves the request',time:'Up to 48 hrs',badges:['Manual','Bottleneck'],desc:'The request emails the manager. They approve (or forget) at their own pace. No reminders.',issue:'⚠ Biggest delay in the whole process — often waits over a weekend.'},
+  {icon:'👤',name:'IT manually re-enters new hire data',time:'15–30 min',badges:['Manual','Bottleneck'],desc:'IT re-types the same name, role, and department from the HR form into the account system.',issue:'⚠ Same data entered twice = 30% chance of a typo.'},
+  {icon:'💻',name:'IT creates accounts and email',time:'20 min',badges:['Manual'],desc:'IT sets up email, laptop profile, and internal system accounts.'},
+  {icon:'🔐',name:'IT assigns software licenses',time:'15 min',badges:['Manual'],desc:'IT checks which tools the role needs and assigns them one by one.'},
+  {icon:'📦',name:'IT requests laptop from supply',time:'10 min',badges:['Manual'],desc:'IT emails the supply team to ship a laptop. Supply team confirms separately.'},
+  {icon:'🔄',name:'IT tracks status in a spreadsheet',time:'Ongoing',badges:['Manual','Bottleneck'],desc:'IT updates a shared spreadsheet to track where requests are. Managers email asking for updates.',issue:'⚠ No one outside IT can see the spreadsheet — causes repeat questions.'},
+  {icon:'✅',name:'Accounts verified and tested',time:'10 min',badges:['Auto'],desc:'System automatically confirms accounts are active and accessible.'},
+  {icon:'📬',name:'IT manually emails everyone',time:'10 min',badges:['Manual','Bottleneck'],desc:'IT sends separate emails to the new hire, manager, and team to confirm setup is done. Gets skipped when IT is busy.',issue:'⚠ Frequently forgotten — people don\'t know setup is complete.'},
+];
+
+const BOTTLENECK_INDICES = [1,2,6,8]; // which nodes are bottlenecks
+
+const AI_VERDICTS = [null,null,null,null]; // accept/reject
+const OPT_APPLIED = [false,false,false,false];
+
+let canvasPhase = 0;
+let activePanel = 0;
+let highlightedBN = null;
+let bnClickedAny = false;
+let aiReviewedCount = 0;
+let optAppliedCount = 0;
+
+// ── Render helpers ──
+function renderFlow(container, nodes, options={}){
+  container.innerHTML='';
+  nodes.forEach((n,i)=>{
+    // Node
+    const div = document.createElement('div');
+    div.className = 'flow-node';
+    if(options.bottlenecks && BOTTLENECK_INDICES.includes(i)) div.classList.add('bottleneck');
+    if(options.clickBottleneck && BOTTLENECK_INDICES.includes(i)){
+      div.classList.add('clickable');
+      div.onclick = ()=>showBNDetail(i,n);
+    }
+    if(n.removed) div.classList.add('removed');
+    if(n.optimized) div.classList.add('optimized');
+    if(n.isNew) div.classList.add('new-node');
+    if(options.highlighted===i) div.classList.add('selected');
+
+    div.innerHTML = `
+      <div class="fn-top">
+        <div class="fn-icon">${n.icon}</div>
+        <div class="fn-name">${n.name}</div>
+        <div class="fn-time">${n.time}</div>
+      </div>
+      <div class="fn-badges">
+        ${n.badges.map(b=>`<span class="fn-badge ${b==='Bottleneck'?'bottleneck-badge':b==='Auto'?'auto':b==='Removed'?'removed-badge':b==='New'?'new-badge':'manual'}">${b}</span>`).join('')}
+      </div>
+      <div class="fn-desc">${n.desc}</div>
+      ${n.issue?`<div class="fn-issue">${n.issue}</div>`:''}
+      ${n.improvement?`<div class="fn-improvement">${n.improvement}</div>`:''}
+    `;
+    container.appendChild(div);
+
+    // Arrow (not after last)
+    if(i<nodes.length-1){
+      const arrow = document.createElement('div');
+      arrow.className = 'flow-arrow' + (options.bottlenecks && BOTTLENECK_INDICES.includes(i) ?' bottleneck-arrow':'');
+      arrow.innerHTML = '↓';
+      container.appendChild(arrow);
+    }
+  });
+}
+
+// Phase 0: current
+renderFlow(document.getElementById('currentFlow'), NODES_CURRENT);
+
+// Phase 1: bottlenecks
+function renderBottleneckFlow(){
+  const nodes = NODES_CURRENT.map((n,i)=>{
+    if(highlightedBN===i) return {...n};
+    return {...n};
+  });
+  renderFlow(document.getElementById('bottleneckFlow'), nodes, {bottlenecks:true, clickBottleneck:true, highlighted:highlightedBN});
+}
+renderBottleneckFlow();
+
+function showBNDetail(i,n){
+  highlightedBN = i;
+  renderBottleneckFlow();
+  bnClickedAny = true;
+  document.getElementById('bnDetail').style.display='block';
+  document.getElementById('bnDetail').innerHTML = `<strong>${n.icon} ${n.name}</strong><br>${n.issue||n.desc}`;
+  document.getElementById('bnNext').classList.add('show');
+}
+
+// Phase 2: AI suggestions applied dynamically
+function buildAiNodes(){
+  const nodes = NODES_CURRENT.map((n,i)=>{
+    let node = {...n, badges:[...n.badges]};
+    // Suggestion 0: remove manager approval
+    if(i===1 && AI_VERDICTS[0]==='accept'){
+      node.removed=true;
+      node.badges=['Removed'];
+      node.desc='Removed — auto-approved based on AI recommendation.';
+      node.issue=null;
+    } else if(i===1 && AI_VERDICTS[0]==='reject'){
+      // keep but note
+    }
+    // Suggestion 1: auto-sync HR data
+    if(i===2 && AI_VERDICTS[1]==='accept'){
+      node.optimized=true;
+      node.name='Auto-sync new hire data from HR';
+      node.time='~0 min (automatic)';
+      node.badges=['Auto','Improved'];
+      node.desc='Data flows automatically from the HR system — no re-entry needed.';
+      node.issue=null;
+      node.improvement='✓ Eliminates 30% error rate from duplicate entry.';
+    }
+    // Suggestion 2: auto-notify
+    if(i===8 && AI_VERDICTS[2]==='accept'){
+      node.optimized=true;
+      node.name='Auto-send completion notifications';
+      node.time='~0 min (automatic)';
+      node.badges=['Auto','Improved'];
+      node.desc='System automatically notifies new hire, manager, and team the moment setup is done.';
+      node.issue=null;
+      node.improvement='✓ Zero effort, can\'t be forgotten.';
+    }
+    // Suggestion 3: status tracker (add a node)
+    return node;
+  });
+  // Add status tracker node if accepted
+  if(AI_VERDICTS[3]==='accept'){
+    const trackerIdx = nodes.findIndex(n=>n.name.includes('spreadsheet'));
+    if(trackerIdx!==-1){
+      nodes[trackerIdx]={
+        ...nodes[trackerIdx],
+        optimized:true,
+        isNew:true,
+        name:'Live status tracker (self-serve)',
+        time:'Always on',
+        badges:['Auto','New'],
+        desc:'Managers and new hires can check status at any time — no emails to IT needed.',
+        issue:null,
+        improvement:'✓ Eliminates "where is my request?" emails to IT.'
+      };
+    }
+  }
+  return nodes;
+}
+
+function renderAiFlow(){
+  renderFlow(document.getElementById('aiFlow'), buildAiNodes());
+  const accepted = AI_VERDICTS.filter(v=>v==='accept').length;
+  const reviewed = AI_VERDICTS.filter(v=>v!==null).length;
+  document.getElementById('aiCanvasLabel').textContent = reviewed===4 ? `${accepted} of 4 suggestions accepted` : `${reviewed} of 4 reviewed...`;
+  document.getElementById('aiCanvasLabel').className = 'canvas-label ' + (accepted>0?'after':'before');
+  if(reviewed===4) document.getElementById('aiNext').classList.add('show');
+}
+
+// Phase 3: optimized
+function buildOptimizedNodes(){
+  return NODES_CURRENT.map((n,i)=>{
+    let node={...n, badges:[...n.badges]};
+    if(i===1) node={...node, removed:true, badges:['Removed'], name:'Manager approval (replaced by auto-approve)', time:'~0 min', desc:'Auto-approved with manager notification. Human can override within 24hrs if needed.', issue:null, improvement:'✓ Approval time: 48 hrs → instant.'};
+    if(i===2) node={...node, optimized:true, name:'Auto-sync new hire data from HR',time:'~0 min',badges:['Auto'],desc:'Data flows automatically — no manual re-entry.',issue:null,improvement:'✓ Error rate: 30% → ~5%.'};
+    if(i===6) node={...node, optimized:true, isNew:true, name:'Live status tracker (self-serve)',time:'Always on',badges:['Auto'],desc:'Anyone can check status — no IT emails needed.',issue:null,improvement:'✓ Eliminates repeat status questions.'};
+    if(i===8) node={...node, optimized:true, name:'Auto-send completion notifications',time:'~0 min',badges:['Auto'],desc:'Instant notifications to all stakeholders on completion.',issue:null,improvement:'✓ Never forgotten again.'};
+    return node;
+  });
+}
+
+// ── AI verdicts ──
+const aiVerdictText = {
+  0:{
+    accept:{cls:'acc', text:'✓ Accepted — but with a note: completely removing manager visibility isn\'t always the right call. The better version is auto-approving while still notifying the manager, and giving them 24 hours to override if needed. The workflow will reflect this more nuanced approach.'},
+    reject:{cls:'rej', text:'✕ Reasonable call. Manager approval adds a human check that catches edge cases — a new hire for a sensitive role, a duplicate request, a timing issue. Keeping it but adding an automatic reminder after 4 hours would address the wait time problem without removing the check entirely.'}
+  },
+  1:{
+    accept:{cls:'acc', text:'✓ Clear win. Same data entered twice by two different people is a textbook automation candidate — no judgment needed, just a direct data sync between systems. Error rate drops from ~30% to near zero.'},
+    reject:{cls:'rej', text:'✕ Consider revisiting this one. Manual re-entry of the same data is one of the easiest and highest-value things to automate. There\'s no judgment involved — it\'s just copying information from one system to another. This is exactly what automation is for.'}
+  },
+  2:{
+    accept:{cls:'acc', text:'✓ Great call. This is a straightforward improvement — automated notifications are faster, more reliable, and free up IT time. The only thing to check is that the notification content is correct and goes to the right people.'},
+    reject:{cls:'rej', text:'✕ Worth reconsidering. Manual email notifications are a common single point of failure — they depend on one person remembering, and they get skipped when IT is busy. Automation here has no real downside.'}
+  },
+  3:{
+    accept:{cls:'acc', text:'✓ Good call. A self-serve status tracker reduces the "where is my request?" emails that IT gets dozens of times per week. It also gives new hires and managers confidence that the process is moving — without requiring IT to stop and respond to each question.'},
+    reject:{cls:'rej', text:'✕ Understandable, but the repeat status questions to IT are a real drain on time. Even a simple automated email update at each stage would help. Full visibility isn\'t always feasible, but some version of this usually pays off.'}
+  }
+};
+
+function aiVerdict(idx, val, btn){
+  const row = btn.closest('.ai-verdict-row');
+  const btns = row.querySelectorAll('.ai-v-btn');
+  const explEl = document.getElementById('ve-'+idx);
+
+  if(btn.classList.contains('picked')){
+    btns.forEach(b=>b.classList.remove('picked'));
+    explEl.classList.remove('show','acc','rej');
+    explEl.textContent='';
+    if(AI_VERDICTS[idx]!==null) aiReviewedCount--;
+    AI_VERDICTS[idx]=null;
+  } else {
+    btns.forEach(b=>b.classList.remove('picked'));
+    btn.classList.add('picked');
+    const vt = aiVerdictText[idx][val];
+    explEl.textContent=vt.text;
+    explEl.className='ai-v-explain show '+vt.cls;
+    if(AI_VERDICTS[idx]===null) aiReviewedCount++;
+    AI_VERDICTS[idx]=val;
+  }
+
+  // Update canvas if on phase 2
+  if(canvasPhase>=2) renderAiFlow();
+  updateOptPanel();
+
+  // Check if all reviewed
+  const allDone = AI_VERDICTS.filter(v=>v!==null).length===4;
+  if(allDone && canvasPhase>=2) document.getElementById('aiNext').classList.add('show');
+}
+
+// ── Optimize panel ──
+const optSteps = [
+  {label:'Replace manual approval with auto-approve + manager notification', aiIdx:0, icon:'⏳'},
+  {label:'Auto-sync HR data to account creation system', aiIdx:1, icon:'📝'},
+  {label:'Add live status tracker for self-serve visibility', aiIdx:3, icon:'🔄'},
+  {label:'Replace manual emails with auto-notifications on completion', aiIdx:2, icon:'📬'},
+];
+
+function updateOptPanel(){
+  const list = document.getElementById('optStepsList');
+  list.innerHTML='';
+  let allDoneCount=0;
+  optSteps.forEach((step,i)=>{
+    const verdict = AI_VERDICTS[step.aiIdx];
+    if(!verdict) return; // only show reviewed ones
+    const applied = OPT_APPLIED[i];
+    const isAccepted = verdict==='accept';
+
+    const div = document.createElement('div');
+    div.className='opt-step';
+    div.innerHTML=`
+      <div class="opt-step-head">
+        <div class="opt-step-icon">${step.icon}</div>
+        <div class="opt-step-name">${step.label}</div>
+        <div class="opt-step-status ${applied?'done':'pending'}">${applied?'✓ Done':'Pending'}</div>
+      </div>
+      <div class="opt-step-body ${isAccepted&&!applied?'show':''}">
+        ${isAccepted
+          ? `<p>This change was accepted. Apply it to update the workflow.</p>
+             <button class="opt-apply-btn" onclick="applyOpt(${i})" ${applied?'disabled':''}>
+               ${applied?'✓ Applied':'Apply this change'}
+             </button>`
+          : `<p style="color:var(--grey);">This suggestion was rejected — no changes needed here.</p>`
+        }
+      </div>
+    `;
+    if(applied||!isAccepted) allDoneCount++;
+    list.appendChild(div);
+  });
+
+  const reviewedCount = AI_VERDICTS.filter(v=>v!==null).length;
+  if(reviewedCount===0){
+    document.getElementById('optHint').textContent='Accept suggestions in the AI tab first, then come back here to apply them.';
+  } else if(allDoneCount===reviewedCount && reviewedCount===4){
+    document.getElementById('optHint').textContent='All changes handled! Click the button below to see the optimized workflow.';
+    document.getElementById('optDoneBtn').style.display='block';
+  } else {
+    document.getElementById('optHint').textContent='Apply each accepted change to update the workflow in real time.';
+  }
+}
+
+function applyOpt(i){
+  OPT_APPLIED[i]=true;
+  optAppliedCount++;
+  updateOptPanel();
+  if(canvasPhase>=2) renderAiFlow();
+}
+
+// ── Panel tabs ──
+function switchPanel(n){
+  document.querySelectorAll('.panel-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ps-'+n).classList.add('active');
+  document.getElementById('ptab-'+n).classList.add('active');
+  activePanel=n;
+}
+
+// ── Canvas phases ──
+function advanceCanvas(n){
+  document.getElementById('cp-'+canvasPhase).classList.remove('active');
+  canvasPhase=n;
+  document.getElementById('cp-'+n).classList.add('active');
+
+  if(n===1){
+    switchPanel(1);
+    renderBottleneckFlow();
+  } else if(n===2){
+    switchPanel(2);
+    renderAiFlow();
+  } else if(n===3){
+    switchPanel(3);
+    renderFlow(document.getElementById('optimizedFlow'), buildOptimizedNodes());
+  }
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Highlight bottleneck from panel click
+function highlightBottleneck(bnIdx){
+  // Map panel bottleneck index to node index
+  const nodeMap=[1,2,6,8];
+  highlightedBN = nodeMap[bnIdx];
+  if(canvasPhase===1) renderBottleneckFlow();
+  bnClickedAny=true;
+  const n = NODES_CURRENT[nodeMap[bnIdx]];
+  document.getElementById('bnDetail').style.display='block';
+  document.getElementById('bnDetail').innerHTML=`<strong>${n.icon} ${n.name}</strong><br>${n.issue||n.desc}`;
+  document.getElementById('bnNext').classList.add('show');
+}
+
+function restartActivity(){ location.reload(); }
+</script>
+</body>
+</html>
