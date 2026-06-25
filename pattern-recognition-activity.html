@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Activity: Find the Pattern</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --dark:#0A0A18;--dark2:#12101F;--dark3:#1C1830;
+  --mono-green:#3DDB7A;--mono-red:#FF6060;--mono-amber:#FFBE45;--mono-blue:#60B8FF;--mono-dim:#5A507A;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:var(--white);color:var(--ink);}
+.wrap{max-width:900px;margin:0 auto;padding:40px 24px 80px;}
+
+.hero{text-align:center;padding:20px 0 28px;}
+.lesson-tag{display:inline-block;background:var(--purple-pale);color:var(--purple-dark);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:18px;}
+.hero h1{font-family:"Fraunces",serif;font-weight:700;font-size:32px;line-height:1.18;margin:0 0 12px;color:var(--purple-dark);}
+.hero p{font-size:16px;line-height:1.6;color:var(--grey);max-width:600px;margin:0 auto;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:4px;margin:24px auto 0;}
+
+.tip-box{background:var(--purple-pale);border-radius:18px;padding:20px 24px;margin:24px 0 28px;display:flex;gap:14px;align-items:flex-start;}
+.tip-box .icon{font-size:24px;flex-shrink:0;line-height:1;margin-top:2px;}
+.tip-box p{margin:0;font-size:15px;line-height:1.6;color:var(--purple-dark);}
+.tip-box strong{font-weight:700;}
+
+/* Phase system */
+.phase{display:none;}
+.phase.active{display:block;animation:fadeUp .4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* Step indicator */
+.step-track{display:flex;gap:0;margin-bottom:28px;border-radius:12px;overflow:hidden;border:2px solid var(--purple-mid);}
+.step-tab{flex:1;padding:11px 6px;font-size:12px;font-weight:700;color:var(--grey);text-align:center;background:var(--white);border:none;font-family:"DM Sans",sans-serif;cursor:default;transition:all .2s ease;}
+.step-tab.active{background:var(--purple);color:#fff;}
+.step-tab.done{background:var(--purple-pale);color:var(--purple-dark);}
+
+/* ── CHART SHELL ── */
+.chart-shell{background:var(--dark);border-radius:20px;overflow:hidden;border:1px solid #2A2040;margin-bottom:18px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.chart-bar{background:var(--dark3);padding:11px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2A2040;}
+.cb-dot{width:9px;height:9px;border-radius:50%;}
+.cb-title{font-family:"DM Mono",monospace;font-size:12px;color:var(--mono-dim);margin-left:4px;flex:1;}
+.cb-live{font-size:11px;font-weight:700;color:var(--mono-green);font-family:"DM Mono",monospace;display:flex;align-items:center;gap:5px;}
+.cb-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--mono-green);animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.chart-body{padding:20px 20px 10px;}
+
+/* SVG chart */
+#chartSvg{display:block;width:100%;cursor:crosshair;touch-action:manipulation;}
+.chart-hint{font-family:"DM Mono",monospace;font-size:11px;color:var(--mono-dim);text-align:center;padding:0 0 14px;}
+
+/* Toolbar */
+.chart-toolbar{display:flex;gap:8px;padding:0 20px 16px;flex-wrap:wrap;}
+.tool-btn{
+  display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;
+  border:2px solid #2A2040;background:transparent;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s ease;color:rgba(255,255,255,.6);
+}
+.tool-btn:hover{border-color:rgba(255,255,255,.3);color:#fff;}
+.tool-btn.active-trend{border-color:var(--mono-amber);background:rgba(255,190,69,.1);color:var(--mono-amber);}
+.tool-btn.active-anomaly{border-color:var(--mono-red);background:rgba(255,96,96,.1);color:var(--mono-red);}
+.tool-btn.active-none{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8);}
+.tool-btn .tool-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tool-btn .tool-dot.trend{background:var(--mono-amber);}
+.tool-btn .tool-dot.anomaly{background:var(--mono-red);}
+.tool-btn .undo-icon{font-size:14px;}
+
+/* Annotation legend */
+.anno-legend{display:flex;gap:14px;flex-wrap:wrap;padding:0 20px 10px;}
+.al-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.5);}
+.al-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.al-dot.trend{background:var(--mono-amber);}
+.al-dot.anomaly{background:var(--mono-red);}
+
+/* Tally chips */
+.tally-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.tally-chip{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;border:2px solid;}
+.tally-chip.tc-trend{background:var(--amber-pale);border-color:var(--amber);color:var(--amber);}
+.tally-chip.tc-anomaly{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+.tally-chip.tc-need{background:var(--purple-pale);border-color:var(--purple);color:var(--purple-dark);}
+
+/* Continue button */
+.cont-btn{display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:8px;}
+.cont-btn.show{display:block;}
+.cont-btn:hover{background:var(--purple-dark);}
+
+/* ── REVEAL ── */
+.reveal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+@media(max-width:580px){.reveal-grid{grid-template-columns:1fr;}}
+
+.reveal-card{border-radius:16px;padding:18px 20px;}
+.reveal-card.trend-card{background:var(--amber-pale);border:2px solid var(--amber);}
+.reveal-card.anomaly-card{background:var(--red-pale);border:2px solid var(--red);}
+.reveal-card h3{font-family:"Fraunces",serif;font-size:15px;margin:0 0 10px;}
+.trend-card h3{color:var(--amber);}
+.anomaly-card h3{color:var(--red);}
+.reveal-item{display:flex;gap:10px;margin-bottom:8px;font-size:13px;line-height:1.6;align-items:flex-start;}
+.reveal-item:last-child{margin-bottom:0;}
+.reveal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.trend-card .reveal-dot{background:var(--amber);}
+.anomaly-card .reveal-dot{background:var(--red);}
+
+/* Score + match meter */
+.match-wrap{background:var(--purple-pale);border-radius:14px;padding:18px 20px;margin-bottom:22px;}
+.match-label{font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;}
+.match-bar-wrap{height:12px;background:var(--purple-mid);border-radius:999px;overflow:hidden;margin-bottom:6px;}
+.match-bar-fill{height:100%;border-radius:999px;background:var(--purple);transition:width 1s ease;}
+.match-pct{font-family:"Fraunces",serif;font-size:22px;font-weight:700;color:var(--purple-dark);}
+.match-sub{font-size:13px;color:var(--grey);}
+
+/* ── Q&A phase ── */
+.qa-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;}
+.qa-card{border:2px solid #EEE;border-radius:14px;overflow:hidden;}
+.qa-head{padding:13px 18px;background:#FAFAFA;border-bottom:1px solid #EEE;}
+.qa-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:4px;}
+.qa-q{font-size:14px;font-weight:600;color:var(--ink);}
+.qa-opts{padding:12px;display:flex;flex-direction:column;gap:7px;}
+.qa-opt{border:2px solid #EEE;border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);cursor:pointer;background:var(--white);transition:all .15s ease;text-align:left;line-height:1.5;font-family:"DM Sans",sans-serif;display:block;width:100%;}
+.qa-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.qa-opt.correct{border-color:var(--green);background:var(--green-pale);color:var(--green);font-weight:600;}
+.qa-opt.wrong{border-color:var(--red);background:var(--red-pale);color:var(--red);}
+.qa-opt.locked:hover{background:var(--white);border-color:#EEE;}
+.qa-opt.locked.correct:hover{background:var(--green-pale);border-color:var(--green);}
+.qa-fb{padding:10px 12px;font-size:13px;line-height:1.6;display:none;border-top:1px solid #EEE;}
+.qa-fb.show{display:block;}
+.qa-fb.good{background:var(--green-pale);color:var(--green);}
+.qa-fb.ok{background:var(--amber-pale);color:var(--amber);}
+
+/* Finale */
+.finale-icon{text-align:center;font-size:52px;margin-bottom:14px;}
+.finale-title{font-family:"Fraunces",serif;font-weight:700;font-size:26px;color:var(--purple-dark);text-align:center;margin:0 0 12px;}
+.finale-sub{font-size:15px;line-height:1.7;color:var(--grey);max-width:540px;margin:0 auto 28px;text-align:center;}
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:28px;color:#fff;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 14px;color:#fff;}
+.s-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.s-item:last-child{margin-bottom:0;}
+.s-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.s-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+@media(max-width:560px){.hero h1{font-size:26px;}.step-tab{font-size:10px;padding:10px 3px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero fade-in">
+  <div class="lesson-tag">Hands-On Activity</div>
+  <h1>Find the Pattern</h1>
+  <p>You're looking at real system data. Your job is to do what engineers do every day — spot what's normal, mark the trends, and flag what doesn't fit.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="tip-box fade-in">
+  <div class="icon">👆</div>
+  <p><strong>How this works:</strong> Study the chart, then use the tools to mark what you notice. Pick "Mark Trend" and click areas where the data moves in a steady direction. Pick "Mark Anomaly" and click the points that look out of place. No typing — just look and tap.</p>
+</div>
+
+<div class="step-track">
+  <button class="step-tab active" id="st-0">1. Study the Data</button>
+  <button class="step-tab" id="st-1">2. Mark Trends & Anomalies</button>
+  <button class="step-tab" id="st-2">3. See What You Found</button>
+  <button class="step-tab" id="st-3">4. Dig Deeper</button>
+</div>
+
+<!-- ═══════════ PHASE 0: STUDY ═══════════ -->
+<div class="phase active" id="phase-0">
+  <div style="font-family:'Fraunces',serif;font-weight:700;font-size:21px;color:var(--ink);margin-bottom:6px;">Step 1: Study the Data First</div>
+  <div style="font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:20px;">Before you mark anything, read the chart. What's the overall shape? Where does it stay steady? Where does something seem off? Take 30 seconds to look before moving on.</div>
+
+  <div class="chart-shell fade-in">
+    <div class="chart-bar">
+      <div class="cb-dot" style="background:#FF5F56;"></div>
+      <div class="cb-dot" style="background:#FEBC2E;"></div>
+      <div class="cb-dot" style="background:#27C840;"></div>
+      <span class="cb-title">Server Response Time (ms) — api-gateway-prod · 48 hours</span>
+      <span class="cb-live">LIVE</span>
+    </div>
+    <div class="chart-body">
+      <svg id="studySvg" viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;"></svg>
+    </div>
+    <div class="chart-hint">↑ Response time in milliseconds &nbsp;·&nbsp; Each point = 1 hour &nbsp;·&nbsp; Lower is faster</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;" class="fade-in">
+    <div style="background:#FAFAFA;border:1px solid #EEE;border-radius:12px;padding:14px 16px;text-align:center;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:5px;">Time Period</div>
+      <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--ink);">48 hours</div>
+      <div style="font-size:12px;color:var(--grey);">Mon 8am → Wed 8am</div>
+    </div>
+    <div style="background:#FAFAFA;border:1px solid #EEE;border-radius:12px;padding:14px 16px;text-align:center;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:5px;">Avg Response</div>
+      <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--ink);">312ms</div>
+      <div style="font-size:12px;color:var(--grey);">Target: under 400ms</div>
+    </div>
+    <div style="background:var(--red-pale);border:1px solid var(--red);border-radius:12px;padding:14px 16px;text-align:center;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--red);margin-bottom:5px;">Peak Spike</div>
+      <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--red);">1,840ms</div>
+      <div style="font-size:12px;color:var(--red);">5× above normal</div>
+    </div>
+  </div>
+
+  <div style="background:var(--amber-pale);border:1px solid var(--amber);border-radius:14px;padding:14px 18px;margin-bottom:20px;font-size:14px;color:var(--amber);line-height:1.65;" class="fade-in">
+    💡 <strong>What to look for:</strong> Find a time period where the line climbs steadily (a trend). Find a point where the line jumps or drops suddenly (an anomaly). You'll mark both in the next step.
+  </div>
+
+  <button class="cont-btn show" onclick="goToPhase(1)">I've studied it — start marking →</button>
+</div>
+
+<!-- ═══════════ PHASE 1: ANNOTATE ═══════════ -->
+<div class="phase" id="phase-1">
+  <div style="font-family:'Fraunces',serif;font-weight:700;font-size:21px;color:var(--ink);margin-bottom:6px;">Step 2: Mark What You See</div>
+  <div style="font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:16px;">Pick a tool, then click on the chart. You need at least <strong>2 trends</strong> and <strong>2 anomalies</strong> before moving on. You can undo any mark you make.</div>
+
+  <div class="tally-row" id="tallyRow">
+    <div class="tally-chip tc-trend" id="trendChip">📈 Trends marked: 0</div>
+    <div class="tally-chip tc-anomaly" id="anomalyChip">⚠️ Anomalies marked: 0</div>
+    <div class="tally-chip tc-need" id="needChip">Need: 2 trends + 2 anomalies</div>
+  </div>
+
+  <div class="chart-shell">
+    <div class="chart-bar">
+      <div class="cb-dot" style="background:#FF5F56;"></div>
+      <div class="cb-dot" style="background:#FEBC2E;"></div>
+      <div class="cb-dot" style="background:#27C840;"></div>
+      <span class="cb-title">Server Response Time (ms) — api-gateway-prod · 48 hours</span>
+      <span class="cb-live">LIVE</span>
+    </div>
+    <div class="chart-body">
+      <svg id="annoSvg" viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;cursor:crosshair;"></svg>
+    </div>
+    <div class="chart-hint">Click on data points to mark them with your selected tool</div>
+    <div class="anno-legend">
+      <div class="al-item"><div class="al-dot trend"></div> Trend region</div>
+      <div class="al-item"><div class="al-dot anomaly"></div> Anomaly point</div>
+    </div>
+    <div class="chart-toolbar">
+      <button class="tool-btn" id="tool-trend" onclick="setTool('trend')">
+        <div class="tool-dot trend"></div> Mark Trend
+      </button>
+      <button class="tool-btn" id="tool-anomaly" onclick="setTool('anomaly')">
+        <div class="tool-dot anomaly"></div> Mark Anomaly
+      </button>
+      <button class="tool-btn" id="tool-none" onclick="setTool('none')">
+        ✋ Stop Marking
+      </button>
+      <button class="tool-btn" onclick="undoLast()" style="margin-left:auto;">
+        <span class="undo-icon">↩</span> Undo
+      </button>
+    </div>
+  </div>
+
+  <div id="tooltipBox" style="display:none;background:var(--dark3);border:1px solid #3D2460;border-radius:10px;padding:10px 14px;font-size:13px;color:#C9A8E8;line-height:1.6;margin-bottom:14px;font-family:'DM Mono',monospace;"></div>
+
+  <button class="cont-btn" id="annotNext" onclick="goToReveal()">See what I found →</button>
+</div>
+
+<!-- ═══════════ PHASE 2: REVEAL ═══════════ -->
+<div class="phase" id="phase-2">
+  <div style="font-family:'Fraunces',serif;font-weight:700;font-size:21px;color:var(--ink);margin-bottom:6px;">Step 3: What You Found vs. What's Really There</div>
+  <div style="font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:20px;">Here's your chart with all the key patterns revealed — and how well your marks matched up.</div>
+
+  <div class="chart-shell">
+    <div class="chart-bar">
+      <div class="cb-dot" style="background:#FF5F56;"></div>
+      <div class="cb-dot" style="background:#FEBC2E;"></div>
+      <div class="cb-dot" style="background:#27C840;"></div>
+      <span class="cb-title">Server Response Time (ms) — Annotated View</span>
+    </div>
+    <div class="chart-body">
+      <svg id="revealSvg" viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;"></svg>
+    </div>
+    <div class="chart-hint">Orange = trend region &nbsp;·&nbsp; Red = anomaly point &nbsp;·&nbsp; Your marks shown as rings</div>
+  </div>
+
+  <div class="match-wrap">
+    <div class="match-label">Your annotation accuracy</div>
+    <div class="match-bar-wrap"><div class="match-bar-fill" id="matchBar" style="width:0%;"></div></div>
+    <div class="match-pct" id="matchPct">—</div>
+    <div class="match-sub" id="matchSub"></div>
+  </div>
+
+  <div class="reveal-grid">
+    <div class="reveal-card trend-card">
+      <h3>📈 The Trends in This Data</h3>
+      <div class="reveal-item"><div class="reveal-dot"></div><div><strong>Morning ramp-up (hours 1–8):</strong> Response time climbs gradually each morning as more employees come online and traffic increases.</div></div>
+      <div class="reveal-item"><div class="reveal-dot"></div><div><strong>Overnight recovery (hours 18–24):</strong> When traffic drops overnight, response time falls steadily back toward the baseline.</div></div>
+      <div class="reveal-item"><div class="reveal-dot"></div><div><strong>Second-day repeat (hours 25–40):</strong> The same morning ramp-up happens again the next day — confirming this is a regular pattern, not a random event.</div></div>
+    </div>
+    <div class="reveal-card anomaly-card">
+      <h3>⚠️ The Anomalies in This Data</h3>
+      <div class="reveal-item"><div class="reveal-dot"></div><div><strong>Hour 14 spike (1,840ms):</strong> A sudden jump to 5× the normal response time — far outside the regular trend. This is the biggest red flag.</div></div>
+      <div class="reveal-item"><div class="reveal-dot"></div><div><strong>Hour 31 spike (1,240ms):</strong> A second spike the following day — same time window, similar pattern. Two similar spikes at the same time of day suggests a recurring cause.</div></div>
+      <div class="reveal-item"><div class="reveal-dot"></div><div><strong>Hours 22–24 dip:</strong> Response time dropped unusually low — even lower than overnight baseline. This could mean a maintenance window, traffic redirect, or a monitoring gap.</div></div>
+    </div>
+  </div>
+
+  <button class="cont-btn show" onclick="goToPhase(3)">Answer a few questions →</button>
+</div>
+
+<!-- ═══════════ PHASE 3: Q&A ═══════════ -->
+<div class="phase" id="phase-3">
+  <div style="font-family:'Fraunces',serif;font-weight:700;font-size:21px;color:var(--ink);margin-bottom:6px;">Step 4: Think Like an Engineer</div>
+  <div style="font-size:15px;color:var(--grey);line-height:1.6;margin-bottom:22px;">Pattern recognition isn't just about finding the shapes — it's about knowing what to do with them. Answer these questions about what you saw.</div>
+
+  <div class="qa-grid">
+
+    <div class="qa-card">
+      <div class="qa-head">
+        <div class="qa-label">Question 1 of 3</div>
+        <div class="qa-q">The same spike happened at roughly the same time two days in a row. What does that tell you?</div>
+      </div>
+      <div class="qa-opts">
+        <button class="qa-opt" onclick="ansQ(0,this,'ok','That\'s possible — but there\'s a more useful interpretation. Random one-time problems don\'t repeat at the same time two days in a row. The pattern itself is the clue.')">Something went randomly wrong — it happens sometimes.</button>
+        <button class="qa-opt" onclick="ansQ(0,this,'good','Exactly. When anomalies repeat on a schedule, they\'re almost never random. Something predictable is triggering them — a scheduled job, a batch process, a backup, a peak traffic window. That pattern is what lets engineers find and fix the root cause instead of just restarting things.')">There\'s probably a predictable cause — something that happens at that time every day, like a scheduled job or a daily traffic peak.</button>
+        <button class="qa-opt" onclick="ansQ(0,this,'ok','Random events don\'t follow a schedule. If the problem happens at hour 14 both days, something at hour 14 is triggering it. That\'s a pattern worth investigating.')">The data is probably wrong — spikes at the same time two days in a row seems like a coincidence.</button>
+      </div>
+      <div class="qa-fb" id="qfb-0"></div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-head">
+        <div class="qa-label">Question 2 of 3</div>
+        <div class="qa-q">Why is the morning ramp-up considered a trend and not an anomaly?</div>
+      </div>
+      <div class="qa-opts">
+        <button class="qa-opt" onclick="ansQ(1,this,'ok','Size matters somewhat — but a very large spike can still be a trend if it happens consistently. The real distinction is predictability and regularity.')">Because trends are small increases and anomalies are large ones.</button>
+        <button class="qa-opt" onclick="ansQ(1,this,'good','Right. The morning ramp-up happens the same way, at the same time, both days. That repetition and predictability is what makes it a trend — it reflects normal system behavior under normal load conditions. An anomaly breaks the expected pattern. A trend IS the expected pattern.')">Because it happens the same way every day — it\'s predictable and reflects normal system behavior as traffic increases each morning.</button>
+        <button class="qa-opt" onclick="ansQ(1,this,'ok','Trends can happen quickly too. The key isn\'t the speed — it\'s whether the change is predictable and expected. A slow anomaly is still an anomaly if it doesn\'t fit the pattern.')">Because trends happen slowly and anomalies happen fast.</button>
+      </div>
+      <div class="qa-fb" id="qfb-1"></div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-head">
+        <div class="qa-label">Question 3 of 3</div>
+        <div class="qa-q">Why do real engineering teams use AI tools to help watch charts like this instead of doing it manually?</div>
+      </div>
+      <div class="qa-opts">
+        <button class="qa-opt" onclick="ansQ(2,this,'ok','AI can help with charts too — but the real reason is scale. A single engineer can watch one chart. But production systems generate thousands of metrics simultaneously, every second. No human team can watch all of them.')">Because engineers aren\'t good at reading charts.</button>
+        <button class="qa-opt" onclick="ansQ(2,this,'ok','Automation handles responses to known issues — but AI monitoring is about detection, not just response. And humans still make the decisions about what to do after something is flagged.')">So the system can automatically fix problems without human involvement.</button>
+        <button class="qa-opt" onclick="ansQ(2,this,'good','Exactly. This chart showed 48 data points. A real production system might generate 100,000+ data points per minute across hundreds of different metrics. AI can watch all of them simultaneously, flag unusual patterns the moment they appear, and surface them to engineers who then decide what to do. The human skill you just practiced — pattern recognition and judgment — is what engineers apply after AI narrows the field.')">Because real systems generate thousands of data points every minute across hundreds of different metrics — too many for any person to watch manually. AI spots the patterns and flags the anomalies, and engineers decide what to do with what gets flagged.</button>
+      </div>
+      <div class="qa-fb" id="qfb-2"></div>
+    </div>
+
+  </div>
+
+  <button class="cont-btn" id="qaNext" onclick="showFinale()">See the wrap-up →</button>
+</div>
+
+<!-- ═══════════ FINALE ═══════════ -->
+<div class="phase" id="phase-4">
+  <div class="finale-icon">📈</div>
+  <div class="finale-title">You Just Thought Like an Engineer</div>
+  <div class="finale-sub">Spotting trends, flagging anomalies, and asking "why did this repeat?" — that's the same reasoning a real analytics or operations team uses every day.</div>
+
+  <div class="summary-box">
+    <h3>What This Activity Showed</h3>
+    <div class="s-item"><div class="s-check">✓</div><p>Before marking anything, engineers study the overall shape first to understand what "normal" looks like. You can't spot what's unusual until you know what usual is.</p></div>
+    <div class="s-item"><div class="s-check">✓</div><p>Trends are predictable patterns — gradual changes that happen the same way repeatedly. Anomalies break that pattern. The same spike happening two days in a row at the same time is a pattern, not a coincidence.</p></div>
+    <div class="s-item"><div class="s-check">✓</div><p>AI tools watch thousands of metrics simultaneously and surface anomalies the moment they appear. But humans still need pattern recognition skills to understand what the AI flagged and decide what to do about it.</p></div>
+  </div>
+  <button class="restart-btn" onclick="restartActivity()">Try again</button>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── Data ──
+// 48 hourly response time values (ms)
+// Hours 0–8: morning ramp up day 1 (80→280)
+// Hours 9–13: daytime plateau ~300
+// Hour 14: spike to 1840
+// Hours 15–17: recovery
+// Hours 18–23: overnight decline
+// Hours 22–24: unusual dip very low
+// Hours 25–32: morning ramp up day 2
+// Hour 31: second spike to 1240
+// Hours 32–40: recovery and plateau
+// Hours 41–47: overnight decline
+
+const DATA = [
+  95, 110, 130, 155, 185, 220, 255, 285, 305, // 0-8 morning ramp
+  310, 320, 315, 308, 312,                     // 9-13 plateau
+  1840,                                         // 14 SPIKE 1
+  680, 410, 330, 310,                          // 15-18 recovery
+  285, 240, 195, 90, 70, 75,                   // 19-24 overnight + dip
+  95, 115, 145, 175, 210, 250, 280,            // 25-31 morning ramp 2
+  1240,                                         // 31 SPIKE 2 (index 31)
+  520, 360, 315, 308, 302, 310, 318,           // 32-38 recovery
+  295, 260, 210, 170, 130, 100, 88, 85, 82    // 39-47 overnight
+];
+
+// Correct patterns (by data index ranges/points)
+const TREND_ZONES = [
+  {start:0, end:8, label:'Morning ramp-up (Day 1)'},
+  {start:19, end:24, label:'Overnight recovery + dip'},
+  {start:25, end:30, label:'Morning ramp-up (Day 2)'},
+  {start:39, end:47, label:'Overnight recovery (Day 2)'},
+];
+const ANOMALY_POINTS = [14, 31, 23]; // major spike 1, spike 2, unusual dip
+
+// ── Chart geometry ──
+const PAD = {l:52, r:20, t:20, b:36};
+const W = 760, H = 240;
+const CW = W - PAD.l - PAD.r;
+const CH = H - PAD.t - PAD.b;
+const YMIN = 0, YMAX = 2000;
+const N = DATA.length;
+
+function xOf(i){ return PAD.l + (i/(N-1))*CW; }
+function yOf(v){ return PAD.t + CH - (v-YMIN)/(YMAX-YMIN)*CH; }
+
+function buildPath(){
+  return DATA.map((v,i) => (i===0?'M':'L') + xOf(i).toFixed(1)+','+yOf(v).toFixed(1)).join(' ');
+}
+
+function buildGridAndAxes(svg){
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  // Horizontal grid lines
+  [0,500,1000,1500,2000].forEach(v=>{
+    const y = yOf(v);
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',PAD.l); line.setAttribute('x2',W-PAD.r);
+    line.setAttribute('y1',y); line.setAttribute('y2',y);
+    line.setAttribute('stroke','#2A2040'); line.setAttribute('stroke-width','1');
+    g.appendChild(line);
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',PAD.l-6); txt.setAttribute('y',y+4);
+    txt.setAttribute('text-anchor','end'); txt.setAttribute('fill','#5A507A');
+    txt.setAttribute('font-size','10'); txt.setAttribute('font-family','DM Mono,monospace');
+    txt.textContent = v+'ms';
+    g.appendChild(txt);
+  });
+  // X axis labels
+  [0,12,24,36,47].forEach(i=>{
+    const x = xOf(i);
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',x); txt.setAttribute('y',H-PAD.b+16);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('fill','#5A507A');
+    txt.setAttribute('font-size','10'); txt.setAttribute('font-family','DM Mono,monospace');
+    const labels = {0:'Mon 8am',12:'Mon 8pm',24:'Tue 8am',36:'Tue 8pm',47:'Wed 8am'};
+    txt.textContent = labels[i]||'';
+    g.appendChild(txt);
+  });
+  svg.appendChild(g);
+}
+
+function buildLine(svg, color, strokeW){
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d', buildPath());
+  path.setAttribute('fill','none');
+  path.setAttribute('stroke', color);
+  path.setAttribute('stroke-width', strokeW||2);
+  path.setAttribute('stroke-linejoin','round');
+  path.setAttribute('stroke-linecap','round');
+  svg.appendChild(path);
+  return path;
+}
+
+function buildDots(svg, color, r, interactive){
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  DATA.forEach((v,i)=>{
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', xOf(i).toFixed(1));
+    c.setAttribute('cy', yOf(v).toFixed(1));
+    c.setAttribute('r', r||3);
+    c.setAttribute('fill', color);
+    c.setAttribute('data-idx', i);
+    c.setAttribute('data-val', v);
+    if(interactive){
+      c.style.cursor='pointer';
+      c.addEventListener('mouseenter',()=>showTooltip(i,v));
+      c.addEventListener('click',()=>handleDotClick(i,v,c));
+    }
+    g.appendChild(c);
+  });
+  svg.appendChild(g);
+  return g;
+}
+
+// ── Study chart ──
+function buildStudyChart(){
+  const svg = document.getElementById('studySvg');
+  buildGridAndAxes(svg);
+  buildLine(svg,'#60B8FF',2);
+  // Highlight the spike
+  const sc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  sc.setAttribute('cx', xOf(14).toFixed(1));
+  sc.setAttribute('cy', yOf(1840).toFixed(1));
+  sc.setAttribute('r','6');
+  sc.setAttribute('fill','#FF6060');
+  svg.appendChild(sc);
+  buildDots(svg,'#60B8FF',3,false);
+}
+
+// ── Anno chart ──
+let activeTool = null;
+let userMarks = []; // {type, idx, val}
+
+function buildAnnoChart(){
+  const svg = document.getElementById('annoSvg');
+  buildGridAndAxes(svg);
+  buildLine(svg,'#60B8FF',2);
+  buildDots(svg,'#60B8FF',5,true);
+}
+
+function setTool(t){
+  activeTool = t==='none'?null:t;
+  document.getElementById('tool-trend').className = 'tool-btn' + (activeTool==='trend'?' active-trend':'');
+  document.getElementById('tool-anomaly').className = 'tool-btn' + (activeTool==='anomaly'?' active-anomaly':'');
+  document.getElementById('tool-none').className = 'tool-btn' + (activeTool===null?' active-none':'');
+}
+
+function showTooltip(i,v){
+  const box = document.getElementById('tooltipBox');
+  const hours = ['Mon 8am','Mon 9am','Mon 10am','Mon 11am','Mon noon','Mon 1pm','Mon 2pm','Mon 3pm','Mon 4pm','Mon 5pm','Mon 6pm','Mon 7pm','Mon 8pm','Mon 9pm','Mon 10pm','Mon 11pm','Tue midnight','Tue 1am','Tue 2am','Tue 3am','Tue 4am','Tue 5am','Tue 6am','Tue 7am','Tue 8am','Tue 9am','Tue 10am','Tue 11am','Tue noon','Tue 1pm','Tue 2pm','Tue 3pm','Tue 4pm','Tue 5pm','Tue 6pm','Tue 7pm','Tue 8pm','Tue 9pm','Tue 10pm','Tue 11pm','Wed midnight','Wed 1am','Wed 2am','Wed 3am','Wed 4am','Wed 5am','Wed 6am','Wed 7am'];
+  box.style.display='block';
+  box.textContent = (hours[i]||'Hour '+i) + '  →  ' + v + 'ms response time';
+}
+
+function handleDotClick(i, v, el){
+  if(!activeTool) return;
+  // Check if already marked
+  const existing = userMarks.findIndex(m=>m.idx===i);
+  if(existing!==-1){
+    // Remove mark
+    removeMarkVisual(userMarks[existing]);
+    userMarks.splice(existing,1);
+  } else {
+    // Add mark
+    const mark = {type:activeTool, idx:i, val:v};
+    userMarks.push(mark);
+    addMarkVisual(mark);
+  }
+  updateTally();
+}
+
+function addMarkVisual(mark){
+  const svg = document.getElementById('annoSvg');
+  const x = xOf(mark.idx);
+  const y = yOf(mark.val);
+  const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  ring.setAttribute('cx', x.toFixed(1));
+  ring.setAttribute('cy', y.toFixed(1));
+  ring.setAttribute('r', mark.type==='trend'?12:10);
+  ring.setAttribute('fill', mark.type==='trend'?'rgba(255,190,69,.25)':'rgba(255,96,96,.25)');
+  ring.setAttribute('stroke', mark.type==='trend'?'#FFBE45':'#FF6060');
+  ring.setAttribute('stroke-width','2');
+  ring.setAttribute('id','mark-ring-'+mark.idx);
+  ring.setAttribute('pointer-events','none');
+  svg.appendChild(ring);
+}
+
+function removeMarkVisual(mark){
+  const el = document.getElementById('mark-ring-'+mark.idx);
+  if(el) el.remove();
+}
+
+function undoLast(){
+  if(!userMarks.length) return;
+  const last = userMarks.pop();
+  removeMarkVisual(last);
+  updateTally();
+}
+
+function updateTally(){
+  const trends = userMarks.filter(m=>m.type==='trend').length;
+  const anomalies = userMarks.filter(m=>m.type==='anomaly').length;
+  document.getElementById('trendChip').textContent = '📈 Trends marked: '+trends;
+  document.getElementById('anomalyChip').textContent = '⚠️ Anomalies marked: '+anomalies;
+  const ready = trends>=2 && anomalies>=2;
+  document.getElementById('annotNext').classList.toggle('show', ready);
+  if(ready){
+    document.getElementById('needChip').textContent = '✓ Ready to continue!';
+    document.getElementById('needChip').style.background='var(--green-pale)';
+    document.getElementById('needChip').style.borderColor='var(--green)';
+    document.getElementById('needChip').style.color='var(--green)';
+  } else {
+    document.getElementById('needChip').textContent = 'Need: 2 trends + 2 anomalies';
+    document.getElementById('needChip').style.background='';
+    document.getElementById('needChip').style.borderColor='';
+    document.getElementById('needChip').style.color='';
+  }
+}
+
+// ── Reveal chart ──
+function buildRevealChart(){
+  const svg = document.getElementById('revealSvg');
+  buildGridAndAxes(svg);
+
+  // Shade trend zones
+  TREND_ZONES.forEach(z=>{
+    const x1 = xOf(z.start), x2 = xOf(z.end);
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', x1.toFixed(1));
+    rect.setAttribute('y', PAD.t);
+    rect.setAttribute('width', (x2-x1).toFixed(1));
+    rect.setAttribute('height', CH);
+    rect.setAttribute('fill','rgba(255,190,69,.08)');
+    rect.setAttribute('stroke','rgba(255,190,69,.3)');
+    rect.setAttribute('stroke-width','1');
+    svg.appendChild(rect);
+    // Label
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x', ((x1+x2)/2).toFixed(1));
+    txt.setAttribute('y', PAD.t+12);
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('fill','#FFBE45');
+    txt.setAttribute('font-size','9');
+    txt.setAttribute('font-family','DM Sans,sans-serif');
+    txt.setAttribute('font-weight','700');
+    txt.textContent = 'TREND';
+    svg.appendChild(txt);
+  });
+
+  buildLine(svg,'#60B8FF',2);
+
+  // Anomaly circles
+  ANOMALY_POINTS.forEach(i=>{
+    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    ring.setAttribute('cx', xOf(i).toFixed(1));
+    ring.setAttribute('cy', yOf(DATA[i]).toFixed(1));
+    ring.setAttribute('r','14');
+    ring.setAttribute('fill','rgba(255,96,96,.2)');
+    ring.setAttribute('stroke','#FF6060');
+    ring.setAttribute('stroke-width','2');
+    ring.setAttribute('stroke-dasharray','4 3');
+    svg.appendChild(ring);
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x', xOf(i).toFixed(1));
+    lbl.setAttribute('y', (yOf(DATA[i])-18).toFixed(1));
+    lbl.setAttribute('text-anchor','middle');
+    lbl.setAttribute('fill','#FF6060');
+    lbl.setAttribute('font-size','9');
+    lbl.setAttribute('font-family','DM Sans,sans-serif');
+    lbl.setAttribute('font-weight','700');
+    lbl.textContent = '⚠ ' + DATA[i]+'ms';
+    svg.appendChild(lbl);
+  });
+
+  // User marks as thin rings
+  userMarks.forEach(mark=>{
+    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    ring.setAttribute('cx', xOf(mark.idx).toFixed(1));
+    ring.setAttribute('cy', yOf(mark.val).toFixed(1));
+    ring.setAttribute('r', mark.type==='trend'?18:14);
+    ring.setAttribute('fill','none');
+    ring.setAttribute('stroke', mark.type==='trend'?'rgba(255,190,69,.5)':'rgba(255,96,96,.5)');
+    ring.setAttribute('stroke-width','1.5');
+    ring.setAttribute('stroke-dasharray','3 2');
+    svg.appendChild(ring);
+  });
+
+  buildDots(svg,'#60B8FF',3,false);
+
+  // Score
+  let hits = 0;
+  userMarks.forEach(m=>{
+    if(m.type==='trend'){
+      if(TREND_ZONES.some(z=>m.idx>=z.start && m.idx<=z.end)) hits++;
+    } else {
+      if(ANOMALY_POINTS.includes(m.idx) || Math.abs(DATA[m.idx]-DATA[Math.max(0,m.idx-1)])>300) hits++;
+    }
+  });
+  const pct = Math.min(100, Math.round((hits/Math.max(1,userMarks.length))*100));
+  setTimeout(()=>{
+    document.getElementById('matchBar').style.width = pct+'%';
+    document.getElementById('matchPct').textContent = pct+'%';
+    const msgs = [[80,'Great eye — you correctly identified the patterns the data was showing.',''],[50,'Good start — you caught some of the patterns. Check the revealed chart to see what you missed.',''],[0,'Pattern recognition takes practice. Compare your rings to the revealed markers to see where your read differed.','']];
+    const msg = msgs.find(m=>pct>=m[0]);
+    document.getElementById('matchSub').textContent = msg[1];
+  },400);
+}
+
+// ── Q&A ──
+const qaAnswers = [null,null,null];
+function ansQ(qi, btn, type, fb){
+  const card = btn.closest('.qa-card');
+  const opts = card.querySelectorAll('.qa-opt');
+  if(btn.dataset.pending==='true'){
+    btn.dataset.pending='false'; btn.classList.remove('correct','wrong');
+    card.querySelector('.qa-fb').classList.remove('show','good','ok');
+    card.querySelector('.qa-fb').textContent='';
+    qaAnswers[qi]=null; checkQA(); return;
+  }
+  opts.forEach(o=>{o.dataset.pending='false';o.classList.remove('correct','wrong');});
+  btn.dataset.pending='true';
+  btn.classList.add(type==='good'?'correct':'wrong');
+  const fbe=document.getElementById('qfb-'+qi);
+  fbe.textContent=fb; fbe.className='qa-fb show '+(type==='good'?'good':'ok');
+  qaAnswers[qi]=type; checkQA();
+}
+function checkQA(){
+  const done=qaAnswers.filter(v=>v!==null).length;
+  document.getElementById('qaNext').classList.toggle('show',done===3);
+}
+
+// ── Phase navigation ──
+let curPhase=0;
+function goToPhase(n){
+  document.getElementById('phase-'+curPhase).classList.remove('active');
+  document.getElementById('st-'+curPhase).classList.remove('active');
+  document.getElementById('st-'+curPhase).classList.add('done');
+  curPhase=n;
+  document.getElementById('phase-'+n).classList.add('active');
+  document.getElementById('st-'+n).classList.add('active');
+  window.scrollTo({top:document.querySelector('.step-track').offsetTop-20,behavior:'smooth'});
+}
+
+function goToReveal(){
+  buildRevealChart();
+  goToPhase(2);
+}
+
+function showFinale(){
+  goToPhase(4);
+}
+
+function restartActivity(){ location.reload(); }
+
+// ── Init ──
+buildStudyChart();
+buildAnnoChart();
+setTool('none');
+
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
