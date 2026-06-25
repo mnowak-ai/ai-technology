@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Activity: Something Is Wrong — What Do You Do?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --dark:#0F0A1E;--dark2:#1A1030;--dark3:#251845;
+  --mg:#4AE68A;--mr:#FF6B6B;--ma:#FFB84D;--mb:#7EC8FF;--md:#6B5A90;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:var(--white);color:var(--ink);}
+.wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
+
+.hero{text-align:center;padding:20px 0 28px;}
+.lesson-tag{display:inline-block;background:var(--purple-pale);color:var(--purple-dark);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:18px;}
+.hero h1{font-family:"Fraunces",serif;font-weight:700;font-size:32px;line-height:1.18;margin:0 0 12px;color:var(--purple-dark);}
+.hero p{font-size:16px;line-height:1.6;color:var(--grey);max-width:600px;margin:0 auto;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:4px;margin:24px auto 0;}
+
+.tip-box{background:var(--purple-pale);border-radius:18px;padding:20px 24px;margin:24px 0 36px;display:flex;gap:14px;align-items:flex-start;}
+.tip-box .icon{font-size:24px;flex-shrink:0;line-height:1;margin-top:2px;}
+.tip-box p{margin:0;font-size:15px;line-height:1.6;color:var(--purple-dark);}
+.tip-box strong{font-weight:700;}
+
+.phase-nav{display:flex;gap:0;border-radius:14px;overflow:hidden;border:2px solid var(--purple-mid);margin-bottom:34px;}
+.phase-tab{flex:1;padding:12px 4px;font-size:12px;font-weight:700;color:var(--grey);text-align:center;background:var(--white);cursor:default;transition:all .2s ease;border:none;font-family:"DM Sans",sans-serif;line-height:1.3;}
+.phase-tab.active{background:var(--purple);color:#fff;}
+.phase-tab.done{background:var(--purple-pale);color:var(--purple-dark);}
+
+.phase{display:none;}
+.phase.active{display:block;animation:slideIn .4s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.phase-title{font-family:"Fraunces",serif;font-weight:700;font-size:22px;color:var(--ink);margin:0 0 6px;}
+.phase-sub{font-size:15px;color:var(--grey);line-height:1.6;margin:0 0 22px;}
+
+/* Alert screen */
+.alert-screen{background:var(--dark);border-radius:20px;overflow:hidden;margin-bottom:22px;border:1px solid #3D2460;}
+.alert-screen-bar{background:var(--dark3);padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #3D2460;}
+.dot-r{width:10px;height:10px;border-radius:50%;background:#FF5F56;}
+.dot-y{width:10px;height:10px;border-radius:50%;background:#FEBC2E;}
+.dot-g{width:10px;height:10px;border-radius:50%;background:#27C840;}
+.screen-title{font-family:"DM Mono",monospace;font-size:12px;color:var(--md);margin-left:6px;}
+.new-badge{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:5px;background:rgba(255,107,107,.15);color:var(--mr);border:1px solid rgba(255,107,107,.3);}
+.alert-screen-body{padding:20px 22px;}
+
+.alert-line{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-family:"DM Mono",monospace;font-size:13px;line-height:1.65;}
+.alert-line:last-of-type{margin-bottom:0;}
+.al-time{color:var(--md);white-space:nowrap;flex-shrink:0;}
+.al-sev{font-weight:700;white-space:nowrap;flex-shrink:0;min-width:60px;}
+.al-sev.red{color:var(--mr);}
+.al-sev.amber{color:var(--ma);}
+.al-sev.green{color:var(--mg);}
+.al-msg{color:#C9A8E8;}
+.al-msg strong{color:#fff;}
+
+.ai-box{background:var(--dark3);border:1px solid var(--purple);border-radius:12px;padding:16px 18px;margin-top:18px;}
+.ai-box-label{font-family:"DM Mono",monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple-mid);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.ai-box-label::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--purple);}
+.ai-box-body{font-size:14px;line-height:1.75;color:#C9A8E8;}
+.ai-box-body strong{color:#fff;}
+.ai-rec{margin-top:12px;background:rgba(123,47,190,.18);border-radius:8px;padding:12px 14px;font-size:13px;color:#C9A8E8;line-height:1.65;}
+.ai-rec strong{color:#fff;}
+
+/* Context grid */
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+@media(max-width:580px){.ctx-grid{grid-template-columns:1fr;}}
+.ctx-tile{background:var(--purple-pale);border-radius:14px;padding:15px 17px;}
+.ctx-tile h4{font-family:"Fraunces",serif;font-size:13px;color:var(--purple-dark);margin:0 0 8px;}
+.ctx-tile ul{margin:0;padding-left:16px;}
+.ctx-tile li{font-size:13px;line-height:1.7;color:var(--ink);margin-bottom:2px;}
+.ctx-tile li.flag{color:var(--red);font-weight:600;}
+.ctx-tile li.warn{color:var(--amber);}
+.ctx-tile li.ok{color:var(--green);}
+
+/* Collapsible ref */
+.ref-toggle{width:100%;background:var(--white);border:2px solid var(--purple-mid);border-radius:14px;padding:13px 18px;font-size:14px;font-weight:700;color:var(--purple-dark);cursor:pointer;font-family:"DM Sans",sans-serif;text-align:left;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;transition:all .15s ease;}
+.ref-toggle:hover{border-color:var(--purple);background:var(--purple-pale);}
+.ref-toggle.open{border-color:var(--purple);background:var(--purple-pale);border-radius:14px 14px 0 0;margin-bottom:0;}
+.ref-arrow{font-size:16px;transition:transform .25s ease;display:inline-block;}
+.ref-toggle.open .ref-arrow{transform:rotate(180deg);}
+.ref-panel{display:none;border:2px solid var(--purple);border-top:none;border-radius:0 0 14px 14px;margin-bottom:18px;}
+.ref-panel.open{display:block;animation:slideIn .3s ease;}
+.ref-inner{padding:16px;}
+
+/* Phase btn */
+.phase-btn{display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:12px;}
+.phase-btn.show{display:block;}
+.phase-btn:hover{background:var(--purple-dark);}
+
+/* Triage cards */
+.triage-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
+.t-card{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;}
+.t-card-head{padding:12px 18px;display:flex;align-items:center;gap:10px;}
+.t-head-red{background:#3D0F0F;}
+.t-head-amber{background:#2E1F00;}
+.t-head-green{background:#0A1A0A;}
+.t-badge{font-family:"DM Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:5px;}
+.t-badge.red{background:rgba(255,107,107,.2);color:var(--mr);border:1px solid rgba(255,107,107,.3);}
+.t-badge.amber{background:rgba(255,184,77,.15);color:var(--ma);border:1px solid rgba(255,184,77,.25);}
+.t-badge.green{background:rgba(74,230,138,.1);color:var(--mg);border:1px solid rgba(74,230,138,.2);}
+.t-card-title{font-family:"DM Mono",monospace;font-size:13px;color:#fff;flex:1;}
+.t-card-body{padding:14px 18px;}
+.t-desc{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:14px;}
+.t-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+@media(max-width:500px){.t-btns{grid-template-columns:repeat(2,1fr);}}
+.t-btn{border:2px solid var(--purple-mid);border-radius:9px;padding:9px 4px;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);transition:all .15s ease;font-family:"DM Sans",sans-serif;color:var(--grey);text-align:center;}
+.t-btn:hover{border-color:var(--purple);color:var(--purple-dark);background:var(--purple-pale);}
+.t-btn.ap1{border-color:var(--red);background:var(--red-pale);color:var(--red);}
+.t-btn.ap2{border-color:var(--amber);background:var(--amber-pale);color:var(--amber);}
+.t-btn.ap3{border-color:var(--purple);background:var(--purple-pale);color:var(--purple-dark);}
+.t-btn.ap4{border-color:var(--green);background:var(--green-pale);color:var(--green);}
+.t-btn:disabled{opacity:.3;cursor:not-allowed;}
+.triage-count{text-align:center;font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:6px;}
+
+/* Investigation */
+.inv-wrap{border:2px solid var(--purple-mid);border-radius:16px;overflow:hidden;margin-bottom:16px;}
+.inv-wrap-head{background:linear-gradient(135deg,var(--purple-dark),var(--purple));padding:14px 20px;color:#fff;}
+.inv-wrap-head h3{font-family:"Fraunces",serif;font-size:16px;margin:0 0 3px;}
+.inv-wrap-head p{font-size:12px;opacity:.75;margin:0;}
+.inv-item{border-top:1px solid var(--purple-mid);}
+.inv-btn{width:100%;background:var(--white);border:none;padding:14px 18px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;font-family:"DM Sans",sans-serif;transition:background .15s ease;}
+.inv-btn:hover{background:var(--purple-pale);}
+.inv-btn.open{background:var(--purple-pale);color:var(--purple-dark);}
+.inv-arrow{font-size:14px;transition:transform .2s ease;flex-shrink:0;margin-left:10px;}
+.inv-btn.open .inv-arrow{transform:rotate(180deg);}
+.inv-body{display:none;padding:0 18px 16px;font-size:14px;line-height:1.7;color:var(--ink);}
+.inv-body.show{display:block;}
+.finding{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.6;}
+.finding.bad{background:var(--red-pale);color:var(--red);}
+.finding.ok{background:var(--green-pale);color:var(--green);}
+.finding.warn{background:var(--amber-pale);color:var(--amber);}
+.inv-count{text-align:center;font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:6px;}
+
+/* Decision */
+.dec-wrap{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin-bottom:22px;}
+.dec-wrap-head{background:linear-gradient(135deg,var(--purple-dark),var(--purple));padding:18px 22px;color:#fff;}
+.dec-wrap-head h3{font-family:"Fraunces",serif;font-size:17px;margin:0 0 3px;}
+.dec-wrap-head p{font-size:13px;opacity:.8;margin:0;}
+.dec-field{border-bottom:1px solid var(--purple-mid);padding:18px 22px;}
+.dec-field:last-child{border-bottom:none;}
+.dec-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--grey);margin-bottom:10px;}
+.dec-opts{display:flex;flex-direction:column;gap:8px;}
+.dec-opt{border:2px solid var(--purple-mid);border-radius:10px;padding:13px 15px;font-size:14px;color:var(--ink);cursor:pointer;background:var(--white);transition:all .15s ease;text-align:left;line-height:1.5;font-family:"DM Sans",sans-serif;}
+.dec-opt:hover{border-color:var(--purple);background:var(--purple-pale);}
+.dec-opt.best{border-color:var(--green);background:var(--green-pale);color:var(--green);font-weight:600;}
+.dec-opt.partial{border-color:var(--amber);background:var(--amber-pale);color:var(--amber);font-weight:600;}
+.dec-opt.locked{border-color:var(--purple-mid);color:var(--grey);cursor:default;}
+.dec-opt.locked:hover{background:var(--white);}
+.dec-fb{margin-top:10px;font-size:13px;line-height:1.6;display:none;padding:10px 12px;border-radius:8px;}
+.dec-fb.show{display:block;}
+.dec-fb.good{background:var(--green-pale);color:var(--green);}
+.dec-fb.ok{background:var(--amber-pale);color:var(--amber);}
+
+/* Finale */
+.finale-icon{text-align:center;font-size:48px;margin-bottom:12px;}
+.finale-title{font-family:"Fraunces",serif;font-weight:700;font-size:26px;color:var(--purple-dark);text-align:center;margin:0 0 10px;}
+.finale-sub{font-size:15px;line-height:1.7;color:var(--grey);max-width:560px;margin:0 auto 28px;text-align:center;}
+.report-card{background:var(--white);border:2px solid var(--purple-mid);border-radius:20px;overflow:hidden;margin-bottom:24px;}
+.rc-head{background:var(--dark);padding:18px 22px;}
+.rc-head h3{font-family:"DM Mono",monospace;font-size:15px;color:#fff;margin:0 0 3px;}
+.rc-head p{font-family:"DM Mono",monospace;font-size:12px;color:var(--md);margin:0;}
+.rc-body{padding:20px 22px;}
+.rc-row{display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.6;align-items:flex-start;}
+.rc-row:last-child{margin-bottom:0;}
+.rc-lbl{font-weight:700;color:var(--grey);font-size:12px;text-transform:uppercase;letter-spacing:.03em;min-width:130px;flex-shrink:0;margin-top:2px;}
+.rc-val{color:var(--ink);}
+.chip-red{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:var(--red-pale);color:var(--red);border:1px solid var(--red);}
+
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:30px 28px;color:#fff;text-align:left;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 16px;color:#fff;}
+.summary-item{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.summary-item:last-child{margin-bottom:0;}
+.s-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.summary-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+@media(max-width:560px){.hero h1{font-size:26px;}.phase-tab{font-size:10px;padding:10px 2px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero fade-in">
+  <div class="lesson-tag">Hands-On Activity</div>
+  <h1>Something Is Wrong — What Do You Do?</h1>
+  <p>Your company's security system just lit up. The AI gave you a summary and told you what to do. But before anyone acts — it's your job to check the work.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="tip-box fade-in">
+  <div class="icon">👆</div>
+  <p><strong>How this works:</strong> You're an IT professional at a financial company. A set of security warnings just came in. Step through the alerts, decide which ones are most urgent, run some checks to understand what actually happened, then make the calls. No typing — just tap your way through it.</p>
+</div>
+
+<div class="phase-nav">
+  <button class="phase-tab active" id="tab-0">1. The Alerts</button>
+  <button class="phase-tab" id="tab-1">2. Sort by Urgency</button>
+  <button class="phase-tab" id="tab-2">3. Investigate</button>
+  <button class="phase-tab" id="tab-3">4. Decide</button>
+</div>
+
+<!-- ═══════════════════════════════
+     PHASE 1 — Read the alerts
+═══════════════════════════════ -->
+<div class="phase active" id="phase-0">
+  <div class="phase-title">Your Security System Just Fired Four Warnings</div>
+  <div class="phase-sub">It's 2:14 PM on a Tuesday. Read through everything carefully — the warnings on screen and the background information below — before moving on.</div>
+
+  <div class="alert-screen fade-in">
+    <div class="alert-screen-bar">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="screen-title">Security Warnings — ClearPath Financial · Right Now</span>
+      <span class="new-badge">● 4 NEW</span>
+    </div>
+    <div class="alert-screen-body">
+
+      <div class="alert-line">
+        <span class="al-time">2:02 PM</span>
+        <span class="al-sev red">[URGENT]</span>
+        <span class="al-msg">Someone tried to log in to the <strong>payroll system account</strong> 847 times in 3 minutes from an outside computer. The account was automatically locked after too many failed attempts.</span>
+      </div>
+
+      <div class="alert-line">
+        <span class="al-time">2:03 PM</span>
+        <span class="al-sev amber">[WARNING]</span>
+        <span class="al-msg">Just before the lockout, that same payroll account pulled up a list of <strong>every employee's salary, bank account number, and social security number</strong> — all 14,200 of them. Normal lookups only return 200–400 records.</span>
+      </div>
+
+      <div class="alert-line">
+        <span class="al-time">2:06 PM</span>
+        <span class="al-sev amber">[WARNING]</span>
+        <span class="al-msg">A large amount of data — about <strong>2.4 gigabytes</strong>, roughly the size of a movie — was sent from your company's computers to an outside location that's not on your approved list.</span>
+      </div>
+
+      <div class="alert-line">
+        <span class="al-time">2:09 PM</span>
+        <span class="al-sev green">[ROUTINE]</span>
+        <span class="al-msg">Scheduled virus scan finished on HR laptop #7. <strong>No problems found.</strong> This is a normal weekly check.</span>
+      </div>
+
+      <div class="ai-box">
+        <div class="ai-box-label">AI Summary</div>
+        <div class="ai-box-body">
+          The first three warnings appear to be connected. Someone outside the company tried hundreds of passwords until they found the right one for the payroll account. Using that account, they <strong>downloaded the personal and financial records of every employee</strong> — then sent that data to an outside computer. This looks like a deliberate theft of employee information.
+        </div>
+        <div class="ai-rec">
+          <strong>AI says to:</strong> Immediately disconnect the login server and the employee database from the network. Reset all account passwords. Tell your security director and legal team now. Save all records for investigation. This appears to be a serious data breach.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctx-grid fade-in">
+    <div class="ctx-tile">
+      <h4>🏢 About the Company</h4>
+      <ul>
+        <li>ClearPath Financial — a mid-size financial services company</li>
+        <li class="flag">The company is required by law to protect employee financial data</li>
+        <li>The payroll account is used by the software that handles employee pay</li>
+        <li class="warn">Tuesday afternoons are when the weekly payroll process runs (1–4 PM)</li>
+        <li>14,200 employees total — that's the whole company</li>
+      </ul>
+    </div>
+    <div class="ctx-tile">
+      <h4>🔑 About the Payroll Account</h4>
+      <ul>
+        <li class="warn">Last used normally: 10:42 AM today</li>
+        <li class="ok">Normal lookups: 200–400 employee records per run</li>
+        <li class="flag">This lookup: 14,200 records — 35 to 70 times more than normal</li>
+        <li>The account can read data but cannot change or delete it</li>
+        <li class="warn">This account does not require a second form of ID to log in (a known weak spot)</li>
+      </ul>
+    </div>
+    <div class="ctx-tile">
+      <h4>🌐 About the Data That Left the Building</h4>
+      <ul>
+        <li class="flag">The outside address the data was sent to is not on any approved list</li>
+        <li>The address is located in Eastern Europe — not a region the company does business with</li>
+        <li class="flag">2.4 GB sent in 4 minutes is about 40 times the normal peak for outbound transfers</li>
+        <li class="flag">Security researchers have flagged this outside address as a known destination used by hackers</li>
+      </ul>
+    </div>
+    <div class="ctx-tile">
+      <h4>📋 Other Things to Know</h4>
+      <ul>
+        <li class="ok">No planned maintenance or software updates today</li>
+        <li class="ok">No similar warnings in the past 90 days</li>
+        <li class="warn">A scheduled security test is coming up — but not until next week</li>
+        <li class="ok">HR laptop #7 virus scan: routine, no issues, not connected to this</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box fade-in" style="margin-bottom:10px;">
+    <div class="icon">🤔</div>
+    <p>The AI connected the dots and told you what to do. Before you follow its instructions — do you agree with its read of the situation? Are there any complications it might have missed? Move on to sort the warnings by urgency.</p>
+  </div>
+
+  <button class="phase-btn show" onclick="goToPhase(1)">Sort warnings by urgency →</button>
+</div>
+
+<!-- ═══════════════════════════════
+     PHASE 2 — Triage
+═══════════════════════════════ -->
+<div class="phase" id="phase-1">
+  <div class="phase-title">Sort the Warnings by Urgency</div>
+  <div class="phase-sub">Your team can't work on everything at the same time. Decide how urgent each warning is before anyone starts investigating. You can change your answers before moving on.</div>
+
+  <button class="ref-toggle" id="rt1" onclick="tRef('rt1','rp1')"><span>🖥️ See the warnings again</span><span class="ref-arrow">▼</span></button>
+  <div class="ref-panel" id="rp1"><div class="ref-inner">
+    <div style="font-family:'DM Mono',monospace;font-size:12px;color:#C9A8E8;background:var(--dark);border-radius:10px;padding:14px;line-height:2.1;">
+      <div><span style="color:var(--md);">2:02 PM</span> <span style="color:var(--mr);font-weight:700;">[URGENT]</span> <span> 847 login attempts → payroll account locked</span></div>
+      <div><span style="color:var(--md);">2:03 PM</span> <span style="color:var(--ma);font-weight:700;">[WARNING]</span> <span> All 14,200 employee records pulled by that account</span></div>
+      <div><span style="color:var(--md);">2:06 PM</span> <span style="color:var(--ma);font-weight:700;">[WARNING]</span> <span> 2.4 GB sent to an outside address (known hacker destination)</span></div>
+      <div><span style="color:var(--md);">2:09 PM</span> <span style="color:var(--mg);font-weight:700;">[ROUTINE]</span> <span style="color:#C9A8E8;"> HR laptop virus scan — clean, routine</span></div>
+    </div>
+    <div style="margin-top:12px;background:rgba(123,47,190,.1);border:1px solid var(--purple-mid);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--grey);line-height:1.6;">
+      <strong style="color:var(--purple-dark);">AI says:</strong> First three warnings are connected — looks like a deliberate theft of employee data. Recommendation: disconnect servers, reset passwords, notify leadership immediately.
+    </div>
+  </div></div>
+
+  <div class="triage-grid">
+
+    <div class="t-card">
+      <div class="t-card-head t-head-red">
+        <span class="t-badge red">URGENT</span>
+        <span class="t-card-title">Warning 1 — 847 Login Attempts / Account Locked</span>
+      </div>
+      <div class="t-card-body">
+        <div class="t-desc">Someone outside the company tried hundreds of passwords on the payroll account in about 3 minutes. The account was locked after too many failures. This happened during the active payroll processing window.</div>
+        <div class="t-btns" id="pb-0">
+          <button class="t-btn" onclick="setPri(0,'p1',this)">🔴 Handle now</button>
+          <button class="t-btn" onclick="setPri(0,'p2',this)">🟠 Very soon</button>
+          <button class="t-btn" onclick="setPri(0,'p3',this)">🟡 Today</button>
+          <button class="t-btn" onclick="setPri(0,'p4',this)">🟢 Just watch</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-card">
+      <div class="t-card-head t-head-amber">
+        <span class="t-badge amber">WARNING</span>
+        <span class="t-card-title">Warning 2 — All Employee Records Downloaded</span>
+      </div>
+      <div class="t-card-body">
+        <div class="t-desc">Right before the account locked, it was used to download the full list of all 14,200 employees — including salaries, bank account numbers, and social security numbers. Normal runs only pull 200–400 records.</div>
+        <div class="t-btns" id="pb-1">
+          <button class="t-btn" onclick="setPri(1,'p1',this)">🔴 Handle now</button>
+          <button class="t-btn" onclick="setPri(1,'p2',this)">🟠 Very soon</button>
+          <button class="t-btn" onclick="setPri(1,'p3',this)">🟡 Today</button>
+          <button class="t-btn" onclick="setPri(1,'p4',this)">🟢 Just watch</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-card">
+      <div class="t-card-head t-head-amber">
+        <span class="t-badge amber">WARNING</span>
+        <span class="t-card-title">Warning 3 — 2.4 GB Sent to Outside Address</span>
+      </div>
+      <div class="t-card-body">
+        <div class="t-desc">A large amount of data was sent from your company's computers to an outside location not on the approved list. The outside address has been flagged by security researchers as a place known hackers use to receive stolen data.</div>
+        <div class="t-btns" id="pb-2">
+          <button class="t-btn" onclick="setPri(2,'p1',this)">🔴 Handle now</button>
+          <button class="t-btn" onclick="setPri(2,'p2',this)">🟠 Very soon</button>
+          <button class="t-btn" onclick="setPri(2,'p3',this)">🟡 Today</button>
+          <button class="t-btn" onclick="setPri(2,'p4',this)">🟢 Just watch</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-card">
+      <div class="t-card-head t-head-green">
+        <span class="t-badge green">ROUTINE</span>
+        <span class="t-card-title">Warning 4 — HR Laptop Virus Scan (Clean)</span>
+      </div>
+      <div class="t-card-body">
+        <div class="t-desc">HR laptop #7 finished its scheduled weekly virus scan. Nothing was found. This is a normal automatic check that runs every week on all company devices.</div>
+        <div class="t-btns" id="pb-3">
+          <button class="t-btn" onclick="setPri(3,'p1',this)">🔴 Handle now</button>
+          <button class="t-btn" onclick="setPri(3,'p2',this)">🟠 Very soon</button>
+          <button class="t-btn" onclick="setPri(3,'p3',this)">🟡 Today</button>
+          <button class="t-btn" onclick="setPri(3,'p4',this)">🟢 Just watch</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="triage-count" id="triageCount">Sorted: 0 / 4 warnings</div>
+  <button class="phase-btn" id="triageNext" onclick="submitTriage()">Start the investigation →</button>
+</div>
+
+<!-- ═══════════════════════════════
+     PHASE 3 — Investigate
+═══════════════════════════════ -->
+<div class="phase" id="phase-2">
+  <div class="phase-title">Run Your Checks</div>
+  <div class="phase-sub">The AI gave you a theory. Now verify it. Tap each check to see what you actually find. You need all five before you can decide what to do.</div>
+
+  <button class="ref-toggle" id="rt2" onclick="tRef('rt2','rp2')"><span>🖥️ See the warnings + background info</span><span class="ref-arrow">▼</span></button>
+  <div class="ref-panel" id="rp2"><div class="ref-inner">
+    <div style="font-family:'DM Mono',monospace;font-size:12px;color:#C9A8E8;background:var(--dark);border-radius:10px;padding:14px;line-height:2.1;margin-bottom:12px;">
+      <div><span style="color:var(--md);">2:02</span> <span style="color:var(--mr);font-weight:700;">[URGENT]</span> 847 login attempts → payroll account locked</div>
+      <div><span style="color:var(--md);">2:03</span> <span style="color:var(--ma);font-weight:700;">[WARNING]</span> All 14,200 employee records pulled by that account</div>
+      <div><span style="color:var(--md);">2:06</span> <span style="color:var(--ma);font-weight:700;">[WARNING]</span> 2.4 GB sent to outside address (known hacker site)</div>
+    </div>
+    <div class="ctx-grid" style="margin-bottom:0;">
+      <div class="ctx-tile"><h4>Key facts</h4><ul>
+        <li class="flag">Payroll account: no second login step required, now locked</li>
+        <li class="flag">Normal: 200–400 records. Pulled: 14,200</li>
+        <li class="flag">Outside address: flagged as a known hacker destination</li>
+        <li class="warn">Payroll processing runs Tuesdays 1–4 PM</li>
+      </ul></div>
+      <div class="ctx-tile"><h4>AI's theory</h4><ul>
+        <li>Someone guessed the password and got in</li>
+        <li>They downloaded all employee financial data</li>
+        <li>They sent it to an outside hacker-controlled address</li>
+        <li class="flag">AI recommendation: disconnect servers, reset passwords, notify leadership</li>
+      </ul></div>
+    </div>
+  </div></div>
+
+  <div class="inv-wrap fade-in">
+    <div class="inv-wrap-head">
+      <h3>Investigation Checks</h3>
+      <p>Tap each one to run it. All five required before deciding.</p>
+    </div>
+
+    <div class="inv-item">
+      <button class="inv-btn" id="ib0" onclick="openCheck(0)">
+        <span>🔐 Check 1 — Did the password guessing actually work?</span>
+        <span class="inv-arrow">▼</span>
+      </button>
+      <div class="inv-body" id="ibd0">
+        Out of 847 attempts, one password worked — at 2:02:04 PM. The attacker was logged in for about 44 seconds before the account locked. During those 44 seconds, they connected to the employee database.
+        <div class="finding bad">⚠ Confirmed: Yes, one attempt succeeded. The attacker had a working login for about 44 seconds before being locked out.</div>
+      </div>
+    </div>
+
+    <div class="inv-item">
+      <button class="inv-btn" id="ib1" onclick="openCheck(1)">
+        <span>🗄️ Check 2 — What exactly was in the employee data they pulled?</span>
+        <span class="inv-arrow">▼</span>
+      </button>
+      <div class="inv-body" id="ibd1">
+        The database records confirm: the attacker's session ran a lookup that returned every employee's name, social security number, bank account number, routing number, and salary. All 14,200 employees. The request came from the attacker's computer using the stolen login.
+        <div class="finding bad">⚠ Confirmed: Very sensitive personal and financial information for every employee was accessed by an unauthorized person. This is the kind of data that can be used for identity theft and financial fraud.</div>
+      </div>
+    </div>
+
+    <div class="inv-item">
+      <button class="inv-btn" id="ib2" onclick="openCheck(2)">
+        <span>🌐 Check 3 — Where did the 2.4 GB actually go?</span>
+        <span class="inv-arrow">▼</span>
+      </button>
+      <div class="inv-body" id="ibd2">
+        Network records confirm the data left your company's database server and went to the same outside address that appeared in the warning — the one flagged by security researchers as a place known hackers use. The timing matches: the data left right after the employee records were downloaded, over about 4 minutes.
+        <div class="finding bad">⚠ Confirmed: The data transfer happened right after the download and went to a known hacker-controlled address. This strongly suggests the employee data was stolen and sent outside the company.</div>
+      </div>
+    </div>
+
+    <div class="inv-item">
+      <button class="inv-btn" id="ib3" onclick="openCheck(3)">
+        <span>💻 Check 4 — Is the HR laptop virus scan connected to any of this?</span>
+        <span class="inv-arrow">▼</span>
+      </button>
+      <div class="inv-body" id="ibd3">
+        HR laptop #7 belongs to an HR staff member who has access to employee information. But the virus scan was a scheduled automatic check — logs show it started automatically at 2:09 PM with no action from the user. The laptop made no connections to the database or outside address during the time the incident was happening.
+        <div class="finding ok">✓ Not connected: The virus scan is a routine weekly event with nothing to do with the active incident. This warning can be set aside.</div>
+      </div>
+    </div>
+
+    <div class="inv-item">
+      <button class="inv-btn" id="ib4" onclick="openCheck(4)">
+        <span>⚙️ Check 5 — Is the payroll software still running? What happens next?</span>
+        <span class="inv-arrow">▼</span>
+      </button>
+      <div class="inv-body" id="ibd4">
+        The payroll software is still running and processing this week's pay. However, it needs the payroll account to write the final pay amounts to employees' bank accounts at 2:30 PM — about 16 minutes from now. Since the account is locked, that step will fail unless someone either unlocks it (which is risky, since the attacker might have the password) or sets up a new, secure account for payroll to use.
+        <div class="finding warn">⚠ New complication: If nothing is done, payroll fails at 2:30 PM and 14,200 employees don't get paid on time. This is a serious problem the AI's recommendation didn't account for — simply locking everything down would make it worse.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="inv-count" id="invCount">Checks run: 0 / 5</div>
+  <button class="phase-btn" id="invNext" onclick="submitInv()">Make your decisions →</button>
+</div>
+
+<!-- ═══════════════════════════════
+     PHASE 4 — Decide
+═══════════════════════════════ -->
+<div class="phase" id="phase-3">
+  <div class="phase-title">Make the Calls</div>
+  <div class="phase-sub">Your investigation confirmed the core problem — and surfaced a complication the AI didn't flag. Now decide what to actually do. You can change any answer before you finish.</div>
+
+  <button class="ref-toggle" id="rt3" onclick="tRef('rt3','rp3')"><span>📋 What you found</span><span class="ref-arrow">▼</span></button>
+  <div class="ref-panel" id="rp3"><div class="ref-inner">
+    <div class="ctx-grid" style="margin-bottom:0;">
+      <div class="ctx-tile"><h4>✅ Confirmed</h4><ul>
+        <li class="flag">Password guessing worked — 1 login got through</li>
+        <li class="flag">All 14,200 employee records accessed (SSNs, bank accounts)</li>
+        <li class="flag">Data sent to outside hacker-controlled address</li>
+        <li class="ok">HR laptop scan: unrelated, routine</li>
+      </ul></div>
+      <div class="ctx-tile"><h4>⚠ Complication AI Missed</h4><ul>
+        <li>Payroll software needs the account at 2:30 PM</li>
+        <li class="flag">That's about 16 minutes from now</li>
+        <li>If the account stays locked: 14,200 employees miss their paycheck</li>
+        <li class="warn">Simply locking everything down doesn't solve this</li>
+      </ul></div>
+    </div>
+  </div></div>
+
+  <div class="dec-wrap">
+    <div class="dec-wrap-head">
+      <h3>Your Response Decisions</h3>
+      <p>Pick the best answer for each. Tap again to change your mind.</p>
+    </div>
+
+    <div class="dec-field" id="df0">
+      <div class="dec-label">What do you do right now to stop the threat?</div>
+      <div class="dec-opts">
+        <button class="dec-opt" onclick="pickD(0,this,'partial','The theft has already happened — the attacker logged out when the account locked. Shutting down the login server and database won\'t stop what already occurred, and it would make the payroll problem worse. The most useful immediate step is blocking that outside address so no more data can be sent there.')">Disconnect the login server and the employee database from the network right away, like the AI recommended.</button>
+        <button class="dec-opt" onclick="pickD(0,this,'best','Right. The attacker is already gone — the account locked them out. The most useful thing right now is blocking that outside address so no more data can reach it. You can also start saving all the records you\'ll need for the investigation, without shutting down systems the payroll process still needs.')">Block the outside address immediately so no more data can be sent there. Save all records for investigation. Hold off on disconnecting servers until the payroll situation is handled.</button>
+        <button class="dec-opt" onclick="pickD(0,this,'partial','Too slow. You\'ve confirmed a data theft and know where the data went. Waiting for a meeting before doing anything — even blocking the outside address — gives more time for damage to spread.')">Wait for a management meeting before taking any action — this is too big a decision for an analyst to make alone.</button>
+      </div>
+      <div class="dec-fb" id="dfb0"></div>
+    </div>
+
+    <div class="dec-field" id="df1">
+      <div class="dec-label">What do you do about the 2:30 PM payroll deadline?</div>
+      <div class="dec-opts">
+        <button class="dec-opt" onclick="pickD(1,this,'partial','Keeping the account locked indefinitely means 14,200 employees miss their paycheck — that\'s a legal and financial problem on top of the security problem. You need a plan for payroll, not just a decision to leave things locked.')">Keep the account locked forever — security has to come first, even if payroll fails.</button>
+        <button class="dec-opt" onclick="pickD(1,this,'partial','Unlocking the original account means using a password the attacker already knows. That reopens the door. Even if you change the password first, it\'s a riskier path than creating a fresh, clean account.')">Unlock the payroll account and let payroll proceed — the attacker is already gone, so it should be safe now.</button>
+        <button class="dec-opt" onclick="pickD(1,this,'best','Exactly right. You\'re not choosing between security and payroll — you\'re doing both. A brand-new account with a strong password removes the risk, while still letting payroll finish. Loop in the security director and the payroll team immediately so they can approve the plan and move fast.')">Escalate immediately to your security director and payroll leadership. Recommend creating a brand-new payroll account with a strong password for today\'s run only — while the compromised account stays locked.</button>
+      </div>
+      <div class="dec-fb" id="dfb1"></div>
+    </div>
+
+    <div class="dec-field" id="df2">
+      <div class="dec-label">Who needs to be told — and when?</div>
+      <div class="dec-opts">
+        <button class="dec-opt" onclick="pickD(2,this,'partial','Your security director and legal team are right. But this list isn\'t complete. The company has legal obligations to notify regulators when personal financial data is stolen — and employees whose bank account numbers and social security numbers were taken have a right to know so they can protect themselves.')">Tell your security director and legal team only. Wait until you have the full picture before notifying anyone else.</button>
+        <button class="dec-opt" onclick="pickD(2,this,'best','Right. Your security director and legal team need to mobilize immediately. Legal will know the notification deadlines the company is required to meet. And the 14,200 employees whose sensitive information was stolen need to be told so they can watch for fraud on their bank accounts and take steps to protect themselves.')">Notify your security director and legal team now. Brief them that employees will need to be individually notified about the theft of their bank account numbers and social security numbers so they can protect themselves.</button>
+        <button class="dec-opt" onclick="pickD(2,this,'partial','Sending a mass company email before your security director and legal team are involved creates panic and gets ahead of the official response. Employee notification needs to happen — but through a coordinated, carefully worded message, not an immediate all-hands alert.')">Send an immediate all-company email warning every employee that their information was stolen.</button>
+      </div>
+      <div class="dec-fb" id="dfb2"></div>
+    </div>
+
+    <div class="dec-field" id="df3">
+      <div class="dec-label">The AI got most of this right. What did it miss — and does that matter?</div>
+      <div class="dec-opts">
+        <button class="dec-opt" onclick="pickD(3,this,'partial','The AI did identify the attack correctly — but what it missed wasn\'t a small detail. The payroll deadline is a time-sensitive problem affecting 14,200 people. If you\'d just followed the AI\'s instructions and locked everything down, you would have made the situation worse.')">It was a small detail — the AI got the important stuff right, so it didn\'t really affect anything.</button>
+        <button class="dec-opt" onclick="pickD(3,this,'partial','That goes too far. The AI correctly identified all three connected warnings, figured out what happened, and flagged the right severity. That kind of fast pattern-matching is genuinely useful. The right lesson is to use AI as a starting point — not to distrust it entirely.')">The AI missed something critical, so it shouldn\'t be trusted for future situations.</button>
+        <button class="dec-opt" onclick="pickD(3,this,'best','Exactly. The AI did real work — it connected three alerts and reconstructed what happened faster than a human manually reviewing logs could. But it analyzed the security pattern without accounting for business operations (the payroll window). Human judgment filled that gap. That\'s how AI and people are supposed to work together.')">The AI\'s analysis was accurate and saved time — but it didn\'t account for business operations. Human review caught what it missed. The right approach: use AI as a fast starting point, then add human context before acting.</button>
+      </div>
+      <div class="dec-fb" id="dfb3"></div>
+    </div>
+
+  </div>
+
+  <button class="phase-btn" id="decNext" onclick="showFinale()">See the incident summary →</button>
+</div>
+
+<!-- ═══════════════════════════════
+     FINALE
+═══════════════════════════════ -->
+<div class="phase" id="phase-4">
+  <div class="finale-icon">🛡️</div>
+  <div class="finale-title">Incident Summary</div>
+  <div class="finale-sub">Here's the complete picture — from the first warning through your response. This is what a real incident record looks like when it's done right.</div>
+
+  <div class="report-card">
+    <div class="rc-head">
+      <h3>// INCIDENT REPORT — INC-2024-1107</h3>
+      <p>// ClearPath Financial · Security Team · Tuesday 2:14 PM</p>
+    </div>
+    <div class="rc-body">
+      <div class="rc-row">
+        <div class="rc-lbl">What happened</div>
+        <div class="rc-val"><span class="chip-red">SERIOUS</span> Someone outside the company guessed the payroll account password, downloaded sensitive financial information for all 14,200 employees, and sent it to a hacker-controlled address outside the company.</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-lbl">Timeline</div>
+        <div class="rc-val">2:02 PM — 847 password attempts, 1 succeeded. 2:03 PM — all employee records downloaded. 2:06–2:10 PM — 2.4 GB sent outside the company.</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-lbl">What was taken</div>
+        <div class="rc-val">Name, social security number, bank account number, routing number, and salary for every employee (14,200 people).</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-lbl">What AI got right</div>
+        <div class="rc-val">Connected all three warnings, reconstructed the sequence of events, and correctly flagged the severity. Saved significant investigation time.</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-lbl">What AI missed</div>
+        <div class="rc-val">The payroll software needed the locked account at 2:30 PM. Simply locking everything down — as the AI recommended — would have caused 14,200 employees to miss their paycheck.</div>
+      </div>
+      <div class="rc-row">
+        <div class="rc-lbl">Actions taken</div>
+        <div class="rc-val">Outside hacker address blocked. Records preserved for investigation. Security director and legal team notified. New payroll account created for today's run. Employee notification planning started.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <h3>What This Activity Showed</h3>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>AI can connect patterns across multiple warnings very quickly — faster than a person reviewing each one manually. That's genuinely useful in a time-sensitive situation.</p>
+    </div>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>But AI analyzes the security picture, not the full business picture. It didn't know payroll was running. A human had to catch that before following the AI's instructions made things worse.</p>
+    </div>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>Sorting warnings by urgency, running your own checks, and thinking through the consequences before acting — that's what separates a good response from one that creates new problems while solving the first one.</p>
+    </div>
+  </div>
+  <button class="restart-btn" onclick="restartActivity()">Run it again</button>
+</div>
+
+</div>
+<script>
+let cur=0;
+function goToPhase(n){
+  document.getElementById('phase-'+cur).classList.remove('active');
+  const ot=document.getElementById('tab-'+cur);
+  if(ot){ot.classList.remove('active');ot.classList.add('done');}
+  cur=n;
+  document.getElementById('phase-'+n).classList.add('active');
+  const nt=document.getElementById('tab-'+n);
+  if(nt) nt.classList.add('active');
+  window.scrollTo({top:document.querySelector('.phase-nav').offsetTop-20,behavior:'smooth'});
+}
+function tRef(tid,pid){
+  document.getElementById(tid).classList.toggle('open');
+  document.getElementById(pid).classList.toggle('open');
+}
+/* Triage */
+const ts=[null,null,null,null];
+function setPri(i,p,btn){
+  if(btn.disabled)return;
+  const bg=document.getElementById('pb-'+i).querySelectorAll('.t-btn');
+  if(ts[i]===p){ts[i]=null;bg.forEach(b=>b.classList.remove('ap1','ap2','ap3','ap4'));}
+  else{ts[i]=p;bg.forEach(b=>b.classList.remove('ap1','ap2','ap3','ap4'));btn.classList.add('a'+p);}
+  const s=ts.filter(v=>v!==null).length;
+  document.getElementById('triageCount').textContent='Sorted: '+s+' / 4 warnings';
+  document.getElementById('triageNext').classList.toggle('show',s===4);
+}
+function submitTriage(){
+  document.querySelectorAll('.t-btn').forEach(b=>{b.disabled=true;});
+  goToPhase(2);
+}
+/* Investigation */
+let invN=0;
+function openCheck(i){
+  const btn=document.getElementById('ib'+i);
+  const body=document.getElementById('ibd'+i);
+  if(btn.classList.contains('open')){btn.classList.remove('open');body.classList.remove('show');invN--;}
+  else{btn.classList.add('open');body.classList.add('show');invN++;}
+  document.getElementById('invCount').textContent='Checks run: '+invN+' / 5';
+  document.getElementById('invNext').classList.toggle('show',invN===5);
+}
+function submitInv(){
+  for(let i=0;i<5;i++){document.getElementById('ib'+i).onclick=null;document.getElementById('ib'+i).style.cursor='default';}
+  goToPhase(3);
+}
+/* Decisions */
+const dp=[null,null,null,null];let decLocked=false;
+function pickD(fi,btn,type,fb){
+  if(decLocked)return;
+  const field=document.getElementById('df'+fi);
+  const opts=field.querySelectorAll('.dec-opt');
+  const fbe=document.getElementById('dfb'+fi);
+  if(btn.dataset.pending==='true'){
+    btn.dataset.pending='false';btn.classList.remove('best','partial');
+    fbe.classList.remove('show','good','ok');fbe.textContent='';
+    dp[fi]=null;document.getElementById('decNext').classList.remove('show');return;
+  }
+  opts.forEach(o=>{o.dataset.pending='false';o.classList.remove('best','partial');});
+  btn.dataset.pending='true';btn.classList.add(type==='best'?'best':'partial');
+  fbe.textContent=fb;fbe.className='dec-fb show '+(type==='best'?'good':'ok');
+  dp[fi]={type};
+  if(dp.every(v=>v!==null)){
+    document.getElementById('decNext').classList.add('show');
+    window.scrollTo({top:document.getElementById('decNext').offsetTop-20,behavior:'smooth'});
+  }
+}
+function showFinale(){
+  decLocked=true;
+  document.querySelectorAll('.dec-opt').forEach(o=>{
+    o.style.cursor='default';o.onclick=null;
+    if(!o.classList.contains('best')&&!o.classList.contains('partial'))o.classList.add('locked');
+  });
+  goToPhase(4);
+}
+function restartActivity(){location.reload();}
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
