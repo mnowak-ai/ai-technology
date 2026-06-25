@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Activity: What Kind of Data Is This?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7B2FBE;--purple-dark:#4A1580;--purple-pale:#F3EAFF;--purple-mid:#E8D5FF;
+  --white:#FFFFFF;--ink:#2B1A3D;--grey:#6B6275;
+  --green:#1E8A5F;--green-pale:#E6F7EF;
+  --amber:#B5700A;--amber-pale:#FFF3DD;
+  --red:#C23B3B;--red-pale:#FCEAEA;
+  --blue:#1457A8;--blue-pale:#E4EEFF;--blue-mid:#A8C4F0;
+  --teal:#0E7A6E;--teal-pale:#E0F5F3;--teal-mid:#80CFC9;
+  --dark:#0A0A18;--dark2:#12101F;--dark3:#1C1830;
+  --mono-green:#3DDB7A;--mono-red:#FF6060;--mono-amber:#FFBE45;--mono-blue:#60B8FF;--mono-dim:#5A507A;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:"DM Sans",sans-serif;background:var(--white);color:var(--ink);}
+.wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
+
+.hero{text-align:center;padding:20px 0 28px;}
+.lesson-tag{display:inline-block;background:var(--purple-pale);color:var(--purple-dark);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:6px 16px;border-radius:999px;margin-bottom:18px;}
+.hero h1{font-family:"Fraunces",serif;font-weight:700;font-size:32px;line-height:1.18;margin:0 0 12px;color:var(--purple-dark);}
+.hero p{font-size:16px;line-height:1.6;color:var(--grey);max-width:600px;margin:0 auto;}
+.hero-divider{width:60px;height:4px;background:var(--purple);border-radius:4px;margin:24px auto 0;}
+
+.tip-box{background:var(--purple-pale);border-radius:18px;padding:20px 24px;margin:24px 0 32px;display:flex;gap:14px;align-items:flex-start;}
+.tip-box .icon{font-size:24px;flex-shrink:0;line-height:1;margin-top:2px;}
+.tip-box p{margin:0;font-size:15px;line-height:1.6;color:var(--purple-dark);}
+.tip-box strong{font-weight:700;}
+
+/* Round progress */
+.round-bar{display:flex;gap:8px;justify-content:center;margin-bottom:32px;align-items:center;}
+.round-pip{width:12px;height:12px;border-radius:50%;background:var(--purple-mid);transition:all .3s ease;}
+.round-pip.active{background:var(--purple);transform:scale(1.25);}
+.round-pip.done{background:var(--green);}
+.round-label{font-size:13px;font-weight:600;color:var(--grey);margin-left:8px;}
+
+/* Phase */
+.phase{display:none;}
+.phase.active{display:block;animation:fadeUp .4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── DATA SAMPLE VIEWER ── */
+.sample-stage{position:relative;margin-bottom:24px;}
+
+/* Sample card — the "file" being examined */
+.sample-card{
+  border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12);
+  margin-bottom:16px;transition:transform .2s ease;
+}
+
+/* Three visual styles for three data types */
+.sample-card.log-style{background:var(--dark);border:1px solid #2A2040;}
+.sample-card.ticket-style{background:var(--white);border:2px solid #E4E7EC;}
+.sample-card.metric-style{background:#0D1B2A;border:1px solid #1A3050;}
+
+/* Log card */
+.log-bar{background:var(--dark3);padding:10px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2A2040;}
+.log-dot{width:9px;height:9px;border-radius:50%;}
+.log-title{font-family:"DM Mono",monospace;font-size:12px;color:var(--mono-dim);margin-left:4px;flex:1;}
+.log-badge{font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:5px;}
+.log-badge.err{background:rgba(255,96,96,.15);color:var(--mono-red);border:1px solid rgba(255,96,96,.3);}
+.log-badge.warn{background:rgba(255,190,69,.12);color:var(--mono-amber);border:1px solid rgba(255,190,69,.25);}
+.log-body{padding:16px 20px;display:flex;flex-direction:column;gap:6px;}
+.log-line{font-family:"DM Mono",monospace;font-size:12px;line-height:1.65;display:flex;gap:10px;align-items:flex-start;}
+.ll-ts{color:var(--mono-dim);white-space:nowrap;flex-shrink:0;}
+.ll-lv{font-weight:700;white-space:nowrap;flex-shrink:0;min-width:52px;}
+.ll-lv.e{color:var(--mono-red);}
+.ll-lv.w{color:var(--mono-amber);}
+.ll-lv.i{color:var(--mono-blue);}
+.ll-msg{color:#C9A8E8;}
+.ll-msg strong{color:#fff;}
+
+/* Ticket card */
+.ticket-bar{background:#F8F9FA;padding:10px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E4E7EC;}
+.ticket-logo{font-size:16px;}
+.ticket-title-bar{font-size:13px;font-weight:600;color:var(--grey);font-family:"DM Mono",monospace;}
+.ticket-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;margin-left:auto;}
+.ticket-badge.open{background:#E6F7EF;color:var(--green);border:1px solid var(--green);}
+.ticket-badge.pending{background:var(--amber-pale);color:var(--amber);border:1px solid var(--amber);}
+.ticket-body{padding:18px 22px;}
+.ticket-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.ticket-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;}
+.ticket-tag.prio-high{background:var(--red-pale);color:var(--red);}
+.ticket-tag.prio-med{background:var(--amber-pale);color:var(--amber);}
+.ticket-tag.cat{background:var(--purple-pale);color:var(--purple-dark);}
+.ticket-subject{font-weight:700;font-size:15px;color:var(--ink);margin-bottom:10px;}
+.ticket-msg{font-size:13px;line-height:1.7;color:var(--grey);background:#F8F9FA;border-radius:10px;padding:12px 14px;border-left:3px solid #E4E7EC;font-style:italic;}
+.ticket-footer{margin-top:12px;display:flex;gap:12px;font-size:12px;color:var(--grey);}
+.ticket-footer span{display:flex;align-items:center;gap:5px;}
+
+/* Metric card */
+.metric-bar{background:#0A1520;padding:10px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1A3050;}
+.metric-title-bar{font-family:"DM Mono",monospace;font-size:12px;color:#4A6A8A;flex:1;}
+.metric-live{font-size:11px;font-weight:700;color:var(--mono-green);font-family:"DM Mono",monospace;display:flex;align-items:center;gap:5px;}
+.metric-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--mono-green);animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.metric-body{padding:16px 20px;}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.metric-tile{background:#0A1520;border-radius:10px;padding:12px 14px;border:1px solid #1A3050;}
+.mt-label{font-family:"DM Mono",monospace;font-size:10px;color:#4A6A8A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.mt-value{font-family:"DM Mono",monospace;font-size:22px;font-weight:500;color:#fff;line-height:1;}
+.mt-delta{font-size:11px;margin-top:4px;font-family:"DM Mono",monospace;}
+.mt-delta.good{color:var(--mono-green);}
+.mt-delta.bad{color:var(--mono-red);}
+.mt-delta.warn{color:var(--mono-amber);}
+.sparkline{height:40px;display:flex;align-items:flex-end;gap:3px;padding-top:4px;}
+.spark-bar{flex:1;border-radius:2px 2px 0 0;background:#1A3050;transition:height .3s ease;}
+.spark-bar.hi{background:var(--mono-red);}
+.spark-bar.warn{background:var(--mono-amber);}
+.spark-bar.ok{background:var(--mono-blue);}
+
+/* ── CLASSIFICATION BUTTONS ── */
+.classify-prompt{text-align:center;font-size:15px;font-weight:600;color:var(--ink);margin-bottom:14px;}
+.classify-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px;}
+@media(max-width:520px){.classify-grid{grid-template-columns:1fr;gap:8px;}}
+
+.classify-btn{
+  border:2px solid var(--purple-mid);border-radius:14px;padding:14px 10px;
+  cursor:pointer;background:var(--white);transition:all .2s ease;font-family:"DM Sans",sans-serif;
+  text-align:center;
+}
+.classify-btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1);}
+.classify-btn .cb-icon{font-size:24px;margin-bottom:6px;}
+.classify-btn .cb-label{font-size:13px;font-weight:700;color:var(--ink);display:block;margin-bottom:3px;}
+.classify-btn .cb-hint{font-size:12px;color:var(--grey);line-height:1.4;}
+
+/* Type color themes */
+.classify-btn.log-type{border-color:#3D2460;}
+.classify-btn.log-type:hover{border-color:var(--purple);background:var(--purple-pale);}
+.classify-btn.log-type.selected{border-color:var(--purple);background:var(--purple-pale);}
+
+.classify-btn.ticket-type{border-color:#2A4A1A;}
+.classify-btn.ticket-type:hover{border-color:var(--green);background:var(--green-pale);}
+.classify-btn.ticket-type.selected{border-color:var(--green);background:var(--green-pale);}
+
+.classify-btn.metric-type{border-color:#1A2A4A;}
+.classify-btn.metric-type:hover{border-color:var(--blue);background:var(--blue-pale);}
+.classify-btn.metric-type.selected{border-color:var(--blue);background:var(--blue-pale);}
+
+/* Result overlay */
+.result-panel{
+  border-radius:16px;padding:18px 20px;margin-top:12px;display:none;
+  animation:fadeUp .3s ease;
+}
+.result-panel.show{display:block;}
+.result-panel.correct{background:var(--green-pale);border:2px solid var(--green);}
+.result-panel.incorrect{background:var(--red-pale);border:2px solid var(--red);}
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.result-icon{font-size:22px;}
+.result-title{font-size:16px;font-weight:700;}
+.result-panel.correct .result-title{color:var(--green);}
+.result-panel.incorrect .result-title{color:var(--red);}
+.result-body{font-size:14px;line-height:1.7;color:var(--ink);}
+.result-body strong{color:var(--purple-dark);}
+.result-why{margin-top:10px;font-size:13px;line-height:1.65;padding:10px 12px;border-radius:8px;}
+.correct .result-why{background:rgba(30,138,95,.08);color:var(--green);}
+.incorrect .result-why{background:rgba(194,59,59,.08);color:var(--red);}
+
+/* Next/continue */
+.next-btn{
+  display:none;width:100%;background:var(--purple);color:#fff;border:none;border-radius:14px;
+  padding:15px;font-size:16px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;margin-top:12px;
+}
+.next-btn.show{display:block;}
+.next-btn:hover{background:var(--purple-dark);}
+
+/* ── FINALE ── */
+.score-ring{
+  width:120px;height:120px;border-radius:50%;margin:0 auto 20px;
+  background:conic-gradient(var(--purple) var(--pct, 0%), var(--purple-mid) 0%);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.score-ring::before{content:'';position:absolute;width:88px;height:88px;border-radius:50%;background:var(--white);}
+.score-inner{position:relative;z-index:1;text-align:center;}
+.score-num{font-family:"Fraunces",serif;font-size:26px;font-weight:700;color:var(--purple-dark);line-height:1;}
+.score-denom{font-size:13px;color:var(--grey);}
+
+.type-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0;}
+@media(max-width:520px){.type-breakdown{grid-template-columns:1fr;}}
+.type-card{border-radius:16px;padding:18px 16px;text-align:center;}
+.type-card.log-card{background:var(--purple-pale);border:2px solid var(--purple-mid);}
+.type-card.ticket-card{background:var(--green-pale);border:2px solid var(--green-mid,#A8DFC4);}
+.type-card.metric-card{background:var(--blue-pale);border:2px solid var(--blue-mid);}
+.type-card-icon{font-size:28px;margin-bottom:8px;}
+.type-card-name{font-family:"Fraunces",serif;font-size:14px;font-weight:700;margin-bottom:6px;}
+.log-card .type-card-name{color:var(--purple-dark);}
+.ticket-card .type-card-name{color:var(--green);}
+.metric-card .type-card-name{color:var(--blue);}
+.type-card-desc{font-size:13px;line-height:1.6;color:var(--grey);}
+
+.summary-box{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:22px;padding:28px 28px;color:#fff;text-align:left;margin-bottom:24px;}
+.summary-box h3{font-family:"Fraunces",serif;font-size:19px;margin:0 0 14px;color:#fff;}
+.summary-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.summary-item:last-child{margin-bottom:0;}
+.s-check{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.summary-item p{font-size:14px;line-height:1.65;opacity:.93;margin:0;color:#fff;}
+.restart-btn{display:block;margin:0 auto;background:var(--white);color:var(--purple);border:2px solid var(--purple);border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif;}
+.restart-btn:hover{background:var(--purple-pale);}
+
+.fade-in{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+@media(max-width:560px){.hero h1{font-size:26px;}.metric-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero fade-in">
+  <div class="lesson-tag">Hands-On Activity</div>
+  <h1>What Kind of Data Is This?</h1>
+  <p>Six real-looking data samples. Your job: figure out what type each one is and why it matters for how you'd use it.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="tip-box fade-in">
+  <div class="icon">👆</div>
+  <p><strong>How this works:</strong> Each round shows you a real data sample. Study it, then tap the type you think it is. You'll get immediate feedback with the reasoning — and a look at all three types at the end.</p>
+</div>
+
+<div class="round-bar fade-in" id="roundBar">
+  <div class="round-pip active" id="pip-0"></div>
+  <div class="round-pip" id="pip-1"></div>
+  <div class="round-pip" id="pip-2"></div>
+  <div class="round-pip" id="pip-3"></div>
+  <div class="round-pip" id="pip-4"></div>
+  <div class="round-pip" id="pip-5"></div>
+  <div class="round-label" id="roundLabel">Sample 1 of 6</div>
+</div>
+
+<!-- ════════════════════════════
+     ROUND 0 — Error log (correct: log)
+════════════════════════════ -->
+<div class="phase active" id="phase-0">
+  <div class="sample-card log-style fade-in">
+    <div class="log-bar">
+      <div class="log-dot" style="background:#FF5F56;"></div>
+      <div class="log-dot" style="background:#FEBC2E;"></div>
+      <div class="log-dot" style="background:#27C840;"></div>
+      <span class="log-title">system-events.log — api-gateway-prod</span>
+      <span class="log-badge err">4 ERRORS</span>
+    </div>
+    <div class="log-body">
+      <div class="log-line"><span class="ll-ts">09:14:02</span><span class="ll-lv i">[INFO]</span><span class="ll-msg">Request received: <strong>GET /api/v2/users</strong> — client: 10.0.0.41</span></div>
+      <div class="log-line"><span class="ll-ts">09:14:03</span><span class="ll-lv e">[ERROR]</span><span class="ll-msg"><strong>Database timeout</strong> after 5000ms — query: SELECT * FROM users WHERE active=1</span></div>
+      <div class="log-line"><span class="ll-ts">09:14:03</span><span class="ll-lv e">[ERROR]</span><span class="ll-msg">Retry attempt 1 of 3 — <strong>connection pool exhausted</strong> (32/32 connections in use)</span></div>
+      <div class="log-line"><span class="ll-ts">09:14:08</span><span class="ll-lv e">[ERROR]</span><span class="ll-msg">Retry attempt 2 of 3 — <strong>same timeout</strong> (5012ms). Pool still exhausted.</span></div>
+      <div class="log-line"><span class="ll-ts">09:14:13</span><span class="ll-lv e">[ERROR]</span><span class="ll-msg"><strong>All retries failed.</strong> Returning 503 to client. Incident ID: INC-9821</span></div>
+    </div>
+  </div>
+  <div class="classify-prompt">What type of data is this?</div>
+  <div class="classify-grid">
+    <div class="classify-btn log-type" onclick="classify(0,'log',this)">
+      <div class="cb-icon">📋</div>
+      <span class="cb-label">Error Log</span>
+      <span class="cb-hint">System-generated records of events and failures</span>
+    </div>
+    <div class="classify-btn ticket-type" onclick="classify(0,'ticket',this)">
+      <div class="cb-icon">🎫</div>
+      <span class="cb-label">Support Ticket</span>
+      <span class="cb-hint">A person describing a problem in their own words</span>
+    </div>
+    <div class="classify-btn metric-type" onclick="classify(0,'metric',this)">
+      <div class="cb-icon">📊</div>
+      <span class="cb-label">Performance Data</span>
+      <span class="cb-hint">Numbers tracking how a system is performing over time</span>
+    </div>
+  </div>
+  <div class="result-panel" id="res-0"></div>
+  <button class="next-btn" id="next-0" onclick="goToPhase(1)">Next sample →</button>
+</div>
+
+<!-- ════════════════════════════
+     ROUND 1 — Support ticket (correct: ticket)
+════════════════════════════ -->
+<div class="phase" id="phase-1">
+  <div class="sample-card ticket-style fade-in">
+    <div class="ticket-bar">
+      <span class="ticket-logo">🎫</span>
+      <span class="ticket-title-bar">HelpDesk Pro — Ticket #44821</span>
+      <span class="ticket-badge pending">Pending</span>
+    </div>
+    <div class="ticket-body">
+      <div class="ticket-meta">
+        <span class="ticket-tag prio-high">🔴 High Priority</span>
+        <span class="ticket-tag cat">💻 Login / Access</span>
+        <span class="ticket-tag cat">👤 Submitted by User</span>
+      </div>
+      <div class="ticket-subject">Can't log in — urgent, I have a meeting in 10 minutes</div>
+      <div class="ticket-msg">
+        "Hi, I've been trying to log in since this morning and it keeps saying my password is wrong. I definitely know my password, I use it every day. I tried resetting it but the reset email never arrived. I have an important client meeting at 2pm and really need to get in. My laptop also started doing something weird yesterday where the screen flickered a few times but I don't know if that's related. Please help ASAP!"
+      </div>
+      <div class="ticket-footer">
+        <span>👤 Sarah M. — Marketing</span>
+        <span>🕐 Submitted: 1:31 PM</span>
+        <span>📬 No reply yet</span>
+      </div>
+    </div>
+  </div>
+  <div class="classify-prompt">What type of data is this?</div>
+  <div class="classify-grid">
+    <div class="classify-btn log-type" onclick="classify(1,'log',this)">
+      <div class="cb-icon">📋</div>
+      <span class="cb-label">Error Log</span>
+      <span class="cb-hint">System-generated records of events and failures</span>
+    </div>
+    <div class="classify-btn ticket-type" onclick="classify(1,'ticket',this)">
+      <div class="cb-icon">🎫</div>
+      <span class="cb-label">Support Ticket</span>
+      <span class="cb-hint">A person describing a problem in their own words</span>
+    </div>
+    <div class="classify-btn metric-type" onclick="classify(1,'metric',this)">
+      <div class="cb-icon">📊</div>
+      <span class="cb-label">Performance Data</span>
+      <span class="cb-hint">Numbers tracking how a system is performing over time</span>
+    </div>
+  </div>
+  <div class="result-panel" id="res-1"></div>
+  <button class="next-btn" id="next-1" onclick="goToPhase(2)">Next sample →</button>
+</div>
+
+<!-- ════════════════════════════
+     ROUND 2 — Performance metrics (correct: metric)
+════════════════════════════ -->
+<div class="phase" id="phase-2">
+  <div class="sample-card metric-style fade-in">
+    <div class="metric-bar">
+      <span class="metric-title-bar">System Dashboard — api-gateway-prod · Last 60 min</span>
+      <span class="metric-live">LIVE</span>
+    </div>
+    <div class="metric-body">
+      <div class="metric-grid">
+        <div class="metric-tile">
+          <div class="mt-label">Response Time</div>
+          <div class="mt-value">847<span style="font-size:13px;color:#4A6A8A;">ms</span></div>
+          <div class="mt-delta bad">↑ +340ms from avg</div>
+        </div>
+        <div class="metric-tile">
+          <div class="mt-label">Error Rate</div>
+          <div class="mt-value">12<span style="font-size:13px;color:#4A6A8A;">%</span></div>
+          <div class="mt-delta bad">↑ from 0.8% baseline</div>
+        </div>
+        <div class="metric-tile">
+          <div class="mt-label">Uptime</div>
+          <div class="mt-value">98.1<span style="font-size:13px;color:#4A6A8A;">%</span></div>
+          <div class="mt-delta warn">↓ below 99.9% SLA</div>
+        </div>
+      </div>
+      <div class="sparkline">
+        <div class="spark-bar ok" style="height:30%;"></div>
+        <div class="spark-bar ok" style="height:35%;"></div>
+        <div class="spark-bar ok" style="height:28%;"></div>
+        <div class="spark-bar ok" style="height:40%;"></div>
+        <div class="spark-bar ok" style="height:33%;"></div>
+        <div class="spark-bar ok" style="height:38%;"></div>
+        <div class="spark-bar ok" style="height:30%;"></div>
+        <div class="spark-bar warn" style="height:55%;"></div>
+        <div class="spark-bar warn" style="height:65%;"></div>
+        <div class="spark-bar hi" style="height:85%;"></div>
+        <div class="spark-bar hi" style="height:90%;"></div>
+        <div class="spark-bar hi" style="height:100%;"></div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4A6A8A;margin-top:4px;text-align:center;">Response time over last 60 minutes — spike began ~14 min ago</div>
+    </div>
+  </div>
+  <div class="classify-prompt">What type of data is this?</div>
+  <div class="classify-grid">
+    <div class="classify-btn log-type" onclick="classify(2,'log',this)">
+      <div class="cb-icon">📋</div>
+      <span class="cb-label">Error Log</span>
+      <span class="cb-hint">System-generated records of events and failures</span>
+    </div>
+    <div class="classify-btn ticket-type" onclick="classify(2,'ticket',this)">
+      <div class="cb-icon">🎫</div>
+      <span class="cb-label">Support Ticket</span>
+      <span class="cb-hint">A person describing a problem in their own words</span>
+    </div>
+    <div class="classify-btn metric-type" onclick="classify(2,'metric',this)">
+      <div class="cb-icon">📊</div>
+      <span class="cb-label">Performance Data</span>
+      <span class="cb-hint">Numbers tracking how a system is performing over time</span>
+    </div>
+  </div>
+  <div class="result-panel" id="res-2"></div>
+  <button class="next-btn" id="next-2" onclick="goToPhase(3)">Next sample →</button>
+</div>
+
+<!-- ════════════════════════════
+     ROUND 3 — Tricky: Warning log (correct: log, not metric)
+════════════════════════════ -->
+<div class="phase" id="phase-3">
+  <div class="sample-card log-style fade-in">
+    <div class="log-bar">
+      <div class="log-dot" style="background:#FF5F56;"></div>
+      <div class="log-dot" style="background:#FEBC2E;"></div>
+      <div class="log-dot" style="background:#27C840;"></div>
+      <span class="log-title">auth-service.log — identity-prod-02</span>
+      <span class="log-badge warn">2 WARNINGS</span>
+    </div>
+    <div class="log-body">
+      <div class="log-line"><span class="ll-ts">13:31:04</span><span class="ll-lv i">[INFO]</span><span class="ll-msg">User <strong>s.martinez@company.com</strong> authenticated successfully. Session opened.</span></div>
+      <div class="log-line"><span class="ll-ts">13:31:19</span><span class="ll-lv w">[WARN]</span><span class="ll-msg"><strong>Unusual login location:</strong> IP 185.220.101.45 does not match user's typical city (Chicago). Location: Warsaw, PL.</span></div>
+      <div class="log-line"><span class="ll-ts">13:31:20</span><span class="ll-lv w">[WARN]</span><span class="ll-msg"><strong>Multiple active sessions:</strong> same account now has 2 open sessions from different countries simultaneously.</span></div>
+      <div class="log-line"><span class="ll-ts">13:31:22</span><span class="ll-lv i">[INFO]</span><span class="ll-msg">Session activity: accessed HR portal, payroll module. Read-only permissions confirmed.</span></div>
+    </div>
+  </div>
+  <div style="background:var(--amber-pale);border:1px solid var(--amber);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--amber);line-height:1.6;" class="fade-in">
+    🧩 <strong>Challenge round!</strong> This one might look like performance data because it includes times and numbers. Look closely at what kind of information it's actually recording.
+  </div>
+  <div class="classify-prompt">What type of data is this?</div>
+  <div class="classify-grid">
+    <div class="classify-btn log-type" onclick="classify(3,'log',this)">
+      <div class="cb-icon">📋</div>
+      <span class="cb-label">Error Log</span>
+      <span class="cb-hint">System-generated records of events and failures</span>
+    </div>
+    <div class="classify-btn ticket-type" onclick="classify(3,'ticket',this)">
+      <div class="cb-icon">🎫</div>
+      <span class="cb-label">Support Ticket</span>
+      <span class="cb-hint">A person describing a problem in their own words</span>
+    </div>
+    <div class="classify-btn metric-type" onclick="classify(3,'metric',this)">
+      <div class="cb-icon">📊</div>
+      <span class="cb-label">Performance Data</span>
+      <span class="cb-hint">Numbers tracking how a system is performing over time</span>
+    </div>
+  </div>
+  <div class="result-panel" id="res-3"></div>
+  <button class="next-btn" id="next-3" onclick="goToPhase(4)">Next sample →</button>
+</div>
+
+<!-- ════════════════════════════
+     ROUND 4 — Tricky: Ticket with technical detail (correct: ticket)
+════════════════════════════ -->
+<div class="phase" id="phase-4">
+  <div class="sample-card ticket-style fade-in">
+    <div class="ticket-bar">
+      <span class="ticket-logo">🎫</span>
+      <span class="ticket-title-bar">HelpDesk Pro — Ticket #44955</span>
+      <span class="ticket-badge open">Open</span>
+    </div>
+    <div class="ticket-body">
+      <div class="ticket-meta">
+        <span class="ticket-tag prio-med">🟡 Medium Priority</span>
+        <span class="ticket-tag cat">🖥️ Server / Backend</span>
+        <span class="ticket-tag cat">👤 Submitted by Dev</span>
+      </div>
+      <div class="ticket-subject">API returning 503 errors intermittently since this morning</div>
+      <div class="ticket-msg">
+        "Hey team, I've been getting intermittent 503s from the /api/v2/orders endpoint since around 9am. It's not every request — maybe 1 in 8 is failing. I checked our monitoring and response times look spiked. I tried restarting my local environment but no change. Could be a backend issue? The errors started right after last night's deployment. My team is blocked on testing. Let me know if you need logs."
+      </div>
+      <div class="ticket-footer">
+        <span>👤 Dev Team — Engineering</span>
+        <span>🕐 Submitted: 10:12 AM</span>
+        <span>💬 3 replies</span>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--amber-pale);border:1px solid var(--amber);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--amber);line-height:1.6;" class="fade-in">
+    🧩 <strong>Challenge round!</strong> This one contains technical terms and error codes. Does that change what type of data it is?
+  </div>
+  <div class="classify-prompt">What type of data is this?</div>
+  <div class="classify-grid">
+    <div class="classify-btn log-type" onclick="classify(4,'log',this)">
+      <div class="cb-icon">📋</div>
+      <span class="cb-label">Error Log</span>
+      <span class="cb-hint">System-generated records of events and failures</span>
+    </div>
+    <div class="classify-btn ticket-type" onclick="classify(4,'ticket',this)">
+      <div class="cb-icon">🎫</div>
+      <span class="cb-label">Support Ticket</span>
+      <span class="cb-hint">A person describing a problem in their own words</span>
+    </div>
+    <div class="classify-btn metric-type" onclick="classify(4,'metric',this)">
+      <div class="cb-icon">📊</div>
+      <span class="cb-label">Performance Data</span>
+      <span class="cb-hint">Numbers tracking how a system is performing over time</span>
+    </div>
+  </div>
+  <div class="result-panel" id="res-4"></div>
+  <button class="next-btn" id="next-4" onclick="goToPhase(5)">Last sample →</button>
+</div>
+
+<!-- ════════════════════════════
+     ROUND 5 — Tricky: Aggregated metrics (correct: metric)
+════════════════════════════ -->
+<div class="phase" id="phase-5">
+  <div class="sample-card metric-style fade-in">
+    <div class="metric-bar">
+      <span class="metric-title-bar">Weekly Report — Customer Support System · Week of Nov 4</span>
+      <span style="font-size:11px;color:#4A6A8A;font-family:'DM Mono',monospace;">Exported Monday 8:00 AM</span>
+    </div>
+    <div class="metric-body">
+      <div class="metric-grid" style="grid-template-columns:repeat(2,1fr);">
+        <div class="metric-tile">
+          <div class="mt-label">Tickets Opened</div>
+          <div class="mt-value">312</div>
+          <div class="mt-delta warn">↑ +18% vs. last week</div>
+        </div>
+        <div class="metric-tile">
+          <div class="mt-label">Avg Response Time</div>
+          <div class="mt-value">4.2<span style="font-size:13px;color:#4A6A8A;">hrs</span></div>
+          <div class="mt-delta bad">↑ above 3hr target</div>
+        </div>
+        <div class="metric-tile">
+          <div class="mt-label">Resolution Rate</div>
+          <div class="mt-value">87<span style="font-size:13px;color:#4A6A8A;">%</span></div>
+          <div class="mt-delta good">↑ up from 82%</div>
+        </div>
+        <div class="metric-tile">
+          <div class="mt-label">Escalation Rate</div>
+          <div class="mt-value">11<span style="font-size:13px;color:#4A6A8A;">%</span></div>
+          <div class="mt-delta warn">→ same as last week</div>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4A6A8A;margin-top:10px;text-align:center;">Aggregated from 312 tickets · auto-generated · no manual editing</div>
+    </div>
+  </div>
+  <div style="background:var(--amber-pale);border:1px solid var(--amber);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--amber);line-height:1.6;" class="fade-in">
+    🧩 <strong>Final challenge!</strong> This is about support tickets — but is it a ticket itself, or something else?
+  </div>
+  <div class="classify-prompt">What type of data is this?</div>
+  <div class="classify-grid">
+    <div class="classify-btn log-type" onclick="classify(5,'log',this)">
+      <div class="cb-icon">📋</div>
+      <span class="cb-label">Error Log</span>
+      <span class="cb-hint">System-generated records of events and failures</span>
+    </div>
+    <div class="classify-btn ticket-type" onclick="classify(5,'ticket',this)">
+      <div class="cb-icon">🎫</div>
+      <span class="cb-label">Support Ticket</span>
+      <span class="cb-hint">A person describing a problem in their own words</span>
+    </div>
+    <div class="classify-btn metric-type" onclick="classify(5,'metric',this)">
+      <div class="cb-icon">📊</div>
+      <span class="cb-label">Performance Data</span>
+      <span class="cb-hint">Numbers tracking how a system is performing over time</span>
+    </div>
+  </div>
+  <div class="result-panel" id="res-5"></div>
+  <button class="next-btn" id="next-5" onclick="showFinale()">See my results →</button>
+</div>
+
+<!-- ════════════════════════════
+     FINALE
+════════════════════════════ -->
+<div class="phase" id="phase-6">
+  <div class="score-ring" id="scoreRing" style="--pct:0%">
+    <div class="score-inner">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-denom">out of 6</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-bottom:4px;" id="scoreLine"></div>
+  <div style="text-align:center;font-size:14px;color:var(--grey);margin-bottom:28px;" id="scoreSubline"></div>
+
+  <div class="type-breakdown">
+    <div class="type-card log-card">
+      <div class="type-card-icon">📋</div>
+      <div class="type-card-name">Error Logs</div>
+      <div class="type-card-desc">System-written records of exactly what happened and when. Every line follows the same format. Great for debugging — not so easy to scan quickly.</div>
+    </div>
+    <div class="type-card ticket-card">
+      <div class="type-card-icon">🎫</div>
+      <div class="type-card-name">Support Tickets</div>
+      <div class="type-card-desc">Written by people in their own words. Rich with context and emotion — but messy and hard to analyze at scale without help from AI or a human reader.</div>
+    </div>
+    <div class="type-card metric-card">
+      <div class="type-card-icon">📊</div>
+      <div class="type-card-name">Performance Data</div>
+      <div class="type-card-desc">Numbers tracked over time — response speed, uptime, error rates. Easy to visualize and spot trends in. The most AI-friendly type for catching patterns early.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--purple-pale);border-radius:16px;padding:18px 20px;margin-bottom:24px;">
+    <div style="font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--purple-dark);margin-bottom:10px;">The tricky ones — what to remember</div>
+    <div style="font-size:14px;line-height:1.7;color:var(--ink);">
+      <p style="margin:0 0 8px;"><strong>Logs vs. Metrics:</strong> Logs record individual events ("this error happened at 9:14:03"). Metrics track patterns over time ("error rate was 12% last hour"). Logs can contain numbers — but if it's recording what a specific event was, it's a log.</p>
+      <p style="margin:0;"><strong>Tickets with tech details:</strong> A support ticket is still a ticket even if it includes error codes or technical language. What makes it a ticket is that a <em>person</em> wrote it to describe their experience. The source and format are what define the type — not the vocabulary used.</p>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <h3>Why This Matters for AI</h3>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>AI tools are trained to work with different data types in different ways. Knowing what kind of data you're looking at helps you pick the right tool and ask the right questions.</p>
+    </div>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>Performance data is the easiest for AI to analyze — it's all numbers and patterns. Tickets are the hardest — all that human context and emotion needs interpretation before AI can do much with it.</p>
+    </div>
+    <div class="summary-item">
+      <div class="s-check">✓</div>
+      <p>In a real incident, you'll often have all three types at once — logs telling you what happened, metrics showing how bad it got, and tickets telling you how it felt from the user's side. Together they give you the full picture.</p>
+    </div>
+  </div>
+  <button class="restart-btn" onclick="restartActivity()">Try again</button>
+</div>
+
+</div>
+
+<script>
+const TOTAL = 6;
+let curPhase = 0;
+let score = 0;
+const answers = [null,null,null,null,null,null]; // track all answers
+
+const correct = ['log','ticket','metric','log','ticket','metric'];
+
+const feedback = [
+  {
+    log: {
+      result:'correct',
+      title:'✓ That\'s an error log',
+      body:'Notice how every line follows the same structure: a timestamp, a severity level, and a message. That\'s the hallmark of a log — a system writing down exactly what happened, in order, automatically.',
+      why:'Logs record individual events as they happen. They\'re great for debugging because you can trace exactly what the system did step by step.'
+    }
+  },
+  {
+    ticket: {
+      result:'correct',
+      title:'✓ That\'s a support ticket',
+      body:'Even though it mentions a specific problem, the core of this is a person describing their experience in their own words — "I definitely know my password," "I have an important meeting." That human voice is the giveaway.',
+      why:'Support tickets are written by people, not systems. They\'re full of context and emotion — which makes them valuable but harder to analyze automatically.'
+    },
+    log: {
+      result:'incorrect',
+      title:'Not quite — this is a support ticket',
+      body:'Logs are written by systems automatically. This was written by a person named Sarah who\'s frustrated and in a hurry. The informal language ("Please help ASAP!") and the personal details are clues that this is a human writing about their experience.',
+      why:'A ticket is defined by who wrote it — a person describing a problem from their own perspective, not a system recording what happened.'
+    },
+    metric: {
+      result:'incorrect',
+      title:'Not quite — this is a support ticket',
+      body:'Performance data is all numbers — response times, error rates, uptime percentages. This is a personal message from an employee, written in plain English with opinions, urgency, and guesses about what\'s wrong.',
+      why:'When a person writes about a problem in their own words, that\'s a ticket — regardless of how technical the subject is.'
+    }
+  },
+  {
+    metric: {
+      result:'correct',
+      title:'✓ That\'s performance data',
+      body:'Response time, error rate, uptime — these are all numbers that track how a system is performing right now and over time. The sparkline chart at the bottom shows the trend, not just a single moment.',
+      why:'Performance data is designed to be glanced at quickly to understand system health. It tells you "how bad?" and "since when?" — not "what specifically happened?"'
+    },
+    log: {
+      result:'incorrect',
+      title:'Not quite — this is performance data',
+      body:'Logs record specific events one at a time. This dashboard is showing aggregated numbers — averages, rates, and trends — across all activity in the past 60 minutes. That aggregation is what makes it performance data, not a log.',
+      why:'The key difference: logs show you individual events. Performance data shows you patterns across many events.'
+    }
+  },
+  {
+    log: {
+      result:'correct',
+      title:'✓ That\'s an error log — nice catch',
+      body:'Even though it includes timestamps and numbers (which might look like performance data), each line is recording a specific event: "this login happened," "this warning was triggered." That event-by-event structure is what makes it a log.',
+      why:'Logs can contain numbers and times without being performance data. The question is: is it recording individual events, or tracking averages over time?'
+    },
+    metric: {
+      result:'incorrect',
+      title:'Close — but this is a log',
+      body:'Performance data tracks numbers over time (averages, trends, rates). This is recording specific events one at a time — a login from Warsaw, a warning about two active sessions. Individual events = log.',
+      why:'The tricky part: logs always have timestamps and can include numbers. But if it\'s documenting what happened at a specific moment, it\'s a log.'
+    }
+  },
+  {
+    ticket: {
+      result:'correct',
+      title:'✓ That\'s a support ticket — even with the tech terms',
+      body:'This was written by a developer in their own words — "I tried restarting my local environment," "Could be a backend issue?" The informal language, the personal experience, and the guesswork are all signs of a human-written ticket, not an automated log.',
+      why:'Adding technical vocabulary doesn\'t change the data type. A ticket is still a ticket when a developer writes it — it\'s just a ticket from someone who knows more about what\'s happening.'
+    },
+    log: {
+      result:'incorrect',
+      title:'Not quite — this is a support ticket',
+      body:'Error codes and technical terms can appear in tickets too. The difference is who wrote it and why. A developer named themselves, used phrases like "Could be a backend issue?" and mentioned their team is blocked. That\'s a person asking for help — the definition of a ticket.',
+      why:'Logs are written by systems automatically. This was written by a person with opinions, questions, and context about their situation.'
+    }
+  },
+  {
+    metric: {
+      result:'correct',
+      title:'✓ That\'s performance data — even though it\'s about tickets',
+      body:'The key: this data is about tickets, not a ticket itself. It\'s aggregated numbers — 312 tickets, 4.2 hour average, 87% resolution rate — summarizing what happened over a whole week. That\'s performance data, generated automatically from the ticket system.',
+      why:'Performance data can measure anything — including support tickets. If it\'s counting, averaging, or tracking trends over time, it\'s performance data.'
+    },
+    ticket: {
+      result:'incorrect',
+      title:'Not quite — this is performance data',
+      body:'This might look like it\'s about tickets, but it\'s actually numbers summarizing what happened across 312 tickets over a week. No single person wrote this — it was auto-generated. That aggregation of numbers over time is the definition of performance data.',
+      why:'A single ticket is a human writing about one problem. 312 tickets summarized into percentages and averages is performance data about your support system.'
+    }
+  }
+];
+
+function classify(round, type, btn){
+  const btns = btn.closest('.classify-grid').querySelectorAll('.classify-btn');
+  // Toggle off
+  if(btn.classList.contains('selected')){
+    btn.classList.remove('selected');
+    document.getElementById('res-'+round).classList.remove('show','correct','incorrect');
+    document.getElementById('next-'+round).classList.remove('show');
+    answers[round]=null;
+    return;
+  }
+  // Clear and select
+  btns.forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[round]=type;
+
+  const isCorrect = type === correct[round];
+  const fd = feedback[round][type] || feedback[round][correct[round]];
+  const panel = document.getElementById('res-'+round);
+
+  panel.className = 'result-panel show ' + (isCorrect?'correct':'incorrect');
+  panel.innerHTML = `
+    <div class="result-header">
+      <div class="result-icon">${isCorrect?'✅':'❌'}</div>
+      <div class="result-title">${fd.title}</div>
+    </div>
+    <div class="result-body">${fd.body}</div>
+    <div class="result-why">${fd.why}</div>
+  `;
+
+  document.getElementById('next-'+round).classList.add('show');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function goToPhase(n){
+  // Tally score at end of current phase
+  const r = curPhase;
+  if(answers[r] === correct[r]) score++;
+
+  document.getElementById('phase-'+curPhase).classList.remove('active');
+  document.getElementById('pip-'+curPhase).classList.remove('active');
+  document.getElementById('pip-'+curPhase).classList.add('done');
+  curPhase = n;
+  document.getElementById('phase-'+n).classList.add('active');
+  if(n < TOTAL) document.getElementById('pip-'+n).classList.add('active');
+  document.getElementById('roundLabel').textContent = 'Sample '+(n+1)+' of '+TOTAL;
+  window.scrollTo({top:document.querySelector('.round-bar').offsetTop-20,behavior:'smooth'});
+}
+
+function showFinale(){
+  // Count last answer
+  if(answers[5] === correct[5]) score++;
+
+  document.getElementById('phase-5').classList.remove('active');
+  document.getElementById('pip-5').classList.remove('active');
+  document.getElementById('pip-5').classList.add('done');
+  document.getElementById('phase-6').classList.add('active');
+  document.getElementById('roundLabel').textContent = 'Complete!';
+
+  // Score ring
+  const pct = Math.round((score/TOTAL)*100);
+  document.getElementById('scoreRing').style.setProperty('--pct', pct+'%');
+  document.getElementById('scoreNum').textContent = score;
+  const lines = [
+    [6,'🏆 Perfect score!','You spotted every data type — including the tricky ones.'],
+    [5,'⭐ Great work!','You caught most of them. Check the ones you missed above.'],
+    [4,'👍 Solid start','A couple tricky samples got you — those distinctions take practice.'],
+    [3,'🔄 Keep going','The challenge rounds were tough. Read the explanations above and try again.'],
+    [0,'📚 Good try','Data classification takes practice. Review the breakdowns below.'],
+  ];
+  const line = lines.find(l => score >= l[0]) || lines[lines.length-1];
+  document.getElementById('scoreLine').innerHTML = `<span style="font-family:Fraunces,serif;font-size:20px;font-weight:700;color:var(--purple-dark);">${line[1]}</span>`;
+  document.getElementById('scoreSubline').textContent = line[2];
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restartActivity(){ location.reload(); }
+
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
